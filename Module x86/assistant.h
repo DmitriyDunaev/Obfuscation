@@ -50,7 +50,7 @@ public:
     void printlist(ofstream& s)
     {
         s << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-        s << "<Routine xsi:noNamespaceSchemaLocation=\"Untitled1.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n";
+        s << "<Routine xsi:noNamespaceSchemaLocation=\"CFG_Schema.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n";
         bl->dump(s);
 
 

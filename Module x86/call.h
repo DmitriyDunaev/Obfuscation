@@ -15,7 +15,7 @@ public:
     void print(ofstream& s)
     {
 #ifdef DEBUG
-        s  << "		<Instruction Type=\"fake\" Label=\"" << s << "<\">/Instruction><!-- CALL -->" << endl;
+        s  << "		<Instruction Type=\"original\" Label=\"" << s << "<\">/Instruction><!-- CALL -->" << endl;
 #endif
     }
 };

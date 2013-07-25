@@ -18,7 +18,7 @@ public:
     bool islabel() {return true;}
     void print(ofstream& s)
     {
-        s  << "		<Instruction Type=\"fake\" Label=\"" << label << i << "\"></Instruction><!-- LABEL -->" << endl;
+        s  << "		<Instruction Type=\"original\" Label=\"" << label << i << "\"></Instruction><!-- LABEL -->" << endl;
     }
 };
 

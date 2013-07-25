@@ -33,13 +33,13 @@ int main (void)
     list<Line> lines;
 
     stringstream ss;
-//    ss << "int __cdecl sub_401334()\n{\nchar v1; // [sp+8h] [bp-38h]@1\nint v2;";
+//    ss << "char v1; // [sp+8h] [bp-38h]@1\nint v2;";
 //    ss << "// [sp+1Ch] [bp-24h]@1\nchar *v3; // [sp+30h] [bp-10h]@1\nint i; // [sp+34h] [bp-Ch]@1\nint *v5;";
 //    ss << " // [sp+38h] [bp-8h]@1\nchar *v6; // [sp+3Ch] [bp-4h]@1\n\nsub_401960();\nv6 = &v1;\nv3 = &v1;\nv5";
 //    ss << " = &v2;\nfor ( i = 0; i; ++i )\n{\n*(_DWORD *)v6 = dword_405008;\n*v5 = dword_402000;\nv6";
-//    ss << " += 4;\n++v5;\n}\nreturn *(_DWORD *)v3;\n}\n// 402000: using guessed type int dword_402000;\n//";
+//    ss << " += 4;\n++v5;\n}\nreturn *(_DWORD *)v3;\n// 402000: using guessed type int dword_402000;\n//";
 //    ss << " 405008: using guessed type int dword_405008;\n" ;
-
+////
     ss << " result = 9;\n";
     ss << " if ( csudajo || azis && blabla)\n";
     ss << " {\n";

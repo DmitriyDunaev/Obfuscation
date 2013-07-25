@@ -62,20 +62,20 @@ public:
             {
                 s << "In=\"" << t << "\" ";
             }
-            tmp;
+            stringstream tmp2;
+            string t2;
             for (std::vector<CInstructionsContainer*>::iterator i = successors.begin();
                                             i != successors.end(); ++i)
                 {
-                    tmp << "ID_" << (*i)->getblockid();
+                    tmp2 << "ID_" << (*i)->getblockid();
                     std::vector<CInstructionsContainer*>::iterator j=i;
                     ++j;
-                    if (j != successors.end()) tmp << " ";
+                    if (j != successors.end()) tmp2 << " ";
                 }
-            t;
-            t = tmp.str();
-            if ( t != "")
+            t2 = tmp2.str();
+            if ( t2 != "")
             {
-                s << "Out=\"" << t << "\" ";
+                s << "Out=\"" << t2 << "\" ";
             }
             s << "ID=\"ID_" << block_id << "\">\n";
             for (std::list<CThreeAdressInstruction*>::iterator i = InstructionList.begin();
