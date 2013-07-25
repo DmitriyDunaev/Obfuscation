@@ -1,0 +1,143 @@
+# depslib dependency file v1.0
+1374751434 source:c:\users\andrás\documents\github\obfuscation\module x86\assistant.cpp
+	"assistant.h"
+	<cstdlib>
+	<stdio.h>
+
+1374750985 c:\users\andrás\documents\github\obfuscation\module x86\assistant.h
+	"instructionscontainer.h"
+	"line.h"
+	"labelgenerator.h"
+	"parser.h"
+	"label.h"
+	"call.h"
+	"blocks.h"
+	"unc_jump.h"
+	"cond_jump.h"
+	"fakeexitblock.h"
+
+1374750727 c:\users\andrás\documents\github\obfuscation\module x86\instructionscontainer.h
+	<iostream>
+	<fstream>
+	<list>
+	<vector>
+	"threeadressinstruction.h"
+	"variables.h"
+
+1374744188 c:\users\andrás\documents\github\obfuscation\module x86\threeadressinstruction.h
+	<iostream>
+	<string>
+	<iostream>
+	<fstream>
+	"operand.h"
+
+1374571286 c:\users\andrás\documents\github\obfuscation\module x86\operand.h
+	<iostream>
+	<string>
+	<sstream>
+
+1374571112 c:\users\andrás\documents\github\obfuscation\module x86\variables.h
+	<map>
+	<string>
+	"operand.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\module x86\line.h
+	"threeadressinstruction.h"
+
+1374358297 c:\users\andrás\documents\github\obfuscation\module x86\labelgenerator.h
+	<string>
+	<sstream>
+
+1374572559 c:\users\andrás\documents\github\obfuscation\module x86\parser.h
+	<iostream>
+	<string>
+	<stack>
+	<list>
+	<sstream>
+	"instructionscontainer.h"
+	"quadruple.h"
+	"equation.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\module x86\quadruple.h
+	"threeadressinstruction.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\module x86\equation.h
+	"threeadressinstruction.h"
+
+1374751254 c:\users\andrás\documents\github\obfuscation\module x86\label.h
+	<string>
+	"threeadressinstruction.h"
+
+1374752003 c:\users\andrás\documents\github\obfuscation\module x86\call.h
+	"threeadressinstruction.h"
+	<string>
+
+1374743673 c:\users\andrás\documents\github\obfuscation\module x86\blocks.h
+	<list>
+	"instructionscontainer.h"
+	"fakeexitblock.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\module x86\fakeexitblock.h
+	"threeadressinstruction.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\module x86\unc_jump.h
+	"threeadressinstruction.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\module x86\cond_jump.h
+	"threeadressinstruction.h"
+
+1374666969 source:c:\users\andrás\documents\github\obfuscation\module x86\blocks.cpp
+	"blocks.h"
+
+1374482108 source:c:\users\andrás\documents\github\obfuscation\module x86\call.cpp
+	"call.h"
+
+1374601219 source:c:\users\andrás\documents\github\obfuscation\module x86\cond_jump.cpp
+	"cond_jump.h"
+
+1374710397 source:c:\users\andrás\documents\github\obfuscation\module x86\equation.cpp
+	"equation.h"
+
+1374659610 source:c:\users\andrás\documents\github\obfuscation\module x86\fake_exit_block.cpp
+	"fake_exit_block.h"
+
+1374712434 c:\users\andrás\documents\github\obfuscation\module x86\fake_exit_block.h
+
+1374659776 source:c:\users\andrás\documents\github\obfuscation\module x86\fakeexitblock.cpp
+	"fakeexitblock.h"
+
+1374511489 source:c:\users\andrás\documents\github\obfuscation\module x86\instructionscontainer.cpp
+	"instructionscontainer.h"
+
+1374358249 source:c:\users\andrás\documents\github\obfuscation\module x86\label.cpp
+	"label.h"
+
+1374358302 source:c:\users\andrás\documents\github\obfuscation\module x86\labelgenerator.cpp
+	"labelgenerator.h"
+
+1374358307 source:c:\users\andrás\documents\github\obfuscation\module x86\line.cpp
+	"line.h"
+
+1374752952 source:c:\users\andrás\documents\github\obfuscation\module x86\main.cpp
+	<iostream>
+	"assistant.h"
+	"parser.h"
+
+1374483510 source:c:\users\andrás\documents\github\obfuscation\module x86\operand.cpp
+	"operand.h"
+
+1374571333 source:c:\users\andrás\documents\github\obfuscation\module x86\parser.cpp
+	"parser.h"
+
+1374665819 source:c:\users\andrás\documents\github\obfuscation\module x86\quadruple.cpp
+	"quadruple.h"
+
+1374322606 source:c:\users\andrás\documents\github\obfuscation\module x86\threeadressinstruction.cpp
+	"threeadressinstruction.h"
+
+1374600365 source:c:\users\andrás\documents\github\obfuscation\module x86\unc_jump.cpp
+	"unc_jump.h"
+
+1374166317 source:c:\users\andrás\documents\github\obfuscation\module x86\variables.cpp
+	"variables.h"
+

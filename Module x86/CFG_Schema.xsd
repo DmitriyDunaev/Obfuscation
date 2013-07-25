@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="Instruction">
+		<xs:complexType mixed="true">
+			<xs:attribute name="Type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="original"/>
+						<xs:enumeration value="fake"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="Label" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="BasicBlock">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Instruction" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="ID" type="xs:ID" use="required"/>
+			<xs:attribute name="In" type="xs:IDREFS" use="optional"/>
+			<xs:attribute name="Out" type="xs:IDREFS" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Routine">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="BasicBlock" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
