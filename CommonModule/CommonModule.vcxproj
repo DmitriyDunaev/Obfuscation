@@ -52,7 +52,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -76,17 +76,47 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="assistant.h" />
+    <ClInclude Include="blocks.h" />
+    <ClInclude Include="call.h" />
     <ClInclude Include="CommonModule.h" />
+    <ClInclude Include="cond_jump.h" />
+    <ClInclude Include="equation.h" />
+    <ClInclude Include="fakeexitblock.h" />
+    <ClInclude Include="fake_exit_block.h" />
+    <ClInclude Include="instructionscontainer.h" />
+    <ClInclude Include="label.h" />
+    <ClInclude Include="labelgenerator.h" />
+    <ClInclude Include="line.h" />
+    <ClInclude Include="operand.h" />
+    <ClInclude Include="parser.h" />
+    <ClInclude Include="quadruple.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Stdafx.h" />
+    <ClInclude Include="threeadressinstruction.h" />
+    <ClInclude Include="unc_jump.h" />
+    <ClInclude Include="variables.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="assistant.cpp" />
+    <ClCompile Include="blocks.cpp" />
+    <ClCompile Include="call.cpp" />
     <ClCompile Include="CommonModule.cpp" />
-    <ClCompile Include="Stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="cond_jump.cpp" />
+    <ClCompile Include="equation.cpp" />
+    <ClCompile Include="fakeexitblock.cpp" />
+    <ClCompile Include="fake_exit_block.cpp" />
+    <ClCompile Include="instructionscontainer.cpp" />
+    <ClCompile Include="label.cpp" />
+    <ClCompile Include="labelgenerator.cpp" />
+    <ClCompile Include="line.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="operand.cpp" />
+    <ClCompile Include="parser.cpp" />
+    <ClCompile Include="quadruple.cpp" />
+    <ClCompile Include="threeadressinstruction.cpp" />
+    <ClCompile Include="unc_jump.cpp" />
+    <ClCompile Include="variables.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

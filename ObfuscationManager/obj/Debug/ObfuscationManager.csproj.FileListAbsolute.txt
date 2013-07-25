@@ -2,6 +2,8 @@ C:\Users\DSD\Documents\GitHub\Obfuscation2\Obfuscation\ObfuscationManager\bin\De
 C:\Users\DSD\Documents\GitHub\Obfuscation\ObfuscationManager\bin\Debug\ObfuscationManager.exe.config
 C:\Users\DSD\Documents\GitHub\Obfuscation\ObfuscationManager\bin\Debug\ObfuscationManager.exe
 C:\Users\DSD\Documents\GitHub\Obfuscation\ObfuscationManager\bin\Debug\ObfuscationManager.pdb
+C:\Users\DSD\Documents\GitHub\Obfuscation\ObfuscationManager\bin\Debug\CommonModule.dll
+C:\Users\DSD\Documents\GitHub\Obfuscation\ObfuscationManager\bin\Debug\CommonModule.pdb
 C:\Users\DSD\Documents\GitHub\Obfuscation\ObfuscationManager\obj\Debug\ObfuscationManager.csprojResolveAssemblyReference.cache
 C:\Users\DSD\Documents\GitHub\Obfuscation\ObfuscationManager\obj\Debug\ObfuscationManager.exe
 C:\Users\DSD\Documents\GitHub\Obfuscation\ObfuscationManager\obj\Debug\ObfuscationManager.pdb
