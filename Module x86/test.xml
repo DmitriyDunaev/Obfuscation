@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Routine xsi:noNamespaceSchemaLocation="CFG_Schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<BasicBlock Out="ID_5 ID_2" ID="ID_0">
+		<Instruction Type="original" Label="">result := 9</Instruction><!-- EQUATION -->
+		<Instruction Type="original" Label="">if  csudajo goto LABEL_3</Instruction><!-- COND_JMP -->
+	</BasicBlock>
+	<BasicBlock In="ID_0" Out="ID_8" ID="ID_2">
+		<Instruction Type="original" Label="">goto LABEL_4</Instruction><!-- UNC_JMP -->
+	</BasicBlock>
+	<BasicBlock In="ID_0" Out="ID_11 ID_8" ID="ID_5">
+		<Instruction Type="original" Label="LABEL_3"></Instruction><!-- LABEL -->
+		<Instruction Type="original" Label="">if azis goto LABEL_2</Instruction><!-- COND_JMP -->
+	</BasicBlock>
+	<BasicBlock In="ID_2 ID_5" Out="ID_11 ID_9" ID="ID_8">
+		<Instruction Type="original" Label="LABEL_4"></Instruction><!-- LABEL -->
+		<Instruction Type="original" Label="">if blabl goto LABEL_2</Instruction><!-- COND_JMP -->
+	</BasicBlock>
+	<BasicBlock In="ID_8" Out="ID_12" ID="ID_9">
+		<Instruction Type="original" Label="">igaz := 0</Instruction><!-- EQUATION -->
+		<Instruction Type="original" Label="">hamis := 1</Instruction><!-- EQUATION -->
+		<Instruction Type="original" Label="">goto LABEL_1</Instruction><!-- UNC_JMP -->
+	</BasicBlock>
+	<BasicBlock In="ID_5 ID_8" Out="ID_12" ID="ID_11">
+		<Instruction Type="original" Label="LABEL_2"></Instruction><!-- LABEL -->
+		<Instruction Type="original" Label="">igaz := 1</Instruction><!-- EQUATION -->
+		<Instruction Type="original" Label="">hamis := 0</Instruction><!-- EQUATION -->
+	</BasicBlock>
+	<BasicBlock In="ID_9 ID_11" Out="ID_13" ID="ID_12">
+		<Instruction Type="original" Label="LABEL_1"></Instruction><!-- LABEL -->
+		<Instruction Type="original" Label="">0x28fe24</Instruction><!-- LINE -->
+	</BasicBlock>
+	<BasicBlock In="ID_12" ID="ID_13">
+		<Instruction Type="original" Label="">return</Instruction><!-- EXIT -->
+	</BasicBlock>
+</Routine>

@@ -1,0 +1,230 @@
+# depslib dependency file v1.0
+1374666235 source:d:\codeblocks\repo_test\assistant.cpp
+	"assistant.h"
+	<cstdlib>
+	<stdio.h>
+
+1374745402 d:\codeblocks\repo_test\assistant.h
+	"instructionscontainer.h"
+	"line.h"
+	"labelgenerator.h"
+	"parser.h"
+	"label.h"
+	"call.h"
+	"blocks.h"
+	"unc_jump.h"
+	"cond_jump.h"
+	"fakeexitblock.h"
+
+1374747615 d:\codeblocks\repo_test\instructionscontainer.h
+	<iostream>
+	<fstream>
+	<list>
+	<vector>
+	"threeadressinstruction.h"
+	"variables.h"
+
+1374744188 d:\codeblocks\repo_test\threeadressinstruction.h
+	<iostream>
+	<string>
+	<iostream>
+	<fstream>
+	"operand.h"
+
+1374571286 d:\codeblocks\repo_test\operand.h
+	<iostream>
+	<string>
+	<sstream>
+
+1374571112 d:\codeblocks\repo_test\variables.h
+	<map>
+	<string>
+	"operand.h"
+
+1374745282 d:\codeblocks\repo_test\line.h
+	"threeadressinstruction.h"
+
+1374358297 d:\codeblocks\repo_test\labelgenerator.h
+	<string>
+	<sstream>
+
+1374572559 d:\codeblocks\repo_test\parser.h
+	<iostream>
+	<string>
+	<stack>
+	<list>
+	<sstream>
+	"instructionscontainer.h"
+	"quadruple.h"
+	"equation.h"
+
+1374745282 d:\codeblocks\repo_test\quadruple.h
+	"threeadressinstruction.h"
+
+1374745282 d:\codeblocks\repo_test\equation.h
+	"threeadressinstruction.h"
+
+1374745282 d:\codeblocks\repo_test\label.h
+	<string>
+	"threeadressinstruction.h"
+
+1374745282 d:\codeblocks\repo_test\call.h
+	"threeadressinstruction.h"
+	<string>
+
+1374743673 d:\codeblocks\repo_test\blocks.h
+	<list>
+	"instructionscontainer.h"
+	"fakeexitblock.h"
+
+1374745282 d:\codeblocks\repo_test\fakeexitblock.h
+	"threeadressinstruction.h"
+
+1374745282 d:\codeblocks\repo_test\unc_jump.h
+	"threeadressinstruction.h"
+
+1374745282 d:\codeblocks\repo_test\cond_jump.h
+	"threeadressinstruction.h"
+
+1374666969 source:d:\codeblocks\repo_test\blocks.cpp
+	"blocks.h"
+
+1374482108 source:d:\codeblocks\repo_test\call.cpp
+	"call.h"
+
+1374601219 source:d:\codeblocks\repo_test\cond_jump.cpp
+	"cond_jump.h"
+
+1374710397 source:d:\codeblocks\repo_test\equation.cpp
+	"equation.h"
+
+1374659610 source:d:\codeblocks\repo_test\fake_exit_block.cpp
+	"fake_exit_block.h"
+
+1374712434 d:\codeblocks\repo_test\fake_exit_block.h
+
+1374659776 source:d:\codeblocks\repo_test\fakeexitblock.cpp
+	"fakeexitblock.h"
+
+1374511489 source:d:\codeblocks\repo_test\instructionscontainer.cpp
+	"instructionscontainer.h"
+
+1374358249 source:d:\codeblocks\repo_test\label.cpp
+	"label.h"
+
+1374358302 source:d:\codeblocks\repo_test\labelgenerator.cpp
+	"labelgenerator.h"
+
+1374358307 source:d:\codeblocks\repo_test\line.cpp
+	"line.h"
+
+1374745309 source:d:\codeblocks\repo_test\main.cpp
+	<iostream>
+	"assistant.h"
+	"parser.h"
+
+1374483510 source:d:\codeblocks\repo_test\operand.cpp
+	"operand.h"
+
+1374571333 source:d:\codeblocks\repo_test\parser.cpp
+	"parser.h"
+
+1374665819 source:d:\codeblocks\repo_test\quadruple.cpp
+	"quadruple.h"
+
+1374322606 source:d:\codeblocks\repo_test\threeadressinstruction.cpp
+	"threeadressinstruction.h"
+
+1374600365 source:d:\codeblocks\repo_test\unc_jump.cpp
+	"unc_jump.h"
+
+1374166317 source:d:\codeblocks\repo_test\variables.cpp
+	"variables.h"
+
+1374745309 source:c:\users\andrás\documents\github\obfuscation\tac\main.cpp
+	<iostream>
+	"assistant.h"
+	"parser.h"
+
+1374745402 c:\users\andrás\documents\github\obfuscation\tac\assistant.h
+	"instructionscontainer.h"
+	"line.h"
+	"labelgenerator.h"
+	"parser.h"
+	"label.h"
+	"call.h"
+	"blocks.h"
+	"unc_jump.h"
+	"cond_jump.h"
+	"fakeexitblock.h"
+
+1374747615 c:\users\andrás\documents\github\obfuscation\tac\instructionscontainer.h
+	<iostream>
+	<fstream>
+	<list>
+	<vector>
+	"threeadressinstruction.h"
+	"variables.h"
+
+1374744188 c:\users\andrás\documents\github\obfuscation\tac\threeadressinstruction.h
+	<iostream>
+	<string>
+	<iostream>
+	<fstream>
+	"operand.h"
+
+1374571286 c:\users\andrás\documents\github\obfuscation\tac\operand.h
+	<iostream>
+	<string>
+	<sstream>
+
+1374571112 c:\users\andrás\documents\github\obfuscation\tac\variables.h
+	<map>
+	<string>
+	"operand.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\tac\line.h
+	"threeadressinstruction.h"
+
+1374358297 c:\users\andrás\documents\github\obfuscation\tac\labelgenerator.h
+	<string>
+	<sstream>
+
+1374572559 c:\users\andrás\documents\github\obfuscation\tac\parser.h
+	<iostream>
+	<string>
+	<stack>
+	<list>
+	<sstream>
+	"instructionscontainer.h"
+	"quadruple.h"
+	"equation.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\tac\quadruple.h
+	"threeadressinstruction.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\tac\equation.h
+	"threeadressinstruction.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\tac\label.h
+	<string>
+	"threeadressinstruction.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\tac\call.h
+	"threeadressinstruction.h"
+	<string>
+
+1374743673 c:\users\andrás\documents\github\obfuscation\tac\blocks.h
+	<list>
+	"instructionscontainer.h"
+	"fakeexitblock.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\tac\fakeexitblock.h
+	"threeadressinstruction.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\tac\unc_jump.h
+	"threeadressinstruction.h"
+
+1374745282 c:\users\andrás\documents\github\obfuscation\tac\cond_jump.h
+	"threeadressinstruction.h"
+
