@@ -54,7 +54,6 @@ int main (void)
     ss << " return result;";
 
 
-
 #ifdef CIN
     while (!cin.eof())
     {
