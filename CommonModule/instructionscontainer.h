@@ -43,7 +43,7 @@ public:
     int getblockid() { return block_id; }
 
 #ifdef DEBUG
-        void dump (ofstream& s)
+        void dump (stringstream& s)
         {
 
             s << "	<BasicBlock ";

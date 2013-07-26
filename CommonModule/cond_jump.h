@@ -13,7 +13,7 @@ public:
     Cond_jump(string s, int i):cond(s), i(i) {}
     string gets() { return cond; }
     int geti() { return i; }
-    void print(ofstream& s)
+    void print(stringstream& s)
     {
         s  << "		<Instruction Type=\"original\" Label=\"\">if " << cond << " goto LABEL_" << i << "</Instruction><!-- COND_JMP -->" << endl;
     }

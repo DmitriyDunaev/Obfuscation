@@ -7,3 +7,11 @@ C:\Users\DSD\Documents\GitHub\Obfuscation\ObfuscationManager\bin\Debug\CommonMod
 C:\Users\DSD\Documents\GitHub\Obfuscation\ObfuscationManager\obj\Debug\ObfuscationManager.csprojResolveAssemblyReference.cache
 C:\Users\DSD\Documents\GitHub\Obfuscation\ObfuscationManager\obj\Debug\ObfuscationManager.exe
 C:\Users\DSD\Documents\GitHub\Obfuscation\ObfuscationManager\obj\Debug\ObfuscationManager.pdb
+C:\Users\András\Documents\GitHub\Obfuscation\ObfuscationManager\bin\Debug\ObfuscationManager.exe.config
+C:\Users\András\Documents\GitHub\Obfuscation\ObfuscationManager\bin\Debug\ObfuscationManager.exe
+C:\Users\András\Documents\GitHub\Obfuscation\ObfuscationManager\bin\Debug\ObfuscationManager.pdb
+C:\Users\András\Documents\GitHub\Obfuscation\ObfuscationManager\bin\Debug\CommonModule.dll
+C:\Users\András\Documents\GitHub\Obfuscation\ObfuscationManager\bin\Debug\CommonModule.pdb
+C:\Users\András\Documents\GitHub\Obfuscation\ObfuscationManager\obj\Debug\ObfuscationManager.csprojResolveAssemblyReference.cache
+C:\Users\András\Documents\GitHub\Obfuscation\ObfuscationManager\obj\Debug\ObfuscationManager.exe
+C:\Users\András\Documents\GitHub\Obfuscation\ObfuscationManager\obj\Debug\ObfuscationManager.pdb

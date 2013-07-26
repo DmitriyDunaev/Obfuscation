@@ -10,7 +10,7 @@ class FakeExitBlock : public CThreeAdressInstruction
 public:
     FakeExitBlock(){}
     bool isexit() { return true;}
-    void print(ofstream& s)
+    void print(stringstream& s)
     {
         s  << "		<Instruction Type=\"original\" Label=\"\">return</Instruction><!-- EXIT -->" << endl;
     }

@@ -443,6 +443,10 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
             cnt->push_back( new  Call(i->gets()));
         }
 
+		else if (i->gets().find("return")!=string::npos)
+        {
+            cnt->push_back( new  Line("RETURN"));
+        }
 
         else if (i->gets() == "")
         {

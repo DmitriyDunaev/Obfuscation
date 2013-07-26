@@ -16,7 +16,7 @@ public:
     string gets() { return label; }
     int geti() { return i; }
     bool islabel() {return true;}
-    void print(ofstream& s)
+    void print(stringstream& s)
     {
         s  << "		<Instruction Type=\"original\" Label=\"" << label << i << "\"></Instruction><!-- LABEL -->" << endl;
     }

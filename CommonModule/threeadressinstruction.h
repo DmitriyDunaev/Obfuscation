@@ -22,7 +22,7 @@ public:
     virtual bool islabel() { return false; }
     virtual bool isuncjmp() { return false; }
     virtual bool isexit() {return false;}
-    virtual void print(ofstream& s) {}
+    virtual void print(stringstream& s) {}
 
 };
 

@@ -14,7 +14,7 @@ public:
     string gets() { return label; }
     int geti() { return i; }
     bool isuncjmp() { return true; }
-    void print(ofstream& s)
+    void print(stringstream& s)
     {
         s  << "		<Instruction Type=\"original\" Label=\"\">goto " << label << i << "</Instruction><!-- UNC_JMP -->" << endl;
     }

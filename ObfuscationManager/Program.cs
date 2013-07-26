@@ -15,6 +15,7 @@ namespace ObfuscationManager
             XmlDocument doc = new XmlDocument();
             InputProvider ip = new InputProvider();
             doc = ip.Read(InputType.PseudoCode, PlatformType.x86);
+            doc.Save("test4.xml");
             Console.Write("zzz");
             
         }

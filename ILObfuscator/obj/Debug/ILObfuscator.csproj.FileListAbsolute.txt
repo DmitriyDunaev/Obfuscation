@@ -2,3 +2,7 @@ C:\Users\DSD\Documents\GitHub\Obfuscation\ILObfuscator\bin\Debug\ILObfuscator.dl
 C:\Users\DSD\Documents\GitHub\Obfuscation\ILObfuscator\bin\Debug\ILObfuscator.pdb
 C:\Users\DSD\Documents\GitHub\Obfuscation\ILObfuscator\obj\Debug\ILObfuscator.dll
 C:\Users\DSD\Documents\GitHub\Obfuscation\ILObfuscator\obj\Debug\ILObfuscator.pdb
+C:\Users\András\Documents\GitHub\Obfuscation\ILObfuscator\bin\Debug\ILObfuscator.dll
+C:\Users\András\Documents\GitHub\Obfuscation\ILObfuscator\bin\Debug\ILObfuscator.pdb
+C:\Users\András\Documents\GitHub\Obfuscation\ILObfuscator\obj\Debug\ILObfuscator.dll
+C:\Users\András\Documents\GitHub\Obfuscation\ILObfuscator\obj\Debug\ILObfuscator.pdb

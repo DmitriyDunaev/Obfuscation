@@ -96,7 +96,7 @@ void Parser::parse()
     cout << is.str() << endl;
 #endif // DEBUG
     string token;
-    TokenType typ;
+    OwnTokenType typ;
 
     do
     {
@@ -145,7 +145,7 @@ void Parser::make_tac()
 {
     //CVariables &vars = cont.getVars();
     COperand* arr[3];
-    TokenType typ;
+    OwnTokenType typ;
     list<string>::iterator i = tokens.begin();
     while (i != tokens.end())
     {
@@ -234,7 +234,7 @@ int Parser::prec (string token)
     }
 }
 
-TokenType Parser::type (string token)
+OwnTokenType Parser::type (string token)
 {
     /* check if it's a parenthese */
     if (token == "(" || token == ")")

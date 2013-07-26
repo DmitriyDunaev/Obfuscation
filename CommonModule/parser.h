@@ -16,7 +16,7 @@
 #include "quadruple.h"
 #include "equation.h"
 
-enum TokenType
+enum OwnTokenType
 {
     var,  //variable
     num,  //number
@@ -43,7 +43,7 @@ class Parser
     void make_tac ();               // reads the tokens list and makes TAC
 
     static int prec (std::string);
-    static TokenType type (std::string);
+    static OwnTokenType type (std::string);
 
 public:
     Parser(std::string s, CInstructionsContainer& c, CVariables& vars): is(s), cont(c), vars(vars) {};

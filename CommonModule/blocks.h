@@ -36,7 +36,7 @@ public:
 
     friend class Assistant;
 
-    void dump(ofstream& s)
+    void dump(stringstream& s)
     {
 #ifdef DEBUG
         for ( std::list<CInstructionsContainer*>::iterator i = blocks.begin(); i != blocks.end(); ++i )

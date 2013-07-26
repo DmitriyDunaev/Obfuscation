@@ -13,7 +13,7 @@ public:
     Equation (COperand**, bool neg = false);
     virtual ~Equation() {}
 
-    void print(ofstream& s)
+    void print(stringstream& s)
     {
          s << "		<Instruction Type=\"original\" Label=\"\">" << ops[0]->getname() << " := ";
          if (neg) s << "-";
