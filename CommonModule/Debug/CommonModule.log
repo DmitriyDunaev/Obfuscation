@@ -1,10 +1,36 @@
-﻿Build started 7/26/2013 12:49:13 PM.
-     1>Project "C:\Users\András\Documents\GitHub\Obfuscation\CommonModule\CommonModule.vcxproj" on node 2 (Build target(s)).
+﻿Build started 26.07.2013 12:33:23.
+     1>Project "C:\Users\DSD\Documents\GitHub\Obfuscation\CommonModule\CommonModule.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /AI"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\\" /AI"C:\Program Files (x86)\Windows Kits\8.0\References\CommonConfiguration\Neutral" /AI"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\Facades\\" /Zi /clr /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDLL /D _UNICODE /D UNICODE /EHa /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /TP /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\mscorlib.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Data.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Xml.dll" /analyze- /errorReport:prompt /clr:nostdlib assistant.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /AI"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\\" /AI"C:\Program Files (x86)\Windows Kits\8.0\References\CommonConfiguration\Neutral" /AI"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\Facades\\" /Zi /clr /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDLL /D _UNICODE /D UNICODE /EHa /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /TP /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\mscorlib.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Data.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Xml.dll" /analyze- /errorReport:prompt /clr:nostdlib AssemblyInfo.cpp assistant.cpp blocks.cpp call.cpp CommonModule.cpp cond_jump.cpp equation.cpp fakeexitblock.cpp fake_exit_block.cpp instructionscontainer.cpp label.cpp labelgenerator.cpp line.cpp main.cpp operand.cpp parser.cpp quadruple.cpp threeadressinstruction.cpp unc_jump.cpp variables.cpp
+         AssemblyInfo.cpp
          assistant.cpp
+         blocks.cpp
+         call.cpp
+         CommonModule.cpp
+     1>CommonModule.cpp(105): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
+         cond_jump.cpp
+         equation.cpp
+         fakeexitblock.cpp
+         fake_exit_block.cpp
+         instructionscontainer.cpp
+         label.cpp
+         labelgenerator.cpp
+         line.cpp
+         main.cpp
+         operand.cpp
+         parser.cpp
+         quadruple.cpp
+         threeadressinstruction.cpp
+         unc_jump.cpp
+         variables.cpp
+         Generating Code...
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /Zi /clr /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDLL /D _UNICODE /D UNICODE /EHa /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /TP /analyze- /errorReport:prompt "C:\Users\DSD\AppData\Local\Temp\.NETFramework,Version=v4.5.AssemblyAttributes.cpp"
+         .NETFramework,Version=v4.5.AssemblyAttributes.cpp
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.0\bin\x86\rc.exe /D _UNICODE /D UNICODE /l"0x0409" /nologo /fo"Debug\app.res" app.rc 
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\András\Documents\GitHub\Obfuscation\Debug\CommonModule.dll" /INCREMENTAL /NOLOGO /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\András\Documents\GitHub\Obfuscation\Debug\CommonModule.pdb" /ASSEMBLYDEBUG /TLBID:1 /DYNAMICBASE /FIXED:NO /NXCOMPAT /MACHINE:X86 /DLL Debug\app.res
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\DSD\Documents\GitHub\Obfuscation\Debug\CommonModule.dll" /INCREMENTAL /NOLOGO /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\DSD\Documents\GitHub\Obfuscation\Debug\CommonModule.pdb" /ASSEMBLYDEBUG /TLBID:1 /DYNAMICBASE /FIXED:NO /NXCOMPAT /MACHINE:X86 /DLL Debug\app.res
          Debug\AssemblyInfo.obj
          Debug\assistant.obj
          Debug\blocks.obj
@@ -26,9 +52,9 @@
          Debug\unc_jump.obj
          Debug\variables.obj
          "Debug\.NETFramework,Version=v4.5.AssemblyAttributes.obj"
-         CommonModule.vcxproj -> C:\Users\András\Documents\GitHub\Obfuscation\Debug\CommonModule.dll
-     1>Done Building Project "C:\Users\András\Documents\GitHub\Obfuscation\CommonModule\CommonModule.vcxproj" (Build target(s)).
+         CommonModule.vcxproj -> C:\Users\DSD\Documents\GitHub\Obfuscation\Debug\CommonModule.dll
+     1>Done Building Project "C:\Users\DSD\Documents\GitHub\Obfuscation\CommonModule\CommonModule.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:14.19
+Time Elapsed 00:00:18.68
