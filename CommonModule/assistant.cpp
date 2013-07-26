@@ -448,6 +448,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
             cnt->push_back( new  Line("RETURN"));
         }
 		//Test comment.
+		//Test comment 2
 
         else if (i->gets() == "")
         {
