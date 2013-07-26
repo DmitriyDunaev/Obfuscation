@@ -16,9 +16,9 @@ public:
     void ersbeg() { s.erase(0, 1); }
     void ersmid(size_t from, int i) { s.erase( from, i); }
     void ersend() { s.erase(s.size()-1, 1); }
-    void print(stringstream& s)
+    void print(stringstream& str)
     {
-        s << "		<Instruction Type=\"original\" Label=\"\">" << s << "</Instruction><!-- LINE -->" << endl;
+        str << "		<Instruction Type=\"original\" Label=\"\">" << s << "</Instruction><!-- LINE -->" << endl;
     }
 
 };
