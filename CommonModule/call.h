@@ -12,10 +12,10 @@ class Call : public CThreeAdressInstruction
 public:
     Call(string s):s(s){}
     string gets() { return s; }
-    void print(stringstream& s)
+    void print(stringstream& str)
     {
 #ifdef DEBUG
-        s  << "		<Instruction Type=\"original\" Label=\"" << s << "<\">/Instruction><!-- CALL -->" << endl;
+        str  << "		<Instruction Type=\"original\" Label=\"" << s << "<\">/Instruction><!-- CALL -->" << endl;
 #endif
     }
 };
