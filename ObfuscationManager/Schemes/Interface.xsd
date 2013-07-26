@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2011 sp1 AAA BBB CCC(http://www.altova.com) by End User (free.org) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="Instruction">
+		<xs:complexType>
+			<xs:attribute name="ID" type="xs:ID" use="required"/>
+			<xs:attribute name="StatementType" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="FullAssignment"/>
+						<xs:enumeration value="UnaryAssignment"/>
+						<xs:enumeration value="Copy"/>
+						<xs:enumeration value="UnconditionalJump"/>
+						<xs:enumeration value="ConditionalJump"/>
+						<xs:enumeration value="Call"/>
+						<xs:enumeration value="IndexedAssignment"/>
+						<xs:enumeration value="PointerAssignment"/>
+						<xs:enumeration value="Unknown"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="Temporary" type="xs:boolean" use="required"/>
+			<xs:attribute name="Constant" type="xs:boolean" use="required"/>
+			<xs:attribute name="IOParameter" type="xs:boolean" use="required"/>
+			<xs:attribute name="InitialValue" type="xs:string" use="optional"/>
+			<xs:attribute name="RefVars" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="BasicBlock">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Instruction" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="ID" type="xs:ID" use="required"/>
+			<xs:attribute name="Predecessors" type="xs:IDREFS" use="optional"/>
+			<xs:attribute name="Successors" type="xs:IDREFS" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Routine">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Function" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="Name" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Function">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="BasicBlock" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="ID" type="xs:ID" use="required"/>
+			<xs:attribute name="Name" use="required"/>
+			<xs:attribute name="CalledFrom" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="InternalOnly"/>
+						<xs:enumeration value="ExternalOnly"/>
+						<xs:enumeration value="Both"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="InputParameters" type="xs:IDREFS"/>
+			<xs:attribute name="OutputParameters" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
