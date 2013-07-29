@@ -2,7 +2,7 @@
 <!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="Instruction">
-		<xs:complexType>
+		<xs:complexType mixed="true">
 			<xs:attribute name="ID" type="xs:ID" use="required"/>
 			<xs:attribute name="StatementType" use="required">
 				<xs:simpleType>
@@ -19,7 +19,6 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name="Fake" type="xs:boolean" use="optional" default="false"/>
 			<xs:attribute name="PolyRequired" type="xs:boolean" use="optional" default="false"/>
 			<xs:attribute name="RefVars" type="xs:IDREFS" use="optional"/>
 		</xs:complexType>
@@ -39,23 +38,19 @@
 			<xs:sequence>
 				<xs:element ref="Function" maxOccurs="unbounded"/>
 			</xs:sequence>
-			<xs:attribute name="Name" use="required">
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:whiteSpace value="collapse"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:attribute>
+			<xs:attribute name="Description" type="xs:string" use="required"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Function">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="BasicBlock" minOccurs="1" maxOccurs="unbounded"/>
-				<xs:element ref="Variable" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="Inputs" type="VariablesType"/>
+				<xs:element name="Outputs" type="VariablesType"/>
+				<xs:element name="Locals" type="VariablesType"/>
+				<xs:element ref="BasicBlock" maxOccurs="unbounded"/>
 			</xs:sequence>
 			<xs:attribute name="ID" type="xs:ID" use="required"/>
-			<xs:attribute name="Name" use="required"/>
+			<xs:attribute name="ExternalLabel" use="required"/>
 			<xs:attribute name="CalledFrom" use="required">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -65,26 +60,43 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name="InputParameters" type="xs:IDREFS"/>
-			<xs:attribute name="OutputParameters" type="xs:IDREFS"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Variable">
 		<!--Variable's name is given in the innerText-->
-		<xs:complexType>
+		<xs:complexType mixed="true">
 			<xs:attribute name="ID" type="xs:ID" use="required"/>
-			<xs:attribute name="Type" use="required">
+			<xs:attribute name="Size" use="required">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:enumeration value="int"/>
-						<xs:enumeration value="char"/>
-						<xs:enumeration value="Unknown"/>
+						<xs:enumeration value="word"/>
+						<xs:enumeration value="dword"/>
+						<xs:enumeration value="byte"/>
+						<xs:enumeration value="qword"/>
+						<xs:enumeration value="unknown"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name="Constant" type="xs:boolean" default="false"/>
-			<xs:attribute name="DefaultValueInParam" type="xs:string" use="optional"/>
-			<xs:attribute name="Pointer" use="optional" default="false"/>
+			<xs:attribute name="Pointer" type="xs:boolean" use="required"/>
+			<xs:attribute name="ConstValueInParam" type="xs:string" use="optional"/>
 		</xs:complexType>
 	</xs:element>
+	<xs:complexType name="VariablesType">
+		<xs:all>
+			<xs:element name="Original">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="Variable" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Fake">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="Variable" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
 </xs:schema>
