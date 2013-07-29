@@ -128,6 +128,17 @@
   <ItemGroup>
     <Xsd Include="..\obfuscationmanager\schemes\exchange.xsd" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AltovaXML\AltovaXML.csproj">
+      <Project>{03aaa791-ec2d-4a90-abbf-45337e52dfd6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Altova\Altova.csproj">
+      <Project>{d43e6c54-2df5-454e-9566-dffe2f3a6946}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Exchange\Exchange.csproj">
+      <Project>{93d90e85-c287-4b4e-b6ea-fc92e9e1bd76}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
