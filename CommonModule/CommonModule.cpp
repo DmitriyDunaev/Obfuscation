@@ -26,7 +26,7 @@ Xml::XmlDocument^ CommonModule::InputProvider::Read (InputType it, PlatformType 
 #include <iostream>
 
 #include "CommonModule.h"
-
+#include "Interface.h"
 #include "assistant.h"
 #include "parser.h"
 
@@ -55,21 +55,25 @@ string CommonModule::Reader::DoStuffNop()
     list<Line> lines;
 
     stringstream ss;
-    ss << "for ( i = 0; i; ++i )\n{\n*(_DWORD *)v6 = dword_405008;\n*v5 = dword_402000;\nv6";
-    ss << " += 4;\n}\nreturn *(_DWORD *)v3;";
+   /* ss << "for ( i = 0; i; ++i )\n{\n*(_DWORD *)v6 = dword_405008;\n*v5 = dword_402000;\nv6";
+    ss << " += 4;\n}\nreturn *(_DWORD *)v3;";*/
 //
-//    ss << " result = 10;\n";
-//    ss << " if ( csudajo || azis && blabla)\n";
-//    ss << " {\n";
-//    ss << " igaz = 1;\n";
-//    ss << " hamis = 0;\n";
-//    ss << " }\n";
-//    ss << " else\n";
-//    ss << " {\n";
-//    ss << " igaz = 0;\n";
-//    ss << " hamis = 1;\n";
-//    ss << " }\n";
-//    ss << " return result;";
+	ss << " int sub_kaki(a, b)\n";
+	ss << " {\n";
+    ss << " result = 10;\n";
+    ss << " if ( csudajo || azis && blabla)\n";
+    ss << " {\n";
+    ss << " igaz = 1;\n";
+    ss << " hamis = 0;\n";
+    ss << " }\n";
+    ss << " else\n";
+    ss << " {\n";
+    ss << " igaz = 0;\n";
+    ss << " hamis = 1;\n";
+    ss << " }\n";
+    ss << " return result;\n";
+	ss << " }\n";
+	ss << " kaki.";
 
 
 #ifdef CIN
@@ -110,6 +114,7 @@ string CommonModule::Reader::DoStuffNop()
     Reader.printlist(s);
 	cout << s;
 	fputs(s.str().c_str(), f);
+
 
     fclose(f);
 	return s.str();

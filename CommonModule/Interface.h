@@ -28,14 +28,32 @@ public ref class NewDataSet : public ::System::Data::DataSet {
     public : ref class BasicBlockDataTable;
     public : ref class RoutineDataTable;
     public : ref class FunctionDataTable;
+    public : ref class InputsDataTable;
+    public : ref class OriginalDataTable;
+    public : ref class VariableDataTable;
+    public : ref class FakeDataTable;
+    public : ref class OutputsDataTable;
+    public : ref class LocalsDataTable;
     public : ref class InstructionRow;
     public : ref class BasicBlockRow;
     public : ref class RoutineRow;
     public : ref class FunctionRow;
+    public : ref class InputsRow;
+    public : ref class OriginalRow;
+    public : ref class VariableRow;
+    public : ref class FakeRow;
+    public : ref class OutputsRow;
+    public : ref class LocalsRow;
     public : ref class InstructionRowChangeEvent;
     public : ref class BasicBlockRowChangeEvent;
     public : ref class RoutineRowChangeEvent;
     public : ref class FunctionRowChangeEvent;
+    public : ref class InputsRowChangeEvent;
+    public : ref class OriginalRowChangeEvent;
+    public : ref class VariableRowChangeEvent;
+    public : ref class FakeRowChangeEvent;
+    public : ref class OutputsRowChangeEvent;
+    public : ref class LocalsRowChangeEvent;
     
     private: NewDataSet::InstructionDataTable^  tableInstruction;
     
@@ -45,11 +63,45 @@ public ref class NewDataSet : public ::System::Data::DataSet {
     
     private: NewDataSet::FunctionDataTable^  tableFunction;
     
+    private: NewDataSet::InputsDataTable^  tableInputs;
+    
+    private: NewDataSet::OriginalDataTable^  tableOriginal;
+    
+    private: NewDataSet::VariableDataTable^  tableVariable;
+    
+    private: NewDataSet::FakeDataTable^  tableFake;
+    
+    private: NewDataSet::OutputsDataTable^  tableOutputs;
+    
+    private: NewDataSet::LocalsDataTable^  tableLocals;
+    
     private: ::System::Data::DataRelation^  relationBasicBlock_Instruction;
     
     private: ::System::Data::DataRelation^  relationFunction_BasicBlock;
     
     private: ::System::Data::DataRelation^  relationRoutine_Function;
+    
+    private: ::System::Data::DataRelation^  relationFunction_Inputs;
+    
+    private: ::System::Data::DataRelation^  relationInputs_Original;
+    
+    private: ::System::Data::DataRelation^  relationOutputs_Original;
+    
+    private: ::System::Data::DataRelation^  relationLocals_Original;
+    
+    private: ::System::Data::DataRelation^  relationOriginal_Variable;
+    
+    private: ::System::Data::DataRelation^  relationFake_Variable;
+    
+    private: ::System::Data::DataRelation^  relationInputs_Fake;
+    
+    private: ::System::Data::DataRelation^  relationOutputs_Fake;
+    
+    private: ::System::Data::DataRelation^  relationLocals_Fake;
+    
+    private: ::System::Data::DataRelation^  relationFunction_Outputs;
+    
+    private: ::System::Data::DataRelation^  relationFunction_Locals;
     
     private: ::System::Data::SchemaSerializationMode _schemaSerializationMode;
     
@@ -64,6 +116,24 @@ public ref class NewDataSet : public ::System::Data::DataSet {
     
     public : [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
     delegate System::Void FunctionRowChangeEventHandler(::System::Object^  sender, NewDataSet::FunctionRowChangeEvent^  e);
+    
+    public : [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    delegate System::Void InputsRowChangeEventHandler(::System::Object^  sender, NewDataSet::InputsRowChangeEvent^  e);
+    
+    public : [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    delegate System::Void OriginalRowChangeEventHandler(::System::Object^  sender, NewDataSet::OriginalRowChangeEvent^  e);
+    
+    public : [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    delegate System::Void VariableRowChangeEventHandler(::System::Object^  sender, NewDataSet::VariableRowChangeEvent^  e);
+    
+    public : [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    delegate System::Void FakeRowChangeEventHandler(::System::Object^  sender, NewDataSet::FakeRowChangeEvent^  e);
+    
+    public : [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    delegate System::Void OutputsRowChangeEventHandler(::System::Object^  sender, NewDataSet::OutputsRowChangeEvent^  e);
+    
+    public : [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    delegate System::Void LocalsRowChangeEventHandler(::System::Object^  sender, NewDataSet::LocalsRowChangeEvent^  e);
     
     public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
     [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
@@ -101,6 +171,54 @@ public ref class NewDataSet : public ::System::Data::DataSet {
     System::ComponentModel::DesignerSerializationVisibility(::System::ComponentModel::DesignerSerializationVisibility::Content)]
     property NewDataSet::FunctionDataTable^  Function {
         NewDataSet::FunctionDataTable^  get();
+    }
+    
+    public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+    System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0"), 
+    System::ComponentModel::Browsable(false), 
+    System::ComponentModel::DesignerSerializationVisibility(::System::ComponentModel::DesignerSerializationVisibility::Content)]
+    property NewDataSet::InputsDataTable^  Inputs {
+        NewDataSet::InputsDataTable^  get();
+    }
+    
+    public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+    System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0"), 
+    System::ComponentModel::Browsable(false), 
+    System::ComponentModel::DesignerSerializationVisibility(::System::ComponentModel::DesignerSerializationVisibility::Content)]
+    property NewDataSet::OriginalDataTable^  Original {
+        NewDataSet::OriginalDataTable^  get();
+    }
+    
+    public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+    System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0"), 
+    System::ComponentModel::Browsable(false), 
+    System::ComponentModel::DesignerSerializationVisibility(::System::ComponentModel::DesignerSerializationVisibility::Content)]
+    property NewDataSet::VariableDataTable^  Variable {
+        NewDataSet::VariableDataTable^  get();
+    }
+    
+    public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+    System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0"), 
+    System::ComponentModel::Browsable(false), 
+    System::ComponentModel::DesignerSerializationVisibility(::System::ComponentModel::DesignerSerializationVisibility::Content)]
+    property NewDataSet::FakeDataTable^  Fake {
+        NewDataSet::FakeDataTable^  get();
+    }
+    
+    public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+    System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0"), 
+    System::ComponentModel::Browsable(false), 
+    System::ComponentModel::DesignerSerializationVisibility(::System::ComponentModel::DesignerSerializationVisibility::Content)]
+    property NewDataSet::OutputsDataTable^  Outputs {
+        NewDataSet::OutputsDataTable^  get();
+    }
+    
+    public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+    System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0"), 
+    System::ComponentModel::Browsable(false), 
+    System::ComponentModel::DesignerSerializationVisibility(::System::ComponentModel::DesignerSerializationVisibility::Content)]
+    property NewDataSet::LocalsDataTable^  Locals {
+        NewDataSet::LocalsDataTable^  get();
     }
     
     public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
@@ -180,6 +298,30 @@ public ref class NewDataSet : public ::System::Data::DataSet {
     
     private: [System::Diagnostics::DebuggerNonUserCodeAttribute]
     [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    ::System::Boolean ShouldSerializeInputs();
+    
+    private: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+    [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    ::System::Boolean ShouldSerializeOriginal();
+    
+    private: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+    [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    ::System::Boolean ShouldSerializeVariable();
+    
+    private: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+    [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    ::System::Boolean ShouldSerializeFake();
+    
+    private: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+    [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    ::System::Boolean ShouldSerializeOutputs();
+    
+    private: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+    [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    ::System::Boolean ShouldSerializeLocals();
+    
+    private: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+    [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
     ::System::Void SchemaChanged(::System::Object^  sender, ::System::ComponentModel::CollectionChangeEventArgs^  e);
     
     public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
@@ -197,13 +339,7 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         
         private: ::System::Data::DataColumn^  columnStatementType;
         
-        private: ::System::Data::DataColumn^  columnTemporary;
-        
-        private: ::System::Data::DataColumn^  columnConstant;
-        
-        private: ::System::Data::DataColumn^  columnIOParameter;
-        
-        private: ::System::Data::DataColumn^  columnInitialValue;
+        private: ::System::Data::DataColumn^  columnPolyRequired;
         
         private: ::System::Data::DataColumn^  columnRefVars;
         
@@ -244,25 +380,7 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
         System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property ::System::Data::DataColumn^  TemporaryColumn {
-            ::System::Data::DataColumn^  get();
-        }
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
-        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property ::System::Data::DataColumn^  ConstantColumn {
-            ::System::Data::DataColumn^  get();
-        }
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
-        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property ::System::Data::DataColumn^  IOParameterColumn {
-            ::System::Data::DataColumn^  get();
-        }
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
-        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property ::System::Data::DataColumn^  InitialValueColumn {
+        property ::System::Data::DataColumn^  PolyRequiredColumn {
             ::System::Data::DataColumn^  get();
         }
         
@@ -297,15 +415,8 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
         [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        NewDataSet::InstructionRow^  AddInstructionRow(
-                    System::String^  ID, 
-                    System::String^  StatementType, 
-                    System::Boolean Temporary, 
-                    System::Boolean Constant, 
-                    System::Boolean IOParameter, 
-                    System::String^  InitialValue, 
-                    System::String^  RefVars, 
-                    NewDataSet::BasicBlockRow^  parentBasicBlockRowByBasicBlock_Instruction);
+        NewDataSet::InstructionRow^  AddInstructionRow(System::String^  ID, System::String^  StatementType, System::Boolean PolyRequired, 
+                    System::String^  RefVars, NewDataSet::BasicBlockRow^  parentBasicBlockRowByBasicBlock_Instruction);
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
         [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
@@ -518,7 +629,7 @@ public ref class NewDataSet : public ::System::Data::DataSet {
     System::Xml::Serialization::XmlSchemaProviderAttribute(L"GetTypedTableSchema")]
     ref class RoutineDataTable : public ::System::Data::DataTable, public ::System::Collections::IEnumerable {
         
-        private: ::System::Data::DataColumn^  columnName;
+        private: ::System::Data::DataColumn^  columnDescription;
         
         private: ::System::Data::DataColumn^  columnRoutine_Id;
         
@@ -545,7 +656,7 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         RoutineDataTable(::System::Runtime::Serialization::SerializationInfo^  info, ::System::Runtime::Serialization::StreamingContext context);
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
         System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property ::System::Data::DataColumn^  NameColumn {
+        property ::System::Data::DataColumn^  DescriptionColumn {
             ::System::Data::DataColumn^  get();
         }
         
@@ -574,7 +685,7 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
         [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        NewDataSet::RoutineRow^  AddRoutineRow(System::String^  Name);
+        NewDataSet::RoutineRow^  AddRoutineRow(System::String^  Description);
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
         [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
@@ -642,13 +753,9 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         
         private: ::System::Data::DataColumn^  columnID;
         
-        private: ::System::Data::DataColumn^  columnName;
+        private: ::System::Data::DataColumn^  columnExternalLabel;
         
         private: ::System::Data::DataColumn^  columnCalledFrom;
-        
-        private: ::System::Data::DataColumn^  columnInputParameters;
-        
-        private: ::System::Data::DataColumn^  columnOutputParameters;
         
         private: ::System::Data::DataColumn^  columnFunction_Id;
         
@@ -683,25 +790,13 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
         System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property ::System::Data::DataColumn^  NameColumn {
+        property ::System::Data::DataColumn^  ExternalLabelColumn {
             ::System::Data::DataColumn^  get();
         }
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
         System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
         property ::System::Data::DataColumn^  CalledFromColumn {
-            ::System::Data::DataColumn^  get();
-        }
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
-        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property ::System::Data::DataColumn^  InputParametersColumn {
-            ::System::Data::DataColumn^  get();
-        }
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
-        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property ::System::Data::DataColumn^  OutputParametersColumn {
             ::System::Data::DataColumn^  get();
         }
         
@@ -736,12 +831,7 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
         [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        NewDataSet::FunctionRow^  AddFunctionRow(
-                    System::String^  ID, 
-                    System::String^  Name, 
-                    System::String^  CalledFrom, 
-                    System::String^  InputParameters, 
-                    System::String^  OutputParameters, 
+        NewDataSet::FunctionRow^  AddFunctionRow(System::String^  ID, System::String^  ExternalLabel, System::String^  CalledFrom, 
                     NewDataSet::RoutineRow^  parentRoutineRowByRoutine_Function);
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
@@ -802,6 +892,810 @@ public ref class NewDataSet : public ::System::Data::DataSet {
     };
     
     public : /// <summary>
+///Represents the strongly named DataTable class.
+///</summary>
+    [System::Serializable, 
+    System::Xml::Serialization::XmlSchemaProviderAttribute(L"GetTypedTableSchema")]
+    ref class InputsDataTable : public ::System::Data::DataTable, public ::System::Collections::IEnumerable {
+        
+        private: ::System::Data::DataColumn^  columnInputs_Id;
+        
+        private: ::System::Data::DataColumn^  columnFunction_Id;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::InputsRowChangeEventHandler^  InputsRowChanging;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::InputsRowChangeEventHandler^  InputsRowChanged;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::InputsRowChangeEventHandler^  InputsRowDeleting;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::InputsRowChangeEventHandler^  InputsRowDeleted;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        InputsDataTable();
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        InputsDataTable(::System::Data::DataTable^  table);
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        InputsDataTable(::System::Runtime::Serialization::SerializationInfo^  info, ::System::Runtime::Serialization::StreamingContext context);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Inputs_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Function_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0"), 
+        System::ComponentModel::Browsable(false)]
+        property ::System::Int32 Count {
+            ::System::Int32 get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::InputsRow^  default [::System::Int32 ] {
+            NewDataSet::InputsRow^  get(::System::Int32 index);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void AddInputsRow(NewDataSet::InputsRow^  row);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        NewDataSet::InputsRow^  AddInputsRow(NewDataSet::FunctionRow^  parentFunctionRowByFunction_Inputs);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Collections::IEnumerator^  GetEnumerator();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataTable^  Clone() override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataTable^  CreateInstance() override;
+        
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void InitVars();
+        
+        private: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void InitClass();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        NewDataSet::InputsRow^  NewInputsRow();
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataRow^  NewRowFromBuilder(::System::Data::DataRowBuilder^  builder) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Type^  GetRowType() override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowChanged(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowChanging(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowDeleted(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowDeleting(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void RemoveInputsRow(NewDataSet::InputsRow^  row);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        static ::System::Xml::Schema::XmlSchemaComplexType^  GetTypedTableSchema(::System::Xml::Schema::XmlSchemaSet^  xs);
+    };
+    
+    public : /// <summary>
+///Represents the strongly named DataTable class.
+///</summary>
+    [System::Serializable, 
+    System::Xml::Serialization::XmlSchemaProviderAttribute(L"GetTypedTableSchema")]
+    ref class OriginalDataTable : public ::System::Data::DataTable, public ::System::Collections::IEnumerable {
+        
+        private: ::System::Data::DataColumn^  columnOriginal_Id;
+        
+        private: ::System::Data::DataColumn^  columnInputs_Id;
+        
+        private: ::System::Data::DataColumn^  columnOutputs_Id;
+        
+        private: ::System::Data::DataColumn^  columnLocals_Id;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::OriginalRowChangeEventHandler^  OriginalRowChanging;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::OriginalRowChangeEventHandler^  OriginalRowChanged;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::OriginalRowChangeEventHandler^  OriginalRowDeleting;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::OriginalRowChangeEventHandler^  OriginalRowDeleted;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        OriginalDataTable();
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        OriginalDataTable(::System::Data::DataTable^  table);
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        OriginalDataTable(::System::Runtime::Serialization::SerializationInfo^  info, ::System::Runtime::Serialization::StreamingContext context);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Original_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Inputs_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Outputs_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Locals_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0"), 
+        System::ComponentModel::Browsable(false)]
+        property ::System::Int32 Count {
+            ::System::Int32 get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::OriginalRow^  default [::System::Int32 ] {
+            NewDataSet::OriginalRow^  get(::System::Int32 index);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void AddOriginalRow(NewDataSet::OriginalRow^  row);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        NewDataSet::OriginalRow^  AddOriginalRow(NewDataSet::InputsRow^  parentInputsRowByInputs_Original, NewDataSet::OutputsRow^  parentOutputsRowByOutputs_Original, 
+                    NewDataSet::LocalsRow^  parentLocalsRowByLocals_Original);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Collections::IEnumerator^  GetEnumerator();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataTable^  Clone() override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataTable^  CreateInstance() override;
+        
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void InitVars();
+        
+        private: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void InitClass();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        NewDataSet::OriginalRow^  NewOriginalRow();
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataRow^  NewRowFromBuilder(::System::Data::DataRowBuilder^  builder) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Type^  GetRowType() override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowChanged(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowChanging(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowDeleted(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowDeleting(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void RemoveOriginalRow(NewDataSet::OriginalRow^  row);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        static ::System::Xml::Schema::XmlSchemaComplexType^  GetTypedTableSchema(::System::Xml::Schema::XmlSchemaSet^  xs);
+    };
+    
+    public : /// <summary>
+///Represents the strongly named DataTable class.
+///</summary>
+    [System::Serializable, 
+    System::Xml::Serialization::XmlSchemaProviderAttribute(L"GetTypedTableSchema")]
+    ref class VariableDataTable : public ::System::Data::DataTable, public ::System::Collections::IEnumerable {
+        
+        private: ::System::Data::DataColumn^  columnID;
+        
+        private: ::System::Data::DataColumn^  columnSize;
+        
+        private: ::System::Data::DataColumn^  columnPointer;
+        
+        private: ::System::Data::DataColumn^  columnConstValueInParam;
+        
+        private: ::System::Data::DataColumn^  columnOriginal_Id;
+        
+        private: ::System::Data::DataColumn^  columnFake_Id;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::VariableRowChangeEventHandler^  VariableRowChanging;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::VariableRowChangeEventHandler^  VariableRowChanged;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::VariableRowChangeEventHandler^  VariableRowDeleting;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::VariableRowChangeEventHandler^  VariableRowDeleted;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        VariableDataTable();
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        VariableDataTable(::System::Data::DataTable^  table);
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        VariableDataTable(::System::Runtime::Serialization::SerializationInfo^  info, ::System::Runtime::Serialization::StreamingContext context);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  IDColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  SizeColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  PointerColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  ConstValueInParamColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Original_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Fake_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0"), 
+        System::ComponentModel::Browsable(false)]
+        property ::System::Int32 Count {
+            ::System::Int32 get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::VariableRow^  default [::System::Int32 ] {
+            NewDataSet::VariableRow^  get(::System::Int32 index);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void AddVariableRow(NewDataSet::VariableRow^  row);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        NewDataSet::VariableRow^  AddVariableRow(
+                    System::String^  ID, 
+                    System::String^  Size, 
+                    System::Boolean Pointer, 
+                    System::String^  ConstValueInParam, 
+                    NewDataSet::OriginalRow^  parentOriginalRowByOriginal_Variable, 
+                    NewDataSet::FakeRow^  parentFakeRowByFake_Variable);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Collections::IEnumerator^  GetEnumerator();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataTable^  Clone() override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataTable^  CreateInstance() override;
+        
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void InitVars();
+        
+        private: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void InitClass();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        NewDataSet::VariableRow^  NewVariableRow();
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataRow^  NewRowFromBuilder(::System::Data::DataRowBuilder^  builder) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Type^  GetRowType() override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowChanged(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowChanging(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowDeleted(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowDeleting(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void RemoveVariableRow(NewDataSet::VariableRow^  row);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        static ::System::Xml::Schema::XmlSchemaComplexType^  GetTypedTableSchema(::System::Xml::Schema::XmlSchemaSet^  xs);
+    };
+    
+    public : /// <summary>
+///Represents the strongly named DataTable class.
+///</summary>
+    [System::Serializable, 
+    System::Xml::Serialization::XmlSchemaProviderAttribute(L"GetTypedTableSchema")]
+    ref class FakeDataTable : public ::System::Data::DataTable, public ::System::Collections::IEnumerable {
+        
+        private: ::System::Data::DataColumn^  columnFake_Id;
+        
+        private: ::System::Data::DataColumn^  columnInputs_Id;
+        
+        private: ::System::Data::DataColumn^  columnOutputs_Id;
+        
+        private: ::System::Data::DataColumn^  columnLocals_Id;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::FakeRowChangeEventHandler^  FakeRowChanging;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::FakeRowChangeEventHandler^  FakeRowChanged;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::FakeRowChangeEventHandler^  FakeRowDeleting;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::FakeRowChangeEventHandler^  FakeRowDeleted;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        FakeDataTable();
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        FakeDataTable(::System::Data::DataTable^  table);
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        FakeDataTable(::System::Runtime::Serialization::SerializationInfo^  info, ::System::Runtime::Serialization::StreamingContext context);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Fake_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Inputs_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Outputs_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Locals_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0"), 
+        System::ComponentModel::Browsable(false)]
+        property ::System::Int32 Count {
+            ::System::Int32 get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::FakeRow^  default [::System::Int32 ] {
+            NewDataSet::FakeRow^  get(::System::Int32 index);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void AddFakeRow(NewDataSet::FakeRow^  row);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        NewDataSet::FakeRow^  AddFakeRow(NewDataSet::InputsRow^  parentInputsRowByInputs_Fake, NewDataSet::OutputsRow^  parentOutputsRowByOutputs_Fake, 
+                    NewDataSet::LocalsRow^  parentLocalsRowByLocals_Fake);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Collections::IEnumerator^  GetEnumerator();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataTable^  Clone() override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataTable^  CreateInstance() override;
+        
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void InitVars();
+        
+        private: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void InitClass();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        NewDataSet::FakeRow^  NewFakeRow();
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataRow^  NewRowFromBuilder(::System::Data::DataRowBuilder^  builder) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Type^  GetRowType() override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowChanged(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowChanging(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowDeleted(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowDeleting(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void RemoveFakeRow(NewDataSet::FakeRow^  row);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        static ::System::Xml::Schema::XmlSchemaComplexType^  GetTypedTableSchema(::System::Xml::Schema::XmlSchemaSet^  xs);
+    };
+    
+    public : /// <summary>
+///Represents the strongly named DataTable class.
+///</summary>
+    [System::Serializable, 
+    System::Xml::Serialization::XmlSchemaProviderAttribute(L"GetTypedTableSchema")]
+    ref class OutputsDataTable : public ::System::Data::DataTable, public ::System::Collections::IEnumerable {
+        
+        private: ::System::Data::DataColumn^  columnOutputs_Id;
+        
+        private: ::System::Data::DataColumn^  columnFunction_Id;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::OutputsRowChangeEventHandler^  OutputsRowChanging;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::OutputsRowChangeEventHandler^  OutputsRowChanged;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::OutputsRowChangeEventHandler^  OutputsRowDeleting;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::OutputsRowChangeEventHandler^  OutputsRowDeleted;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        OutputsDataTable();
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        OutputsDataTable(::System::Data::DataTable^  table);
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        OutputsDataTable(::System::Runtime::Serialization::SerializationInfo^  info, ::System::Runtime::Serialization::StreamingContext context);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Outputs_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Function_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0"), 
+        System::ComponentModel::Browsable(false)]
+        property ::System::Int32 Count {
+            ::System::Int32 get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::OutputsRow^  default [::System::Int32 ] {
+            NewDataSet::OutputsRow^  get(::System::Int32 index);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void AddOutputsRow(NewDataSet::OutputsRow^  row);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        NewDataSet::OutputsRow^  AddOutputsRow(NewDataSet::FunctionRow^  parentFunctionRowByFunction_Outputs);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Collections::IEnumerator^  GetEnumerator();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataTable^  Clone() override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataTable^  CreateInstance() override;
+        
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void InitVars();
+        
+        private: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void InitClass();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        NewDataSet::OutputsRow^  NewOutputsRow();
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataRow^  NewRowFromBuilder(::System::Data::DataRowBuilder^  builder) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Type^  GetRowType() override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowChanged(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowChanging(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowDeleted(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowDeleting(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void RemoveOutputsRow(NewDataSet::OutputsRow^  row);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        static ::System::Xml::Schema::XmlSchemaComplexType^  GetTypedTableSchema(::System::Xml::Schema::XmlSchemaSet^  xs);
+    };
+    
+    public : /// <summary>
+///Represents the strongly named DataTable class.
+///</summary>
+    [System::Serializable, 
+    System::Xml::Serialization::XmlSchemaProviderAttribute(L"GetTypedTableSchema")]
+    ref class LocalsDataTable : public ::System::Data::DataTable, public ::System::Collections::IEnumerable {
+        
+        private: ::System::Data::DataColumn^  columnLocals_Id;
+        
+        private: ::System::Data::DataColumn^  columnFunction_Id;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::LocalsRowChangeEventHandler^  LocalsRowChanging;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::LocalsRowChangeEventHandler^  LocalsRowChanged;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::LocalsRowChangeEventHandler^  LocalsRowDeleting;
+        
+        public: [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        event NewDataSet::LocalsRowChangeEventHandler^  LocalsRowDeleted;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        LocalsDataTable();
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        LocalsDataTable(::System::Data::DataTable^  table);
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        LocalsDataTable(::System::Runtime::Serialization::SerializationInfo^  info, ::System::Runtime::Serialization::StreamingContext context);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Locals_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataColumn^  Function_IdColumn {
+            ::System::Data::DataColumn^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0"), 
+        System::ComponentModel::Browsable(false)]
+        property ::System::Int32 Count {
+            ::System::Int32 get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::LocalsRow^  default [::System::Int32 ] {
+            NewDataSet::LocalsRow^  get(::System::Int32 index);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void AddLocalsRow(NewDataSet::LocalsRow^  row);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        NewDataSet::LocalsRow^  AddLocalsRow(NewDataSet::FunctionRow^  parentFunctionRowByFunction_Locals);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Collections::IEnumerator^  GetEnumerator();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataTable^  Clone() override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataTable^  CreateInstance() override;
+        
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void InitVars();
+        
+        private: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void InitClass();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        NewDataSet::LocalsRow^  NewLocalsRow();
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Data::DataRow^  NewRowFromBuilder(::System::Data::DataRowBuilder^  builder) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Type^  GetRowType() override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowChanged(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowChanging(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowDeleted(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        protected: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        virtual ::System::Void OnRowDeleting(::System::Data::DataRowChangeEventArgs^  e) override;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void RemoveLocalsRow(NewDataSet::LocalsRow^  row);
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        static ::System::Xml::Schema::XmlSchemaComplexType^  GetTypedTableSchema(::System::Xml::Schema::XmlSchemaSet^  xs);
+    };
+    
+    public : /// <summary>
 ///Represents strongly named DataRow class.
 ///</summary>
     ref class InstructionRow : public ::System::Data::DataRow {
@@ -827,30 +1721,9 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
         System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property System::Boolean Temporary {
+        property System::Boolean PolyRequired {
             System::Boolean get();
             System::Void set(System::Boolean value);
-        }
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
-        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property System::Boolean Constant {
-            System::Boolean get();
-            System::Void set(System::Boolean value);
-        }
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
-        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property System::Boolean IOParameter {
-            System::Boolean get();
-            System::Void set(System::Boolean value);
-        }
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
-        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property System::String^  InitialValue {
-            System::String^  get();
-            System::Void set(System::String^  value);
         }
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
@@ -876,11 +1749,11 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
         [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        ::System::Boolean IsInitialValueNull();
+        ::System::Boolean IsPolyRequiredNull();
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
         [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        ::System::Void SetInitialValueNull();
+        ::System::Void SetPolyRequiredNull();
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
         [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
@@ -992,7 +1865,7 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         RoutineRow(::System::Data::DataRowBuilder^  rb);
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
         System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property System::String^  Name {
+        property System::String^  Description {
             System::String^  get();
             System::Void set(System::String^  value);
         }
@@ -1028,7 +1901,7 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
         System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property System::String^  Name {
+        property System::String^  ExternalLabel {
             System::String^  get();
             System::Void set(System::String^  value);
         }
@@ -1036,20 +1909,6 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
         System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
         property System::String^  CalledFrom {
-            System::String^  get();
-            System::Void set(System::String^  value);
-        }
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
-        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property System::String^  InputParameters {
-            System::String^  get();
-            System::Void set(System::String^  value);
-        }
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
-        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        property System::String^  OutputParameters {
             System::String^  get();
             System::Void set(System::String^  value);
         }
@@ -1077,22 +1936,6 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
         [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        ::System::Boolean IsInputParametersNull();
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
-        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        ::System::Void SetInputParametersNull();
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
-        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        ::System::Boolean IsOutputParametersNull();
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
-        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
-        ::System::Void SetOutputParametersNull();
-        
-        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
-        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
         ::System::Boolean IsRoutine_IdNull();
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
@@ -1101,7 +1944,430 @@ public ref class NewDataSet : public ::System::Data::DataSet {
         
         public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
         [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        cli::array< NewDataSet::InputsRow^  >^  GetInputsRows();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        cli::array< NewDataSet::OutputsRow^  >^  GetOutputsRows();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        cli::array< NewDataSet::LocalsRow^  >^  GetLocalsRows();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
         cli::array< NewDataSet::BasicBlockRow^  >^  GetBasicBlockRows();
+    };
+    
+    public : /// <summary>
+///Represents strongly named DataRow class.
+///</summary>
+    ref class InputsRow : public ::System::Data::DataRow {
+        
+        private: NewDataSet::InputsDataTable^  tableInputs;
+        
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        InputsRow(::System::Data::DataRowBuilder^  rb);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Inputs_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Function_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::FunctionRow^  FunctionRow {
+            NewDataSet::FunctionRow^  get();
+            System::Void set(NewDataSet::FunctionRow^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Boolean IsFunction_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void SetFunction_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        cli::array< NewDataSet::OriginalRow^  >^  GetOriginalRows();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        cli::array< NewDataSet::FakeRow^  >^  GetFakeRows();
+    };
+    
+    public : /// <summary>
+///Represents strongly named DataRow class.
+///</summary>
+    ref class OriginalRow : public ::System::Data::DataRow {
+        
+        private: NewDataSet::OriginalDataTable^  tableOriginal;
+        
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        OriginalRow(::System::Data::DataRowBuilder^  rb);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Original_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Inputs_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Outputs_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Locals_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::InputsRow^  InputsRow {
+            NewDataSet::InputsRow^  get();
+            System::Void set(NewDataSet::InputsRow^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::OutputsRow^  OutputsRow {
+            NewDataSet::OutputsRow^  get();
+            System::Void set(NewDataSet::OutputsRow^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::LocalsRow^  LocalsRow {
+            NewDataSet::LocalsRow^  get();
+            System::Void set(NewDataSet::LocalsRow^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Boolean IsInputs_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void SetInputs_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Boolean IsOutputs_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void SetOutputs_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Boolean IsLocals_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void SetLocals_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        cli::array< NewDataSet::VariableRow^  >^  GetVariableRows();
+    };
+    
+    public : /// <summary>
+///Represents strongly named DataRow class.
+///</summary>
+    ref class VariableRow : public ::System::Data::DataRow {
+        
+        private: NewDataSet::VariableDataTable^  tableVariable;
+        
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        VariableRow(::System::Data::DataRowBuilder^  rb);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::String^  ID {
+            System::String^  get();
+            System::Void set(System::String^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::String^  Size {
+            System::String^  get();
+            System::Void set(System::String^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Boolean Pointer {
+            System::Boolean get();
+            System::Void set(System::Boolean value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::String^  ConstValueInParam {
+            System::String^  get();
+            System::Void set(System::String^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Original_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Fake_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::OriginalRow^  OriginalRow {
+            NewDataSet::OriginalRow^  get();
+            System::Void set(NewDataSet::OriginalRow^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::FakeRow^  FakeRow {
+            NewDataSet::FakeRow^  get();
+            System::Void set(NewDataSet::FakeRow^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Boolean IsConstValueInParamNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void SetConstValueInParamNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Boolean IsOriginal_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void SetOriginal_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Boolean IsFake_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void SetFake_IdNull();
+    };
+    
+    public : /// <summary>
+///Represents strongly named DataRow class.
+///</summary>
+    ref class FakeRow : public ::System::Data::DataRow {
+        
+        private: NewDataSet::FakeDataTable^  tableFake;
+        
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        FakeRow(::System::Data::DataRowBuilder^  rb);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Fake_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Inputs_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Outputs_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Locals_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::InputsRow^  InputsRow {
+            NewDataSet::InputsRow^  get();
+            System::Void set(NewDataSet::InputsRow^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::OutputsRow^  OutputsRow {
+            NewDataSet::OutputsRow^  get();
+            System::Void set(NewDataSet::OutputsRow^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::LocalsRow^  LocalsRow {
+            NewDataSet::LocalsRow^  get();
+            System::Void set(NewDataSet::LocalsRow^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Boolean IsInputs_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void SetInputs_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Boolean IsOutputs_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void SetOutputs_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Boolean IsLocals_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void SetLocals_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        cli::array< NewDataSet::VariableRow^  >^  GetVariableRows();
+    };
+    
+    public : /// <summary>
+///Represents strongly named DataRow class.
+///</summary>
+    ref class OutputsRow : public ::System::Data::DataRow {
+        
+        private: NewDataSet::OutputsDataTable^  tableOutputs;
+        
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        OutputsRow(::System::Data::DataRowBuilder^  rb);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Outputs_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Function_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::FunctionRow^  FunctionRow {
+            NewDataSet::FunctionRow^  get();
+            System::Void set(NewDataSet::FunctionRow^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Boolean IsFunction_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void SetFunction_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        cli::array< NewDataSet::OriginalRow^  >^  GetOriginalRows();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        cli::array< NewDataSet::FakeRow^  >^  GetFakeRows();
+    };
+    
+    public : /// <summary>
+///Represents strongly named DataRow class.
+///</summary>
+    ref class LocalsRow : public ::System::Data::DataRow {
+        
+        private: NewDataSet::LocalsDataTable^  tableLocals;
+        
+        internal: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        LocalsRow(::System::Data::DataRowBuilder^  rb);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Locals_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property System::Int32 Function_Id {
+            System::Int32 get();
+            System::Void set(System::Int32 value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::FunctionRow^  FunctionRow {
+            NewDataSet::FunctionRow^  get();
+            System::Void set(NewDataSet::FunctionRow^  value);
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Boolean IsFunction_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        ::System::Void SetFunction_IdNull();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        cli::array< NewDataSet::OriginalRow^  >^  GetOriginalRows();
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        cli::array< NewDataSet::FakeRow^  >^  GetFakeRows();
     };
     
     public : /// <summary>
@@ -1207,6 +2473,162 @@ public ref class NewDataSet : public ::System::Data::DataSet {
             ::System::Data::DataRowAction get();
         }
     };
+    
+    public : /// <summary>
+///Row event argument class
+///</summary>
+    [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    ref class InputsRowChangeEvent : public ::System::EventArgs {
+        
+        private: NewDataSet::InputsRow^  eventRow;
+        
+        private: ::System::Data::DataRowAction eventAction;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        InputsRowChangeEvent(NewDataSet::InputsRow^  row, ::System::Data::DataRowAction action);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::InputsRow^  Row {
+            NewDataSet::InputsRow^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataRowAction Action {
+            ::System::Data::DataRowAction get();
+        }
+    };
+    
+    public : /// <summary>
+///Row event argument class
+///</summary>
+    [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    ref class OriginalRowChangeEvent : public ::System::EventArgs {
+        
+        private: NewDataSet::OriginalRow^  eventRow;
+        
+        private: ::System::Data::DataRowAction eventAction;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        OriginalRowChangeEvent(NewDataSet::OriginalRow^  row, ::System::Data::DataRowAction action);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::OriginalRow^  Row {
+            NewDataSet::OriginalRow^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataRowAction Action {
+            ::System::Data::DataRowAction get();
+        }
+    };
+    
+    public : /// <summary>
+///Row event argument class
+///</summary>
+    [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    ref class VariableRowChangeEvent : public ::System::EventArgs {
+        
+        private: NewDataSet::VariableRow^  eventRow;
+        
+        private: ::System::Data::DataRowAction eventAction;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        VariableRowChangeEvent(NewDataSet::VariableRow^  row, ::System::Data::DataRowAction action);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::VariableRow^  Row {
+            NewDataSet::VariableRow^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataRowAction Action {
+            ::System::Data::DataRowAction get();
+        }
+    };
+    
+    public : /// <summary>
+///Row event argument class
+///</summary>
+    [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    ref class FakeRowChangeEvent : public ::System::EventArgs {
+        
+        private: NewDataSet::FakeRow^  eventRow;
+        
+        private: ::System::Data::DataRowAction eventAction;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        FakeRowChangeEvent(NewDataSet::FakeRow^  row, ::System::Data::DataRowAction action);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::FakeRow^  Row {
+            NewDataSet::FakeRow^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataRowAction Action {
+            ::System::Data::DataRowAction get();
+        }
+    };
+    
+    public : /// <summary>
+///Row event argument class
+///</summary>
+    [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    ref class OutputsRowChangeEvent : public ::System::EventArgs {
+        
+        private: NewDataSet::OutputsRow^  eventRow;
+        
+        private: ::System::Data::DataRowAction eventAction;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        OutputsRowChangeEvent(NewDataSet::OutputsRow^  row, ::System::Data::DataRowAction action);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::OutputsRow^  Row {
+            NewDataSet::OutputsRow^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataRowAction Action {
+            ::System::Data::DataRowAction get();
+        }
+    };
+    
+    public : /// <summary>
+///Row event argument class
+///</summary>
+    [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+    ref class LocalsRowChangeEvent : public ::System::EventArgs {
+        
+        private: NewDataSet::LocalsRow^  eventRow;
+        
+        private: ::System::Data::DataRowAction eventAction;
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute]
+        [System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        LocalsRowChangeEvent(NewDataSet::LocalsRow^  row, ::System::Data::DataRowAction action);
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property NewDataSet::LocalsRow^  Row {
+            NewDataSet::LocalsRow^  get();
+        }
+        
+        public: [System::Diagnostics::DebuggerNonUserCodeAttribute, 
+        System::CodeDom::Compiler::GeneratedCodeAttribute(L"System.Data.Design.TypedDataSetGenerator", L"4.0.0.0")]
+        property ::System::Data::DataRowAction Action {
+            ::System::Data::DataRowAction get();
+        }
+    };
 };
 
 
@@ -1244,6 +2666,24 @@ inline NewDataSet::NewDataSet(::System::Runtime::Serialization::SerializationInf
         if (ds->Tables[L"Function"] != nullptr) {
             __super::Tables->Add((gcnew NewDataSet::FunctionDataTable(ds->Tables[L"Function"])));
         }
+        if (ds->Tables[L"Inputs"] != nullptr) {
+            __super::Tables->Add((gcnew NewDataSet::InputsDataTable(ds->Tables[L"Inputs"])));
+        }
+        if (ds->Tables[L"Original"] != nullptr) {
+            __super::Tables->Add((gcnew NewDataSet::OriginalDataTable(ds->Tables[L"Original"])));
+        }
+        if (ds->Tables[L"Variable"] != nullptr) {
+            __super::Tables->Add((gcnew NewDataSet::VariableDataTable(ds->Tables[L"Variable"])));
+        }
+        if (ds->Tables[L"Fake"] != nullptr) {
+            __super::Tables->Add((gcnew NewDataSet::FakeDataTable(ds->Tables[L"Fake"])));
+        }
+        if (ds->Tables[L"Outputs"] != nullptr) {
+            __super::Tables->Add((gcnew NewDataSet::OutputsDataTable(ds->Tables[L"Outputs"])));
+        }
+        if (ds->Tables[L"Locals"] != nullptr) {
+            __super::Tables->Add((gcnew NewDataSet::LocalsDataTable(ds->Tables[L"Locals"])));
+        }
         this->DataSetName = ds->DataSetName;
         this->Prefix = ds->Prefix;
         this->Namespace = ds->Namespace;
@@ -1276,6 +2716,30 @@ inline NewDataSet::RoutineDataTable^  NewDataSet::Routine::get() {
 
 inline NewDataSet::FunctionDataTable^  NewDataSet::Function::get() {
     return this->tableFunction;
+}
+
+inline NewDataSet::InputsDataTable^  NewDataSet::Inputs::get() {
+    return this->tableInputs;
+}
+
+inline NewDataSet::OriginalDataTable^  NewDataSet::Original::get() {
+    return this->tableOriginal;
+}
+
+inline NewDataSet::VariableDataTable^  NewDataSet::Variable::get() {
+    return this->tableVariable;
+}
+
+inline NewDataSet::FakeDataTable^  NewDataSet::Fake::get() {
+    return this->tableFake;
+}
+
+inline NewDataSet::OutputsDataTable^  NewDataSet::Outputs::get() {
+    return this->tableOutputs;
+}
+
+inline NewDataSet::LocalsDataTable^  NewDataSet::Locals::get() {
+    return this->tableLocals;
 }
 
 inline ::System::Data::SchemaSerializationMode NewDataSet::SchemaSerializationMode::get() {
@@ -1331,6 +2795,24 @@ inline ::System::Void NewDataSet::ReadXmlSerializable(::System::Xml::XmlReader^ 
         if (ds->Tables[L"Function"] != nullptr) {
             __super::Tables->Add((gcnew NewDataSet::FunctionDataTable(ds->Tables[L"Function"])));
         }
+        if (ds->Tables[L"Inputs"] != nullptr) {
+            __super::Tables->Add((gcnew NewDataSet::InputsDataTable(ds->Tables[L"Inputs"])));
+        }
+        if (ds->Tables[L"Original"] != nullptr) {
+            __super::Tables->Add((gcnew NewDataSet::OriginalDataTable(ds->Tables[L"Original"])));
+        }
+        if (ds->Tables[L"Variable"] != nullptr) {
+            __super::Tables->Add((gcnew NewDataSet::VariableDataTable(ds->Tables[L"Variable"])));
+        }
+        if (ds->Tables[L"Fake"] != nullptr) {
+            __super::Tables->Add((gcnew NewDataSet::FakeDataTable(ds->Tables[L"Fake"])));
+        }
+        if (ds->Tables[L"Outputs"] != nullptr) {
+            __super::Tables->Add((gcnew NewDataSet::OutputsDataTable(ds->Tables[L"Outputs"])));
+        }
+        if (ds->Tables[L"Locals"] != nullptr) {
+            __super::Tables->Add((gcnew NewDataSet::LocalsDataTable(ds->Tables[L"Locals"])));
+        }
         this->DataSetName = ds->DataSetName;
         this->Prefix = ds->Prefix;
         this->Namespace = ds->Namespace;
@@ -1382,9 +2864,56 @@ inline ::System::Void NewDataSet::InitVars(::System::Boolean initTable) {
             this->tableFunction->InitVars();
         }
     }
+    this->tableInputs = (cli::safe_cast<NewDataSet::InputsDataTable^  >(__super::Tables[L"Inputs"]));
+    if (initTable == true) {
+        if (this->tableInputs != nullptr) {
+            this->tableInputs->InitVars();
+        }
+    }
+    this->tableOriginal = (cli::safe_cast<NewDataSet::OriginalDataTable^  >(__super::Tables[L"Original"]));
+    if (initTable == true) {
+        if (this->tableOriginal != nullptr) {
+            this->tableOriginal->InitVars();
+        }
+    }
+    this->tableVariable = (cli::safe_cast<NewDataSet::VariableDataTable^  >(__super::Tables[L"Variable"]));
+    if (initTable == true) {
+        if (this->tableVariable != nullptr) {
+            this->tableVariable->InitVars();
+        }
+    }
+    this->tableFake = (cli::safe_cast<NewDataSet::FakeDataTable^  >(__super::Tables[L"Fake"]));
+    if (initTable == true) {
+        if (this->tableFake != nullptr) {
+            this->tableFake->InitVars();
+        }
+    }
+    this->tableOutputs = (cli::safe_cast<NewDataSet::OutputsDataTable^  >(__super::Tables[L"Outputs"]));
+    if (initTable == true) {
+        if (this->tableOutputs != nullptr) {
+            this->tableOutputs->InitVars();
+        }
+    }
+    this->tableLocals = (cli::safe_cast<NewDataSet::LocalsDataTable^  >(__super::Tables[L"Locals"]));
+    if (initTable == true) {
+        if (this->tableLocals != nullptr) {
+            this->tableLocals->InitVars();
+        }
+    }
     this->relationBasicBlock_Instruction = this->Relations[L"BasicBlock_Instruction"];
     this->relationFunction_BasicBlock = this->Relations[L"Function_BasicBlock"];
     this->relationRoutine_Function = this->Relations[L"Routine_Function"];
+    this->relationFunction_Inputs = this->Relations[L"Function_Inputs"];
+    this->relationInputs_Original = this->Relations[L"Inputs_Original"];
+    this->relationOutputs_Original = this->Relations[L"Outputs_Original"];
+    this->relationLocals_Original = this->Relations[L"Locals_Original"];
+    this->relationOriginal_Variable = this->Relations[L"Original_Variable"];
+    this->relationFake_Variable = this->Relations[L"Fake_Variable"];
+    this->relationInputs_Fake = this->Relations[L"Inputs_Fake"];
+    this->relationOutputs_Fake = this->Relations[L"Outputs_Fake"];
+    this->relationLocals_Fake = this->Relations[L"Locals_Fake"];
+    this->relationFunction_Outputs = this->Relations[L"Function_Outputs"];
+    this->relationFunction_Locals = this->Relations[L"Function_Locals"];
 }
 
 inline ::System::Void NewDataSet::InitClass() {
@@ -1401,6 +2930,18 @@ inline ::System::Void NewDataSet::InitClass() {
     __super::Tables->Add(this->tableRoutine);
     this->tableFunction = (gcnew NewDataSet::FunctionDataTable());
     __super::Tables->Add(this->tableFunction);
+    this->tableInputs = (gcnew NewDataSet::InputsDataTable());
+    __super::Tables->Add(this->tableInputs);
+    this->tableOriginal = (gcnew NewDataSet::OriginalDataTable());
+    __super::Tables->Add(this->tableOriginal);
+    this->tableVariable = (gcnew NewDataSet::VariableDataTable());
+    __super::Tables->Add(this->tableVariable);
+    this->tableFake = (gcnew NewDataSet::FakeDataTable());
+    __super::Tables->Add(this->tableFake);
+    this->tableOutputs = (gcnew NewDataSet::OutputsDataTable());
+    __super::Tables->Add(this->tableOutputs);
+    this->tableLocals = (gcnew NewDataSet::LocalsDataTable());
+    __super::Tables->Add(this->tableLocals);
     ::System::Data::ForeignKeyConstraint^  fkc;
     fkc = (gcnew ::System::Data::ForeignKeyConstraint(L"BasicBlock_Instruction", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableBasicBlock->BasicBlock_IdColumn}, 
         gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableInstruction->BasicBlock_IdColumn}));
@@ -1420,6 +2961,72 @@ inline ::System::Void NewDataSet::InitClass() {
     fkc->AcceptRejectRule = ::System::Data::AcceptRejectRule::None;
     fkc->DeleteRule = ::System::Data::Rule::Cascade;
     fkc->UpdateRule = ::System::Data::Rule::Cascade;
+    fkc = (gcnew ::System::Data::ForeignKeyConstraint(L"Function_Inputs", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFunction->Function_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableInputs->Function_IdColumn}));
+    this->tableInputs->Constraints->Add(fkc);
+    fkc->AcceptRejectRule = ::System::Data::AcceptRejectRule::None;
+    fkc->DeleteRule = ::System::Data::Rule::Cascade;
+    fkc->UpdateRule = ::System::Data::Rule::Cascade;
+    fkc = (gcnew ::System::Data::ForeignKeyConstraint(L"Inputs_Original", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableInputs->Inputs_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOriginal->Inputs_IdColumn}));
+    this->tableOriginal->Constraints->Add(fkc);
+    fkc->AcceptRejectRule = ::System::Data::AcceptRejectRule::None;
+    fkc->DeleteRule = ::System::Data::Rule::Cascade;
+    fkc->UpdateRule = ::System::Data::Rule::Cascade;
+    fkc = (gcnew ::System::Data::ForeignKeyConstraint(L"Outputs_Original", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOutputs->Outputs_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOriginal->Outputs_IdColumn}));
+    this->tableOriginal->Constraints->Add(fkc);
+    fkc->AcceptRejectRule = ::System::Data::AcceptRejectRule::None;
+    fkc->DeleteRule = ::System::Data::Rule::Cascade;
+    fkc->UpdateRule = ::System::Data::Rule::Cascade;
+    fkc = (gcnew ::System::Data::ForeignKeyConstraint(L"Locals_Original", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableLocals->Locals_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOriginal->Locals_IdColumn}));
+    this->tableOriginal->Constraints->Add(fkc);
+    fkc->AcceptRejectRule = ::System::Data::AcceptRejectRule::None;
+    fkc->DeleteRule = ::System::Data::Rule::Cascade;
+    fkc->UpdateRule = ::System::Data::Rule::Cascade;
+    fkc = (gcnew ::System::Data::ForeignKeyConstraint(L"Original_Variable", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOriginal->Original_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableVariable->Original_IdColumn}));
+    this->tableVariable->Constraints->Add(fkc);
+    fkc->AcceptRejectRule = ::System::Data::AcceptRejectRule::None;
+    fkc->DeleteRule = ::System::Data::Rule::Cascade;
+    fkc->UpdateRule = ::System::Data::Rule::Cascade;
+    fkc = (gcnew ::System::Data::ForeignKeyConstraint(L"Fake_Variable", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFake->Fake_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableVariable->Fake_IdColumn}));
+    this->tableVariable->Constraints->Add(fkc);
+    fkc->AcceptRejectRule = ::System::Data::AcceptRejectRule::None;
+    fkc->DeleteRule = ::System::Data::Rule::Cascade;
+    fkc->UpdateRule = ::System::Data::Rule::Cascade;
+    fkc = (gcnew ::System::Data::ForeignKeyConstraint(L"Inputs_Fake", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableInputs->Inputs_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFake->Inputs_IdColumn}));
+    this->tableFake->Constraints->Add(fkc);
+    fkc->AcceptRejectRule = ::System::Data::AcceptRejectRule::None;
+    fkc->DeleteRule = ::System::Data::Rule::Cascade;
+    fkc->UpdateRule = ::System::Data::Rule::Cascade;
+    fkc = (gcnew ::System::Data::ForeignKeyConstraint(L"Outputs_Fake", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOutputs->Outputs_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFake->Outputs_IdColumn}));
+    this->tableFake->Constraints->Add(fkc);
+    fkc->AcceptRejectRule = ::System::Data::AcceptRejectRule::None;
+    fkc->DeleteRule = ::System::Data::Rule::Cascade;
+    fkc->UpdateRule = ::System::Data::Rule::Cascade;
+    fkc = (gcnew ::System::Data::ForeignKeyConstraint(L"Locals_Fake", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableLocals->Locals_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFake->Locals_IdColumn}));
+    this->tableFake->Constraints->Add(fkc);
+    fkc->AcceptRejectRule = ::System::Data::AcceptRejectRule::None;
+    fkc->DeleteRule = ::System::Data::Rule::Cascade;
+    fkc->UpdateRule = ::System::Data::Rule::Cascade;
+    fkc = (gcnew ::System::Data::ForeignKeyConstraint(L"Function_Outputs", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFunction->Function_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOutputs->Function_IdColumn}));
+    this->tableOutputs->Constraints->Add(fkc);
+    fkc->AcceptRejectRule = ::System::Data::AcceptRejectRule::None;
+    fkc->DeleteRule = ::System::Data::Rule::Cascade;
+    fkc->UpdateRule = ::System::Data::Rule::Cascade;
+    fkc = (gcnew ::System::Data::ForeignKeyConstraint(L"Function_Locals", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFunction->Function_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableLocals->Function_IdColumn}));
+    this->tableLocals->Constraints->Add(fkc);
+    fkc->AcceptRejectRule = ::System::Data::AcceptRejectRule::None;
+    fkc->DeleteRule = ::System::Data::Rule::Cascade;
+    fkc->UpdateRule = ::System::Data::Rule::Cascade;
     this->relationBasicBlock_Instruction = (gcnew ::System::Data::DataRelation(L"BasicBlock_Instruction", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableBasicBlock->BasicBlock_IdColumn}, 
         gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableInstruction->BasicBlock_IdColumn}, false));
     this->relationBasicBlock_Instruction->Nested = true;
@@ -1432,6 +3039,50 @@ inline ::System::Void NewDataSet::InitClass() {
         gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFunction->Routine_IdColumn}, false));
     this->relationRoutine_Function->Nested = true;
     this->Relations->Add(this->relationRoutine_Function);
+    this->relationFunction_Inputs = (gcnew ::System::Data::DataRelation(L"Function_Inputs", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFunction->Function_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableInputs->Function_IdColumn}, false));
+    this->relationFunction_Inputs->Nested = true;
+    this->Relations->Add(this->relationFunction_Inputs);
+    this->relationInputs_Original = (gcnew ::System::Data::DataRelation(L"Inputs_Original", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableInputs->Inputs_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOriginal->Inputs_IdColumn}, false));
+    this->relationInputs_Original->Nested = true;
+    this->Relations->Add(this->relationInputs_Original);
+    this->relationOutputs_Original = (gcnew ::System::Data::DataRelation(L"Outputs_Original", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOutputs->Outputs_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOriginal->Outputs_IdColumn}, false));
+    this->relationOutputs_Original->Nested = true;
+    this->Relations->Add(this->relationOutputs_Original);
+    this->relationLocals_Original = (gcnew ::System::Data::DataRelation(L"Locals_Original", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableLocals->Locals_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOriginal->Locals_IdColumn}, false));
+    this->relationLocals_Original->Nested = true;
+    this->Relations->Add(this->relationLocals_Original);
+    this->relationOriginal_Variable = (gcnew ::System::Data::DataRelation(L"Original_Variable", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOriginal->Original_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableVariable->Original_IdColumn}, false));
+    this->relationOriginal_Variable->Nested = true;
+    this->Relations->Add(this->relationOriginal_Variable);
+    this->relationFake_Variable = (gcnew ::System::Data::DataRelation(L"Fake_Variable", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFake->Fake_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableVariable->Fake_IdColumn}, false));
+    this->relationFake_Variable->Nested = true;
+    this->Relations->Add(this->relationFake_Variable);
+    this->relationInputs_Fake = (gcnew ::System::Data::DataRelation(L"Inputs_Fake", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableInputs->Inputs_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFake->Inputs_IdColumn}, false));
+    this->relationInputs_Fake->Nested = true;
+    this->Relations->Add(this->relationInputs_Fake);
+    this->relationOutputs_Fake = (gcnew ::System::Data::DataRelation(L"Outputs_Fake", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOutputs->Outputs_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFake->Outputs_IdColumn}, false));
+    this->relationOutputs_Fake->Nested = true;
+    this->Relations->Add(this->relationOutputs_Fake);
+    this->relationLocals_Fake = (gcnew ::System::Data::DataRelation(L"Locals_Fake", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableLocals->Locals_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFake->Locals_IdColumn}, false));
+    this->relationLocals_Fake->Nested = true;
+    this->Relations->Add(this->relationLocals_Fake);
+    this->relationFunction_Outputs = (gcnew ::System::Data::DataRelation(L"Function_Outputs", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFunction->Function_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableOutputs->Function_IdColumn}, false));
+    this->relationFunction_Outputs->Nested = true;
+    this->Relations->Add(this->relationFunction_Outputs);
+    this->relationFunction_Locals = (gcnew ::System::Data::DataRelation(L"Function_Locals", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableFunction->Function_IdColumn}, 
+        gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->tableLocals->Function_IdColumn}, false));
+    this->relationFunction_Locals->Nested = true;
+    this->Relations->Add(this->relationFunction_Locals);
 }
 
 inline ::System::Boolean NewDataSet::ShouldSerializeInstruction() {
@@ -1447,6 +3098,30 @@ inline ::System::Boolean NewDataSet::ShouldSerializeRoutine() {
 }
 
 inline ::System::Boolean NewDataSet::ShouldSerializeFunction() {
+    return false;
+}
+
+inline ::System::Boolean NewDataSet::ShouldSerializeInputs() {
+    return false;
+}
+
+inline ::System::Boolean NewDataSet::ShouldSerializeOriginal() {
+    return false;
+}
+
+inline ::System::Boolean NewDataSet::ShouldSerializeVariable() {
+    return false;
+}
+
+inline ::System::Boolean NewDataSet::ShouldSerializeFake() {
+    return false;
+}
+
+inline ::System::Boolean NewDataSet::ShouldSerializeOutputs() {
+    return false;
+}
+
+inline ::System::Boolean NewDataSet::ShouldSerializeLocals() {
     return false;
 }
 
@@ -1538,20 +3213,8 @@ inline ::System::Data::DataColumn^  NewDataSet::InstructionDataTable::StatementT
     return this->columnStatementType;
 }
 
-inline ::System::Data::DataColumn^  NewDataSet::InstructionDataTable::TemporaryColumn::get() {
-    return this->columnTemporary;
-}
-
-inline ::System::Data::DataColumn^  NewDataSet::InstructionDataTable::ConstantColumn::get() {
-    return this->columnConstant;
-}
-
-inline ::System::Data::DataColumn^  NewDataSet::InstructionDataTable::IOParameterColumn::get() {
-    return this->columnIOParameter;
-}
-
-inline ::System::Data::DataColumn^  NewDataSet::InstructionDataTable::InitialValueColumn::get() {
-    return this->columnInitialValue;
+inline ::System::Data::DataColumn^  NewDataSet::InstructionDataTable::PolyRequiredColumn::get() {
+    return this->columnPolyRequired;
 }
 
 inline ::System::Data::DataColumn^  NewDataSet::InstructionDataTable::RefVarsColumn::get() {
@@ -1574,20 +3237,13 @@ inline ::System::Void NewDataSet::InstructionDataTable::AddInstructionRow(NewDat
     this->Rows->Add(row);
 }
 
-inline NewDataSet::InstructionRow^  NewDataSet::InstructionDataTable::AddInstructionRow(
-            System::String^  ID, 
-            System::String^  StatementType, 
-            System::Boolean Temporary, 
-            System::Boolean Constant, 
-            System::Boolean IOParameter, 
-            System::String^  InitialValue, 
-            System::String^  RefVars, 
-            NewDataSet::BasicBlockRow^  parentBasicBlockRowByBasicBlock_Instruction) {
+inline NewDataSet::InstructionRow^  NewDataSet::InstructionDataTable::AddInstructionRow(System::String^  ID, System::String^  StatementType, 
+            System::Boolean PolyRequired, System::String^  RefVars, NewDataSet::BasicBlockRow^  parentBasicBlockRowByBasicBlock_Instruction) {
     NewDataSet::InstructionRow^  rowInstructionRow = (cli::safe_cast<NewDataSet::InstructionRow^  >(this->NewRow()));
-    cli::array< ::System::Object^  >^  columnValuesArray = gcnew cli::array< ::System::Object^  >(8) {ID, StatementType, Temporary, 
-        Constant, IOParameter, InitialValue, RefVars, nullptr};
+    cli::array< ::System::Object^  >^  columnValuesArray = gcnew cli::array< ::System::Object^  >(5) {ID, StatementType, PolyRequired, 
+        RefVars, nullptr};
     if (parentBasicBlockRowByBasicBlock_Instruction != nullptr) {
-        columnValuesArray[7] = parentBasicBlockRowByBasicBlock_Instruction[3];
+        columnValuesArray[4] = parentBasicBlockRowByBasicBlock_Instruction[3];
     }
     rowInstructionRow->ItemArray = columnValuesArray;
     this->Rows->Add(rowInstructionRow);
@@ -1611,10 +3267,7 @@ inline ::System::Data::DataTable^  NewDataSet::InstructionDataTable::CreateInsta
 inline ::System::Void NewDataSet::InstructionDataTable::InitVars() {
     this->columnID = __super::Columns[L"ID"];
     this->columnStatementType = __super::Columns[L"StatementType"];
-    this->columnTemporary = __super::Columns[L"Temporary"];
-    this->columnConstant = __super::Columns[L"Constant"];
-    this->columnIOParameter = __super::Columns[L"IOParameter"];
-    this->columnInitialValue = __super::Columns[L"InitialValue"];
+    this->columnPolyRequired = __super::Columns[L"PolyRequired"];
     this->columnRefVars = __super::Columns[L"RefVars"];
     this->columnBasicBlock_Id = __super::Columns[L"BasicBlock_Id"];
 }
@@ -1624,14 +3277,8 @@ inline ::System::Void NewDataSet::InstructionDataTable::InitClass() {
     __super::Columns->Add(this->columnID);
     this->columnStatementType = (gcnew ::System::Data::DataColumn(L"StatementType", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
     __super::Columns->Add(this->columnStatementType);
-    this->columnTemporary = (gcnew ::System::Data::DataColumn(L"Temporary", ::System::Boolean::typeid, nullptr, ::System::Data::MappingType::Attribute));
-    __super::Columns->Add(this->columnTemporary);
-    this->columnConstant = (gcnew ::System::Data::DataColumn(L"Constant", ::System::Boolean::typeid, nullptr, ::System::Data::MappingType::Attribute));
-    __super::Columns->Add(this->columnConstant);
-    this->columnIOParameter = (gcnew ::System::Data::DataColumn(L"IOParameter", ::System::Boolean::typeid, nullptr, ::System::Data::MappingType::Attribute));
-    __super::Columns->Add(this->columnIOParameter);
-    this->columnInitialValue = (gcnew ::System::Data::DataColumn(L"InitialValue", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
-    __super::Columns->Add(this->columnInitialValue);
+    this->columnPolyRequired = (gcnew ::System::Data::DataColumn(L"PolyRequired", ::System::Boolean::typeid, nullptr, ::System::Data::MappingType::Attribute));
+    __super::Columns->Add(this->columnPolyRequired);
     this->columnRefVars = (gcnew ::System::Data::DataColumn(L"RefVars", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
     __super::Columns->Add(this->columnRefVars);
     this->columnBasicBlock_Id = (gcnew ::System::Data::DataColumn(L"BasicBlock_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
@@ -1640,13 +3287,8 @@ inline ::System::Void NewDataSet::InstructionDataTable::InitClass() {
     this->columnID->Namespace = L"";
     this->columnStatementType->AllowDBNull = false;
     this->columnStatementType->Namespace = L"";
-    this->columnTemporary->AllowDBNull = false;
-    this->columnTemporary->Namespace = L"";
-    this->columnConstant->AllowDBNull = false;
-    this->columnConstant->Namespace = L"";
-    this->columnIOParameter->AllowDBNull = false;
-    this->columnIOParameter->Namespace = L"";
-    this->columnInitialValue->Namespace = L"";
+    this->columnPolyRequired->Namespace = L"";
+    this->columnPolyRequired->DefaultValue = static_cast<System::Boolean>(false);
     this->columnRefVars->Namespace = L"";
 }
 
@@ -1825,7 +3467,7 @@ inline NewDataSet::BasicBlockRow^  NewDataSet::BasicBlockDataTable::AddBasicBloc
     cli::array< ::System::Object^  >^  columnValuesArray = gcnew cli::array< ::System::Object^  >(5) {ID, Predecessors, Successors, 
         nullptr, nullptr};
     if (parentFunctionRowByFunction_BasicBlock != nullptr) {
-        columnValuesArray[4] = parentFunctionRowByFunction_BasicBlock[5];
+        columnValuesArray[4] = parentFunctionRowByFunction_BasicBlock[3];
     }
     rowBasicBlockRow->ItemArray = columnValuesArray;
     this->Rows->Add(rowBasicBlockRow);
@@ -2013,8 +3655,8 @@ inline NewDataSet::RoutineDataTable::RoutineDataTable(::System::Runtime::Seriali
     this->InitVars();
 }
 
-inline ::System::Data::DataColumn^  NewDataSet::RoutineDataTable::NameColumn::get() {
-    return this->columnName;
+inline ::System::Data::DataColumn^  NewDataSet::RoutineDataTable::DescriptionColumn::get() {
+    return this->columnDescription;
 }
 
 inline ::System::Data::DataColumn^  NewDataSet::RoutineDataTable::Routine_IdColumn::get() {
@@ -2033,9 +3675,9 @@ inline ::System::Void NewDataSet::RoutineDataTable::AddRoutineRow(NewDataSet::Ro
     this->Rows->Add(row);
 }
 
-inline NewDataSet::RoutineRow^  NewDataSet::RoutineDataTable::AddRoutineRow(System::String^  Name) {
+inline NewDataSet::RoutineRow^  NewDataSet::RoutineDataTable::AddRoutineRow(System::String^  Description) {
     NewDataSet::RoutineRow^  rowRoutineRow = (cli::safe_cast<NewDataSet::RoutineRow^  >(this->NewRow()));
-    cli::array< ::System::Object^  >^  columnValuesArray = gcnew cli::array< ::System::Object^  >(2) {Name, nullptr};
+    cli::array< ::System::Object^  >^  columnValuesArray = gcnew cli::array< ::System::Object^  >(2) {Description, nullptr};
     rowRoutineRow->ItemArray = columnValuesArray;
     this->Rows->Add(rowRoutineRow);
     return rowRoutineRow;
@@ -2056,19 +3698,19 @@ inline ::System::Data::DataTable^  NewDataSet::RoutineDataTable::CreateInstance(
 }
 
 inline ::System::Void NewDataSet::RoutineDataTable::InitVars() {
-    this->columnName = __super::Columns[L"Name"];
+    this->columnDescription = __super::Columns[L"Description"];
     this->columnRoutine_Id = __super::Columns[L"Routine_Id"];
 }
 
 inline ::System::Void NewDataSet::RoutineDataTable::InitClass() {
-    this->columnName = (gcnew ::System::Data::DataColumn(L"Name", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
-    __super::Columns->Add(this->columnName);
+    this->columnDescription = (gcnew ::System::Data::DataColumn(L"Description", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
+    __super::Columns->Add(this->columnDescription);
     this->columnRoutine_Id = (gcnew ::System::Data::DataColumn(L"Routine_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
     __super::Columns->Add(this->columnRoutine_Id);
     this->Constraints->Add((gcnew ::System::Data::UniqueConstraint(L"Constraint1", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->columnRoutine_Id}, 
             true)));
-    this->columnName->AllowDBNull = false;
-    this->columnName->Namespace = L"";
+    this->columnDescription->AllowDBNull = false;
+    this->columnDescription->Namespace = L"";
     this->columnRoutine_Id->AutoIncrement = true;
     this->columnRoutine_Id->AllowDBNull = false;
     this->columnRoutine_Id->Unique = true;
@@ -2215,20 +3857,12 @@ inline ::System::Data::DataColumn^  NewDataSet::FunctionDataTable::IDColumn::get
     return this->columnID;
 }
 
-inline ::System::Data::DataColumn^  NewDataSet::FunctionDataTable::NameColumn::get() {
-    return this->columnName;
+inline ::System::Data::DataColumn^  NewDataSet::FunctionDataTable::ExternalLabelColumn::get() {
+    return this->columnExternalLabel;
 }
 
 inline ::System::Data::DataColumn^  NewDataSet::FunctionDataTable::CalledFromColumn::get() {
     return this->columnCalledFrom;
-}
-
-inline ::System::Data::DataColumn^  NewDataSet::FunctionDataTable::InputParametersColumn::get() {
-    return this->columnInputParameters;
-}
-
-inline ::System::Data::DataColumn^  NewDataSet::FunctionDataTable::OutputParametersColumn::get() {
-    return this->columnOutputParameters;
 }
 
 inline ::System::Data::DataColumn^  NewDataSet::FunctionDataTable::Function_IdColumn::get() {
@@ -2251,18 +3885,13 @@ inline ::System::Void NewDataSet::FunctionDataTable::AddFunctionRow(NewDataSet::
     this->Rows->Add(row);
 }
 
-inline NewDataSet::FunctionRow^  NewDataSet::FunctionDataTable::AddFunctionRow(
-            System::String^  ID, 
-            System::String^  Name, 
-            System::String^  CalledFrom, 
-            System::String^  InputParameters, 
-            System::String^  OutputParameters, 
-            NewDataSet::RoutineRow^  parentRoutineRowByRoutine_Function) {
+inline NewDataSet::FunctionRow^  NewDataSet::FunctionDataTable::AddFunctionRow(System::String^  ID, System::String^  ExternalLabel, 
+            System::String^  CalledFrom, NewDataSet::RoutineRow^  parentRoutineRowByRoutine_Function) {
     NewDataSet::FunctionRow^  rowFunctionRow = (cli::safe_cast<NewDataSet::FunctionRow^  >(this->NewRow()));
-    cli::array< ::System::Object^  >^  columnValuesArray = gcnew cli::array< ::System::Object^  >(7) {ID, Name, CalledFrom, InputParameters, 
-        OutputParameters, nullptr, nullptr};
+    cli::array< ::System::Object^  >^  columnValuesArray = gcnew cli::array< ::System::Object^  >(5) {ID, ExternalLabel, CalledFrom, 
+        nullptr, nullptr};
     if (parentRoutineRowByRoutine_Function != nullptr) {
-        columnValuesArray[6] = parentRoutineRowByRoutine_Function[1];
+        columnValuesArray[4] = parentRoutineRowByRoutine_Function[1];
     }
     rowFunctionRow->ItemArray = columnValuesArray;
     this->Rows->Add(rowFunctionRow);
@@ -2285,10 +3914,8 @@ inline ::System::Data::DataTable^  NewDataSet::FunctionDataTable::CreateInstance
 
 inline ::System::Void NewDataSet::FunctionDataTable::InitVars() {
     this->columnID = __super::Columns[L"ID"];
-    this->columnName = __super::Columns[L"Name"];
+    this->columnExternalLabel = __super::Columns[L"ExternalLabel"];
     this->columnCalledFrom = __super::Columns[L"CalledFrom"];
-    this->columnInputParameters = __super::Columns[L"InputParameters"];
-    this->columnOutputParameters = __super::Columns[L"OutputParameters"];
     this->columnFunction_Id = __super::Columns[L"Function_Id"];
     this->columnRoutine_Id = __super::Columns[L"Routine_Id"];
 }
@@ -2296,14 +3923,10 @@ inline ::System::Void NewDataSet::FunctionDataTable::InitVars() {
 inline ::System::Void NewDataSet::FunctionDataTable::InitClass() {
     this->columnID = (gcnew ::System::Data::DataColumn(L"ID", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
     __super::Columns->Add(this->columnID);
-    this->columnName = (gcnew ::System::Data::DataColumn(L"Name", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
-    __super::Columns->Add(this->columnName);
+    this->columnExternalLabel = (gcnew ::System::Data::DataColumn(L"ExternalLabel", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
+    __super::Columns->Add(this->columnExternalLabel);
     this->columnCalledFrom = (gcnew ::System::Data::DataColumn(L"CalledFrom", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
     __super::Columns->Add(this->columnCalledFrom);
-    this->columnInputParameters = (gcnew ::System::Data::DataColumn(L"InputParameters", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
-    __super::Columns->Add(this->columnInputParameters);
-    this->columnOutputParameters = (gcnew ::System::Data::DataColumn(L"OutputParameters", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
-    __super::Columns->Add(this->columnOutputParameters);
     this->columnFunction_Id = (gcnew ::System::Data::DataColumn(L"Function_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
     __super::Columns->Add(this->columnFunction_Id);
     this->columnRoutine_Id = (gcnew ::System::Data::DataColumn(L"Routine_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
@@ -2312,12 +3935,10 @@ inline ::System::Void NewDataSet::FunctionDataTable::InitClass() {
             true)));
     this->columnID->AllowDBNull = false;
     this->columnID->Namespace = L"";
-    this->columnName->AllowDBNull = false;
-    this->columnName->Namespace = L"";
+    this->columnExternalLabel->AllowDBNull = false;
+    this->columnExternalLabel->Namespace = L"";
     this->columnCalledFrom->AllowDBNull = false;
     this->columnCalledFrom->Namespace = L"";
-    this->columnInputParameters->Namespace = L"";
-    this->columnOutputParameters->Namespace = L"";
     this->columnFunction_Id->AutoIncrement = true;
     this->columnFunction_Id->AllowDBNull = false;
     this->columnFunction_Id->Unique = true;
@@ -2433,6 +4054,1280 @@ inline ::System::Xml::Schema::XmlSchemaComplexType^  NewDataSet::FunctionDataTab
 }
 
 
+inline NewDataSet::InputsDataTable::InputsDataTable() {
+    this->TableName = L"Inputs";
+    this->BeginInit();
+    this->InitClass();
+    this->EndInit();
+}
+
+inline NewDataSet::InputsDataTable::InputsDataTable(::System::Data::DataTable^  table) {
+    this->TableName = table->TableName;
+    if (table->CaseSensitive != table->DataSet->CaseSensitive) {
+        this->CaseSensitive = table->CaseSensitive;
+    }
+    if (table->Locale->ToString() != table->DataSet->Locale->ToString()) {
+        this->Locale = table->Locale;
+    }
+    if (table->Namespace != table->DataSet->Namespace) {
+        this->Namespace = table->Namespace;
+    }
+    this->Prefix = table->Prefix;
+    this->MinimumCapacity = table->MinimumCapacity;
+}
+
+inline NewDataSet::InputsDataTable::InputsDataTable(::System::Runtime::Serialization::SerializationInfo^  info, ::System::Runtime::Serialization::StreamingContext context) : 
+        ::System::Data::DataTable(info, context) {
+    this->InitVars();
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::InputsDataTable::Inputs_IdColumn::get() {
+    return this->columnInputs_Id;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::InputsDataTable::Function_IdColumn::get() {
+    return this->columnFunction_Id;
+}
+
+inline ::System::Int32 NewDataSet::InputsDataTable::Count::get() {
+    return this->Rows->Count;
+}
+
+inline NewDataSet::InputsRow^  NewDataSet::InputsDataTable::default::get(::System::Int32 index) {
+    return (cli::safe_cast<NewDataSet::InputsRow^  >(this->Rows[index]));
+}
+
+inline ::System::Void NewDataSet::InputsDataTable::AddInputsRow(NewDataSet::InputsRow^  row) {
+    this->Rows->Add(row);
+}
+
+inline NewDataSet::InputsRow^  NewDataSet::InputsDataTable::AddInputsRow(NewDataSet::FunctionRow^  parentFunctionRowByFunction_Inputs) {
+    NewDataSet::InputsRow^  rowInputsRow = (cli::safe_cast<NewDataSet::InputsRow^  >(this->NewRow()));
+    cli::array< ::System::Object^  >^  columnValuesArray = gcnew cli::array< ::System::Object^  >(2) {nullptr, nullptr};
+    if (parentFunctionRowByFunction_Inputs != nullptr) {
+        columnValuesArray[1] = parentFunctionRowByFunction_Inputs[3];
+    }
+    rowInputsRow->ItemArray = columnValuesArray;
+    this->Rows->Add(rowInputsRow);
+    return rowInputsRow;
+}
+
+inline ::System::Collections::IEnumerator^  NewDataSet::InputsDataTable::GetEnumerator() {
+    return this->Rows->GetEnumerator();
+}
+
+inline ::System::Data::DataTable^  NewDataSet::InputsDataTable::Clone() {
+    NewDataSet::InputsDataTable^  cln = (cli::safe_cast<NewDataSet::InputsDataTable^  >(__super::Clone()));
+    cln->InitVars();
+    return cln;
+}
+
+inline ::System::Data::DataTable^  NewDataSet::InputsDataTable::CreateInstance() {
+    return (gcnew NewDataSet::InputsDataTable());
+}
+
+inline ::System::Void NewDataSet::InputsDataTable::InitVars() {
+    this->columnInputs_Id = __super::Columns[L"Inputs_Id"];
+    this->columnFunction_Id = __super::Columns[L"Function_Id"];
+}
+
+inline ::System::Void NewDataSet::InputsDataTable::InitClass() {
+    this->columnInputs_Id = (gcnew ::System::Data::DataColumn(L"Inputs_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnInputs_Id);
+    this->columnFunction_Id = (gcnew ::System::Data::DataColumn(L"Function_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnFunction_Id);
+    this->Constraints->Add((gcnew ::System::Data::UniqueConstraint(L"Constraint1", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->columnInputs_Id}, 
+            true)));
+    this->columnInputs_Id->AutoIncrement = true;
+    this->columnInputs_Id->AllowDBNull = false;
+    this->columnInputs_Id->Unique = true;
+}
+
+inline NewDataSet::InputsRow^  NewDataSet::InputsDataTable::NewInputsRow() {
+    return (cli::safe_cast<NewDataSet::InputsRow^  >(this->NewRow()));
+}
+
+inline ::System::Data::DataRow^  NewDataSet::InputsDataTable::NewRowFromBuilder(::System::Data::DataRowBuilder^  builder) {
+    return (gcnew NewDataSet::InputsRow(builder));
+}
+
+inline ::System::Type^  NewDataSet::InputsDataTable::GetRowType() {
+    return NewDataSet::InputsRow::typeid;
+}
+
+inline ::System::Void NewDataSet::InputsDataTable::OnRowChanged(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowChanged(e);
+    {
+        this->InputsRowChanged(this, (gcnew NewDataSet::InputsRowChangeEvent((cli::safe_cast<NewDataSet::InputsRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::InputsDataTable::OnRowChanging(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowChanging(e);
+    {
+        this->InputsRowChanging(this, (gcnew NewDataSet::InputsRowChangeEvent((cli::safe_cast<NewDataSet::InputsRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::InputsDataTable::OnRowDeleted(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowDeleted(e);
+    {
+        this->InputsRowDeleted(this, (gcnew NewDataSet::InputsRowChangeEvent((cli::safe_cast<NewDataSet::InputsRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::InputsDataTable::OnRowDeleting(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowDeleting(e);
+    {
+        this->InputsRowDeleting(this, (gcnew NewDataSet::InputsRowChangeEvent((cli::safe_cast<NewDataSet::InputsRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::InputsDataTable::RemoveInputsRow(NewDataSet::InputsRow^  row) {
+    this->Rows->Remove(row);
+}
+
+inline ::System::Xml::Schema::XmlSchemaComplexType^  NewDataSet::InputsDataTable::GetTypedTableSchema(::System::Xml::Schema::XmlSchemaSet^  xs) {
+    ::System::Xml::Schema::XmlSchemaComplexType^  type = (gcnew ::System::Xml::Schema::XmlSchemaComplexType());
+    ::System::Xml::Schema::XmlSchemaSequence^  sequence = (gcnew ::System::Xml::Schema::XmlSchemaSequence());
+    NewDataSet^  ds = (gcnew NewDataSet());
+    ::System::Xml::Schema::XmlSchemaAny^  any1 = (gcnew ::System::Xml::Schema::XmlSchemaAny());
+    any1->Namespace = L"http://www.w3.org/2001/XMLSchema";
+    any1->MinOccurs = ::System::Decimal(0);
+    any1->MaxOccurs = ::System::Decimal::MaxValue;
+    any1->ProcessContents = ::System::Xml::Schema::XmlSchemaContentProcessing::Lax;
+    sequence->Items->Add(any1);
+    ::System::Xml::Schema::XmlSchemaAny^  any2 = (gcnew ::System::Xml::Schema::XmlSchemaAny());
+    any2->Namespace = L"urn:schemas-microsoft-com:xml-diffgram-v1";
+    any2->MinOccurs = ::System::Decimal(1);
+    any2->ProcessContents = ::System::Xml::Schema::XmlSchemaContentProcessing::Lax;
+    sequence->Items->Add(any2);
+    ::System::Xml::Schema::XmlSchemaAttribute^  attribute1 = (gcnew ::System::Xml::Schema::XmlSchemaAttribute());
+    attribute1->Name = L"namespace";
+    attribute1->FixedValue = ds->Namespace;
+    type->Attributes->Add(attribute1);
+    ::System::Xml::Schema::XmlSchemaAttribute^  attribute2 = (gcnew ::System::Xml::Schema::XmlSchemaAttribute());
+    attribute2->Name = L"tableTypeName";
+    attribute2->FixedValue = L"InputsDataTable";
+    type->Attributes->Add(attribute2);
+    type->Particle = sequence;
+    ::System::Xml::Schema::XmlSchema^  dsSchema = ds->GetSchemaSerializable();
+    if (xs->Contains(dsSchema->TargetNamespace)) {
+        ::System::IO::MemoryStream^  s1 = (gcnew ::System::IO::MemoryStream());
+        ::System::IO::MemoryStream^  s2 = (gcnew ::System::IO::MemoryStream());
+        try {
+            ::System::Xml::Schema::XmlSchema^  schema = nullptr;
+            dsSchema->Write(s1);
+            for (            ::System::Collections::IEnumerator^  schemas = xs->Schemas(dsSchema->TargetNamespace)->GetEnumerator(); schemas->MoveNext();             ) {
+                schema = (cli::safe_cast<::System::Xml::Schema::XmlSchema^  >(schemas->Current));
+                s2->SetLength(0);
+                schema->Write(s2);
+                if (s1->Length == s2->Length) {
+                    s1->Position = 0;
+                    s2->Position = 0;
+                    for (                    ; ((s1->Position != s1->Length) 
+                                && (s1->ReadByte() == s2->ReadByte()));                     ) {
+                        ;
+                    }
+                    if (s1->Position == s1->Length) {
+                        return type;
+                    }
+                }
+            }
+        }
+        finally {
+            if (s1 != nullptr) {
+                s1->Close();
+            }
+            if (s2 != nullptr) {
+                s2->Close();
+            }
+        }
+    }
+    xs->Add(dsSchema);
+    return type;
+}
+
+
+inline NewDataSet::OriginalDataTable::OriginalDataTable() {
+    this->TableName = L"Original";
+    this->BeginInit();
+    this->InitClass();
+    this->EndInit();
+}
+
+inline NewDataSet::OriginalDataTable::OriginalDataTable(::System::Data::DataTable^  table) {
+    this->TableName = table->TableName;
+    if (table->CaseSensitive != table->DataSet->CaseSensitive) {
+        this->CaseSensitive = table->CaseSensitive;
+    }
+    if (table->Locale->ToString() != table->DataSet->Locale->ToString()) {
+        this->Locale = table->Locale;
+    }
+    if (table->Namespace != table->DataSet->Namespace) {
+        this->Namespace = table->Namespace;
+    }
+    this->Prefix = table->Prefix;
+    this->MinimumCapacity = table->MinimumCapacity;
+}
+
+inline NewDataSet::OriginalDataTable::OriginalDataTable(::System::Runtime::Serialization::SerializationInfo^  info, ::System::Runtime::Serialization::StreamingContext context) : 
+        ::System::Data::DataTable(info, context) {
+    this->InitVars();
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::OriginalDataTable::Original_IdColumn::get() {
+    return this->columnOriginal_Id;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::OriginalDataTable::Inputs_IdColumn::get() {
+    return this->columnInputs_Id;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::OriginalDataTable::Outputs_IdColumn::get() {
+    return this->columnOutputs_Id;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::OriginalDataTable::Locals_IdColumn::get() {
+    return this->columnLocals_Id;
+}
+
+inline ::System::Int32 NewDataSet::OriginalDataTable::Count::get() {
+    return this->Rows->Count;
+}
+
+inline NewDataSet::OriginalRow^  NewDataSet::OriginalDataTable::default::get(::System::Int32 index) {
+    return (cli::safe_cast<NewDataSet::OriginalRow^  >(this->Rows[index]));
+}
+
+inline ::System::Void NewDataSet::OriginalDataTable::AddOriginalRow(NewDataSet::OriginalRow^  row) {
+    this->Rows->Add(row);
+}
+
+inline NewDataSet::OriginalRow^  NewDataSet::OriginalDataTable::AddOriginalRow(NewDataSet::InputsRow^  parentInputsRowByInputs_Original, 
+            NewDataSet::OutputsRow^  parentOutputsRowByOutputs_Original, NewDataSet::LocalsRow^  parentLocalsRowByLocals_Original) {
+    NewDataSet::OriginalRow^  rowOriginalRow = (cli::safe_cast<NewDataSet::OriginalRow^  >(this->NewRow()));
+    cli::array< ::System::Object^  >^  columnValuesArray = gcnew cli::array< ::System::Object^  >(4) {nullptr, nullptr, nullptr, 
+        nullptr};
+    if (parentInputsRowByInputs_Original != nullptr) {
+        columnValuesArray[1] = parentInputsRowByInputs_Original[0];
+    }
+    if (parentOutputsRowByOutputs_Original != nullptr) {
+        columnValuesArray[2] = parentOutputsRowByOutputs_Original[0];
+    }
+    if (parentLocalsRowByLocals_Original != nullptr) {
+        columnValuesArray[3] = parentLocalsRowByLocals_Original[0];
+    }
+    rowOriginalRow->ItemArray = columnValuesArray;
+    this->Rows->Add(rowOriginalRow);
+    return rowOriginalRow;
+}
+
+inline ::System::Collections::IEnumerator^  NewDataSet::OriginalDataTable::GetEnumerator() {
+    return this->Rows->GetEnumerator();
+}
+
+inline ::System::Data::DataTable^  NewDataSet::OriginalDataTable::Clone() {
+    NewDataSet::OriginalDataTable^  cln = (cli::safe_cast<NewDataSet::OriginalDataTable^  >(__super::Clone()));
+    cln->InitVars();
+    return cln;
+}
+
+inline ::System::Data::DataTable^  NewDataSet::OriginalDataTable::CreateInstance() {
+    return (gcnew NewDataSet::OriginalDataTable());
+}
+
+inline ::System::Void NewDataSet::OriginalDataTable::InitVars() {
+    this->columnOriginal_Id = __super::Columns[L"Original_Id"];
+    this->columnInputs_Id = __super::Columns[L"Inputs_Id"];
+    this->columnOutputs_Id = __super::Columns[L"Outputs_Id"];
+    this->columnLocals_Id = __super::Columns[L"Locals_Id"];
+}
+
+inline ::System::Void NewDataSet::OriginalDataTable::InitClass() {
+    this->columnOriginal_Id = (gcnew ::System::Data::DataColumn(L"Original_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnOriginal_Id);
+    this->columnInputs_Id = (gcnew ::System::Data::DataColumn(L"Inputs_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnInputs_Id);
+    this->columnOutputs_Id = (gcnew ::System::Data::DataColumn(L"Outputs_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnOutputs_Id);
+    this->columnLocals_Id = (gcnew ::System::Data::DataColumn(L"Locals_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnLocals_Id);
+    this->Constraints->Add((gcnew ::System::Data::UniqueConstraint(L"Constraint1", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->columnOriginal_Id}, 
+            true)));
+    this->columnOriginal_Id->AutoIncrement = true;
+    this->columnOriginal_Id->AllowDBNull = false;
+    this->columnOriginal_Id->Unique = true;
+}
+
+inline NewDataSet::OriginalRow^  NewDataSet::OriginalDataTable::NewOriginalRow() {
+    return (cli::safe_cast<NewDataSet::OriginalRow^  >(this->NewRow()));
+}
+
+inline ::System::Data::DataRow^  NewDataSet::OriginalDataTable::NewRowFromBuilder(::System::Data::DataRowBuilder^  builder) {
+    return (gcnew NewDataSet::OriginalRow(builder));
+}
+
+inline ::System::Type^  NewDataSet::OriginalDataTable::GetRowType() {
+    return NewDataSet::OriginalRow::typeid;
+}
+
+inline ::System::Void NewDataSet::OriginalDataTable::OnRowChanged(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowChanged(e);
+    {
+        this->OriginalRowChanged(this, (gcnew NewDataSet::OriginalRowChangeEvent((cli::safe_cast<NewDataSet::OriginalRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::OriginalDataTable::OnRowChanging(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowChanging(e);
+    {
+        this->OriginalRowChanging(this, (gcnew NewDataSet::OriginalRowChangeEvent((cli::safe_cast<NewDataSet::OriginalRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::OriginalDataTable::OnRowDeleted(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowDeleted(e);
+    {
+        this->OriginalRowDeleted(this, (gcnew NewDataSet::OriginalRowChangeEvent((cli::safe_cast<NewDataSet::OriginalRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::OriginalDataTable::OnRowDeleting(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowDeleting(e);
+    {
+        this->OriginalRowDeleting(this, (gcnew NewDataSet::OriginalRowChangeEvent((cli::safe_cast<NewDataSet::OriginalRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::OriginalDataTable::RemoveOriginalRow(NewDataSet::OriginalRow^  row) {
+    this->Rows->Remove(row);
+}
+
+inline ::System::Xml::Schema::XmlSchemaComplexType^  NewDataSet::OriginalDataTable::GetTypedTableSchema(::System::Xml::Schema::XmlSchemaSet^  xs) {
+    ::System::Xml::Schema::XmlSchemaComplexType^  type = (gcnew ::System::Xml::Schema::XmlSchemaComplexType());
+    ::System::Xml::Schema::XmlSchemaSequence^  sequence = (gcnew ::System::Xml::Schema::XmlSchemaSequence());
+    NewDataSet^  ds = (gcnew NewDataSet());
+    ::System::Xml::Schema::XmlSchemaAny^  any1 = (gcnew ::System::Xml::Schema::XmlSchemaAny());
+    any1->Namespace = L"http://www.w3.org/2001/XMLSchema";
+    any1->MinOccurs = ::System::Decimal(0);
+    any1->MaxOccurs = ::System::Decimal::MaxValue;
+    any1->ProcessContents = ::System::Xml::Schema::XmlSchemaContentProcessing::Lax;
+    sequence->Items->Add(any1);
+    ::System::Xml::Schema::XmlSchemaAny^  any2 = (gcnew ::System::Xml::Schema::XmlSchemaAny());
+    any2->Namespace = L"urn:schemas-microsoft-com:xml-diffgram-v1";
+    any2->MinOccurs = ::System::Decimal(1);
+    any2->ProcessContents = ::System::Xml::Schema::XmlSchemaContentProcessing::Lax;
+    sequence->Items->Add(any2);
+    ::System::Xml::Schema::XmlSchemaAttribute^  attribute1 = (gcnew ::System::Xml::Schema::XmlSchemaAttribute());
+    attribute1->Name = L"namespace";
+    attribute1->FixedValue = ds->Namespace;
+    type->Attributes->Add(attribute1);
+    ::System::Xml::Schema::XmlSchemaAttribute^  attribute2 = (gcnew ::System::Xml::Schema::XmlSchemaAttribute());
+    attribute2->Name = L"tableTypeName";
+    attribute2->FixedValue = L"OriginalDataTable";
+    type->Attributes->Add(attribute2);
+    type->Particle = sequence;
+    ::System::Xml::Schema::XmlSchema^  dsSchema = ds->GetSchemaSerializable();
+    if (xs->Contains(dsSchema->TargetNamespace)) {
+        ::System::IO::MemoryStream^  s1 = (gcnew ::System::IO::MemoryStream());
+        ::System::IO::MemoryStream^  s2 = (gcnew ::System::IO::MemoryStream());
+        try {
+            ::System::Xml::Schema::XmlSchema^  schema = nullptr;
+            dsSchema->Write(s1);
+            for (            ::System::Collections::IEnumerator^  schemas = xs->Schemas(dsSchema->TargetNamespace)->GetEnumerator(); schemas->MoveNext();             ) {
+                schema = (cli::safe_cast<::System::Xml::Schema::XmlSchema^  >(schemas->Current));
+                s2->SetLength(0);
+                schema->Write(s2);
+                if (s1->Length == s2->Length) {
+                    s1->Position = 0;
+                    s2->Position = 0;
+                    for (                    ; ((s1->Position != s1->Length) 
+                                && (s1->ReadByte() == s2->ReadByte()));                     ) {
+                        ;
+                    }
+                    if (s1->Position == s1->Length) {
+                        return type;
+                    }
+                }
+            }
+        }
+        finally {
+            if (s1 != nullptr) {
+                s1->Close();
+            }
+            if (s2 != nullptr) {
+                s2->Close();
+            }
+        }
+    }
+    xs->Add(dsSchema);
+    return type;
+}
+
+
+inline NewDataSet::VariableDataTable::VariableDataTable() {
+    this->TableName = L"Variable";
+    this->BeginInit();
+    this->InitClass();
+    this->EndInit();
+}
+
+inline NewDataSet::VariableDataTable::VariableDataTable(::System::Data::DataTable^  table) {
+    this->TableName = table->TableName;
+    if (table->CaseSensitive != table->DataSet->CaseSensitive) {
+        this->CaseSensitive = table->CaseSensitive;
+    }
+    if (table->Locale->ToString() != table->DataSet->Locale->ToString()) {
+        this->Locale = table->Locale;
+    }
+    if (table->Namespace != table->DataSet->Namespace) {
+        this->Namespace = table->Namespace;
+    }
+    this->Prefix = table->Prefix;
+    this->MinimumCapacity = table->MinimumCapacity;
+}
+
+inline NewDataSet::VariableDataTable::VariableDataTable(::System::Runtime::Serialization::SerializationInfo^  info, ::System::Runtime::Serialization::StreamingContext context) : 
+        ::System::Data::DataTable(info, context) {
+    this->InitVars();
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::VariableDataTable::IDColumn::get() {
+    return this->columnID;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::VariableDataTable::SizeColumn::get() {
+    return this->columnSize;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::VariableDataTable::PointerColumn::get() {
+    return this->columnPointer;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::VariableDataTable::ConstValueInParamColumn::get() {
+    return this->columnConstValueInParam;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::VariableDataTable::Original_IdColumn::get() {
+    return this->columnOriginal_Id;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::VariableDataTable::Fake_IdColumn::get() {
+    return this->columnFake_Id;
+}
+
+inline ::System::Int32 NewDataSet::VariableDataTable::Count::get() {
+    return this->Rows->Count;
+}
+
+inline NewDataSet::VariableRow^  NewDataSet::VariableDataTable::default::get(::System::Int32 index) {
+    return (cli::safe_cast<NewDataSet::VariableRow^  >(this->Rows[index]));
+}
+
+inline ::System::Void NewDataSet::VariableDataTable::AddVariableRow(NewDataSet::VariableRow^  row) {
+    this->Rows->Add(row);
+}
+
+inline NewDataSet::VariableRow^  NewDataSet::VariableDataTable::AddVariableRow(
+            System::String^  ID, 
+            System::String^  Size, 
+            System::Boolean Pointer, 
+            System::String^  ConstValueInParam, 
+            NewDataSet::OriginalRow^  parentOriginalRowByOriginal_Variable, 
+            NewDataSet::FakeRow^  parentFakeRowByFake_Variable) {
+    NewDataSet::VariableRow^  rowVariableRow = (cli::safe_cast<NewDataSet::VariableRow^  >(this->NewRow()));
+    cli::array< ::System::Object^  >^  columnValuesArray = gcnew cli::array< ::System::Object^  >(6) {ID, Size, Pointer, ConstValueInParam, 
+        nullptr, nullptr};
+    if (parentOriginalRowByOriginal_Variable != nullptr) {
+        columnValuesArray[4] = parentOriginalRowByOriginal_Variable[0];
+    }
+    if (parentFakeRowByFake_Variable != nullptr) {
+        columnValuesArray[5] = parentFakeRowByFake_Variable[0];
+    }
+    rowVariableRow->ItemArray = columnValuesArray;
+    this->Rows->Add(rowVariableRow);
+    return rowVariableRow;
+}
+
+inline ::System::Collections::IEnumerator^  NewDataSet::VariableDataTable::GetEnumerator() {
+    return this->Rows->GetEnumerator();
+}
+
+inline ::System::Data::DataTable^  NewDataSet::VariableDataTable::Clone() {
+    NewDataSet::VariableDataTable^  cln = (cli::safe_cast<NewDataSet::VariableDataTable^  >(__super::Clone()));
+    cln->InitVars();
+    return cln;
+}
+
+inline ::System::Data::DataTable^  NewDataSet::VariableDataTable::CreateInstance() {
+    return (gcnew NewDataSet::VariableDataTable());
+}
+
+inline ::System::Void NewDataSet::VariableDataTable::InitVars() {
+    this->columnID = __super::Columns[L"ID"];
+    this->columnSize = __super::Columns[L"Size"];
+    this->columnPointer = __super::Columns[L"Pointer"];
+    this->columnConstValueInParam = __super::Columns[L"ConstValueInParam"];
+    this->columnOriginal_Id = __super::Columns[L"Original_Id"];
+    this->columnFake_Id = __super::Columns[L"Fake_Id"];
+}
+
+inline ::System::Void NewDataSet::VariableDataTable::InitClass() {
+    this->columnID = (gcnew ::System::Data::DataColumn(L"ID", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
+    __super::Columns->Add(this->columnID);
+    this->columnSize = (gcnew ::System::Data::DataColumn(L"Size", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
+    __super::Columns->Add(this->columnSize);
+    this->columnPointer = (gcnew ::System::Data::DataColumn(L"Pointer", ::System::Boolean::typeid, nullptr, ::System::Data::MappingType::Attribute));
+    __super::Columns->Add(this->columnPointer);
+    this->columnConstValueInParam = (gcnew ::System::Data::DataColumn(L"ConstValueInParam", ::System::String::typeid, nullptr, ::System::Data::MappingType::Attribute));
+    __super::Columns->Add(this->columnConstValueInParam);
+    this->columnOriginal_Id = (gcnew ::System::Data::DataColumn(L"Original_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnOriginal_Id);
+    this->columnFake_Id = (gcnew ::System::Data::DataColumn(L"Fake_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnFake_Id);
+    this->columnID->AllowDBNull = false;
+    this->columnID->Namespace = L"";
+    this->columnSize->AllowDBNull = false;
+    this->columnSize->Namespace = L"";
+    this->columnPointer->AllowDBNull = false;
+    this->columnPointer->Namespace = L"";
+    this->columnConstValueInParam->Namespace = L"";
+}
+
+inline NewDataSet::VariableRow^  NewDataSet::VariableDataTable::NewVariableRow() {
+    return (cli::safe_cast<NewDataSet::VariableRow^  >(this->NewRow()));
+}
+
+inline ::System::Data::DataRow^  NewDataSet::VariableDataTable::NewRowFromBuilder(::System::Data::DataRowBuilder^  builder) {
+    return (gcnew NewDataSet::VariableRow(builder));
+}
+
+inline ::System::Type^  NewDataSet::VariableDataTable::GetRowType() {
+    return NewDataSet::VariableRow::typeid;
+}
+
+inline ::System::Void NewDataSet::VariableDataTable::OnRowChanged(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowChanged(e);
+    {
+        this->VariableRowChanged(this, (gcnew NewDataSet::VariableRowChangeEvent((cli::safe_cast<NewDataSet::VariableRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::VariableDataTable::OnRowChanging(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowChanging(e);
+    {
+        this->VariableRowChanging(this, (gcnew NewDataSet::VariableRowChangeEvent((cli::safe_cast<NewDataSet::VariableRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::VariableDataTable::OnRowDeleted(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowDeleted(e);
+    {
+        this->VariableRowDeleted(this, (gcnew NewDataSet::VariableRowChangeEvent((cli::safe_cast<NewDataSet::VariableRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::VariableDataTable::OnRowDeleting(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowDeleting(e);
+    {
+        this->VariableRowDeleting(this, (gcnew NewDataSet::VariableRowChangeEvent((cli::safe_cast<NewDataSet::VariableRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::VariableDataTable::RemoveVariableRow(NewDataSet::VariableRow^  row) {
+    this->Rows->Remove(row);
+}
+
+inline ::System::Xml::Schema::XmlSchemaComplexType^  NewDataSet::VariableDataTable::GetTypedTableSchema(::System::Xml::Schema::XmlSchemaSet^  xs) {
+    ::System::Xml::Schema::XmlSchemaComplexType^  type = (gcnew ::System::Xml::Schema::XmlSchemaComplexType());
+    ::System::Xml::Schema::XmlSchemaSequence^  sequence = (gcnew ::System::Xml::Schema::XmlSchemaSequence());
+    NewDataSet^  ds = (gcnew NewDataSet());
+    ::System::Xml::Schema::XmlSchemaAny^  any1 = (gcnew ::System::Xml::Schema::XmlSchemaAny());
+    any1->Namespace = L"http://www.w3.org/2001/XMLSchema";
+    any1->MinOccurs = ::System::Decimal(0);
+    any1->MaxOccurs = ::System::Decimal::MaxValue;
+    any1->ProcessContents = ::System::Xml::Schema::XmlSchemaContentProcessing::Lax;
+    sequence->Items->Add(any1);
+    ::System::Xml::Schema::XmlSchemaAny^  any2 = (gcnew ::System::Xml::Schema::XmlSchemaAny());
+    any2->Namespace = L"urn:schemas-microsoft-com:xml-diffgram-v1";
+    any2->MinOccurs = ::System::Decimal(1);
+    any2->ProcessContents = ::System::Xml::Schema::XmlSchemaContentProcessing::Lax;
+    sequence->Items->Add(any2);
+    ::System::Xml::Schema::XmlSchemaAttribute^  attribute1 = (gcnew ::System::Xml::Schema::XmlSchemaAttribute());
+    attribute1->Name = L"namespace";
+    attribute1->FixedValue = ds->Namespace;
+    type->Attributes->Add(attribute1);
+    ::System::Xml::Schema::XmlSchemaAttribute^  attribute2 = (gcnew ::System::Xml::Schema::XmlSchemaAttribute());
+    attribute2->Name = L"tableTypeName";
+    attribute2->FixedValue = L"VariableDataTable";
+    type->Attributes->Add(attribute2);
+    type->Particle = sequence;
+    ::System::Xml::Schema::XmlSchema^  dsSchema = ds->GetSchemaSerializable();
+    if (xs->Contains(dsSchema->TargetNamespace)) {
+        ::System::IO::MemoryStream^  s1 = (gcnew ::System::IO::MemoryStream());
+        ::System::IO::MemoryStream^  s2 = (gcnew ::System::IO::MemoryStream());
+        try {
+            ::System::Xml::Schema::XmlSchema^  schema = nullptr;
+            dsSchema->Write(s1);
+            for (            ::System::Collections::IEnumerator^  schemas = xs->Schemas(dsSchema->TargetNamespace)->GetEnumerator(); schemas->MoveNext();             ) {
+                schema = (cli::safe_cast<::System::Xml::Schema::XmlSchema^  >(schemas->Current));
+                s2->SetLength(0);
+                schema->Write(s2);
+                if (s1->Length == s2->Length) {
+                    s1->Position = 0;
+                    s2->Position = 0;
+                    for (                    ; ((s1->Position != s1->Length) 
+                                && (s1->ReadByte() == s2->ReadByte()));                     ) {
+                        ;
+                    }
+                    if (s1->Position == s1->Length) {
+                        return type;
+                    }
+                }
+            }
+        }
+        finally {
+            if (s1 != nullptr) {
+                s1->Close();
+            }
+            if (s2 != nullptr) {
+                s2->Close();
+            }
+        }
+    }
+    xs->Add(dsSchema);
+    return type;
+}
+
+
+inline NewDataSet::FakeDataTable::FakeDataTable() {
+    this->TableName = L"Fake";
+    this->BeginInit();
+    this->InitClass();
+    this->EndInit();
+}
+
+inline NewDataSet::FakeDataTable::FakeDataTable(::System::Data::DataTable^  table) {
+    this->TableName = table->TableName;
+    if (table->CaseSensitive != table->DataSet->CaseSensitive) {
+        this->CaseSensitive = table->CaseSensitive;
+    }
+    if (table->Locale->ToString() != table->DataSet->Locale->ToString()) {
+        this->Locale = table->Locale;
+    }
+    if (table->Namespace != table->DataSet->Namespace) {
+        this->Namespace = table->Namespace;
+    }
+    this->Prefix = table->Prefix;
+    this->MinimumCapacity = table->MinimumCapacity;
+}
+
+inline NewDataSet::FakeDataTable::FakeDataTable(::System::Runtime::Serialization::SerializationInfo^  info, ::System::Runtime::Serialization::StreamingContext context) : 
+        ::System::Data::DataTable(info, context) {
+    this->InitVars();
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::FakeDataTable::Fake_IdColumn::get() {
+    return this->columnFake_Id;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::FakeDataTable::Inputs_IdColumn::get() {
+    return this->columnInputs_Id;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::FakeDataTable::Outputs_IdColumn::get() {
+    return this->columnOutputs_Id;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::FakeDataTable::Locals_IdColumn::get() {
+    return this->columnLocals_Id;
+}
+
+inline ::System::Int32 NewDataSet::FakeDataTable::Count::get() {
+    return this->Rows->Count;
+}
+
+inline NewDataSet::FakeRow^  NewDataSet::FakeDataTable::default::get(::System::Int32 index) {
+    return (cli::safe_cast<NewDataSet::FakeRow^  >(this->Rows[index]));
+}
+
+inline ::System::Void NewDataSet::FakeDataTable::AddFakeRow(NewDataSet::FakeRow^  row) {
+    this->Rows->Add(row);
+}
+
+inline NewDataSet::FakeRow^  NewDataSet::FakeDataTable::AddFakeRow(NewDataSet::InputsRow^  parentInputsRowByInputs_Fake, 
+            NewDataSet::OutputsRow^  parentOutputsRowByOutputs_Fake, NewDataSet::LocalsRow^  parentLocalsRowByLocals_Fake) {
+    NewDataSet::FakeRow^  rowFakeRow = (cli::safe_cast<NewDataSet::FakeRow^  >(this->NewRow()));
+    cli::array< ::System::Object^  >^  columnValuesArray = gcnew cli::array< ::System::Object^  >(4) {nullptr, nullptr, nullptr, 
+        nullptr};
+    if (parentInputsRowByInputs_Fake != nullptr) {
+        columnValuesArray[1] = parentInputsRowByInputs_Fake[0];
+    }
+    if (parentOutputsRowByOutputs_Fake != nullptr) {
+        columnValuesArray[2] = parentOutputsRowByOutputs_Fake[0];
+    }
+    if (parentLocalsRowByLocals_Fake != nullptr) {
+        columnValuesArray[3] = parentLocalsRowByLocals_Fake[0];
+    }
+    rowFakeRow->ItemArray = columnValuesArray;
+    this->Rows->Add(rowFakeRow);
+    return rowFakeRow;
+}
+
+inline ::System::Collections::IEnumerator^  NewDataSet::FakeDataTable::GetEnumerator() {
+    return this->Rows->GetEnumerator();
+}
+
+inline ::System::Data::DataTable^  NewDataSet::FakeDataTable::Clone() {
+    NewDataSet::FakeDataTable^  cln = (cli::safe_cast<NewDataSet::FakeDataTable^  >(__super::Clone()));
+    cln->InitVars();
+    return cln;
+}
+
+inline ::System::Data::DataTable^  NewDataSet::FakeDataTable::CreateInstance() {
+    return (gcnew NewDataSet::FakeDataTable());
+}
+
+inline ::System::Void NewDataSet::FakeDataTable::InitVars() {
+    this->columnFake_Id = __super::Columns[L"Fake_Id"];
+    this->columnInputs_Id = __super::Columns[L"Inputs_Id"];
+    this->columnOutputs_Id = __super::Columns[L"Outputs_Id"];
+    this->columnLocals_Id = __super::Columns[L"Locals_Id"];
+}
+
+inline ::System::Void NewDataSet::FakeDataTable::InitClass() {
+    this->columnFake_Id = (gcnew ::System::Data::DataColumn(L"Fake_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnFake_Id);
+    this->columnInputs_Id = (gcnew ::System::Data::DataColumn(L"Inputs_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnInputs_Id);
+    this->columnOutputs_Id = (gcnew ::System::Data::DataColumn(L"Outputs_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnOutputs_Id);
+    this->columnLocals_Id = (gcnew ::System::Data::DataColumn(L"Locals_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnLocals_Id);
+    this->Constraints->Add((gcnew ::System::Data::UniqueConstraint(L"Constraint1", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->columnFake_Id}, 
+            true)));
+    this->columnFake_Id->AutoIncrement = true;
+    this->columnFake_Id->AllowDBNull = false;
+    this->columnFake_Id->Unique = true;
+}
+
+inline NewDataSet::FakeRow^  NewDataSet::FakeDataTable::NewFakeRow() {
+    return (cli::safe_cast<NewDataSet::FakeRow^  >(this->NewRow()));
+}
+
+inline ::System::Data::DataRow^  NewDataSet::FakeDataTable::NewRowFromBuilder(::System::Data::DataRowBuilder^  builder) {
+    return (gcnew NewDataSet::FakeRow(builder));
+}
+
+inline ::System::Type^  NewDataSet::FakeDataTable::GetRowType() {
+    return NewDataSet::FakeRow::typeid;
+}
+
+inline ::System::Void NewDataSet::FakeDataTable::OnRowChanged(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowChanged(e);
+    {
+        this->FakeRowChanged(this, (gcnew NewDataSet::FakeRowChangeEvent((cli::safe_cast<NewDataSet::FakeRow^  >(e->Row)), e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::FakeDataTable::OnRowChanging(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowChanging(e);
+    {
+        this->FakeRowChanging(this, (gcnew NewDataSet::FakeRowChangeEvent((cli::safe_cast<NewDataSet::FakeRow^  >(e->Row)), e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::FakeDataTable::OnRowDeleted(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowDeleted(e);
+    {
+        this->FakeRowDeleted(this, (gcnew NewDataSet::FakeRowChangeEvent((cli::safe_cast<NewDataSet::FakeRow^  >(e->Row)), e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::FakeDataTable::OnRowDeleting(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowDeleting(e);
+    {
+        this->FakeRowDeleting(this, (gcnew NewDataSet::FakeRowChangeEvent((cli::safe_cast<NewDataSet::FakeRow^  >(e->Row)), e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::FakeDataTable::RemoveFakeRow(NewDataSet::FakeRow^  row) {
+    this->Rows->Remove(row);
+}
+
+inline ::System::Xml::Schema::XmlSchemaComplexType^  NewDataSet::FakeDataTable::GetTypedTableSchema(::System::Xml::Schema::XmlSchemaSet^  xs) {
+    ::System::Xml::Schema::XmlSchemaComplexType^  type = (gcnew ::System::Xml::Schema::XmlSchemaComplexType());
+    ::System::Xml::Schema::XmlSchemaSequence^  sequence = (gcnew ::System::Xml::Schema::XmlSchemaSequence());
+    NewDataSet^  ds = (gcnew NewDataSet());
+    ::System::Xml::Schema::XmlSchemaAny^  any1 = (gcnew ::System::Xml::Schema::XmlSchemaAny());
+    any1->Namespace = L"http://www.w3.org/2001/XMLSchema";
+    any1->MinOccurs = ::System::Decimal(0);
+    any1->MaxOccurs = ::System::Decimal::MaxValue;
+    any1->ProcessContents = ::System::Xml::Schema::XmlSchemaContentProcessing::Lax;
+    sequence->Items->Add(any1);
+    ::System::Xml::Schema::XmlSchemaAny^  any2 = (gcnew ::System::Xml::Schema::XmlSchemaAny());
+    any2->Namespace = L"urn:schemas-microsoft-com:xml-diffgram-v1";
+    any2->MinOccurs = ::System::Decimal(1);
+    any2->ProcessContents = ::System::Xml::Schema::XmlSchemaContentProcessing::Lax;
+    sequence->Items->Add(any2);
+    ::System::Xml::Schema::XmlSchemaAttribute^  attribute1 = (gcnew ::System::Xml::Schema::XmlSchemaAttribute());
+    attribute1->Name = L"namespace";
+    attribute1->FixedValue = ds->Namespace;
+    type->Attributes->Add(attribute1);
+    ::System::Xml::Schema::XmlSchemaAttribute^  attribute2 = (gcnew ::System::Xml::Schema::XmlSchemaAttribute());
+    attribute2->Name = L"tableTypeName";
+    attribute2->FixedValue = L"FakeDataTable";
+    type->Attributes->Add(attribute2);
+    type->Particle = sequence;
+    ::System::Xml::Schema::XmlSchema^  dsSchema = ds->GetSchemaSerializable();
+    if (xs->Contains(dsSchema->TargetNamespace)) {
+        ::System::IO::MemoryStream^  s1 = (gcnew ::System::IO::MemoryStream());
+        ::System::IO::MemoryStream^  s2 = (gcnew ::System::IO::MemoryStream());
+        try {
+            ::System::Xml::Schema::XmlSchema^  schema = nullptr;
+            dsSchema->Write(s1);
+            for (            ::System::Collections::IEnumerator^  schemas = xs->Schemas(dsSchema->TargetNamespace)->GetEnumerator(); schemas->MoveNext();             ) {
+                schema = (cli::safe_cast<::System::Xml::Schema::XmlSchema^  >(schemas->Current));
+                s2->SetLength(0);
+                schema->Write(s2);
+                if (s1->Length == s2->Length) {
+                    s1->Position = 0;
+                    s2->Position = 0;
+                    for (                    ; ((s1->Position != s1->Length) 
+                                && (s1->ReadByte() == s2->ReadByte()));                     ) {
+                        ;
+                    }
+                    if (s1->Position == s1->Length) {
+                        return type;
+                    }
+                }
+            }
+        }
+        finally {
+            if (s1 != nullptr) {
+                s1->Close();
+            }
+            if (s2 != nullptr) {
+                s2->Close();
+            }
+        }
+    }
+    xs->Add(dsSchema);
+    return type;
+}
+
+
+inline NewDataSet::OutputsDataTable::OutputsDataTable() {
+    this->TableName = L"Outputs";
+    this->BeginInit();
+    this->InitClass();
+    this->EndInit();
+}
+
+inline NewDataSet::OutputsDataTable::OutputsDataTable(::System::Data::DataTable^  table) {
+    this->TableName = table->TableName;
+    if (table->CaseSensitive != table->DataSet->CaseSensitive) {
+        this->CaseSensitive = table->CaseSensitive;
+    }
+    if (table->Locale->ToString() != table->DataSet->Locale->ToString()) {
+        this->Locale = table->Locale;
+    }
+    if (table->Namespace != table->DataSet->Namespace) {
+        this->Namespace = table->Namespace;
+    }
+    this->Prefix = table->Prefix;
+    this->MinimumCapacity = table->MinimumCapacity;
+}
+
+inline NewDataSet::OutputsDataTable::OutputsDataTable(::System::Runtime::Serialization::SerializationInfo^  info, ::System::Runtime::Serialization::StreamingContext context) : 
+        ::System::Data::DataTable(info, context) {
+    this->InitVars();
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::OutputsDataTable::Outputs_IdColumn::get() {
+    return this->columnOutputs_Id;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::OutputsDataTable::Function_IdColumn::get() {
+    return this->columnFunction_Id;
+}
+
+inline ::System::Int32 NewDataSet::OutputsDataTable::Count::get() {
+    return this->Rows->Count;
+}
+
+inline NewDataSet::OutputsRow^  NewDataSet::OutputsDataTable::default::get(::System::Int32 index) {
+    return (cli::safe_cast<NewDataSet::OutputsRow^  >(this->Rows[index]));
+}
+
+inline ::System::Void NewDataSet::OutputsDataTable::AddOutputsRow(NewDataSet::OutputsRow^  row) {
+    this->Rows->Add(row);
+}
+
+inline NewDataSet::OutputsRow^  NewDataSet::OutputsDataTable::AddOutputsRow(NewDataSet::FunctionRow^  parentFunctionRowByFunction_Outputs) {
+    NewDataSet::OutputsRow^  rowOutputsRow = (cli::safe_cast<NewDataSet::OutputsRow^  >(this->NewRow()));
+    cli::array< ::System::Object^  >^  columnValuesArray = gcnew cli::array< ::System::Object^  >(2) {nullptr, nullptr};
+    if (parentFunctionRowByFunction_Outputs != nullptr) {
+        columnValuesArray[1] = parentFunctionRowByFunction_Outputs[3];
+    }
+    rowOutputsRow->ItemArray = columnValuesArray;
+    this->Rows->Add(rowOutputsRow);
+    return rowOutputsRow;
+}
+
+inline ::System::Collections::IEnumerator^  NewDataSet::OutputsDataTable::GetEnumerator() {
+    return this->Rows->GetEnumerator();
+}
+
+inline ::System::Data::DataTable^  NewDataSet::OutputsDataTable::Clone() {
+    NewDataSet::OutputsDataTable^  cln = (cli::safe_cast<NewDataSet::OutputsDataTable^  >(__super::Clone()));
+    cln->InitVars();
+    return cln;
+}
+
+inline ::System::Data::DataTable^  NewDataSet::OutputsDataTable::CreateInstance() {
+    return (gcnew NewDataSet::OutputsDataTable());
+}
+
+inline ::System::Void NewDataSet::OutputsDataTable::InitVars() {
+    this->columnOutputs_Id = __super::Columns[L"Outputs_Id"];
+    this->columnFunction_Id = __super::Columns[L"Function_Id"];
+}
+
+inline ::System::Void NewDataSet::OutputsDataTable::InitClass() {
+    this->columnOutputs_Id = (gcnew ::System::Data::DataColumn(L"Outputs_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnOutputs_Id);
+    this->columnFunction_Id = (gcnew ::System::Data::DataColumn(L"Function_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnFunction_Id);
+    this->Constraints->Add((gcnew ::System::Data::UniqueConstraint(L"Constraint1", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->columnOutputs_Id}, 
+            true)));
+    this->columnOutputs_Id->AutoIncrement = true;
+    this->columnOutputs_Id->AllowDBNull = false;
+    this->columnOutputs_Id->Unique = true;
+}
+
+inline NewDataSet::OutputsRow^  NewDataSet::OutputsDataTable::NewOutputsRow() {
+    return (cli::safe_cast<NewDataSet::OutputsRow^  >(this->NewRow()));
+}
+
+inline ::System::Data::DataRow^  NewDataSet::OutputsDataTable::NewRowFromBuilder(::System::Data::DataRowBuilder^  builder) {
+    return (gcnew NewDataSet::OutputsRow(builder));
+}
+
+inline ::System::Type^  NewDataSet::OutputsDataTable::GetRowType() {
+    return NewDataSet::OutputsRow::typeid;
+}
+
+inline ::System::Void NewDataSet::OutputsDataTable::OnRowChanged(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowChanged(e);
+    {
+        this->OutputsRowChanged(this, (gcnew NewDataSet::OutputsRowChangeEvent((cli::safe_cast<NewDataSet::OutputsRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::OutputsDataTable::OnRowChanging(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowChanging(e);
+    {
+        this->OutputsRowChanging(this, (gcnew NewDataSet::OutputsRowChangeEvent((cli::safe_cast<NewDataSet::OutputsRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::OutputsDataTable::OnRowDeleted(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowDeleted(e);
+    {
+        this->OutputsRowDeleted(this, (gcnew NewDataSet::OutputsRowChangeEvent((cli::safe_cast<NewDataSet::OutputsRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::OutputsDataTable::OnRowDeleting(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowDeleting(e);
+    {
+        this->OutputsRowDeleting(this, (gcnew NewDataSet::OutputsRowChangeEvent((cli::safe_cast<NewDataSet::OutputsRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::OutputsDataTable::RemoveOutputsRow(NewDataSet::OutputsRow^  row) {
+    this->Rows->Remove(row);
+}
+
+inline ::System::Xml::Schema::XmlSchemaComplexType^  NewDataSet::OutputsDataTable::GetTypedTableSchema(::System::Xml::Schema::XmlSchemaSet^  xs) {
+    ::System::Xml::Schema::XmlSchemaComplexType^  type = (gcnew ::System::Xml::Schema::XmlSchemaComplexType());
+    ::System::Xml::Schema::XmlSchemaSequence^  sequence = (gcnew ::System::Xml::Schema::XmlSchemaSequence());
+    NewDataSet^  ds = (gcnew NewDataSet());
+    ::System::Xml::Schema::XmlSchemaAny^  any1 = (gcnew ::System::Xml::Schema::XmlSchemaAny());
+    any1->Namespace = L"http://www.w3.org/2001/XMLSchema";
+    any1->MinOccurs = ::System::Decimal(0);
+    any1->MaxOccurs = ::System::Decimal::MaxValue;
+    any1->ProcessContents = ::System::Xml::Schema::XmlSchemaContentProcessing::Lax;
+    sequence->Items->Add(any1);
+    ::System::Xml::Schema::XmlSchemaAny^  any2 = (gcnew ::System::Xml::Schema::XmlSchemaAny());
+    any2->Namespace = L"urn:schemas-microsoft-com:xml-diffgram-v1";
+    any2->MinOccurs = ::System::Decimal(1);
+    any2->ProcessContents = ::System::Xml::Schema::XmlSchemaContentProcessing::Lax;
+    sequence->Items->Add(any2);
+    ::System::Xml::Schema::XmlSchemaAttribute^  attribute1 = (gcnew ::System::Xml::Schema::XmlSchemaAttribute());
+    attribute1->Name = L"namespace";
+    attribute1->FixedValue = ds->Namespace;
+    type->Attributes->Add(attribute1);
+    ::System::Xml::Schema::XmlSchemaAttribute^  attribute2 = (gcnew ::System::Xml::Schema::XmlSchemaAttribute());
+    attribute2->Name = L"tableTypeName";
+    attribute2->FixedValue = L"OutputsDataTable";
+    type->Attributes->Add(attribute2);
+    type->Particle = sequence;
+    ::System::Xml::Schema::XmlSchema^  dsSchema = ds->GetSchemaSerializable();
+    if (xs->Contains(dsSchema->TargetNamespace)) {
+        ::System::IO::MemoryStream^  s1 = (gcnew ::System::IO::MemoryStream());
+        ::System::IO::MemoryStream^  s2 = (gcnew ::System::IO::MemoryStream());
+        try {
+            ::System::Xml::Schema::XmlSchema^  schema = nullptr;
+            dsSchema->Write(s1);
+            for (            ::System::Collections::IEnumerator^  schemas = xs->Schemas(dsSchema->TargetNamespace)->GetEnumerator(); schemas->MoveNext();             ) {
+                schema = (cli::safe_cast<::System::Xml::Schema::XmlSchema^  >(schemas->Current));
+                s2->SetLength(0);
+                schema->Write(s2);
+                if (s1->Length == s2->Length) {
+                    s1->Position = 0;
+                    s2->Position = 0;
+                    for (                    ; ((s1->Position != s1->Length) 
+                                && (s1->ReadByte() == s2->ReadByte()));                     ) {
+                        ;
+                    }
+                    if (s1->Position == s1->Length) {
+                        return type;
+                    }
+                }
+            }
+        }
+        finally {
+            if (s1 != nullptr) {
+                s1->Close();
+            }
+            if (s2 != nullptr) {
+                s2->Close();
+            }
+        }
+    }
+    xs->Add(dsSchema);
+    return type;
+}
+
+
+inline NewDataSet::LocalsDataTable::LocalsDataTable() {
+    this->TableName = L"Locals";
+    this->BeginInit();
+    this->InitClass();
+    this->EndInit();
+}
+
+inline NewDataSet::LocalsDataTable::LocalsDataTable(::System::Data::DataTable^  table) {
+    this->TableName = table->TableName;
+    if (table->CaseSensitive != table->DataSet->CaseSensitive) {
+        this->CaseSensitive = table->CaseSensitive;
+    }
+    if (table->Locale->ToString() != table->DataSet->Locale->ToString()) {
+        this->Locale = table->Locale;
+    }
+    if (table->Namespace != table->DataSet->Namespace) {
+        this->Namespace = table->Namespace;
+    }
+    this->Prefix = table->Prefix;
+    this->MinimumCapacity = table->MinimumCapacity;
+}
+
+inline NewDataSet::LocalsDataTable::LocalsDataTable(::System::Runtime::Serialization::SerializationInfo^  info, ::System::Runtime::Serialization::StreamingContext context) : 
+        ::System::Data::DataTable(info, context) {
+    this->InitVars();
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::LocalsDataTable::Locals_IdColumn::get() {
+    return this->columnLocals_Id;
+}
+
+inline ::System::Data::DataColumn^  NewDataSet::LocalsDataTable::Function_IdColumn::get() {
+    return this->columnFunction_Id;
+}
+
+inline ::System::Int32 NewDataSet::LocalsDataTable::Count::get() {
+    return this->Rows->Count;
+}
+
+inline NewDataSet::LocalsRow^  NewDataSet::LocalsDataTable::default::get(::System::Int32 index) {
+    return (cli::safe_cast<NewDataSet::LocalsRow^  >(this->Rows[index]));
+}
+
+inline ::System::Void NewDataSet::LocalsDataTable::AddLocalsRow(NewDataSet::LocalsRow^  row) {
+    this->Rows->Add(row);
+}
+
+inline NewDataSet::LocalsRow^  NewDataSet::LocalsDataTable::AddLocalsRow(NewDataSet::FunctionRow^  parentFunctionRowByFunction_Locals) {
+    NewDataSet::LocalsRow^  rowLocalsRow = (cli::safe_cast<NewDataSet::LocalsRow^  >(this->NewRow()));
+    cli::array< ::System::Object^  >^  columnValuesArray = gcnew cli::array< ::System::Object^  >(2) {nullptr, nullptr};
+    if (parentFunctionRowByFunction_Locals != nullptr) {
+        columnValuesArray[1] = parentFunctionRowByFunction_Locals[3];
+    }
+    rowLocalsRow->ItemArray = columnValuesArray;
+    this->Rows->Add(rowLocalsRow);
+    return rowLocalsRow;
+}
+
+inline ::System::Collections::IEnumerator^  NewDataSet::LocalsDataTable::GetEnumerator() {
+    return this->Rows->GetEnumerator();
+}
+
+inline ::System::Data::DataTable^  NewDataSet::LocalsDataTable::Clone() {
+    NewDataSet::LocalsDataTable^  cln = (cli::safe_cast<NewDataSet::LocalsDataTable^  >(__super::Clone()));
+    cln->InitVars();
+    return cln;
+}
+
+inline ::System::Data::DataTable^  NewDataSet::LocalsDataTable::CreateInstance() {
+    return (gcnew NewDataSet::LocalsDataTable());
+}
+
+inline ::System::Void NewDataSet::LocalsDataTable::InitVars() {
+    this->columnLocals_Id = __super::Columns[L"Locals_Id"];
+    this->columnFunction_Id = __super::Columns[L"Function_Id"];
+}
+
+inline ::System::Void NewDataSet::LocalsDataTable::InitClass() {
+    this->columnLocals_Id = (gcnew ::System::Data::DataColumn(L"Locals_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnLocals_Id);
+    this->columnFunction_Id = (gcnew ::System::Data::DataColumn(L"Function_Id", ::System::Int32::typeid, nullptr, ::System::Data::MappingType::Hidden));
+    __super::Columns->Add(this->columnFunction_Id);
+    this->Constraints->Add((gcnew ::System::Data::UniqueConstraint(L"Constraint1", gcnew cli::array< ::System::Data::DataColumn^  >(1) {this->columnLocals_Id}, 
+            true)));
+    this->columnLocals_Id->AutoIncrement = true;
+    this->columnLocals_Id->AllowDBNull = false;
+    this->columnLocals_Id->Unique = true;
+}
+
+inline NewDataSet::LocalsRow^  NewDataSet::LocalsDataTable::NewLocalsRow() {
+    return (cli::safe_cast<NewDataSet::LocalsRow^  >(this->NewRow()));
+}
+
+inline ::System::Data::DataRow^  NewDataSet::LocalsDataTable::NewRowFromBuilder(::System::Data::DataRowBuilder^  builder) {
+    return (gcnew NewDataSet::LocalsRow(builder));
+}
+
+inline ::System::Type^  NewDataSet::LocalsDataTable::GetRowType() {
+    return NewDataSet::LocalsRow::typeid;
+}
+
+inline ::System::Void NewDataSet::LocalsDataTable::OnRowChanged(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowChanged(e);
+    {
+        this->LocalsRowChanged(this, (gcnew NewDataSet::LocalsRowChangeEvent((cli::safe_cast<NewDataSet::LocalsRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::LocalsDataTable::OnRowChanging(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowChanging(e);
+    {
+        this->LocalsRowChanging(this, (gcnew NewDataSet::LocalsRowChangeEvent((cli::safe_cast<NewDataSet::LocalsRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::LocalsDataTable::OnRowDeleted(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowDeleted(e);
+    {
+        this->LocalsRowDeleted(this, (gcnew NewDataSet::LocalsRowChangeEvent((cli::safe_cast<NewDataSet::LocalsRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::LocalsDataTable::OnRowDeleting(::System::Data::DataRowChangeEventArgs^  e) {
+    __super::OnRowDeleting(e);
+    {
+        this->LocalsRowDeleting(this, (gcnew NewDataSet::LocalsRowChangeEvent((cli::safe_cast<NewDataSet::LocalsRow^  >(e->Row)), 
+                e->Action)));
+    }
+}
+
+inline ::System::Void NewDataSet::LocalsDataTable::RemoveLocalsRow(NewDataSet::LocalsRow^  row) {
+    this->Rows->Remove(row);
+}
+
+inline ::System::Xml::Schema::XmlSchemaComplexType^  NewDataSet::LocalsDataTable::GetTypedTableSchema(::System::Xml::Schema::XmlSchemaSet^  xs) {
+    ::System::Xml::Schema::XmlSchemaComplexType^  type = (gcnew ::System::Xml::Schema::XmlSchemaComplexType());
+    ::System::Xml::Schema::XmlSchemaSequence^  sequence = (gcnew ::System::Xml::Schema::XmlSchemaSequence());
+    NewDataSet^  ds = (gcnew NewDataSet());
+    ::System::Xml::Schema::XmlSchemaAny^  any1 = (gcnew ::System::Xml::Schema::XmlSchemaAny());
+    any1->Namespace = L"http://www.w3.org/2001/XMLSchema";
+    any1->MinOccurs = ::System::Decimal(0);
+    any1->MaxOccurs = ::System::Decimal::MaxValue;
+    any1->ProcessContents = ::System::Xml::Schema::XmlSchemaContentProcessing::Lax;
+    sequence->Items->Add(any1);
+    ::System::Xml::Schema::XmlSchemaAny^  any2 = (gcnew ::System::Xml::Schema::XmlSchemaAny());
+    any2->Namespace = L"urn:schemas-microsoft-com:xml-diffgram-v1";
+    any2->MinOccurs = ::System::Decimal(1);
+    any2->ProcessContents = ::System::Xml::Schema::XmlSchemaContentProcessing::Lax;
+    sequence->Items->Add(any2);
+    ::System::Xml::Schema::XmlSchemaAttribute^  attribute1 = (gcnew ::System::Xml::Schema::XmlSchemaAttribute());
+    attribute1->Name = L"namespace";
+    attribute1->FixedValue = ds->Namespace;
+    type->Attributes->Add(attribute1);
+    ::System::Xml::Schema::XmlSchemaAttribute^  attribute2 = (gcnew ::System::Xml::Schema::XmlSchemaAttribute());
+    attribute2->Name = L"tableTypeName";
+    attribute2->FixedValue = L"LocalsDataTable";
+    type->Attributes->Add(attribute2);
+    type->Particle = sequence;
+    ::System::Xml::Schema::XmlSchema^  dsSchema = ds->GetSchemaSerializable();
+    if (xs->Contains(dsSchema->TargetNamespace)) {
+        ::System::IO::MemoryStream^  s1 = (gcnew ::System::IO::MemoryStream());
+        ::System::IO::MemoryStream^  s2 = (gcnew ::System::IO::MemoryStream());
+        try {
+            ::System::Xml::Schema::XmlSchema^  schema = nullptr;
+            dsSchema->Write(s1);
+            for (            ::System::Collections::IEnumerator^  schemas = xs->Schemas(dsSchema->TargetNamespace)->GetEnumerator(); schemas->MoveNext();             ) {
+                schema = (cli::safe_cast<::System::Xml::Schema::XmlSchema^  >(schemas->Current));
+                s2->SetLength(0);
+                schema->Write(s2);
+                if (s1->Length == s2->Length) {
+                    s1->Position = 0;
+                    s2->Position = 0;
+                    for (                    ; ((s1->Position != s1->Length) 
+                                && (s1->ReadByte() == s2->ReadByte()));                     ) {
+                        ;
+                    }
+                    if (s1->Position == s1->Length) {
+                        return type;
+                    }
+                }
+            }
+        }
+        finally {
+            if (s1 != nullptr) {
+                s1->Close();
+            }
+            if (s2 != nullptr) {
+                s2->Close();
+            }
+        }
+    }
+    xs->Add(dsSchema);
+    return type;
+}
+
+
 inline NewDataSet::InstructionRow::InstructionRow(::System::Data::DataRowBuilder^  rb) : 
         ::System::Data::DataRow(rb) {
     this->tableInstruction = (cli::safe_cast<NewDataSet::InstructionDataTable^  >(this->Table));
@@ -2452,38 +5347,17 @@ inline System::Void NewDataSet::InstructionRow::StatementType::set(System::Strin
     this[this->tableInstruction->StatementTypeColumn] = value;
 }
 
-inline System::Boolean NewDataSet::InstructionRow::Temporary::get() {
-    return (cli::safe_cast<::System::Boolean >(this[this->tableInstruction->TemporaryColumn]));
-}
-inline System::Void NewDataSet::InstructionRow::Temporary::set(System::Boolean value) {
-    this[this->tableInstruction->TemporaryColumn] = value;
-}
-
-inline System::Boolean NewDataSet::InstructionRow::Constant::get() {
-    return (cli::safe_cast<::System::Boolean >(this[this->tableInstruction->ConstantColumn]));
-}
-inline System::Void NewDataSet::InstructionRow::Constant::set(System::Boolean value) {
-    this[this->tableInstruction->ConstantColumn] = value;
-}
-
-inline System::Boolean NewDataSet::InstructionRow::IOParameter::get() {
-    return (cli::safe_cast<::System::Boolean >(this[this->tableInstruction->IOParameterColumn]));
-}
-inline System::Void NewDataSet::InstructionRow::IOParameter::set(System::Boolean value) {
-    this[this->tableInstruction->IOParameterColumn] = value;
-}
-
-inline System::String^  NewDataSet::InstructionRow::InitialValue::get() {
+inline System::Boolean NewDataSet::InstructionRow::PolyRequired::get() {
     try {
-        return (cli::safe_cast<::System::String^  >(this[this->tableInstruction->InitialValueColumn]));
+        return (cli::safe_cast<::System::Boolean >(this[this->tableInstruction->PolyRequiredColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'InitialValue\' in table \'Instruction\' is DBNull.", 
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „PolyRequired” oszlop értéke a(z) „Instruction” táblában DBNull.", 
             e));
     }
 }
-inline System::Void NewDataSet::InstructionRow::InitialValue::set(System::String^  value) {
-    this[this->tableInstruction->InitialValueColumn] = value;
+inline System::Void NewDataSet::InstructionRow::PolyRequired::set(System::Boolean value) {
+    this[this->tableInstruction->PolyRequiredColumn] = value;
 }
 
 inline System::String^  NewDataSet::InstructionRow::RefVars::get() {
@@ -2491,8 +5365,7 @@ inline System::String^  NewDataSet::InstructionRow::RefVars::get() {
         return (cli::safe_cast<::System::String^  >(this[this->tableInstruction->RefVarsColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'RefVars\' in table \'Instruction\' is DBNull.", 
-            e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „RefVars” oszlop értéke a(z) „Instruction” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::InstructionRow::RefVars::set(System::String^  value) {
@@ -2504,7 +5377,7 @@ inline System::Int32 NewDataSet::InstructionRow::BasicBlock_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableInstruction->BasicBlock_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'BasicBlock_Id\' in table \'Instruction\' is DBNull.", 
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „BasicBlock_Id” oszlop értéke a(z) „Instruction” táblában DBNull.", 
             e));
     }
 }
@@ -2519,12 +5392,12 @@ inline System::Void NewDataSet::InstructionRow::BasicBlockRow::set(NewDataSet::B
     this->SetParentRow(value, this->Table->ParentRelations[L"BasicBlock_Instruction"]);
 }
 
-inline ::System::Boolean NewDataSet::InstructionRow::IsInitialValueNull() {
-    return this->IsNull(this->tableInstruction->InitialValueColumn);
+inline ::System::Boolean NewDataSet::InstructionRow::IsPolyRequiredNull() {
+    return this->IsNull(this->tableInstruction->PolyRequiredColumn);
 }
 
-inline ::System::Void NewDataSet::InstructionRow::SetInitialValueNull() {
-    this[this->tableInstruction->InitialValueColumn] = ::System::Convert::DBNull;
+inline ::System::Void NewDataSet::InstructionRow::SetPolyRequiredNull() {
+    this[this->tableInstruction->PolyRequiredColumn] = ::System::Convert::DBNull;
 }
 
 inline ::System::Boolean NewDataSet::InstructionRow::IsRefVarsNull() {
@@ -2561,7 +5434,7 @@ inline System::String^  NewDataSet::BasicBlockRow::Predecessors::get() {
         return (cli::safe_cast<::System::String^  >(this[this->tableBasicBlock->PredecessorsColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Predecessors\' in table \'BasicBlock\' is DBNull.", 
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Predecessors” oszlop értéke a(z) „BasicBlock” táblában DBNull.", 
             e));
     }
 }
@@ -2574,7 +5447,7 @@ inline System::String^  NewDataSet::BasicBlockRow::Successors::get() {
         return (cli::safe_cast<::System::String^  >(this[this->tableBasicBlock->SuccessorsColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Successors\' in table \'BasicBlock\' is DBNull.", 
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Successors” oszlop értéke a(z) „BasicBlock” táblában DBNull.", 
             e));
     }
 }
@@ -2594,7 +5467,7 @@ inline System::Int32 NewDataSet::BasicBlockRow::Function_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableBasicBlock->Function_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Function_Id\' in table \'BasicBlock\' is DBNull.", 
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Function_Id” oszlop értéke a(z) „BasicBlock” táblában DBNull.", 
             e));
     }
 }
@@ -2648,11 +5521,11 @@ inline NewDataSet::RoutineRow::RoutineRow(::System::Data::DataRowBuilder^  rb) :
     this->tableRoutine = (cli::safe_cast<NewDataSet::RoutineDataTable^  >(this->Table));
 }
 
-inline System::String^  NewDataSet::RoutineRow::Name::get() {
-    return (cli::safe_cast<::System::String^  >(this[this->tableRoutine->NameColumn]));
+inline System::String^  NewDataSet::RoutineRow::Description::get() {
+    return (cli::safe_cast<::System::String^  >(this[this->tableRoutine->DescriptionColumn]));
 }
-inline System::Void NewDataSet::RoutineRow::Name::set(System::String^  value) {
-    this[this->tableRoutine->NameColumn] = value;
+inline System::Void NewDataSet::RoutineRow::Description::set(System::String^  value) {
+    this[this->tableRoutine->DescriptionColumn] = value;
 }
 
 inline System::Int32 NewDataSet::RoutineRow::Routine_Id::get() {
@@ -2684,11 +5557,11 @@ inline System::Void NewDataSet::FunctionRow::ID::set(System::String^  value) {
     this[this->tableFunction->IDColumn] = value;
 }
 
-inline System::String^  NewDataSet::FunctionRow::Name::get() {
-    return (cli::safe_cast<::System::String^  >(this[this->tableFunction->NameColumn]));
+inline System::String^  NewDataSet::FunctionRow::ExternalLabel::get() {
+    return (cli::safe_cast<::System::String^  >(this[this->tableFunction->ExternalLabelColumn]));
 }
-inline System::Void NewDataSet::FunctionRow::Name::set(System::String^  value) {
-    this[this->tableFunction->NameColumn] = value;
+inline System::Void NewDataSet::FunctionRow::ExternalLabel::set(System::String^  value) {
+    this[this->tableFunction->ExternalLabelColumn] = value;
 }
 
 inline System::String^  NewDataSet::FunctionRow::CalledFrom::get() {
@@ -2696,32 +5569,6 @@ inline System::String^  NewDataSet::FunctionRow::CalledFrom::get() {
 }
 inline System::Void NewDataSet::FunctionRow::CalledFrom::set(System::String^  value) {
     this[this->tableFunction->CalledFromColumn] = value;
-}
-
-inline System::String^  NewDataSet::FunctionRow::InputParameters::get() {
-    try {
-        return (cli::safe_cast<::System::String^  >(this[this->tableFunction->InputParametersColumn]));
-    }
-    catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'InputParameters\' in table \'Function\' is DBNull.", 
-            e));
-    }
-}
-inline System::Void NewDataSet::FunctionRow::InputParameters::set(System::String^  value) {
-    this[this->tableFunction->InputParametersColumn] = value;
-}
-
-inline System::String^  NewDataSet::FunctionRow::OutputParameters::get() {
-    try {
-        return (cli::safe_cast<::System::String^  >(this[this->tableFunction->OutputParametersColumn]));
-    }
-    catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'OutputParameters\' in table \'Function\' is DBNull.", 
-            e));
-    }
-}
-inline System::Void NewDataSet::FunctionRow::OutputParameters::set(System::String^  value) {
-    this[this->tableFunction->OutputParametersColumn] = value;
 }
 
 inline System::Int32 NewDataSet::FunctionRow::Function_Id::get() {
@@ -2736,8 +5583,7 @@ inline System::Int32 NewDataSet::FunctionRow::Routine_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableFunction->Routine_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Routine_Id\' in table \'Function\' is DBNull.", 
-            e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Routine_Id” oszlop értéke a(z) „Function” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::FunctionRow::Routine_Id::set(System::Int32 value) {
@@ -2751,22 +5597,6 @@ inline System::Void NewDataSet::FunctionRow::RoutineRow::set(NewDataSet::Routine
     this->SetParentRow(value, this->Table->ParentRelations[L"Routine_Function"]);
 }
 
-inline ::System::Boolean NewDataSet::FunctionRow::IsInputParametersNull() {
-    return this->IsNull(this->tableFunction->InputParametersColumn);
-}
-
-inline ::System::Void NewDataSet::FunctionRow::SetInputParametersNull() {
-    this[this->tableFunction->InputParametersColumn] = ::System::Convert::DBNull;
-}
-
-inline ::System::Boolean NewDataSet::FunctionRow::IsOutputParametersNull() {
-    return this->IsNull(this->tableFunction->OutputParametersColumn);
-}
-
-inline ::System::Void NewDataSet::FunctionRow::SetOutputParametersNull() {
-    this[this->tableFunction->OutputParametersColumn] = ::System::Convert::DBNull;
-}
-
 inline ::System::Boolean NewDataSet::FunctionRow::IsRoutine_IdNull() {
     return this->IsNull(this->tableFunction->Routine_IdColumn);
 }
@@ -2775,12 +5605,522 @@ inline ::System::Void NewDataSet::FunctionRow::SetRoutine_IdNull() {
     this[this->tableFunction->Routine_IdColumn] = ::System::Convert::DBNull;
 }
 
+inline cli::array< NewDataSet::InputsRow^  >^  NewDataSet::FunctionRow::GetInputsRows() {
+    if (this->Table->ChildRelations[L"Function_Inputs"] == nullptr) {
+        return gcnew cli::array< NewDataSet::InputsRow^  >(0);
+    }
+    else {
+        return (cli::safe_cast<cli::array< NewDataSet::InputsRow^  >^  >(__super::GetChildRows(this->Table->ChildRelations[L"Function_Inputs"])));
+    }
+}
+
+inline cli::array< NewDataSet::OutputsRow^  >^  NewDataSet::FunctionRow::GetOutputsRows() {
+    if (this->Table->ChildRelations[L"Function_Outputs"] == nullptr) {
+        return gcnew cli::array< NewDataSet::OutputsRow^  >(0);
+    }
+    else {
+        return (cli::safe_cast<cli::array< NewDataSet::OutputsRow^  >^  >(__super::GetChildRows(this->Table->ChildRelations[L"Function_Outputs"])));
+    }
+}
+
+inline cli::array< NewDataSet::LocalsRow^  >^  NewDataSet::FunctionRow::GetLocalsRows() {
+    if (this->Table->ChildRelations[L"Function_Locals"] == nullptr) {
+        return gcnew cli::array< NewDataSet::LocalsRow^  >(0);
+    }
+    else {
+        return (cli::safe_cast<cli::array< NewDataSet::LocalsRow^  >^  >(__super::GetChildRows(this->Table->ChildRelations[L"Function_Locals"])));
+    }
+}
+
 inline cli::array< NewDataSet::BasicBlockRow^  >^  NewDataSet::FunctionRow::GetBasicBlockRows() {
     if (this->Table->ChildRelations[L"Function_BasicBlock"] == nullptr) {
         return gcnew cli::array< NewDataSet::BasicBlockRow^  >(0);
     }
     else {
         return (cli::safe_cast<cli::array< NewDataSet::BasicBlockRow^  >^  >(__super::GetChildRows(this->Table->ChildRelations[L"Function_BasicBlock"])));
+    }
+}
+
+
+inline NewDataSet::InputsRow::InputsRow(::System::Data::DataRowBuilder^  rb) : 
+        ::System::Data::DataRow(rb) {
+    this->tableInputs = (cli::safe_cast<NewDataSet::InputsDataTable^  >(this->Table));
+}
+
+inline System::Int32 NewDataSet::InputsRow::Inputs_Id::get() {
+    return (cli::safe_cast<::System::Int32 >(this[this->tableInputs->Inputs_IdColumn]));
+}
+inline System::Void NewDataSet::InputsRow::Inputs_Id::set(System::Int32 value) {
+    this[this->tableInputs->Inputs_IdColumn] = value;
+}
+
+inline System::Int32 NewDataSet::InputsRow::Function_Id::get() {
+    try {
+        return (cli::safe_cast<::System::Int32 >(this[this->tableInputs->Function_IdColumn]));
+    }
+    catch (::System::InvalidCastException^ e) {
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Function_Id” oszlop értéke a(z) „Inputs” táblában DBNull.", e));
+    }
+}
+inline System::Void NewDataSet::InputsRow::Function_Id::set(System::Int32 value) {
+    this[this->tableInputs->Function_IdColumn] = value;
+}
+
+inline NewDataSet::FunctionRow^  NewDataSet::InputsRow::FunctionRow::get() {
+    return (cli::safe_cast<NewDataSet::FunctionRow^  >(this->GetParentRow(this->Table->ParentRelations[L"Function_Inputs"])));
+}
+inline System::Void NewDataSet::InputsRow::FunctionRow::set(NewDataSet::FunctionRow^  value) {
+    this->SetParentRow(value, this->Table->ParentRelations[L"Function_Inputs"]);
+}
+
+inline ::System::Boolean NewDataSet::InputsRow::IsFunction_IdNull() {
+    return this->IsNull(this->tableInputs->Function_IdColumn);
+}
+
+inline ::System::Void NewDataSet::InputsRow::SetFunction_IdNull() {
+    this[this->tableInputs->Function_IdColumn] = ::System::Convert::DBNull;
+}
+
+inline cli::array< NewDataSet::OriginalRow^  >^  NewDataSet::InputsRow::GetOriginalRows() {
+    if (this->Table->ChildRelations[L"Inputs_Original"] == nullptr) {
+        return gcnew cli::array< NewDataSet::OriginalRow^  >(0);
+    }
+    else {
+        return (cli::safe_cast<cli::array< NewDataSet::OriginalRow^  >^  >(__super::GetChildRows(this->Table->ChildRelations[L"Inputs_Original"])));
+    }
+}
+
+inline cli::array< NewDataSet::FakeRow^  >^  NewDataSet::InputsRow::GetFakeRows() {
+    if (this->Table->ChildRelations[L"Inputs_Fake"] == nullptr) {
+        return gcnew cli::array< NewDataSet::FakeRow^  >(0);
+    }
+    else {
+        return (cli::safe_cast<cli::array< NewDataSet::FakeRow^  >^  >(__super::GetChildRows(this->Table->ChildRelations[L"Inputs_Fake"])));
+    }
+}
+
+
+inline NewDataSet::OriginalRow::OriginalRow(::System::Data::DataRowBuilder^  rb) : 
+        ::System::Data::DataRow(rb) {
+    this->tableOriginal = (cli::safe_cast<NewDataSet::OriginalDataTable^  >(this->Table));
+}
+
+inline System::Int32 NewDataSet::OriginalRow::Original_Id::get() {
+    return (cli::safe_cast<::System::Int32 >(this[this->tableOriginal->Original_IdColumn]));
+}
+inline System::Void NewDataSet::OriginalRow::Original_Id::set(System::Int32 value) {
+    this[this->tableOriginal->Original_IdColumn] = value;
+}
+
+inline System::Int32 NewDataSet::OriginalRow::Inputs_Id::get() {
+    try {
+        return (cli::safe_cast<::System::Int32 >(this[this->tableOriginal->Inputs_IdColumn]));
+    }
+    catch (::System::InvalidCastException^ e) {
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Inputs_Id” oszlop értéke a(z) „Original” táblában DBNull.", e));
+    }
+}
+inline System::Void NewDataSet::OriginalRow::Inputs_Id::set(System::Int32 value) {
+    this[this->tableOriginal->Inputs_IdColumn] = value;
+}
+
+inline System::Int32 NewDataSet::OriginalRow::Outputs_Id::get() {
+    try {
+        return (cli::safe_cast<::System::Int32 >(this[this->tableOriginal->Outputs_IdColumn]));
+    }
+    catch (::System::InvalidCastException^ e) {
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Outputs_Id” oszlop értéke a(z) „Original” táblában DBNull.", e));
+    }
+}
+inline System::Void NewDataSet::OriginalRow::Outputs_Id::set(System::Int32 value) {
+    this[this->tableOriginal->Outputs_IdColumn] = value;
+}
+
+inline System::Int32 NewDataSet::OriginalRow::Locals_Id::get() {
+    try {
+        return (cli::safe_cast<::System::Int32 >(this[this->tableOriginal->Locals_IdColumn]));
+    }
+    catch (::System::InvalidCastException^ e) {
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Locals_Id” oszlop értéke a(z) „Original” táblában DBNull.", e));
+    }
+}
+inline System::Void NewDataSet::OriginalRow::Locals_Id::set(System::Int32 value) {
+    this[this->tableOriginal->Locals_IdColumn] = value;
+}
+
+inline NewDataSet::InputsRow^  NewDataSet::OriginalRow::InputsRow::get() {
+    return (cli::safe_cast<NewDataSet::InputsRow^  >(this->GetParentRow(this->Table->ParentRelations[L"Inputs_Original"])));
+}
+inline System::Void NewDataSet::OriginalRow::InputsRow::set(NewDataSet::InputsRow^  value) {
+    this->SetParentRow(value, this->Table->ParentRelations[L"Inputs_Original"]);
+}
+
+inline NewDataSet::OutputsRow^  NewDataSet::OriginalRow::OutputsRow::get() {
+    return (cli::safe_cast<NewDataSet::OutputsRow^  >(this->GetParentRow(this->Table->ParentRelations[L"Outputs_Original"])));
+}
+inline System::Void NewDataSet::OriginalRow::OutputsRow::set(NewDataSet::OutputsRow^  value) {
+    this->SetParentRow(value, this->Table->ParentRelations[L"Outputs_Original"]);
+}
+
+inline NewDataSet::LocalsRow^  NewDataSet::OriginalRow::LocalsRow::get() {
+    return (cli::safe_cast<NewDataSet::LocalsRow^  >(this->GetParentRow(this->Table->ParentRelations[L"Locals_Original"])));
+}
+inline System::Void NewDataSet::OriginalRow::LocalsRow::set(NewDataSet::LocalsRow^  value) {
+    this->SetParentRow(value, this->Table->ParentRelations[L"Locals_Original"]);
+}
+
+inline ::System::Boolean NewDataSet::OriginalRow::IsInputs_IdNull() {
+    return this->IsNull(this->tableOriginal->Inputs_IdColumn);
+}
+
+inline ::System::Void NewDataSet::OriginalRow::SetInputs_IdNull() {
+    this[this->tableOriginal->Inputs_IdColumn] = ::System::Convert::DBNull;
+}
+
+inline ::System::Boolean NewDataSet::OriginalRow::IsOutputs_IdNull() {
+    return this->IsNull(this->tableOriginal->Outputs_IdColumn);
+}
+
+inline ::System::Void NewDataSet::OriginalRow::SetOutputs_IdNull() {
+    this[this->tableOriginal->Outputs_IdColumn] = ::System::Convert::DBNull;
+}
+
+inline ::System::Boolean NewDataSet::OriginalRow::IsLocals_IdNull() {
+    return this->IsNull(this->tableOriginal->Locals_IdColumn);
+}
+
+inline ::System::Void NewDataSet::OriginalRow::SetLocals_IdNull() {
+    this[this->tableOriginal->Locals_IdColumn] = ::System::Convert::DBNull;
+}
+
+inline cli::array< NewDataSet::VariableRow^  >^  NewDataSet::OriginalRow::GetVariableRows() {
+    if (this->Table->ChildRelations[L"Original_Variable"] == nullptr) {
+        return gcnew cli::array< NewDataSet::VariableRow^  >(0);
+    }
+    else {
+        return (cli::safe_cast<cli::array< NewDataSet::VariableRow^  >^  >(__super::GetChildRows(this->Table->ChildRelations[L"Original_Variable"])));
+    }
+}
+
+
+inline NewDataSet::VariableRow::VariableRow(::System::Data::DataRowBuilder^  rb) : 
+        ::System::Data::DataRow(rb) {
+    this->tableVariable = (cli::safe_cast<NewDataSet::VariableDataTable^  >(this->Table));
+}
+
+inline System::String^  NewDataSet::VariableRow::ID::get() {
+    return (cli::safe_cast<::System::String^  >(this[this->tableVariable->IDColumn]));
+}
+inline System::Void NewDataSet::VariableRow::ID::set(System::String^  value) {
+    this[this->tableVariable->IDColumn] = value;
+}
+
+inline System::String^  NewDataSet::VariableRow::Size::get() {
+    return (cli::safe_cast<::System::String^  >(this[this->tableVariable->SizeColumn]));
+}
+inline System::Void NewDataSet::VariableRow::Size::set(System::String^  value) {
+    this[this->tableVariable->SizeColumn] = value;
+}
+
+inline System::Boolean NewDataSet::VariableRow::Pointer::get() {
+    return (cli::safe_cast<::System::Boolean >(this[this->tableVariable->PointerColumn]));
+}
+inline System::Void NewDataSet::VariableRow::Pointer::set(System::Boolean value) {
+    this[this->tableVariable->PointerColumn] = value;
+}
+
+inline System::String^  NewDataSet::VariableRow::ConstValueInParam::get() {
+    try {
+        return (cli::safe_cast<::System::String^  >(this[this->tableVariable->ConstValueInParamColumn]));
+    }
+    catch (::System::InvalidCastException^ e) {
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „ConstValueInParam” oszlop értéke a(z) „Variable” táblában DBNull.", 
+            e));
+    }
+}
+inline System::Void NewDataSet::VariableRow::ConstValueInParam::set(System::String^  value) {
+    this[this->tableVariable->ConstValueInParamColumn] = value;
+}
+
+inline System::Int32 NewDataSet::VariableRow::Original_Id::get() {
+    try {
+        return (cli::safe_cast<::System::Int32 >(this[this->tableVariable->Original_IdColumn]));
+    }
+    catch (::System::InvalidCastException^ e) {
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Original_Id” oszlop értéke a(z) „Variable” táblában DBNull.", 
+            e));
+    }
+}
+inline System::Void NewDataSet::VariableRow::Original_Id::set(System::Int32 value) {
+    this[this->tableVariable->Original_IdColumn] = value;
+}
+
+inline System::Int32 NewDataSet::VariableRow::Fake_Id::get() {
+    try {
+        return (cli::safe_cast<::System::Int32 >(this[this->tableVariable->Fake_IdColumn]));
+    }
+    catch (::System::InvalidCastException^ e) {
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Fake_Id” oszlop értéke a(z) „Variable” táblában DBNull.", e));
+    }
+}
+inline System::Void NewDataSet::VariableRow::Fake_Id::set(System::Int32 value) {
+    this[this->tableVariable->Fake_IdColumn] = value;
+}
+
+inline NewDataSet::OriginalRow^  NewDataSet::VariableRow::OriginalRow::get() {
+    return (cli::safe_cast<NewDataSet::OriginalRow^  >(this->GetParentRow(this->Table->ParentRelations[L"Original_Variable"])));
+}
+inline System::Void NewDataSet::VariableRow::OriginalRow::set(NewDataSet::OriginalRow^  value) {
+    this->SetParentRow(value, this->Table->ParentRelations[L"Original_Variable"]);
+}
+
+inline NewDataSet::FakeRow^  NewDataSet::VariableRow::FakeRow::get() {
+    return (cli::safe_cast<NewDataSet::FakeRow^  >(this->GetParentRow(this->Table->ParentRelations[L"Fake_Variable"])));
+}
+inline System::Void NewDataSet::VariableRow::FakeRow::set(NewDataSet::FakeRow^  value) {
+    this->SetParentRow(value, this->Table->ParentRelations[L"Fake_Variable"]);
+}
+
+inline ::System::Boolean NewDataSet::VariableRow::IsConstValueInParamNull() {
+    return this->IsNull(this->tableVariable->ConstValueInParamColumn);
+}
+
+inline ::System::Void NewDataSet::VariableRow::SetConstValueInParamNull() {
+    this[this->tableVariable->ConstValueInParamColumn] = ::System::Convert::DBNull;
+}
+
+inline ::System::Boolean NewDataSet::VariableRow::IsOriginal_IdNull() {
+    return this->IsNull(this->tableVariable->Original_IdColumn);
+}
+
+inline ::System::Void NewDataSet::VariableRow::SetOriginal_IdNull() {
+    this[this->tableVariable->Original_IdColumn] = ::System::Convert::DBNull;
+}
+
+inline ::System::Boolean NewDataSet::VariableRow::IsFake_IdNull() {
+    return this->IsNull(this->tableVariable->Fake_IdColumn);
+}
+
+inline ::System::Void NewDataSet::VariableRow::SetFake_IdNull() {
+    this[this->tableVariable->Fake_IdColumn] = ::System::Convert::DBNull;
+}
+
+
+inline NewDataSet::FakeRow::FakeRow(::System::Data::DataRowBuilder^  rb) : 
+        ::System::Data::DataRow(rb) {
+    this->tableFake = (cli::safe_cast<NewDataSet::FakeDataTable^  >(this->Table));
+}
+
+inline System::Int32 NewDataSet::FakeRow::Fake_Id::get() {
+    return (cli::safe_cast<::System::Int32 >(this[this->tableFake->Fake_IdColumn]));
+}
+inline System::Void NewDataSet::FakeRow::Fake_Id::set(System::Int32 value) {
+    this[this->tableFake->Fake_IdColumn] = value;
+}
+
+inline System::Int32 NewDataSet::FakeRow::Inputs_Id::get() {
+    try {
+        return (cli::safe_cast<::System::Int32 >(this[this->tableFake->Inputs_IdColumn]));
+    }
+    catch (::System::InvalidCastException^ e) {
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Inputs_Id” oszlop értéke a(z) „Fake” táblában DBNull.", e));
+    }
+}
+inline System::Void NewDataSet::FakeRow::Inputs_Id::set(System::Int32 value) {
+    this[this->tableFake->Inputs_IdColumn] = value;
+}
+
+inline System::Int32 NewDataSet::FakeRow::Outputs_Id::get() {
+    try {
+        return (cli::safe_cast<::System::Int32 >(this[this->tableFake->Outputs_IdColumn]));
+    }
+    catch (::System::InvalidCastException^ e) {
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Outputs_Id” oszlop értéke a(z) „Fake” táblában DBNull.", e));
+    }
+}
+inline System::Void NewDataSet::FakeRow::Outputs_Id::set(System::Int32 value) {
+    this[this->tableFake->Outputs_IdColumn] = value;
+}
+
+inline System::Int32 NewDataSet::FakeRow::Locals_Id::get() {
+    try {
+        return (cli::safe_cast<::System::Int32 >(this[this->tableFake->Locals_IdColumn]));
+    }
+    catch (::System::InvalidCastException^ e) {
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Locals_Id” oszlop értéke a(z) „Fake” táblában DBNull.", e));
+    }
+}
+inline System::Void NewDataSet::FakeRow::Locals_Id::set(System::Int32 value) {
+    this[this->tableFake->Locals_IdColumn] = value;
+}
+
+inline NewDataSet::InputsRow^  NewDataSet::FakeRow::InputsRow::get() {
+    return (cli::safe_cast<NewDataSet::InputsRow^  >(this->GetParentRow(this->Table->ParentRelations[L"Inputs_Fake"])));
+}
+inline System::Void NewDataSet::FakeRow::InputsRow::set(NewDataSet::InputsRow^  value) {
+    this->SetParentRow(value, this->Table->ParentRelations[L"Inputs_Fake"]);
+}
+
+inline NewDataSet::OutputsRow^  NewDataSet::FakeRow::OutputsRow::get() {
+    return (cli::safe_cast<NewDataSet::OutputsRow^  >(this->GetParentRow(this->Table->ParentRelations[L"Outputs_Fake"])));
+}
+inline System::Void NewDataSet::FakeRow::OutputsRow::set(NewDataSet::OutputsRow^  value) {
+    this->SetParentRow(value, this->Table->ParentRelations[L"Outputs_Fake"]);
+}
+
+inline NewDataSet::LocalsRow^  NewDataSet::FakeRow::LocalsRow::get() {
+    return (cli::safe_cast<NewDataSet::LocalsRow^  >(this->GetParentRow(this->Table->ParentRelations[L"Locals_Fake"])));
+}
+inline System::Void NewDataSet::FakeRow::LocalsRow::set(NewDataSet::LocalsRow^  value) {
+    this->SetParentRow(value, this->Table->ParentRelations[L"Locals_Fake"]);
+}
+
+inline ::System::Boolean NewDataSet::FakeRow::IsInputs_IdNull() {
+    return this->IsNull(this->tableFake->Inputs_IdColumn);
+}
+
+inline ::System::Void NewDataSet::FakeRow::SetInputs_IdNull() {
+    this[this->tableFake->Inputs_IdColumn] = ::System::Convert::DBNull;
+}
+
+inline ::System::Boolean NewDataSet::FakeRow::IsOutputs_IdNull() {
+    return this->IsNull(this->tableFake->Outputs_IdColumn);
+}
+
+inline ::System::Void NewDataSet::FakeRow::SetOutputs_IdNull() {
+    this[this->tableFake->Outputs_IdColumn] = ::System::Convert::DBNull;
+}
+
+inline ::System::Boolean NewDataSet::FakeRow::IsLocals_IdNull() {
+    return this->IsNull(this->tableFake->Locals_IdColumn);
+}
+
+inline ::System::Void NewDataSet::FakeRow::SetLocals_IdNull() {
+    this[this->tableFake->Locals_IdColumn] = ::System::Convert::DBNull;
+}
+
+inline cli::array< NewDataSet::VariableRow^  >^  NewDataSet::FakeRow::GetVariableRows() {
+    if (this->Table->ChildRelations[L"Fake_Variable"] == nullptr) {
+        return gcnew cli::array< NewDataSet::VariableRow^  >(0);
+    }
+    else {
+        return (cli::safe_cast<cli::array< NewDataSet::VariableRow^  >^  >(__super::GetChildRows(this->Table->ChildRelations[L"Fake_Variable"])));
+    }
+}
+
+
+inline NewDataSet::OutputsRow::OutputsRow(::System::Data::DataRowBuilder^  rb) : 
+        ::System::Data::DataRow(rb) {
+    this->tableOutputs = (cli::safe_cast<NewDataSet::OutputsDataTable^  >(this->Table));
+}
+
+inline System::Int32 NewDataSet::OutputsRow::Outputs_Id::get() {
+    return (cli::safe_cast<::System::Int32 >(this[this->tableOutputs->Outputs_IdColumn]));
+}
+inline System::Void NewDataSet::OutputsRow::Outputs_Id::set(System::Int32 value) {
+    this[this->tableOutputs->Outputs_IdColumn] = value;
+}
+
+inline System::Int32 NewDataSet::OutputsRow::Function_Id::get() {
+    try {
+        return (cli::safe_cast<::System::Int32 >(this[this->tableOutputs->Function_IdColumn]));
+    }
+    catch (::System::InvalidCastException^ e) {
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Function_Id” oszlop értéke a(z) „Outputs” táblában DBNull.", e));
+    }
+}
+inline System::Void NewDataSet::OutputsRow::Function_Id::set(System::Int32 value) {
+    this[this->tableOutputs->Function_IdColumn] = value;
+}
+
+inline NewDataSet::FunctionRow^  NewDataSet::OutputsRow::FunctionRow::get() {
+    return (cli::safe_cast<NewDataSet::FunctionRow^  >(this->GetParentRow(this->Table->ParentRelations[L"Function_Outputs"])));
+}
+inline System::Void NewDataSet::OutputsRow::FunctionRow::set(NewDataSet::FunctionRow^  value) {
+    this->SetParentRow(value, this->Table->ParentRelations[L"Function_Outputs"]);
+}
+
+inline ::System::Boolean NewDataSet::OutputsRow::IsFunction_IdNull() {
+    return this->IsNull(this->tableOutputs->Function_IdColumn);
+}
+
+inline ::System::Void NewDataSet::OutputsRow::SetFunction_IdNull() {
+    this[this->tableOutputs->Function_IdColumn] = ::System::Convert::DBNull;
+}
+
+inline cli::array< NewDataSet::OriginalRow^  >^  NewDataSet::OutputsRow::GetOriginalRows() {
+    if (this->Table->ChildRelations[L"Outputs_Original"] == nullptr) {
+        return gcnew cli::array< NewDataSet::OriginalRow^  >(0);
+    }
+    else {
+        return (cli::safe_cast<cli::array< NewDataSet::OriginalRow^  >^  >(__super::GetChildRows(this->Table->ChildRelations[L"Outputs_Original"])));
+    }
+}
+
+inline cli::array< NewDataSet::FakeRow^  >^  NewDataSet::OutputsRow::GetFakeRows() {
+    if (this->Table->ChildRelations[L"Outputs_Fake"] == nullptr) {
+        return gcnew cli::array< NewDataSet::FakeRow^  >(0);
+    }
+    else {
+        return (cli::safe_cast<cli::array< NewDataSet::FakeRow^  >^  >(__super::GetChildRows(this->Table->ChildRelations[L"Outputs_Fake"])));
+    }
+}
+
+
+inline NewDataSet::LocalsRow::LocalsRow(::System::Data::DataRowBuilder^  rb) : 
+        ::System::Data::DataRow(rb) {
+    this->tableLocals = (cli::safe_cast<NewDataSet::LocalsDataTable^  >(this->Table));
+}
+
+inline System::Int32 NewDataSet::LocalsRow::Locals_Id::get() {
+    return (cli::safe_cast<::System::Int32 >(this[this->tableLocals->Locals_IdColumn]));
+}
+inline System::Void NewDataSet::LocalsRow::Locals_Id::set(System::Int32 value) {
+    this[this->tableLocals->Locals_IdColumn] = value;
+}
+
+inline System::Int32 NewDataSet::LocalsRow::Function_Id::get() {
+    try {
+        return (cli::safe_cast<::System::Int32 >(this[this->tableLocals->Function_IdColumn]));
+    }
+    catch (::System::InvalidCastException^ e) {
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Function_Id” oszlop értéke a(z) „Locals” táblában DBNull.", e));
+    }
+}
+inline System::Void NewDataSet::LocalsRow::Function_Id::set(System::Int32 value) {
+    this[this->tableLocals->Function_IdColumn] = value;
+}
+
+inline NewDataSet::FunctionRow^  NewDataSet::LocalsRow::FunctionRow::get() {
+    return (cli::safe_cast<NewDataSet::FunctionRow^  >(this->GetParentRow(this->Table->ParentRelations[L"Function_Locals"])));
+}
+inline System::Void NewDataSet::LocalsRow::FunctionRow::set(NewDataSet::FunctionRow^  value) {
+    this->SetParentRow(value, this->Table->ParentRelations[L"Function_Locals"]);
+}
+
+inline ::System::Boolean NewDataSet::LocalsRow::IsFunction_IdNull() {
+    return this->IsNull(this->tableLocals->Function_IdColumn);
+}
+
+inline ::System::Void NewDataSet::LocalsRow::SetFunction_IdNull() {
+    this[this->tableLocals->Function_IdColumn] = ::System::Convert::DBNull;
+}
+
+inline cli::array< NewDataSet::OriginalRow^  >^  NewDataSet::LocalsRow::GetOriginalRows() {
+    if (this->Table->ChildRelations[L"Locals_Original"] == nullptr) {
+        return gcnew cli::array< NewDataSet::OriginalRow^  >(0);
+    }
+    else {
+        return (cli::safe_cast<cli::array< NewDataSet::OriginalRow^  >^  >(__super::GetChildRows(this->Table->ChildRelations[L"Locals_Original"])));
+    }
+}
+
+inline cli::array< NewDataSet::FakeRow^  >^  NewDataSet::LocalsRow::GetFakeRows() {
+    if (this->Table->ChildRelations[L"Locals_Fake"] == nullptr) {
+        return gcnew cli::array< NewDataSet::FakeRow^  >(0);
+    }
+    else {
+        return (cli::safe_cast<cli::array< NewDataSet::FakeRow^  >^  >(__super::GetChildRows(this->Table->ChildRelations[L"Locals_Fake"])));
     }
 }
 
@@ -2837,5 +6177,89 @@ inline NewDataSet::FunctionRow^  NewDataSet::FunctionRowChangeEvent::Row::get() 
 }
 
 inline ::System::Data::DataRowAction NewDataSet::FunctionRowChangeEvent::Action::get() {
+    return this->eventAction;
+}
+
+
+inline NewDataSet::InputsRowChangeEvent::InputsRowChangeEvent(NewDataSet::InputsRow^  row, ::System::Data::DataRowAction action) {
+    this->eventRow = row;
+    this->eventAction = action;
+}
+
+inline NewDataSet::InputsRow^  NewDataSet::InputsRowChangeEvent::Row::get() {
+    return this->eventRow;
+}
+
+inline ::System::Data::DataRowAction NewDataSet::InputsRowChangeEvent::Action::get() {
+    return this->eventAction;
+}
+
+
+inline NewDataSet::OriginalRowChangeEvent::OriginalRowChangeEvent(NewDataSet::OriginalRow^  row, ::System::Data::DataRowAction action) {
+    this->eventRow = row;
+    this->eventAction = action;
+}
+
+inline NewDataSet::OriginalRow^  NewDataSet::OriginalRowChangeEvent::Row::get() {
+    return this->eventRow;
+}
+
+inline ::System::Data::DataRowAction NewDataSet::OriginalRowChangeEvent::Action::get() {
+    return this->eventAction;
+}
+
+
+inline NewDataSet::VariableRowChangeEvent::VariableRowChangeEvent(NewDataSet::VariableRow^  row, ::System::Data::DataRowAction action) {
+    this->eventRow = row;
+    this->eventAction = action;
+}
+
+inline NewDataSet::VariableRow^  NewDataSet::VariableRowChangeEvent::Row::get() {
+    return this->eventRow;
+}
+
+inline ::System::Data::DataRowAction NewDataSet::VariableRowChangeEvent::Action::get() {
+    return this->eventAction;
+}
+
+
+inline NewDataSet::FakeRowChangeEvent::FakeRowChangeEvent(NewDataSet::FakeRow^  row, ::System::Data::DataRowAction action) {
+    this->eventRow = row;
+    this->eventAction = action;
+}
+
+inline NewDataSet::FakeRow^  NewDataSet::FakeRowChangeEvent::Row::get() {
+    return this->eventRow;
+}
+
+inline ::System::Data::DataRowAction NewDataSet::FakeRowChangeEvent::Action::get() {
+    return this->eventAction;
+}
+
+
+inline NewDataSet::OutputsRowChangeEvent::OutputsRowChangeEvent(NewDataSet::OutputsRow^  row, ::System::Data::DataRowAction action) {
+    this->eventRow = row;
+    this->eventAction = action;
+}
+
+inline NewDataSet::OutputsRow^  NewDataSet::OutputsRowChangeEvent::Row::get() {
+    return this->eventRow;
+}
+
+inline ::System::Data::DataRowAction NewDataSet::OutputsRowChangeEvent::Action::get() {
+    return this->eventAction;
+}
+
+
+inline NewDataSet::LocalsRowChangeEvent::LocalsRowChangeEvent(NewDataSet::LocalsRow^  row, ::System::Data::DataRowAction action) {
+    this->eventRow = row;
+    this->eventAction = action;
+}
+
+inline NewDataSet::LocalsRow^  NewDataSet::LocalsRowChangeEvent::Row::get() {
+    return this->eventRow;
+}
+
+inline ::System::Data::DataRowAction NewDataSet::LocalsRowChangeEvent::Action::get() {
     return this->eventAction;
 }

@@ -36,9 +36,6 @@
     <ClInclude Include="equation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fake_exit_block.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="fakeexitblock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -72,6 +69,9 @@
     <ClInclude Include="variables.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommonModule.cpp">
@@ -93,9 +93,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="equation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fake_exit_block.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="fakeexitblock.cpp">

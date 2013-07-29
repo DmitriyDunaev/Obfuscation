@@ -7,16 +7,19 @@ CVariables&  Blocks::getVars()
 
 void Blocks::cleanup()
 {
-    for ( std::list<CInstructionsContainer*>::iterator i = blocks.begin(); i != blocks.end(); ++i)
+	std::list<CInstructionsContainer*>::iterator i = blocks.begin();
+    while ( i != blocks.end() )
 	{
 			std::cout << "Cleanup done" << std::endl;
-			if ((*i)->empty())
+			if ( (*i)->empty() )
 			{
 				std::list<CInstructionsContainer*>::iterator j = i;
-				--i;
+				++i;
 				delete *j;
 				blocks.erase(j);
 			}
+			else
+				++i;
 	}
 }
 

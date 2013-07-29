@@ -182,11 +182,13 @@ void Assistant::preproc()
             --i;
             lines->erase(j);
         }
-        found = i->gets().find("int ");
+        /*found = i->gets().find("int ");
         if (found != string::npos && found2 == string::npos)
         {
             string s = i->gets().substr(found), t = "int";
-            s.erase( s.find(";"), s.size() );
+			size_t exists = s.find(";");
+			if ( exists != string::npos )
+				s.erase( exists, s.size() );
 #ifdef DEBUG2
             cout << bl->Vars[s.substr(4) ]->getname() << endl;
 #endif
@@ -195,7 +197,7 @@ void Assistant::preproc()
             list<Line>::iterator j=i;
             --i;
             lines->erase(j);
-        }
+        }*/
         found = i->gets().find("char ");
         if (found != string::npos && found2 == string::npos)
         {
@@ -410,29 +412,17 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
                  i->gets().find("char ")!=string::npos ||
                  i->gets().find("void ")!=string::npos ) && i->gets().find("sub_")!=string::npos)
         {
-            newblock();
+            
+			string tmp2 = i->gets().substr(i->gets().find("sub"), i->gets().size());
+            string tmp = "		<Function Name=\"" + tmp2 + "\">";
 
-            string tmp = "BeginFunct ";
-            string tmp2 = i->gets().substr(i->gets().find("sub"), i->gets().size());
-            tmp = tmp + tmp2;
-            generatelabel(tmp);
-
+			newblock();
+            
             ++i;
-            ++i;
-            list<Line>::iterator a=i, b;
-            int k=1;
-            while ( k>0)
-            {
-                if (i->gets().find("{")!= string::npos)
-                    k++;
-                else if (i->gets().find("}")!= string::npos)
-                    k--;
-                ++i;
-            }
-            --i;
-            b=i;
+            list<Line>::iterator a, b;
+            setiters(&a, &b, &i);
             work( a, b);
-            tmp = "EndFunct " + tmp2;
+            tmp = "		</Function><!-- " + tmp2 + " -->";
             generatelabel(tmp);
 
             newblock();
@@ -445,7 +435,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 
 		else if (i->gets().find("return")!=string::npos)
         {
-            cnt->push_back( new  Line("RETURN"));
+            cnt->push_back( new  Line("Return"));
         }
 		//Test comment.
 		//Test comment 2

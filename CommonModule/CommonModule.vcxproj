@@ -83,7 +83,6 @@
     <ClInclude Include="cond_jump.h" />
     <ClInclude Include="equation.h" />
     <ClInclude Include="fakeexitblock.h" />
-    <ClInclude Include="fake_exit_block.h" />
     <ClInclude Include="instructionscontainer.h" />
     <ClInclude Include="Interface.h">
       <DependentUpon>..\ObfuscationManager\Schemes\Interface.xsd</DependentUpon>
@@ -108,7 +107,6 @@
     <ClCompile Include="cond_jump.cpp" />
     <ClCompile Include="equation.cpp" />
     <ClCompile Include="fakeexitblock.cpp" />
-    <ClCompile Include="fake_exit_block.cpp" />
     <ClCompile Include="instructionscontainer.cpp" />
     <ClCompile Include="label.cpp" />
     <ClCompile Include="labelgenerator.cpp" />
