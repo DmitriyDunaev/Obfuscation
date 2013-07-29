@@ -45,6 +45,8 @@ string CommonModule::Reader::DoStuffNop()
     p.print();
     c.dump();
 
+	// Random.
+
     return 0;
 
 #else
