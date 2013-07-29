@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Xml.Linq;
+using System.Xml.Schema;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommonModule;
 using System.Xml;
+using System.IO;
 
 
 namespace ObfuscationManager
@@ -25,7 +28,7 @@ namespace ObfuscationManager
                         
             Obfuscator.RoutineType routine = doc.Routine.Append();
             routine.Description.Value = "Some description...";
-            doc.SetSchemaLocation("Exchange.xsd");
+            doc.SetSchemaLocation(@"Schemes\Exchange.xsd");
 
             Obfuscator.FunctionType func1 = routine.Function.Append();
             func1.ID.Value = "ID_1";
@@ -49,10 +52,11 @@ namespace ObfuscationManager
 
             Obfuscator.InstructionType inst1 = bb1.Instruction.Append();
             inst1.ID.Value = "ID_3";
-            inst1.RefVars.Value = "ID_2";
+            inst1.RefVars.Value = v1.ID.Value;
             inst1.StatementType.EnumerationValue = Obfuscator.StatementTypeType.EnumValues.eFullAssignment;
             inst1.Value = "t1:=param+6";
 
+            ValidateExchangeXML(doc);
             doc.SaveToFile("Exchange1.xml", true);
 
                         
@@ -65,6 +69,27 @@ namespace ObfuscationManager
             //   ...
             //   doc.SaveToFile("Exchange1.xml", true);
         }
+
+
+        protected static bool ValidateExchangeXML(Obfuscator.Exchange doc2valid)
+        {
+            bool valid = true;
+            System.Xml.Schema.XmlSchemaSet schemas = new System.Xml.Schema.XmlSchemaSet();
+            schemas.Add(null, @"Schemes\Exchange.xsd");
+
+            XDocument doc = XDocument.Parse(doc2valid.SaveToString(false));
+            string msg = "";
+            System.Xml.Linq.XDocument zz = new XDocument();
+            
+            doc.Validate(schemas, (o, e) =>
+            {
+                msg = e.Message;
+                valid = false;
+            });
+            Console.WriteLine(msg == "" ? "Document is valid" : "Document invalid: " + msg);
+            return valid;
+        }
+
 
 
 
