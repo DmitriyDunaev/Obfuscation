@@ -26,7 +26,7 @@ Xml::XmlDocument^ CommonModule::InputProvider::Read (InputType it, PlatformType 
 #include <iostream>
 
 #include "CommonModule.h"
-#include "Interface.h"
+#include "exchange.h"
 #include "assistant.h"
 #include "parser.h"
 

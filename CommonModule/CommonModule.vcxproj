@@ -84,9 +84,6 @@
     <ClInclude Include="equation.h" />
     <ClInclude Include="fakeexitblock.h" />
     <ClInclude Include="instructionscontainer.h" />
-    <ClInclude Include="Interface.h">
-      <DependentUpon>..\ObfuscationManager\Schemes\Interface.xsd</DependentUpon>
-    </ClInclude>
     <ClInclude Include="label.h" />
     <ClInclude Include="labelgenerator.h" />
     <ClInclude Include="line.h" />
@@ -129,7 +126,7 @@
     <Image Include="app.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Xsd Include="..\ObfuscationManager\Schemes\Interface.xsd" />
+    <Xsd Include="..\obfuscationmanager\schemes\exchange.xsd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -146,7 +146,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Xsd Include="..\ObfuscationManager\Schemes\Interface.xsd">
+    <Xsd Include="..\obfuscationmanager\schemes\exchange.xsd">
       <Filter>Header Files</Filter>
     </Xsd>
   </ItemGroup>

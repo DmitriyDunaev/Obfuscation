@@ -6,25 +6,94 @@ using System.Threading.Tasks;
 using CommonModule;
 using System.Xml;
 
+
 namespace ObfuscationManager
 {
-    class Program
+
+    class Manager
     {
-        static void Main(string[] args)
+
+
+        protected static void Example()
         {
-            XmlDocument doc = new XmlDocument();
-            InputProvider ip = new InputProvider();
-            doc = ip.Read(InputType.PseudoCode, PlatformType.x86);
-            doc.Save("test4.xml");
-            Console.Write("zzz");
+            //
+            // TODO:
+            //   Insert your code here...
+            //
+            // Example code to create and save a structure:
+            Obfuscator.Exchange doc = Obfuscator.Exchange.CreateDocument();
+                        
+            Obfuscator.RoutineType routine = doc.Routine.Append();
+            routine.Description.Value = "Some description...";
+            doc.SetSchemaLocation("Exchange.xsd");
+
+            Obfuscator.FunctionType func1 = routine.Function.Append();
+            func1.ID.Value = "ID_1";
+            func1.CalledFrom.EnumerationValue = Obfuscator.CalledFromType.EnumValues.eInternalOnly;
+            func1.ExternalLabel.Value = "ZZZ";
+
+            Obfuscator.VariablesType vars1 = func1.Inputs.Append();
+
+            Obfuscator.OriginalType orig_vars = vars1.Original.Append();
+//            Obfuscator.FakeType fake_vars = vars1.Fake.Append();
+            
+            Obfuscator.VariableType v1 = orig_vars.Variable.Append();
+            v1.ConstValueInParam.Value = "4";
+            v1.ID.Value = "ID_2";
+            v1.Pointer.Value = false;
+            v1.Size.EnumerationValue = Obfuscator.SizeType.EnumValues.eword;
+            v1.Value="param";
+
+            Obfuscator.BasicBlockType bb1 = func1.BasicBlock.Append();
+            bb1.ID.Value = "ID_12";
+
+            Obfuscator.InstructionType inst1 = bb1.Instruction.Append();
+            inst1.ID.Value = "ID_3";
+            inst1.RefVars.Value = "ID_2";
+            inst1.StatementType.EnumerationValue = Obfuscator.StatementTypeType.EnumValues.eFullAssignment;
+            inst1.Value = "t1:=param+6";
+
+            doc.SaveToFile("Exchange1.xml", true);
+
+                        
+            //   ...
+            //   doc.SaveToFile("Exchange1.xml", true);
+            //
+            // Example code to load and save a structure:
+            //   Exchange.Exchange2 doc = Exchange.Exchange2.LoadFromFile("Exchange1.xml");
+            //   Exchange.VariableType root = doc.Variable.First;
+            //   ...
+            //   doc.SaveToFile("Exchange1.xml", true);
+        }
+
+
+
+
+        [STAThread]
+        static int Main(string[] args)
+        {
+
+            try
+            {
+                Console.WriteLine("Exchange Test Application");
+                Example();
+                Console.WriteLine("OK");
+                return 0;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return 1;
+            }
+
+
+            //XmlDocument doc = new XmlDocument();
+            //InputProvider ip = new InputProvider();
+            //doc = ip.Read(InputType.PseudoCode, PlatformType.x86);
+            //doc.Save("test4.xml");
+            //Console.Write("zzz");
             
         }
 
-        XmlDocument test(string zz)
-        {
-            //XmlDocument doc = new XmlDocument();
-            //doc.LoadXml("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Routine xsi:noNamespaceSchemaLocation=\"CFG_Schema.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">	<BasicBlock Out=\"ID_5 ID_2\" ID=\"ID_0\">	<Instruction Type=\"original\" Label=\"\">result := 9</Instruction>	<Instruction Type=\"original\" Label=\"\">if  csudajo goto LABEL_3</Instruction></BasicBlock></Routine>");
-            return new XmlDocument();
-        }
     }
 }
