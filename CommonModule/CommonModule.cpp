@@ -32,7 +32,8 @@ Xml::XmlDocument^ CommonModule::InputProvider::Read (InputType it, PlatformType 
 
 string CommonModule::Reader::DoStuffNop()
 {
-    Blocks c;
+
+    Routine c;
 
 #ifdef DEB
 
@@ -58,7 +59,7 @@ string CommonModule::Reader::DoStuffNop()
    /* ss << "for ( i = 0; i; ++i )\n{\n*(_DWORD *)v6 = dword_405008;\n*v5 = dword_402000;\nv6";
     ss << " += 4;\n}\nreturn *(_DWORD *)v3;";*/
 //
-	ss << " int sub_kaki(a, b)\n";
+	ss << " int sub_fnct(a, b)\n";
 	ss << " {\n";
     ss << " result = 10;\n";
     ss << " if ( csudajo || azis && blabla)\n";
@@ -73,7 +74,7 @@ string CommonModule::Reader::DoStuffNop()
     ss << " }\n";
     ss << " return result;\n";
 	ss << " }\n";
-	ss << " kaki.";
+	ss << " a = b;";
 
 
 #ifdef CIN
@@ -93,7 +94,7 @@ string CommonModule::Reader::DoStuffNop()
         cout << i->gets() << endl;
     }
 #endif
-
+	
     Assistant Reader(&lines, &c);
 
     Reader.preproc();

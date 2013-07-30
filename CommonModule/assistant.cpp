@@ -15,7 +15,7 @@ void Assistant::getfor(string from, string *s1, string *s2, string *s3)
     if (((s2->find("=")!= string::npos) || (s2->find(">")!= string::npos)
                   || (s2->find("<")!= string::npos)) && (*s2 != "1"))
     {
-        Parser p(*s2, *cnt, bl->Vars);
+        Parser p(*s2, *cnt, rtn->back()->Vars);
         p.work();
         *s2 = p.str();
     }
@@ -31,7 +31,7 @@ void Assistant::getwhile(string from, string *s1)
 
     if ((from.find("=")!= string::npos) || (from.find(">")!= string::npos) || (from.find("<")!= string::npos))
     {
-        Parser p(*s1, *cnt, bl->Vars);
+        Parser p(*s1, *cnt, rtn->back()->Vars);
         p.work();
         *s1 = p.str();
     }
@@ -47,7 +47,7 @@ void Assistant::getif(string from, string *s1)
 
     if ((from.find("=")!= string::npos) || (from.find(">")!= string::npos) || (from.find("<")!= string::npos))
     {
-        Parser p(*s1, *cnt, bl->Vars);
+        Parser p(*s1, *cnt, rtn->back()->Vars);
         p.work();
         *s1 = p.str();
     }
@@ -55,9 +55,9 @@ void Assistant::getif(string from, string *s1)
 
 void Assistant::newblock()
 {
-    bl->id_deal++;
-    bl->blocks.push_back(new CInstructionsContainer(bl->id_deal));
-    cnt = bl->blocks.back();
+    UUID id = l.getid();
+    rtn->back()->blocks.push_back(new CInstructionsContainer(id));
+    cnt = rtn->back()->back();
 }
 
 void Assistant::generateif(string deal, string label)
@@ -74,7 +74,7 @@ void Assistant::generateif(string deal, string label)
             if (((deal.find("=")!= string::npos) || (deal.find(">")!= string::npos)
                       || (deal.find("<")!= string::npos)))
                 {
-                    Parser p_if(deal, *cnt, bl->Vars);
+                    Parser p_if(deal, *cnt, rtn->back()->Vars);
                     p_if.work(false);
                     deal = p_if.str();
                 }
@@ -174,10 +174,10 @@ void Assistant::preproc()
             string s = i->gets().substr(found), t = "signed int";
             s.erase( s.find(";"), s.size() );
 #ifdef DEBUG2
-            cout << bl->Vars[s.substr(4) ]->getname() << endl;
+            cout << rtn->back()->Vars[s.substr(4) ]->getname() << endl;
 #endif
 
-            bl->Vars[s.substr(11) ]->sett("signed int");
+            rtn->back()->Vars[s.substr(11) ]->sett("signed int");
             list<Line>::iterator j=i;
             --i;
             lines->erase(j);
@@ -190,10 +190,10 @@ void Assistant::preproc()
 			if ( exists != string::npos )
 				s.erase( exists, s.size() );
 #ifdef DEBUG2
-            cout << bl->Vars[s.substr(4) ]->getname() << endl;
+            cout << rtn->back().Vars[s.substr(4) ]->getname() << endl;
 #endif
 
-            bl->Vars[s.substr(4) ]->sett("int");
+            rtn->back().Vars[s.substr(4) ]->sett("int");
             list<Line>::iterator j=i;
             --i;
             lines->erase(j);
@@ -204,7 +204,7 @@ void Assistant::preproc()
             string s = i->gets().substr(found);
             s.erase( s.find(";"), s.size() );
 #ifdef DEBUG2
-            bl->Vars[s.substr(5) ]->sett("char");
+            rtn->back()->Vars[s.substr(5) ]->sett("char");
 #endif
             list<Line>::iterator j=i;
             --i;
@@ -317,7 +317,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
             co=l.get();
             ex=l.get();
             getfor(i->gets(), &f1, &f2, &f3);
-            Parser p_f1(f1, *cnt, bl->Vars);
+            Parser p_f1(f1, *cnt, rtn->back()->Vars);
             p_f1.work();
             newblock();
             generatelabel(lo);
@@ -329,7 +329,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
             list<Line>::iterator a, b;
             setiters(&a, &b, &i),
             work(a, b);
-            Parser p_f3(f3, *cnt, bl->Vars);
+            Parser p_f3(f3, *cnt, rtn->back()->Vars);
             p_f3.work();
             generategoto(lo);
             newblock();
@@ -401,7 +401,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 
         else if (i->gets().find("=")!=string::npos || i->gets().find("++")!=string::npos || i->gets().find("--")!=string::npos)
         {
-            Parser p(i->gets(), *cnt, bl->Vars);
+            Parser p(i->gets(), *cnt, rtn->back()->Vars);
             p.work();
             //cnt->push_back( new  CThreeAdressInstruction(i->gets()));
         }
@@ -416,16 +416,14 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 			string tmp2 = i->gets().substr(i->gets().find("sub"), i->gets().size());
             string tmp = "		<Function Name=\"" + tmp2 + "\">";
 
-			newblock();
+			rtn->push_back( new Function( l.getid(), tmp2 , l.getid()) );
+			cnt = rtn->back()->back();
             
             ++i;
             list<Line>::iterator a, b;
             setiters(&a, &b, &i);
             work( a, b);
-            tmp = "		</Function><!-- " + tmp2 + " -->";
-            generatelabel(tmp);
 
-            newblock();
         }
 
         else if (i->gets().find("sub_")!=string::npos)
@@ -451,7 +449,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
         }
     }
 
-    bl->cleanup();
+    rtn->cleanup();
 }
 
 

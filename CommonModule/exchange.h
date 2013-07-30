@@ -5352,7 +5352,7 @@ inline System::Boolean NewDataSet::InstructionRow::PolyRequired::get() {
         return (cli::safe_cast<::System::Boolean >(this[this->tableInstruction->PolyRequiredColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'PolyRequired\' in table \'Instruction\' is DBNull.", 
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „PolyRequired” oszlop értéke a(z) „Instruction” táblában DBNull.", 
             e));
     }
 }
@@ -5365,8 +5365,7 @@ inline System::String^  NewDataSet::InstructionRow::RefVars::get() {
         return (cli::safe_cast<::System::String^  >(this[this->tableInstruction->RefVarsColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'RefVars\' in table \'Instruction\' is DBNull.", 
-            e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „RefVars” oszlop értéke a(z) „Instruction” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::InstructionRow::RefVars::set(System::String^  value) {
@@ -5378,7 +5377,7 @@ inline System::Int32 NewDataSet::InstructionRow::BasicBlock_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableInstruction->BasicBlock_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'BasicBlock_Id\' in table \'Instruction\' is DBNull.", 
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „BasicBlock_Id” oszlop értéke a(z) „Instruction” táblában DBNull.", 
             e));
     }
 }
@@ -5435,7 +5434,7 @@ inline System::String^  NewDataSet::BasicBlockRow::Predecessors::get() {
         return (cli::safe_cast<::System::String^  >(this[this->tableBasicBlock->PredecessorsColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Predecessors\' in table \'BasicBlock\' is DBNull.", 
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Predecessors” oszlop értéke a(z) „BasicBlock” táblában DBNull.", 
             e));
     }
 }
@@ -5448,7 +5447,7 @@ inline System::String^  NewDataSet::BasicBlockRow::Successors::get() {
         return (cli::safe_cast<::System::String^  >(this[this->tableBasicBlock->SuccessorsColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Successors\' in table \'BasicBlock\' is DBNull.", 
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Successors” oszlop értéke a(z) „BasicBlock” táblában DBNull.", 
             e));
     }
 }
@@ -5468,7 +5467,7 @@ inline System::Int32 NewDataSet::BasicBlockRow::Function_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableBasicBlock->Function_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Function_Id\' in table \'BasicBlock\' is DBNull.", 
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Function_Id” oszlop értéke a(z) „BasicBlock” táblában DBNull.", 
             e));
     }
 }
@@ -5584,8 +5583,7 @@ inline System::Int32 NewDataSet::FunctionRow::Routine_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableFunction->Routine_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Routine_Id\' in table \'Function\' is DBNull.", 
-            e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Routine_Id” oszlop értéke a(z) „Function” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::FunctionRow::Routine_Id::set(System::Int32 value) {
@@ -5661,8 +5659,7 @@ inline System::Int32 NewDataSet::InputsRow::Function_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableInputs->Function_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Function_Id\' in table \'Inputs\' is DBNull.", 
-            e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Function_Id” oszlop értéke a(z) „Inputs” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::InputsRow::Function_Id::set(System::Int32 value) {
@@ -5720,8 +5717,7 @@ inline System::Int32 NewDataSet::OriginalRow::Inputs_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableOriginal->Inputs_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Inputs_Id\' in table \'Original\' is DBNull.", 
-            e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Inputs_Id” oszlop értéke a(z) „Original” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::OriginalRow::Inputs_Id::set(System::Int32 value) {
@@ -5733,8 +5729,7 @@ inline System::Int32 NewDataSet::OriginalRow::Outputs_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableOriginal->Outputs_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Outputs_Id\' in table \'Original\' is DBNull.", 
-            e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Outputs_Id” oszlop értéke a(z) „Original” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::OriginalRow::Outputs_Id::set(System::Int32 value) {
@@ -5746,8 +5741,7 @@ inline System::Int32 NewDataSet::OriginalRow::Locals_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableOriginal->Locals_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Locals_Id\' in table \'Original\' is DBNull.", 
-            e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Locals_Id” oszlop értéke a(z) „Original” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::OriginalRow::Locals_Id::set(System::Int32 value) {
@@ -5840,7 +5834,7 @@ inline System::String^  NewDataSet::VariableRow::ConstValueInParam::get() {
         return (cli::safe_cast<::System::String^  >(this[this->tableVariable->ConstValueInParamColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'ConstValueInParam\' in table \'Variable\' is DBNull.", 
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „ConstValueInParam” oszlop értéke a(z) „Variable” táblában DBNull.", 
             e));
     }
 }
@@ -5853,7 +5847,7 @@ inline System::Int32 NewDataSet::VariableRow::Original_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableVariable->Original_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Original_Id\' in table \'Variable\' is DBNull.", 
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Original_Id” oszlop értéke a(z) „Variable” táblában DBNull.", 
             e));
     }
 }
@@ -5866,8 +5860,7 @@ inline System::Int32 NewDataSet::VariableRow::Fake_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableVariable->Fake_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Fake_Id\' in table \'Variable\' is DBNull.", 
-            e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Fake_Id” oszlop értéke a(z) „Variable” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::VariableRow::Fake_Id::set(System::Int32 value) {
@@ -5930,7 +5923,7 @@ inline System::Int32 NewDataSet::FakeRow::Inputs_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableFake->Inputs_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Inputs_Id\' in table \'Fake\' is DBNull.", e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Inputs_Id” oszlop értéke a(z) „Fake” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::FakeRow::Inputs_Id::set(System::Int32 value) {
@@ -5942,7 +5935,7 @@ inline System::Int32 NewDataSet::FakeRow::Outputs_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableFake->Outputs_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Outputs_Id\' in table \'Fake\' is DBNull.", e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Outputs_Id” oszlop értéke a(z) „Fake” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::FakeRow::Outputs_Id::set(System::Int32 value) {
@@ -5954,7 +5947,7 @@ inline System::Int32 NewDataSet::FakeRow::Locals_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableFake->Locals_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Locals_Id\' in table \'Fake\' is DBNull.", e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Locals_Id” oszlop értéke a(z) „Fake” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::FakeRow::Locals_Id::set(System::Int32 value) {
@@ -6033,8 +6026,7 @@ inline System::Int32 NewDataSet::OutputsRow::Function_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableOutputs->Function_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Function_Id\' in table \'Outputs\' is DBNull.", 
-            e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Function_Id” oszlop értéke a(z) „Outputs” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::OutputsRow::Function_Id::set(System::Int32 value) {
@@ -6092,8 +6084,7 @@ inline System::Int32 NewDataSet::LocalsRow::Function_Id::get() {
         return (cli::safe_cast<::System::Int32 >(this[this->tableLocals->Function_IdColumn]));
     }
     catch (::System::InvalidCastException^ e) {
-        throw (gcnew ::System::Data::StrongTypingException(L"The value for column \'Function_Id\' in table \'Locals\' is DBNull.", 
-            e));
+        throw (gcnew ::System::Data::StrongTypingException(L"A(z) „Function_Id” oszlop értéke a(z) „Locals” táblában DBNull.", e));
     }
 }
 inline System::Void NewDataSet::LocalsRow::Function_Id::set(System::Int32 value) {

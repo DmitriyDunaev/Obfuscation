@@ -69,6 +69,9 @@
     <ClInclude Include="variables.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="functions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommonModule.cpp">
@@ -126,6 +129,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="variables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -83,6 +83,7 @@
     <ClInclude Include="cond_jump.h" />
     <ClInclude Include="equation.h" />
     <ClInclude Include="fakeexitblock.h" />
+    <ClInclude Include="functions.h" />
     <ClInclude Include="instructionscontainer.h" />
     <ClInclude Include="label.h" />
     <ClInclude Include="labelgenerator.h" />
@@ -104,6 +105,7 @@
     <ClCompile Include="cond_jump.cpp" />
     <ClCompile Include="equation.cpp" />
     <ClCompile Include="fakeexitblock.cpp" />
+    <ClCompile Include="functions.cpp" />
     <ClCompile Include="instructionscontainer.cpp" />
     <ClCompile Include="label.cpp" />
     <ClCompile Include="labelgenerator.cpp" />

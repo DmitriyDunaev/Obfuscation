@@ -11,12 +11,13 @@
 
 #include "threeadressinstruction.h"
 #include "variables.h"
+#include "labelgenerator.h"
 
 using namespace std;
 
 class CInstructionsContainer
 {
-    int block_id;
+    UUID block_id;
 
     std::list<CThreeAdressInstruction*> InstructionList;
     std::vector<CInstructionsContainer*> predecessors;
@@ -24,7 +25,7 @@ class CInstructionsContainer
     std::vector<CInstructionsContainer*> successors;
 
 public:
-    CInstructionsContainer(int i) : block_id(i) {}
+    CInstructionsContainer(UUID i) : block_id(i) {}
     ~CInstructionsContainer();
     void clear ();
     void push_back (CThreeAdressInstruction*);
@@ -37,10 +38,10 @@ public:
     }
     CThreeAdressInstruction* back() { return InstructionList.back(); }
 
-    friend class Assistant;
-    friend class Blocks;
+	void succpush_back(CInstructionsContainer* c) { successors.push_back(c); }
+	void predpush_back(CInstructionsContainer* c) { predecessors.push_back(c); }
 
-    int getblockid() { return block_id; }
+    UUID getblockid() { return block_id; }
 
 #ifdef DEBUG
         void dump (stringstream& s)
@@ -51,7 +52,7 @@ public:
             for (std::vector<CInstructionsContainer*>::iterator i = predecessors.begin();
                                             i != predecessors.end(); ++i)
                 {
-                    tmp << "ID_" << (*i)->getblockid();
+                    tmp << "ID_" << (*i)->getblockid().Data1;
                     std::vector<CInstructionsContainer*>::iterator j=i;
                     ++j;
                     if (j != predecessors.end()) tmp << " ";
@@ -67,7 +68,7 @@ public:
             for (std::vector<CInstructionsContainer*>::iterator i = successors.begin();
                                             i != successors.end(); ++i)
                 {
-                    tmp2 << "ID_" << (*i)->getblockid();
+                    tmp2 << "ID_" << (*i)->getblockid().Data1;
                     std::vector<CInstructionsContainer*>::iterator j=i;
                     ++j;
                     if (j != successors.end()) tmp2 << " ";
@@ -77,7 +78,7 @@ public:
             {
                 s << "Out=\"" << t2 << "\" ";
             }
-            s << "ID=\"ID_" << block_id << "\">\n";
+			s << "ID=\"ID_" << block_id.Data1 << "\">\n";
             for (std::list<CThreeAdressInstruction*>::iterator i = InstructionList.begin();
                                             i != InstructionList.end(); ++i)
                 {

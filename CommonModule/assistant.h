@@ -10,6 +10,7 @@
 #include "label.h"
 #include "call.h"
 #include "blocks.h"
+#include "functions.h"
 #include "unc_jump.h"
 #include "cond_jump.h"
 #include "fakeexitblock.h"
@@ -23,16 +24,16 @@ using namespace std;
 class Assistant
 {
 public:
-    Assistant(list<Line>* lines, Blocks* b): lines(lines), bl(b) { cnt = (bl->blocks).back(); }
+    Assistant(list<Line>* lines, Routine* b): lines(lines), rtn(b) { cnt = (rtn->back())->back(); }
     list<Line>* lines;
-    Blocks* bl;
+    Routine* rtn;
     CInstructionsContainer* cnt;
 
     LabelGenerator l;
 
     void preproc();
     void work(list<Line>::iterator beg , list<Line>::iterator en );
-    void setconnentions() { bl->setconnections(); }
+    void setconnentions() { rtn->setconnections(&l); }
 
 
     void getfor(string from, string *s1, string *s2, string *s3);
@@ -51,7 +52,7 @@ public:
     {
         s << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         s << "<Routine xsi:noNamespaceSchemaLocation=\"CFG_Schema.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n";
-        bl->dump(s);
+        rtn->dump(s);
 
 
         s << "</Routine>";
