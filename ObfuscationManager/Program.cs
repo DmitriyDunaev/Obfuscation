@@ -92,11 +92,12 @@ namespace ObfuscationManager
 
 
 
-
-
         [STAThread]
         static int Main(string[] args)
         {
+
+            ILObfuscator.Instruction inst = new ILObfuscator.Instruction();
+            inst.ID.setID();
 
             try
             {
@@ -111,6 +112,7 @@ namespace ObfuscationManager
                 return 1;
             }
 
+            
 
             //XmlDocument doc = new XmlDocument();
             //InputProvider ip = new InputProvider();

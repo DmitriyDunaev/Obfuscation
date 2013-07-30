@@ -83,6 +83,10 @@
       <Project>{93d90e85-c287-4b4e-b6ea-fc92e9e1bd76}</Project>
       <Name>Exchange</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ILObfuscator\ILObfuscator.csproj">
+      <Project>{7bbcfcfc-f998-41d8-846a-ee3ff0a3d7b6}</Project>
+      <Name>ILObfuscator</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
