@@ -148,9 +148,4 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
-  <ItemGroup>
-    <Xsd Include="..\obfuscationmanager\schemes\exchange.xsd">
-      <Filter>Header Files</Filter>
-    </Xsd>
-  </ItemGroup>
 </Project>

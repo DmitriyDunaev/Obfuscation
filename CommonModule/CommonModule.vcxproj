@@ -128,9 +128,6 @@
     <Image Include="app.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Xsd Include="..\obfuscationmanager\schemes\exchange.xsd" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\AltovaXML\AltovaXML.csproj">
       <Project>{03aaa791-ec2d-4a90-abbf-45337e52dfd6}</Project>
     </ProjectReference>

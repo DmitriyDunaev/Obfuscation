@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CommonModule;
 using System.Xml;
 using System.IO;
+using Obfuscator;
 
 
 namespace ObfuscationManager
@@ -55,13 +56,34 @@ namespace ObfuscationManager
 //            inst1.RefVars.Value = v1.ID.Value;
 //            inst1.StatementType.EnumerationValue = Obfuscator.StatementTypeType.EnumValues.eFullAssignment;
 //            inst1.Value = "t1:=param+6";
+
+
+
+
             XmlDocument doc = new XmlDocument();
             InputProvider ip = new InputProvider();
             doc = ip.Read(InputType.PseudoCode, PlatformType.x86);
             doc.Save("test2.xml");
-            Obfuscator.Exchange exch = Obfuscator.Exchange.LoadFromFile("test2.xml");
-            //Obfuscator.Exchange exch = Obfuscator.Exchange.LoadFromString(doc.ToString());
-            ValidateExchangeXML(exch);
+            string error;
+            if (!ValidateExchangeXML(doc, out error))
+            {
+                Console.WriteLine("Document invalid: " + error);
+                return;
+            }
+            else
+            {
+                Console.WriteLine("Document is valid!");
+            }
+
+            Exchange exch;
+            if (!ConvertToExchangeType(doc, out exch, out error))
+            {
+                Console.WriteLine("Document conversion failed. Error message: " + error);
+                return;
+            }
+
+//            Obfuscator.Exchange exch = Obfuscator.Exchange.LoadFromFile("test2.xml");
+            
             exch.SaveToFile("Exchange1.xml", true);
 
                         
@@ -73,26 +95,107 @@ namespace ObfuscationManager
             //   Exchange.VariableType root = doc.Variable.First;
             //   ...
             //   doc.SaveToFile("Exchange1.xml", true);
+
+
         }
 
 
-        protected static bool ValidateExchangeXML(Obfuscator.Exchange doc2valid)
+        protected static bool ValidateExchangeXML(XmlDocument doc2validate, out string error_message)
         {
             bool valid = true;
             System.Xml.Schema.XmlSchemaSet schemas = new System.Xml.Schema.XmlSchemaSet();
-            schemas.Add(null, @"Schemes\Exchange.xsd");
+            schemas.Add(null, @"Schemas\Exchange.xsd");
 
-            XDocument doc = XDocument.Parse(doc2valid.SaveToString(false));
-            string msg = "";
-            System.Xml.Linq.XDocument zz = new XDocument();
+            XDocument doc = XDocument.Parse(doc2validate.InnerXml);
+            string msg = string.Empty;
             
             doc.Validate(schemas, (o, e) =>
             {
                 msg = e.Message;
                 valid = false;
             });
-            Console.WriteLine(msg == "" ? "Document is valid" : "Document invalid: " + msg);
+            
+            error_message = msg;
+            
             return valid;
+        }
+
+
+        protected static bool ConvertToExchangeType(XmlDocument doc, out Exchange exch, out string error_message)
+        {
+            exch = Exchange.LoadFromString(doc.InnerXml);
+            foreach (RoutineType routine in exch.Routine)
+            {
+                foreach (FunctionType function in routine.Function)
+                {
+                    // Collecting IDs for all variables within a function
+                    List<string> variable_IDs = new List<string>();
+                    if(function.Inputs.Exists && function.Inputs[0].Original.Exists && function.Inputs[0].Original[0].Variable.Exists)
+                        foreach (VariableType var in function.Inputs[0].Original[0].Variable)
+	    	                variable_IDs.Add(var.ID.Value);
+                    if (function.Inputs.Exists && function.Inputs[0].Fake.Exists && function.Inputs[0].Fake[0].Variable.Exists)
+                        foreach (VariableType var in function.Inputs[0].Fake[0].Variable)
+                            variable_IDs.Add(var.ID.Value);
+                    if (function.Outputs.Exists && function.Outputs[0].Original.Exists && function.Outputs[0].Original[0].Variable.Exists)
+                        foreach (VariableType var in function.Outputs[0].Original[0].Variable)
+                            variable_IDs.Add(var.ID.Value);
+                    if (function.Outputs.Exists && function.Outputs[0].Fake.Exists && function.Outputs[0].Fake[0].Variable.Exists)
+                        foreach (VariableType var in function.Outputs[0].Fake[0].Variable)
+                            variable_IDs.Add(var.ID.Value);
+                    if (function.Locals.Exists && function.Locals[0].Original.Exists && function.Locals[0].Original[0].Variable.Exists)
+                        foreach (VariableType var in function.Locals[0].Original[0].Variable)
+                            variable_IDs.Add(var.ID.Value);
+                    if (function.Locals.Exists && function.Locals[0].Fake.Exists && function.Locals[0].Fake[0].Variable.Exists)
+                        foreach (VariableType var in function.Locals[0].Fake[0].Variable)
+                            variable_IDs.Add(var.ID.Value);
+
+                    // Collecting IDs for Basic Blocks and checking the consistence of Predecessors and Successors.
+                    List<string> basicblock_IDs = new List<string>();
+                    foreach (BasicBlockType bb in function.BasicBlock)
+                    {
+                        basicblock_IDs.Add(bb.ID.Value);
+                        // Checking RefVar ID for variables
+                        foreach (InstructionType inst in bb.Instruction)
+                            if (inst.RefVars.Exists())
+                            {
+                                string[] refvars = inst.RefVars.Value.Split(' ');
+                                foreach (string refvar in refvars)
+                                    if (!variable_IDs.Contains(refvar))
+                                    {
+                                        error_message = "An instruction contains reference to a non-existing variable. Additional information: Instruction ID="+inst.ID.Value+", Basic Block ID=" + bb.ID.Value + ", Function ID=" + function.ID.Value + ").";
+                                        return false;
+                                    }
+                            }
+                    }
+                    foreach (BasicBlockType bb in function.BasicBlock)
+                    {
+                        if (bb.Predecessors.Exists())
+                        {
+                            string[] predecessors = bb.Predecessors.Value.Split(' ');
+                            foreach (string pred in predecessors)
+                                if (!basicblock_IDs.Contains(pred))
+                                {
+                                    error_message = "In a Basic Block (" + bb.ID.Value + ") 'Predecessors' reference is invalid. No predecessor with ID={" + pred + "} found in Function (ID=" + function.ID.Value + ").";
+                                    return false;
+                                }
+                        }
+                        if (bb.Successors.Exists())
+                        {
+                            string[] successors = bb.Successors.Value.Split(' ');
+                            foreach (string succ in successors)
+                                if (!basicblock_IDs.Contains(succ))
+                                {
+                                    error_message = "In a Basic Block (" + bb.ID.Value + ") 'Successors' reference is invalid. No successor with ID={" + succ + "} found in Function (" + function.ID.Value + ").";
+                                    return false;
+                                }
+                        }
+                    }
+                }
+            }
+
+
+            error_message = string.Empty;
+            return true;
         }
 
 

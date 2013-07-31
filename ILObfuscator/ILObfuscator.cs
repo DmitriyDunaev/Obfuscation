@@ -57,6 +57,7 @@ namespace ILObfuscator
         public IDManager ID = new IDManager();
         public List<BasicBlock> predecessors;
         public List<BasicBlock> successors;
+        public List<Instruction> instructions;
     }
 
     public class Instruction
