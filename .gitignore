@@ -38,8 +38,10 @@ local.properties
 
 # User-specific files
 *.suo
+*.v11.suo
 *.user
 *.sln.docstates
+*.sdf
 
 # Build results
 
