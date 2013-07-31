@@ -41,8 +41,8 @@ void Function::setconnections(LabelGenerator* l)
         if ( lab != -1 && !(*i)->back()->islabel())
         {
             CInstructionsContainer* succ;
-			//succ = findlabel( lab );
-			succ = *i;
+			succ = findlabel( lab );
+			//succ = *i;
             (*i)->succpush_back( succ );
             succ->predpush_back( *i );
         }
@@ -60,11 +60,49 @@ void Function::setconnections(LabelGenerator* l)
 
 }
 
+void Function::setjumps()
+{   
+	list<CInstructionsContainer*>::iterator i = blocks.begin();
+
+    while (  i != blocks.end() && !(*i)->back()->isexit())
+    {
+		if ( !(*i)->empty() )
+		{
+			int lab = (*i)->front()->geti();
+			if ( lab != -1 && (*i)->front()->islabel())
+			{
+				CInstructionsContainer* succ;
+				succ = findjump( lab );
+				while (succ != NULL )
+				{
+					succ->back()->settarget( (*i)->frontplus() );
+					succ->back()->seti( -1 );
+					succ = findjump( lab );
+				}
+			(*i)->erasefront();
+			}
+			++i;
+		} else
+			++i;
+	}
+
+}
+
+CInstructionsContainer* Function::findjump( int lab )
+{
+    for ( list<CInstructionsContainer*>::iterator i = blocks.begin(); i != blocks.end(); ++i)
+    {
+        if ( (*i)->back()->geti() == lab && !(*i)->back()->islabel())
+            return *i;
+    }
+    return NULL;
+}
+
 CInstructionsContainer* Function::findlabel( int lab )
 {
     for ( list<CInstructionsContainer*>::iterator i = blocks.begin(); i != blocks.end(); ++i)
     {
-        if ( (*i)->front()->geti() == lab && (*i)->front()->islabel() || 1)
+        if ( (*i)->front()->geti() == lab && (*i)->front()->islabel())
             return *i;
     }
     return NULL;

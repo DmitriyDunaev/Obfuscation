@@ -19,13 +19,7 @@ public:
     COperand*& operator[] (std::string s);
 
 #ifdef DEBUG
-    void dump()
-    {
-        std::cout << std::endl << "----------- Variables -----------\n\n";
-        for (std::map<std::string, COperand*>::iterator i = variables.begin();
-                                                        i != variables.end(); ++i)
-        ((*i).second)->print();
-    }
+    void dump(std::stringstream &s);
 #endif
 };
 

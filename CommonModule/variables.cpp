@@ -20,3 +20,17 @@ CVariables::~CVariables()
 {
     clear();
 }
+
+void CVariables::dump(stringstream &s)
+{
+    s << "	<Locals>\n		 <Original>\n";
+    for (std::map<std::string, COperand*>::iterator i = variables.begin(); i != variables.end(); ++i)
+    {
+		s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" Size=\"unknown\" Pointer=\"false\">";
+		((*i).second)->print(s);
+		s << "</Variable>\n";
+	}
+
+	s << "		</Original>\n	</Locals>\n";
+
+}

@@ -4,6 +4,7 @@ using namespace std;
 
 COperand::COperand(std::string s)
 {
+	UuidCreate( &id );
     name = s;
     t = "\0";
     type = variable;
@@ -27,10 +28,10 @@ std::string COperand::getname()
 }
 
 #ifdef DEBUG
-void COperand::print ()
+void COperand::print (stringstream &s)
 {
-    cout << name << ": ";
-    if (type == constant)
+    s << name;
+    /*if (type == constant)
         cout << "constant";
     if (type == temp_var)
         cout << "temporary variable";
@@ -40,6 +41,6 @@ void COperand::print ()
     if (t != "\0" )
         cout << " " << t;
 
-    cout << endl;
+    cout << endl;*/
 }
 #endif

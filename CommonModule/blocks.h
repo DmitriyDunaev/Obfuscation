@@ -26,10 +26,11 @@ public:
 	{
 		stringstream tmp;
 		tmp.flags( stringstream::hex );
-		tmp << id.Data1 << "-" << id.Data2 << "-" << id.Data3 << "-" << id.Data4[0] << id.Data4[1] << "-";
+		tmp << id.Data1 << "-" << id.Data2 << "-" << id.Data3 << "-" << (int)id.Data4[0] << (int)id.Data4[1] << "-";
 		tmp.width(2);
 		tmp.flags();
-		tmp << id.Data4[2] << id.Data4[3] << id.Data4[4] << id.Data4[5] << id.Data4[6] << id.Data4[7];
+		tmp << std::setfill('0');
+		tmp << (int)id.Data4[2] << (int)id.Data4[3] << (int)id.Data4[4] <<(int) id.Data4[5] << (int)id.Data4[6] << (int)id.Data4[7];
 		string ret = tmp.str();
 		return ret;
 	}
@@ -42,8 +43,10 @@ public:
     CInstructionsContainer* back() { return blocks.back(); }
     void cleanup();
     void setconnections(LabelGenerator* l);
+	void setjumps();
 
     CInstructionsContainer* findlabel( int i );
+	CInstructionsContainer* findjump( int i );
 
     CVariables&  getVars();
 
@@ -51,11 +54,11 @@ public:
 
     void dump(stringstream& s)
     {
+		Vars.dump(s);
         for ( std::list<CInstructionsContainer*>::iterator i = blocks.begin(); i != blocks.end(); ++i )
         {
             (*i)->dump(s);
 		}
-		Vars.dump();
     }
 };
 

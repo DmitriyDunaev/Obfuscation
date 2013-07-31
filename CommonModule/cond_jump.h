@@ -9,14 +9,16 @@ class Cond_jump : public CThreeAdressInstruction
 {
     string cond;
     int i;
+	CThreeAdressInstruction* target;
 public:
-    Cond_jump(string s, int i):cond(s), i(i) {}
+    Cond_jump(string s, int i):cond(s), i(i), target(this) {}
     string gets() { return cond; }
     int geti() { return i; }
-    void print(stringstream& s)
-    {
-        s  << "		<Instruction Type=\"original\" Label=\"\">if " << cond << " goto LABEL_" << i << "</Instruction><!-- COND_JMP -->" << endl;
-    }
+	void seti( int in ) { i = in; }
+    void print(stringstream& s);
+
+	CThreeAdressInstruction* gettarget() {return target;}
+	void settarget( CThreeAdressInstruction* t ) { target = t; }
 };
 
 #endif // UNC_JUMP_H
