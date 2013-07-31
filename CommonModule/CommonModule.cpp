@@ -8,18 +8,16 @@ Xml::XmlDocument^ CommonModule::InputProvider::Read (InputType it, PlatformType 
 {
 	Xml::XmlDocument^ doc = gcnew Xml::XmlDocument;
 	Reader r1;
-	r1.DoStuff();
 	//doc->LoadXml("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Routine xsi:noNamespaceSchemaLocation=\"CFG_Schema.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">	<BasicBlock Out=\"ID_5 ID_2\" ID=\"ID_0\">	<Instruction Type=\"original\" Label=\"\">result := 9</Instruction>	<Instruction Type=\"original\" Label=\"\">if  csudajo goto LABEL_3</Instruction></BasicBlock></Routine>");
-	std::string str = r1.DoStuffNop();
+	std::string str = r1.DoStuff();
 	String ^ s = gcnew String(str.c_str());
 	doc->LoadXml(s);
-	cout << str.c_str() << endl;
+	//cout << str.c_str() << endl;
 	return doc;
 	
 }
 
 //#define DEB
-#define DEB2
 
 //#define CIN
 
@@ -30,7 +28,7 @@ Xml::XmlDocument^ CommonModule::InputProvider::Read (InputType it, PlatformType 
 #include "assistant.h"
 #include "parser.h"
 
-string CommonModule::Reader::DoStuffNop()
+string CommonModule::Reader::DoStuff()
 {
 
     Routine c;
@@ -65,6 +63,13 @@ string CommonModule::Reader::DoStuffNop()
 	ss << " return x;\n";
 	ss << " c = y + z;\n";
 	ss << " return y;\n";
+	ss << " }\n";
+	ss << " int sub_masik(ca, b)\n";
+	ss << " {\n";
+	ss << " xa = ya;\n";
+	ss << " return xa;\n";
+	ss << " ca = ya + az;\n";
+	ss << " return ya;\n";
 	ss << " }";
 
 
@@ -79,22 +84,10 @@ string CommonModule::Reader::DoStuffNop()
 #endif
         lines.push_back(in);
     }
-#ifdef DEB2
-    for ( list<Line>::iterator i = lines.begin(); i != lines.end(); ++i)
-    {
-        cout << i->gets() << endl;
-    }
-#endif
 	
     Assistant Reader(&lines, &c);
 
     Reader.preproc();
-#ifdef DEB2
-    for ( list<Line>::iterator i = lines.begin(); i != lines.end(); ++i)
-    {
-        cout << i->gets() << endl;
-    }
-#endif
 
     Reader.work( Reader.lines->begin(), Reader.lines->end());
 
@@ -102,7 +95,7 @@ string CommonModule::Reader::DoStuffNop()
 
 	stringstream s;
     Reader.printlist(s);
-	cout << s;
+	//cout << s;
 	return s.str();
 
 

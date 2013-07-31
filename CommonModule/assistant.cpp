@@ -149,10 +149,24 @@ void Assistant::generatelabel(string label)
 
 void Assistant::preproc()
 {
+	list<Line>::iterator l = lines->begin();
+	while ( l != lines->end())
+	{
+		while((l->gets())[0] == ' ') l->ersbeg();
+		if (l->gets() == "\n")
+		{
+			list<Line>::iterator j;
+			j = l;
+			++l;
+			lines->erase(j);
+		} else ++l;
+	}
+
     for (list<Line>::iterator i = lines->begin(); i != lines->end(); ++i)
     {
         if ( i->gets().find("//") != string::npos )
             i->ersmid( i->gets().find("//"), i->gets().size() );
+		
     }
 
     for (list<Line>::iterator i = lines->begin(); i != lines->end(); ++i)
@@ -213,7 +227,7 @@ void Assistant::preproc()
     }
 
     // (*(_BYTE *)  is...?
-
+	
     for (list<Line>::iterator i = lines->begin(); i != lines->end(); ++i)
     {
         size_t found = i->gets().find(" = -");
@@ -221,6 +235,7 @@ void Assistant::preproc()
             i->repl(found);
         while((i->gets())[0] == ' ') i->ersbeg();
         if((i->gets())[i->gets().size()-1] == ';') i->ersend();
+		
 //
 //        size_t found1 = i->gets().find("(");
 //
@@ -240,8 +255,21 @@ void Assistant::preproc()
 //                i->ins(found2);
 //            found2 = i->gets().find(")", found2+1, i->gets().size());
 //        }
+		
 
     }
+
+	list<Line>::iterator k = lines->begin();
+	while ( k != lines->end())
+	{
+		if (k->gets()[0] == '\n')
+		{
+			list<Line>::iterator j;
+			j = k;
+			++k;
+			lines->erase(j);
+		} else ++k;
+	}
 
 }
 
@@ -408,9 +436,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 
 //----------------------------------OTHER-STUFF-------------------------
 
-        else if ((i->gets().find("int ")!=string::npos ||
-                 i->gets().find("char ")!=string::npos ||
-                 i->gets().find("void ")!=string::npos ) && i->gets().find("sub_")!=string::npos)
+        else if ((i->gets().find("int ")!=string::npos || i->gets().find("char ")!=string::npos || i->gets().find("void ")!=string::npos ) && i->gets().find("sub_")!=string::npos)
         {
             
 
@@ -430,8 +456,6 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 				op->setuse(0);
 			}
             string tmp = "		<Function Name=\"" + tmp2 + "\">";
-
-			
 
             ++i;
             list<Line>::iterator a, b;

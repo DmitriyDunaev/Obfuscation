@@ -92,9 +92,6 @@ string Parser::inc_or_dec (string s, bool before)
 
 void Parser::parse()
 {
-#ifdef DEBUG2
-    cout << is.str() << endl;
-#endif // DEBUG
     string token;
     OwnTokenType typ;
 

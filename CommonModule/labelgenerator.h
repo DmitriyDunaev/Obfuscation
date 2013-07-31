@@ -24,14 +24,6 @@ public:
         return tmp;
     }
 	UUID getid() { UUID j; UuidCreate( &j ); return j; }
-	GUID getguid()
-	{ 
-		::CoInitialize(0);
-		GUID Guid = {0};
-		::CoCreateGuid( &Guid );
-		::CoUninitialize();
-		return Guid;
-	}
 };
 
 #endif // LABELGENERATOR_H

@@ -8,7 +8,6 @@ void Routine::cleanup()
 		(*i)->cleanup();
 		if ( (*i)->empty() )
 		{
-			std::cout << "Routine cleanup done" << std::endl;
 			std::list<Function*>::iterator j = i;
 			++i;
 			delete *j;

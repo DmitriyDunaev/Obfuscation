@@ -40,17 +40,7 @@ public:
 	}
 	int getuse () { return usetype; }
 	
-	std::string getid()
-	{
-		std::stringstream tmp;
-		tmp.flags( std::stringstream::hex );
-		tmp << id.Data1 << "-" << id.Data2 << "-" << id.Data3 << "-" << (int)id.Data4[0] << (int)id.Data4[1] << "-";
-		tmp.width(2);
-		tmp << std::setfill('0');
-		tmp << (int)id.Data4[2] << (int)id.Data4[3] << (int)id.Data4[4] <<(int) id.Data4[5] << (int)id.Data4[6] << (int)id.Data4[7];
-		std::string ret = tmp.str();
-		return ret;
-	}
+	std::string getid();
 };
 
 #endif // COPERAND_H

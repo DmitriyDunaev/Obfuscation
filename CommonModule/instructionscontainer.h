@@ -8,6 +8,7 @@
 
 #include <list>
 #include <vector>
+#include <iomanip>
 
 #include "threeadressinstruction.h"
 #include "variables.h"
@@ -51,18 +52,7 @@ public:
 	void succpush_back(CInstructionsContainer* c) { successors.push_back(c); }
 	void predpush_back(CInstructionsContainer* c) { predecessors.push_back(c); }
 
-    string getid()
-	{
-		stringstream tmp;
-		tmp.flags( stringstream::hex );
-		tmp << id.Data1 << "-" << id.Data2 << "-" << id.Data3 << "-" << (int)id.Data4[0] << (int)id.Data4[1] << "-";
-		tmp.width(2);
-		tmp.flags();
-		tmp << std::setfill('0');
-		tmp << (int)id.Data4[2] << (int)id.Data4[3] << (int)id.Data4[4] <<(int) id.Data4[5] << (int)id.Data4[6] << (int)id.Data4[7];
-		string ret = tmp.str();
-		return ret;
-	}
+    string getid();
 
 #ifdef DEBUG
         void dump (stringstream& s)

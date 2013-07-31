@@ -23,11 +23,7 @@ namespace CommonModule {
 	public ref class Reader
 	{
 	public:
-		void DoStuff()
-		{
-			std::cout << "ASD" << std::endl;
-		}
-		string DoStuffNop();
+		string DoStuff();
 	};
 
 	public ref class InputProvider
