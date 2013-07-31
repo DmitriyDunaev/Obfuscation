@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="constant_calc_algortihm.cs" />
+    <Compile Include="dead_vars_algorithm.cs" />
     <Compile Include="ILObfuscator.cs" />
     <Compile Include="ILObfuscatorTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
