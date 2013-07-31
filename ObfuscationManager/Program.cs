@@ -24,40 +24,45 @@ namespace ObfuscationManager
             //   Insert your code here...
             //
             // Example code to create and save a structure:
-            Obfuscator.Exchange doc = Obfuscator.Exchange.CreateDocument();
+//            Obfuscator.Exchange doc = Obfuscator.Exchange.CreateDocument();
                         
-            Obfuscator.RoutineType routine = doc.Routine.Append();
-            routine.Description.Value = "Some description...";
-            doc.SetSchemaLocation(@"Schemes\Exchange.xsd");
+//            Obfuscator.RoutineType routine = doc.Routine.Append();
+//            routine.Description.Value = "Some description...";
+//            doc.SetSchemaLocation(@"Schemes\Exchange.xsd");
 
-            Obfuscator.FunctionType func1 = routine.Function.Append();
-            func1.ID.Value = "ID_1";
-            func1.CalledFrom.EnumerationValue = Obfuscator.CalledFromType.EnumValues.eInternalOnly;
-            func1.ExternalLabel.Value = "ZZZ";
+//            Obfuscator.FunctionType func1 = routine.Function.Append();
+//            func1.ID.Value = "ID_1";
+//            func1.CalledFrom.EnumerationValue = Obfuscator.CalledFromType.EnumValues.eInternalOnly;
+//            func1.ExternalLabel.Value = "ZZZ";
 
-            Obfuscator.VariablesType vars1 = func1.Inputs.Append();
+//            Obfuscator.VariablesType vars1 = func1.Inputs.Append();
 
-            Obfuscator.OriginalType orig_vars = vars1.Original.Append();
-//            Obfuscator.FakeType fake_vars = vars1.Fake.Append();
+//            Obfuscator.OriginalType orig_vars = vars1.Original.Append();
+////            Obfuscator.FakeType fake_vars = vars1.Fake.Append();
             
-            Obfuscator.VariableType v1 = orig_vars.Variable.Append();
-            v1.ConstValueInParam.Value = "4";
-            v1.ID.Value = "ID_2";
-            v1.Pointer.Value = false;
-            v1.Size.EnumerationValue = Obfuscator.SizeType.EnumValues.eword;
-            v1.Value="param";
+//            Obfuscator.VariableType v1 = orig_vars.Variable.Append();
+//            v1.ConstValueInParam.Value = "4";
+//            v1.ID.Value = "ID_2";
+//            v1.Pointer.Value = false;
+//            v1.Size.EnumerationValue = Obfuscator.SizeType.EnumValues.eword;
+//            v1.Value="param";
 
-            Obfuscator.BasicBlockType bb1 = func1.BasicBlock.Append();
-            bb1.ID.Value = "ID_12";
+//            Obfuscator.BasicBlockType bb1 = func1.BasicBlock.Append();
+//            bb1.ID.Value = "ID_12";
 
-            Obfuscator.InstructionType inst1 = bb1.Instruction.Append();
-            inst1.ID.Value = "ID_3";
-            inst1.RefVars.Value = v1.ID.Value;
-            inst1.StatementType.EnumerationValue = Obfuscator.StatementTypeType.EnumValues.eFullAssignment;
-            inst1.Value = "t1:=param+6";
-
-            ValidateExchangeXML(doc);
-            doc.SaveToFile("Exchange1.xml", true);
+//            Obfuscator.InstructionType inst1 = bb1.Instruction.Append();
+//            inst1.ID.Value = "ID_3";
+//            inst1.RefVars.Value = v1.ID.Value;
+//            inst1.StatementType.EnumerationValue = Obfuscator.StatementTypeType.EnumValues.eFullAssignment;
+//            inst1.Value = "t1:=param+6";
+            XmlDocument doc = new XmlDocument();
+            InputProvider ip = new InputProvider();
+            doc = ip.Read(InputType.PseudoCode, PlatformType.x86);
+            doc.Save("test2.xml");
+            Obfuscator.Exchange exch = Obfuscator.Exchange.LoadFromFile("test2.xml");
+            //Obfuscator.Exchange exch = Obfuscator.Exchange.LoadFromString(doc.ToString());
+            ValidateExchangeXML(exch);
+            exch.SaveToFile("Exchange1.xml", true);
 
                         
             //   ...
