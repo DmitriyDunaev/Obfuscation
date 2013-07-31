@@ -59,11 +59,12 @@ namespace ObfuscationManager
 
 
 
-
+            // Getting input from InputProvider
             XmlDocument doc = new XmlDocument();
             InputProvider ip = new InputProvider();
             doc = ip.Read(InputType.PseudoCode, PlatformType.x86);
-            doc.Save("test2.xml");
+
+            // Validating XML by Schema
             string error;
             if (!ValidateExchangeXML(doc, out error))
             {
@@ -72,19 +73,23 @@ namespace ObfuscationManager
             }
             else
             {
-                Console.WriteLine("Document is valid!");
+                Console.WriteLine("Document is valid.");
             }
 
+            // Converting XML to Exchange and performing logical control
             Exchange exch;
             if (!ConvertToExchangeType(doc, out exch, out error))
             {
-                Console.WriteLine("Document conversion failed. Error message: " + error);
+                Console.WriteLine("Document conversion failed!\n" + error);
                 return;
             }
+            else
+                Console.WriteLine("Document converted successfully.\n");
 
-//            Obfuscator.Exchange exch = Obfuscator.Exchange.LoadFromFile("test2.xml");
-            
+            // For debugging
             exch.SaveToFile("Exchange1.xml", true);
+            
+            ILObfuscator.Routine routine = new ILObfuscator.Routine(exch);
 
                         
             //   ...
@@ -124,10 +129,15 @@ namespace ObfuscationManager
         protected static bool ConvertToExchangeType(XmlDocument doc, out Exchange exch, out string error_message)
         {
             exch = Exchange.LoadFromString(doc.InnerXml);
+            error_message = string.Empty;
             foreach (RoutineType routine in exch.Routine)
             {
                 foreach (FunctionType function in routine.Function)
                 {
+                    //Check ID correctness
+                    if (!checkIDcorrectness(function.ID.Value, ref error_message))
+                        return false;
+
                     // Collecting IDs for all variables within a function
                     List<string> variable_IDs = new List<string>();
                     if(function.Inputs.Exists && function.Inputs[0].Original.Exists && function.Inputs[0].Original[0].Variable.Exists)
@@ -149,23 +159,38 @@ namespace ObfuscationManager
                         foreach (VariableType var in function.Locals[0].Fake[0].Variable)
                             variable_IDs.Add(var.ID.Value);
 
+                    // Checking 'Variable ID' for correctness
+                    foreach(string var in variable_IDs)
+                        if (!checkIDcorrectness(var, ref error_message))
+                            return false;
+
                     // Collecting IDs for Basic Blocks and checking the consistence of Predecessors and Successors.
                     List<string> basicblock_IDs = new List<string>();
                     foreach (BasicBlockType bb in function.BasicBlock)
                     {
+                        // Checking 'BasicBlock ID' for correctness
+                        if (!checkIDcorrectness(bb.ID.Value, ref error_message))
+                            return false;
+
                         basicblock_IDs.Add(bb.ID.Value);
                         // Checking RefVar ID for variables
                         foreach (InstructionType inst in bb.Instruction)
+                        {
+                            //Checking 'Instruction ID' for correctness
+                            if (!checkIDcorrectness(inst.ID.Value, ref error_message))
+                                return false;
+
                             if (inst.RefVars.Exists())
                             {
                                 string[] refvars = inst.RefVars.Value.Split(' ');
                                 foreach (string refvar in refvars)
                                     if (!variable_IDs.Contains(refvar))
                                     {
-                                        error_message = "An instruction contains reference to a non-existing variable. Additional information: Instruction ID="+inst.ID.Value+", Basic Block ID=" + bb.ID.Value + ", Function ID=" + function.ID.Value + ").";
+                                        error_message = "\nAn instruction contains reference to a non-existing variable.\nAdditional information:\n- Referenced variable (not found): " + refvar + "\n- Instruction: " + inst.ID.Value + ",\n- Basic Block: " + bb.ID.Value + ",\n- Function: " + function.ID.Value + ".";
                                         return false;
                                     }
                             }
+                        }
                     }
                     foreach (BasicBlockType bb in function.BasicBlock)
                     {
@@ -175,7 +200,7 @@ namespace ObfuscationManager
                             foreach (string pred in predecessors)
                                 if (!basicblock_IDs.Contains(pred))
                                 {
-                                    error_message = "In a Basic Block (" + bb.ID.Value + ") 'Predecessors' reference is invalid. No predecessor with ID={" + pred + "} found in Function (ID=" + function.ID.Value + ").";
+                                    error_message = "\n'Predecessors' reference is invalid in the basic block.\nAdditional information:\n- Basic block: " + bb.ID.Value + "\n- Predecessor ID (not found): " + pred + "\n- Function:" + function.ID.Value + ".";
                                     return false;
                                 }
                         }
@@ -185,16 +210,37 @@ namespace ObfuscationManager
                             foreach (string succ in successors)
                                 if (!basicblock_IDs.Contains(succ))
                                 {
-                                    error_message = "In a Basic Block (" + bb.ID.Value + ") 'Successors' reference is invalid. No successor with ID={" + succ + "} found in Function (" + function.ID.Value + ").";
+                                    error_message = "\n'Successors' reference is invalid in the basic block.\nAdditional information:\n- Basic block: " + bb.ID.Value + "\n- Successor ID (not found): " + succ + "\n- Function:" + function.ID.Value + ".";
                                     return false;
                                 }
                         }
                     }
                 }
             }
+            return true;
+        }
 
-
-            error_message = string.Empty;
+        protected static bool checkIDcorrectness(string id, ref string error_message)
+        {
+            if (id.ToUpper() != id)
+            {
+                error_message = "The unique identifier " + id + " seems not to be uppercase.";
+                return false;
+            }
+            if(!id.StartsWith("ID_"))
+            {
+                error_message = "The unique identifier " + id + " does not start with ID_";
+                return false;
+            }
+            try
+            {
+                Guid guid = Guid.Parse(id.Substring(3));
+            }
+            catch (FormatException fe)
+            {
+                error_message = "The unique identifier " + id + " is not in a form ID_'GUID'.\nAdditional information: " + fe.Message;
+                return false;
+            }
             return true;
         }
 
@@ -205,13 +251,13 @@ namespace ObfuscationManager
         {
 
             ILObfuscator.Instruction inst = new ILObfuscator.Instruction();
-            inst.ID.setID();
+            inst.ID = new ILObfuscator.IDManager();
 
             try
             {
-                Console.WriteLine("Exchange Test Application");
+//                Console.WriteLine("Exchange Test Application");
                 Example();
-                Console.WriteLine("OK");
+                Console.WriteLine("Program has finished successfully.");
                 return 0;
             }
             catch (Exception e)
