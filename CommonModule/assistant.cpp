@@ -84,7 +84,7 @@ void Assistant::generateif(string deal, string label)
             stringstream ss(tmp);
             ss >> i;
             label.erase(6, label.size());
-            cnt->push_back( new Cond_jump(deal, i) );
+            cnt->push_back( new Cond_jump(deal, i, &rtn->back()->Vars) );
 
             newblock();
         }
@@ -196,7 +196,7 @@ void Assistant::preproc()
             --i;
             lines->erase(j);
         }
-        /*found = i->gets().find("int ");
+        found = i->gets().find("int ");
         if (found != string::npos && found2 == string::npos)
         {
             string s = i->gets().substr(found), t = "int";
@@ -207,11 +207,11 @@ void Assistant::preproc()
             cout << rtn->back().Vars[s.substr(4) ]->getname() << endl;
 #endif
 
-            rtn->back().Vars[s.substr(4) ]->sett("int");
+            rtn->back()->Vars[s.substr(4) ]->sett("int");
             list<Line>::iterator j=i;
             --i;
             lines->erase(j);
-        }*/
+        }
         found = i->gets().find("char ");
         if (found != string::npos && found2 == string::npos)
         {
@@ -471,9 +471,9 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 
 		else if (i->gets().find("return")!=string::npos)
         {
-            cnt->push_back( new  Unc_jump("Returnblabla", -2));
 			string tmp = i->gets().substr( i->gets().find("return") + 7, i->gets().size() );
 			rtn->back()->Vars[tmp]->setuse(1);
+			cnt->push_back( new  Unc_jump("Returnblabla", -2, rtn->back()->Vars[tmp]));
 			newblock();
         }
 		//Test comment.

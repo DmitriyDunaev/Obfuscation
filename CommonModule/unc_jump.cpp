@@ -5,6 +5,8 @@ void Unc_jump::print(stringstream& s)
     s << "<Instruction PolyRequired=\"false\" ID=\"ID_";
 	s << getid() << "\" StatementType=\"";
 	s << "UnconditionalJump";
+	if (ret != nullptr )
+		s << "\" RefVars=\"ID_" << ret->getid();
 	s << "\" >";
 	s << "goto " << target->getid();
     s << "</Instruction>"<< std::endl;

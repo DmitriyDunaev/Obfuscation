@@ -59,7 +59,9 @@ string CommonModule::Reader::DoStuff()
 //
 	ss << " int sub_fnct(a, b)\n";
 	ss << " {\n";
-	ss << " x = y;\n";
+	ss << " int hadesz;\n";
+	ss << " char zeusz;\n";
+	ss << " if ( x > y );\n";
 	ss << " return x;\n";
 	ss << " c = y + z;\n";
 	ss << " return y;\n";

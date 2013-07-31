@@ -28,7 +28,17 @@ void CVariables::dump(stringstream &s)
     {
 		if ( (i->second)->getuse() == 0 )
 		{
-			s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" Size=\"unknown\" Pointer=\"false\">";
+			s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" ";
+			string t = i->second->gett();
+			if ( t != "\0")
+			{
+				if ( t == "char" )
+					s << "Size=\"byte\" ";
+				else if ( t == "int" )
+					s << "Size=\"word\" ";
+				
+			} else s << "Size=\"unknown\" ";
+			s << "Pointer=\"false\">";
 			((*i).second)->print(s);
 			s << "</Variable>\n";
 		}
