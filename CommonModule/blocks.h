@@ -10,6 +10,7 @@ using namespace std;
 #include "instructionscontainer.h"
 #include "labelgenerator.h"
 #include "fakeexitblock.h"
+#include "line.h"
 
 class Function
 {

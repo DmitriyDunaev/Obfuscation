@@ -51,7 +51,7 @@ public:
     void printlist(stringstream& s)
     {
         s << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-        s << "<Routine Description=\"Some routine\" xsi:noNamespaceSchemaLocation=\"Schemes\\Exchange.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n";
+        s << "<Routine Description=\"Some routine\" xsi:noNamespaceSchemaLocation=\"Schemas\\Exchange.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n";
         rtn->dump(s);
 
 

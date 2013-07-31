@@ -413,12 +413,26 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
                  i->gets().find("void ")!=string::npos ) && i->gets().find("sub_")!=string::npos)
         {
             
-			string tmp2 = i->gets().substr(i->gets().find("sub"), i->gets().size());
-            string tmp = "		<Function Name=\"" + tmp2 + "\">";
 
+
+			string tmp2 = i->gets().substr(i->gets().find("sub")+3, i->gets().size());
+			stringstream ss(tmp2.substr(tmp2.find("(")+1, tmp2.find(")")-1));
+			
 			rtn->push_back( new Function( l.getid(), tmp2 , l.getid()) );
 			cnt = rtn->back()->back();
-            
+
+			string var;
+			while ( getline(ss, var, ',') )
+			{
+				if (var[0] == ' ') var.erase( 0, 1);
+				if (var[var.size()-1] == ')') var.erase( var.size() -1, 1);
+				COperand* op = rtn->back()->Vars[var];
+				op->setuse(0);
+			}
+            string tmp = "		<Function Name=\"" + tmp2 + "\">";
+
+			
+
             ++i;
             list<Line>::iterator a, b;
             setiters(&a, &b, &i);
@@ -433,7 +447,10 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 
 		else if (i->gets().find("return")!=string::npos)
         {
-            cnt->push_back( new  Line("Return"));
+            cnt->push_back( new  Unc_jump("Returnblabla", -2));
+			string tmp = i->gets().substr( i->gets().find("return") + 7, i->gets().size() );
+			rtn->back()->Vars[tmp]->setuse(1);
+			newblock();
         }
 		//Test comment.
 		//Test comment 2

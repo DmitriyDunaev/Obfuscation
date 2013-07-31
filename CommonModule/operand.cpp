@@ -8,6 +8,7 @@ COperand::COperand(std::string s)
     name = s;
     t = "\0";
     type = variable;
+	usetype = 2;
 
     /* temporary variables are like: t_xx */
     if (name[0] == 't' && name[1] == '_')

@@ -24,7 +24,7 @@ class COperand
 {
     std::string name;
     OpType type;
-
+	int usetype;
     std::string t;
 
 	UUID id;
@@ -35,6 +35,10 @@ public:
     std::string getname();
     std::string gett() {return t; }
     void sett(std::string s) { t=s; }
+	void setuse( int i ) {
+		usetype = i; 
+	}
+	int getuse () { return usetype; }
 	
 	std::string getid()
 	{

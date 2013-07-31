@@ -8,8 +8,9 @@ using namespace std;
 class FakeExitBlock : public CThreeAdressInstruction
 {
 public:
-    FakeExitBlock(){}
+    FakeExitBlock(){ UuidCreate( &id ); }
     bool isexit() { return true;}
+	int geti() { return -2; }
     void print(stringstream& s);
 };
 

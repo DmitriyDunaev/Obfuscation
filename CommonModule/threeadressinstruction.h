@@ -14,6 +14,7 @@
 
 class CThreeAdressInstruction
 {
+protected:
 	UUID id;
 public:
 

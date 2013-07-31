@@ -23,12 +23,39 @@ CVariables::~CVariables()
 
 void CVariables::dump(stringstream &s)
 {
-    s << "	<Locals>\n		 <Original>\n";
+    s << "	<Inputs>\n		 <Original>\n";
     for (std::map<std::string, COperand*>::iterator i = variables.begin(); i != variables.end(); ++i)
     {
-		s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" Size=\"unknown\" Pointer=\"false\">";
-		((*i).second)->print(s);
-		s << "</Variable>\n";
+		if ( (i->second)->getuse() == 0 )
+		{
+			s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" Size=\"unknown\" Pointer=\"false\">";
+			((*i).second)->print(s);
+			s << "</Variable>\n";
+		}
+	}
+
+	s << "		</Original>\n	</Inputs>\n";
+	s << "	<Outputs>\n		 <Original>\n";
+    for (std::map<std::string, COperand*>::iterator i = variables.begin(); i != variables.end(); ++i)
+    {
+		if ( (i->second)->getuse() == 1 )
+		{
+			s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" Size=\"unknown\" Pointer=\"false\">";
+			((*i).second)->print(s);
+			s << "</Variable>\n";
+		}
+	}
+
+	s << "		</Original>\n	</Outputs>\n";
+	s << "	<Locals>\n		 <Original>\n";
+    for (std::map<std::string, COperand*>::iterator i = variables.begin(); i != variables.end(); ++i)
+    {
+		if ( (i->second)->getuse() == 2 )
+		{
+			s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" Size=\"unknown\" Pointer=\"false\">";
+			((*i).second)->print(s);
+			s << "</Variable>\n";
+		}
 	}
 
 	s << "		</Original>\n	</Locals>\n";

@@ -13,12 +13,7 @@ public:
     Quadruple (std::string, COperand**);
     virtual ~Quadruple() {}
 
-    void print(stringstream& s)
-    {
-        s << "		<Instruction Type=\"original\" Label=\"\">" << ops[0]->getname() << " := " << ops[1]->getname();
-        s << " " << oprtr << " " << ops[2]->getname();
-        s << "</Instruction><!-- QUAD -->" << std::endl;
-    }
+    void print(stringstream& s);
 
 };
 

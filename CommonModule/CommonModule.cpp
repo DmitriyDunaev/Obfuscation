@@ -61,20 +61,11 @@ string CommonModule::Reader::DoStuffNop()
 //
 	ss << " int sub_fnct(a, b)\n";
 	ss << " {\n";
-    ss << " result = 10;\n";
-    ss << " if ( csudajo || azis && blabla)\n";
-    ss << " {\n";
-    ss << " igaz = 1;\n";
-    ss << " hamis = 0;\n";
-    ss << " }\n";
-    ss << " else\n";
-    ss << " {\n";
-    ss << " igaz = 0;\n";
-    ss << " hamis = 1;\n";
-    ss << " }\n";
-    ss << " return result;\n";
-	ss << " }\n";
-	ss << " a = b;";
+	ss << " x = y;\n";
+	ss << " return x;\n";
+	ss << " c = y + z;\n";
+	ss << " return y;\n";
+	ss << " }";
 
 
 #ifdef CIN
@@ -109,15 +100,9 @@ string CommonModule::Reader::DoStuffNop()
 
     Reader.setconnentions();
 
-    FILE *f = fopen("test2.xml", "w");
-
 	stringstream s;
     Reader.printlist(s);
 	cout << s;
-	fputs(s.str().c_str(), f);
-
-
-    fclose(f);
 	return s.str();
 
 

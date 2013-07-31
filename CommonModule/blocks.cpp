@@ -27,26 +27,27 @@ void Function::cleanup()
 void Function::setconnections(LabelGenerator* l)
 {   
 	UUID id = l->getid();
-	stringstream s;
-	//GUID g = l->getguid();
     blocks.push_back(new CInstructionsContainer(id));
     blocks.back()->push_back( new FakeExitBlock );
+    blocks.back()->push_back( new Line("Fake Exit Block") );
 
 	list<CInstructionsContainer*>::iterator i = blocks.begin();
 
-    while (  i != blocks.end() && !(*i)->back()->isexit())
+    while (  i != blocks.end())
     {
 		if ( !(*i)->empty() ) {
         int lab = (*i)->back()->geti();
-        if ( lab != -1 && !(*i)->back()->islabel())
+        if ( lab != -1 && (!(*i)->back()->islabel() ))
         {
             CInstructionsContainer* succ;
 			succ = findlabel( lab );
-			//succ = *i;
-            (*i)->succpush_back( succ );
-            succ->predpush_back( *i );
+			if (succ != NULL )
+			{
+				(*i)->succpush_back( succ );
+				succ->predpush_back( *i );
+			}
         }
-        if ( !(*i)->back()->isuncjmp())
+        if ( lab != -1 && !(*i)->back()->isuncjmp())
         {
 			list<CInstructionsContainer*>::iterator j = i;
             ++i;
@@ -64,12 +65,12 @@ void Function::setjumps()
 {   
 	list<CInstructionsContainer*>::iterator i = blocks.begin();
 
-    while (  i != blocks.end() && !(*i)->back()->isexit())
+    while (  i != blocks.end())
     {
 		if ( !(*i)->empty() )
 		{
 			int lab = (*i)->front()->geti();
-			if ( lab != -1 && (*i)->front()->islabel())
+			if ( lab != -1 && ( (*i)->front()->islabel() || (*i)->front()->isexit() ) )
 			{
 				CInstructionsContainer* succ;
 				succ = findjump( lab );
@@ -102,7 +103,7 @@ CInstructionsContainer* Function::findlabel( int lab )
 {
     for ( list<CInstructionsContainer*>::iterator i = blocks.begin(); i != blocks.end(); ++i)
     {
-        if ( (*i)->front()->geti() == lab && (*i)->front()->islabel())
+        if ( (*i)->front()->geti() == lab && ( (*i)->front()->islabel() || (*i)->front()->isexit()))
             return *i;
     }
     return NULL;
