@@ -10,8 +10,9 @@ class Unc_jump : public CThreeAdressInstruction
     string label;
     int i;
 	CThreeAdressInstruction* target;
+	COperand* ret;
 public:
-    Unc_jump(string s, int i):label(s), i(i), target(this) {}
+    Unc_jump(string s, int i, COperand* r = nullptr):label(s), i(i), target(this), ret(r) {}
     string gets() { return label; }
     int geti() { return i; }
 	void seti ( int in ) { i = in; }
