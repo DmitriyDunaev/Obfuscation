@@ -1033,8 +1033,8 @@ namespace Obfuscator
 			private Altova.Xml.TypeBase owner;
 			private Altova.TypeInfo.MemberInfo info; 
 			public MemberAttribute_ConstValueInParam (Altova.Xml.TypeBase owner, Altova.TypeInfo.MemberInfo info) {this.owner = owner; this.info = info;}
-			public string Value { get {
-				return (string)Altova.Xml.XmlTreeOperations.CastToString(Altova.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);			
+			public int Value { get {
+				return (int)Altova.Xml.XmlTreeOperations.CastToInt(Altova.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);			
 			}
 			set {	
 				Altova.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);		

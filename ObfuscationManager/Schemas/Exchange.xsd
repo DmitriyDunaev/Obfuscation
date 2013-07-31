@@ -78,7 +78,7 @@
 				</xs:simpleType>
 			</xs:attribute>
 			<xs:attribute name="Pointer" type="xs:boolean" use="required"/>
-			<xs:attribute name="ConstValueInParam" type="xs:string" use="optional"/>
+			<xs:attribute name="ConstValueInParam" type="xs:int" use="optional"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:complexType name="VariablesType">

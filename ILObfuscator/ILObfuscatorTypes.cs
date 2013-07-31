@@ -52,6 +52,7 @@ namespace ILObfuscator
                     Variables.Add(new Variable(var, Variable.Kind_IO.Local, Variable.Kind_OF.Fake));
             //foreach (BasicBlockType bb in function.BasicBlock)
             //    BasicBlocks.Add(new BasicBlock(bb));
+
         }
     }
 
@@ -73,7 +74,7 @@ namespace ILObfuscator
         // Attributes
         public IDManager ID = new IDManager();
         public string name;
-        public string constValueInParam;
+        public List<int> constValueInParam;
         public Obfuscator.SizeType.EnumValues size;
         public bool pointer;
         public Kind_IO kind_io;
@@ -83,8 +84,11 @@ namespace ILObfuscator
         {
             ID = new IDManager(var.ID.Value);
             name = var.Value;
-            if(var.ConstValueInParam.Exists())
-                constValueInParam = var.ConstValueInParam.Value;
+            if (var.ConstValueInParam.Exists())
+            {
+                constValueInParam = new List<int>(1);
+                constValueInParam.Add(var.ConstValueInParam.Value);
+            }
             size = var.Size.EnumerationValue;
             pointer = var.Pointer.Value;
             kind_io = kind_io1;
