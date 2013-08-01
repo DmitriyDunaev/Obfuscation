@@ -32,10 +32,14 @@ void CVariables::dump(stringstream &s)
 			string t = i->second->gett();
 			if ( !t.empty())
 			{
-				if ( t == "char" )
+				if ( t == "char" ||  t == "signed char" ||  t == "unsigned char" )
 					s << "Size=\"byte\" ";
-				else if ( t == "int" )
+				else if ( t == "int" ||  t == "signed int" ||  t == "unsigned int" )
+					s << "Size=\"dword\" ";
+				else if ( t == "short" ||  t == "signed short" ||  t == "unsigned short" )
 					s << "Size=\"word\" ";
+				else if ( t == "long" ||  t == "signed long" ||  t == "unsigned long" )
+					s << "Size=\"qword\" ";
 				
 			} else s << "Size=\"unknown\" ";
 			s << "Pointer=\"false\">";
@@ -54,10 +58,14 @@ void CVariables::dump(stringstream &s)
 			string t = i->second->gett();
 			if ( !t.empty())
 			{
-				if ( t == "char" )
+				if ( t == "char" ||  t == "signed char" ||  t == "unsigned char" )
 					s << "Size=\"byte\" ";
-				else if ( t == "int" )
+				else if ( t == "int" ||  t == "signed int" ||  t == "unsigned int" )
+					s << "Size=\"dword\" ";
+				else if ( t == "short" ||  t == "signed short" ||  t == "unsigned short" )
 					s << "Size=\"word\" ";
+				else if ( t == "long" ||  t == "signed long" ||  t == "unsigned long" )
+					s << "Size=\"qword\" ";
 				
 			} else s << "Size=\"unknown\" ";
 			s << "Pointer=\"false\">";
@@ -76,10 +84,14 @@ void CVariables::dump(stringstream &s)
 			string t = i->second->gett();
 			if ( !t.empty())
 			{
-				if ( t == "char" )
+				if ( t == "char" ||  t == "signed char" ||  t == "unsigned char" )
 					s << "Size=\"byte\" ";
-				else if ( t == "int" )
+				else if ( t == "int" ||  t == "signed int" ||  t == "unsigned int" )
+					s << "Size=\"dword\" ";
+				else if ( t == "short" ||  t == "signed short" ||  t == "unsigned short" )
 					s << "Size=\"word\" ";
+				else if ( t == "long" ||  t == "signed long" ||  t == "unsigned long" )
+					s << "Size=\"qword\" ";
 				
 			} else s << "Size=\"unknown\" ";
 			s << "Pointer=\"false\">";

@@ -337,7 +337,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 
 //-----------------------------------FOR-------------------------------
 
-        else if (i->gets().find("for")!=string::npos)
+        else if (i->gets().find("for ")!=string::npos)
         {
             string f1, f2, f3;
             string ex, co, lo;
@@ -366,7 +366,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 
 //-------------------------------DO-WHILE---------------------------------------
 
-        else if (i->gets().find("do")!=string::npos)
+        else if (i->gets().find("do ")!=string::npos)
         {
             string w;
             string on;
@@ -464,16 +464,30 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 
         }
 
-		else if ((i->gets().find("int ")!=string::npos || i->gets().find("char ")!=string::npos || i->gets().find("signed int")!=string::npos || i->gets().find("signed char")!=string::npos ) && i->gets().find("sub_")==string::npos)
+		else if ((i->gets().find("int ")!=string::npos || i->gets().find("char ")!=string::npos 
+			|| i->gets().find("signed int")!=string::npos || i->gets().find("signed char")!=string::npos 
+			|| i->gets().find("unsigned int")!=string::npos || i->gets().find("unsigned char")!=string::npos 
+			|| i->gets().find("long")!=string::npos || i->gets().find("short")!=string::npos 
+			|| i->gets().find("signed long")!=string::npos || i->gets().find("signed short")!=string::npos 
+			|| i->gets().find("unsigned long")!=string::npos || i->gets().find("unsigned short")!=string::npos ) && i->gets().find("sub_")==string::npos)
         {
-			size_t found = i->gets().find("signed intint ");
+			size_t found = i->gets().find("unsigned int ");
 			if (found != string::npos)
 			{
-				string s = i->gets().substr(found), t = "signed int";
+				string s = i->gets().substr(found);
 
-				cout << rtn->back()->Vars[s.substr(4) ]->getname() << endl;
+				rtn->back()->Vars[s.substr(13) ]->sett("unsigned int");
+				list<Line>::iterator j=i;
+				--i;
+				lines->erase(j);
+			}
+			found = i->gets().find("signed int ");
+			if (found != string::npos)
+			{
+				string s = i->gets().substr(found);
 
 				rtn->back()->Vars[s.substr(11) ]->sett("signed int");
+
 				list<Line>::iterator j=i;
 				--i;
 				lines->erase(j);
@@ -492,6 +506,62 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 				list<Line>::iterator j=i;
 				--i;
 				lines->erase(j);
+
+			}
+			found = i->gets().find("unsigned long ");
+			if (found != string::npos)
+			{
+				string s = i->gets().substr(found);
+
+				rtn->back()->Vars[s.substr(14) ]->sett("unsigned long");
+
+				list<Line>::iterator j=i;
+				--i;
+				lines->erase(j);
+			}
+			found = i->gets().find("signed long ");
+			if (found != string::npos)
+			{
+				string s = i->gets().substr(found);
+
+				rtn->back()->Vars[s.substr(12) ]->sett("signed long");
+
+				list<Line>::iterator j=i;
+				--i;
+				lines->erase(j);
+			}
+			found = i->gets().find("long ");
+			if (found != string::npos)
+			{
+				string s = i->gets().substr(found);
+
+				rtn->back()->Vars[s.substr(5) ]->sett("long");
+
+				list<Line>::iterator j=i;
+				--i;
+				lines->erase(j);
+			}
+			found = i->gets().find("unsigned char ");
+			if (found != string::npos)
+			{
+				string s = i->gets().substr(found);
+
+				rtn->back()->Vars[s.substr(14) ]->sett("unsigned char");
+
+				list<Line>::iterator j=i;
+				--i;
+				lines->erase(j);
+			}
+			found = i->gets().find("signed char ");
+			if (found != string::npos)
+			{
+				string s = i->gets().substr(found);
+
+				rtn->back()->Vars[s.substr(12) ]->sett("signed char");
+
+				list<Line>::iterator j=i;
+				--i;
+				lines->erase(j);
 			}
 			found = i->gets().find("char ");
 			if (found != string::npos)
@@ -499,6 +569,39 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 				string s = i->gets().substr(found);
 
 				rtn->back()->Vars[s.substr(5) ]->sett("char");
+
+				list<Line>::iterator j=i;
+				--i;
+				lines->erase(j);
+			}
+			found = i->gets().find("unsigned short ");
+			if (found != string::npos)
+			{
+				string s = i->gets().substr(found);
+
+				rtn->back()->Vars[s.substr(15) ]->sett("unsigned short");
+
+				list<Line>::iterator j=i;
+				--i;
+				lines->erase(j);
+			}
+			found = i->gets().find("signed short ");
+			if (found != string::npos)
+			{
+				string s = i->gets().substr(found);
+
+				rtn->back()->Vars[s.substr(13) ]->sett("signed short");
+
+				list<Line>::iterator j=i;
+				--i;
+				lines->erase(j);
+			}
+			found = i->gets().find("short ");
+			if (found != string::npos)
+			{
+				string s = i->gets().substr(found);
+
+				rtn->back()->Vars[s.substr(6) ]->sett("short");
 
 				list<Line>::iterator j=i;
 				--i;
