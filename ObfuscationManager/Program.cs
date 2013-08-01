@@ -250,9 +250,6 @@ namespace ObfuscationManager
         static int Main(string[] args)
         {
 
-            ILObfuscator.Instruction inst = new ILObfuscator.Instruction();
-            inst.ID = new ILObfuscator.IDManager();
-
             try
             {
 //                Console.WriteLine("Exchange Test Application");
