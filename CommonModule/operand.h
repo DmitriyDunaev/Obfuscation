@@ -26,13 +26,15 @@ class COperand
     OpType type;
 	int usetype;
     std::string t;
-
+	bool p;
 	UUID id;
 public:
     COperand(std::string s);
 
     void print(std::stringstream &s);
     std::string getname();
+	bool getp() { return p; }
+	void setp(bool i) { p=i; }
     std::string gett() {return t; }
     void sett(std::string s) { t=s; }
 	void setuse( int i ) {

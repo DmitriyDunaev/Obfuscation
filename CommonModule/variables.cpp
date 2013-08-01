@@ -94,7 +94,9 @@ void CVariables::dump(stringstream &s)
 					s << "Size=\"qword\" ";
 				
 			} else s << "Size=\"unknown\" ";
-			s << "Pointer=\"false\">";
+			s << "Pointer=\"";
+			if ( i->second->getp() ) s << "true\">";
+			else s << "false\">";
 			((*i).second)->print(s);
 			s << "</Variable>\n";
 		}

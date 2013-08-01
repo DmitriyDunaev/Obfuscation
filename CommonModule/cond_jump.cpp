@@ -11,22 +11,8 @@ void Cond_jump::print(stringstream& s)
 		s << " ID_" << ops[1]->getid();
 	}
 	s << "\">if " << ops[0]->getname();
-	cout << op;
 	if ( opnum > 1 )
-	{
-		s << " ";
-		if (op == "==")
-			s << "==";
-		else if (op == ">")
-			s << ">";
-		else if (op == "<")
-			s << "<";
-		else if (op == ">=")
-			s << ">=";
-		else if (op == "<=")
-			s << "<=";
-		s << " " << ops[1]->getname();
-	}
+		s << " " << op << " " << ops[1]->getname();
 	s << " goto " << target->getid();
     s << "</Instruction>"<< std::endl;
 }

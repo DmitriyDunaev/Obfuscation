@@ -59,9 +59,9 @@ string CommonModule::Reader::DoStuff()
 //
 	ss << " int sub_fnct(a, b)\n";
 	ss << " {\n";
-	ss << " int hades;\n";
+	ss << " int *hades;\n";
 	ss << " signed int poseidon;\n";
-	ss << " unsigned long mars;\n";
+	ss << " unsigned long *mars;\n";
 	ss << " char zeus;\n";
 	ss << " if ( x > y );\n";
 	ss << " return x;\n";
