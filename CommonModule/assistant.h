@@ -34,7 +34,7 @@ public:
     void preproc();
     void work(list<Line>::iterator beg , list<Line>::iterator en );
     void setconnentions() { rtn->setconnections(&l); rtn->setjumps(); }
-
+	bool checkdecls(string str, bool in);
 
     void getfor(string from, string *s1, string *s2, string *s3);
     void getwhile(string from, string *s1);

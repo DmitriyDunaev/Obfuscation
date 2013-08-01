@@ -12,7 +12,10 @@ void Equation::print(stringstream& s)
     s << "<Instruction PolyRequired=\"false\" ID=\"ID_";
 	s << getid() << "\" StatementType=\"";
 	if (neg) s << "UnaryAssignment"; else s << "Copy";
-	s << "\" RefVars=\"ID_" << ops[0]->getid() << " ID_" << ops[1]->getid() << "\">";
+	s << "\" RefVars=\"";
+	if (ops[0]->gettype() != constant) s << "ID_" << ops[0]->getid();
+	if (ops[1]->gettype() != constant) s << " ID_" << ops[1]->getid();
+	s << "\">";
 	s << ops[0]->getname() << " := ";
     if (neg) s << "-";
     s << ops[1]->getname();

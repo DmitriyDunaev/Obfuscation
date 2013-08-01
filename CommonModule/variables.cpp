@@ -4,6 +4,8 @@ using namespace std;
 
 COperand*& CVariables::operator[] (string s)
 {
+	if ( s[0] == '*') s.erase( 0, 1 );
+    if ( s[0] == '&') s.erase( 0, 1 );
     if (!variables.count(s))
         variables[s] = new COperand(s);
     return variables[s];
@@ -26,7 +28,7 @@ void CVariables::dump(stringstream &s)
     s << "	<Inputs>\n		 <Original>\n";
     for (std::map<std::string, COperand*>::iterator i = variables.begin(); i != variables.end(); ++i)
     {
-		if ( (i->second)->getuse() == 0 )
+		if ( ((i->second)->getuse() == input) && (!i->second->gettype() == constant))
 		{
 			s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" ";
 			string t = i->second->gett();
@@ -42,7 +44,9 @@ void CVariables::dump(stringstream &s)
 					s << "Size=\"qword\" ";
 				
 			} else s << "Size=\"unknown\" ";
-			s << "Pointer=\"false\">";
+			s << "Pointer=\"";
+			if ( i->second->getp() ) s << "true\">";
+			else s << "false\">";
 			((*i).second)->print(s);
 			s << "</Variable>\n";
 		}
@@ -52,7 +56,7 @@ void CVariables::dump(stringstream &s)
 	s << "	<Outputs>\n		 <Original>\n";
     for (std::map<std::string, COperand*>::iterator i = variables.begin(); i != variables.end(); ++i)
     {
-		if ( (i->second)->getuse() == 1 )
+		if ( ((i->second)->getuse() == output) && (!i->second->gettype() == constant))
 		{
 			s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" ";
 			string t = i->second->gett();
@@ -68,7 +72,9 @@ void CVariables::dump(stringstream &s)
 					s << "Size=\"qword\" ";
 				
 			} else s << "Size=\"unknown\" ";
-			s << "Pointer=\"false\">";
+			s << "Pointer=\"";
+			if ( i->second->getp() ) s << "true\">";
+			else s << "false\">";
 			((*i).second)->print(s);
 			s << "</Variable>\n";
 		}
@@ -78,7 +84,7 @@ void CVariables::dump(stringstream &s)
 	s << "	<Locals>\n		 <Original>\n";
     for (std::map<std::string, COperand*>::iterator i = variables.begin(); i != variables.end(); ++i)
     {
-		if ( (i->second)->getuse() == 2 )
+		if ( ((i->second)->getuse() == local) && (!i->second->gettype() == constant) )
 		{
 			s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" ";
 			string t = i->second->gett();

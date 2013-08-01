@@ -149,7 +149,7 @@ void Assistant::generatelabel(string label)
 void Assistant::preproc()
 {
 	list<Line>::iterator l = lines->begin();
-	while ( l != lines->end())
+	/*while ( l != lines->end())
 	{
 		while((l->gets())[0] == ' ') l->ersbeg();
 		if (l->gets() == "\n")
@@ -159,12 +159,14 @@ void Assistant::preproc()
 			++l;
 			lines->erase(j);
 		} else ++l;
-	}
+	}*/
 
     for (list<Line>::iterator i = lines->begin(); i != lines->end(); ++i)
     {
         if ( i->gets().find("//") != string::npos )
+		{
             i->ersmid( i->gets().find("//"), i->gets().size() );
+		}
 		
     }
 
@@ -173,10 +175,17 @@ void Assistant::preproc()
         size_t found = i->gets().find("*(_DWORD *)");
         while (found != string::npos)
         {
-            i->ersmid(found, 11);
+            i->ersmid(found+1, 10);
             found = i->gets().find("*(_DWORD *)");
         }
+		found = i->gets().find("*(_BYTE *)");
+        while (found != string::npos)
+        {
+            i->ersmid(found+1, 9);
+            found = i->gets().find("*(_BYTE *)");
+        }
     }
+
 /*
     for (list<Line>::iterator i = lines->begin(); i != lines->end(); ++i)
     {
@@ -226,15 +235,29 @@ void Assistant::preproc()
     }
 */
     // (*(_BYTE *)  is...?
-	
+	/*for (list<Line>::iterator i = lines->begin(); i != lines->end(); ++i)
+    {
+		size_t found = i->gets().find("&");
+		if ( found != string::npos )
+		{
+			i->ersmid(found, 1);
+		}
+	}*/
+
     for (list<Line>::iterator i = lines->begin(); i != lines->end(); ++i)
     {
-        size_t found = i->gets().find(" = -");
-        if (found != string::npos)
-            i->repl(found);
-        while((i->gets())[0] == ' ') i->ersbeg();
-        if((i->gets())[i->gets().size()-1] == ';') i->ersend();
-		
+		while((i->gets()).c_str()[0] == ' ') i->ersbeg();
+		while((i->gets()).c_str()[i->gets().size()-1] == ' ') i->ersend();
+
+        if ( !i->gets().empty() )
+		{
+			size_t found = i->gets().find(" = -");
+			if (found != string::npos)
+			{
+				i->repl(found);
+			}
+			if((i->gets())[i->gets().size()-1] == ';') i->ersend();
+		}
 //
 //        size_t found1 = i->gets().find("(");
 //
@@ -258,7 +281,7 @@ void Assistant::preproc()
 
     }
 
-	list<Line>::iterator k = lines->begin();
+	/*list<Line>::iterator k = lines->begin();
 	while ( k != lines->end())
 	{
 		if (k->gets()[0] == '\n')
@@ -269,7 +292,7 @@ void Assistant::preproc()
 			lines->erase(j);
 		} else ++k;
 	}
-
+*/
 }
 
 void Assistant::setiters(list<Line>::iterator* a, list<Line>::iterator* b, list<Line>::iterator* i, bool inc)
@@ -298,6 +321,236 @@ void Assistant::setiters(list<Line>::iterator* a, list<Line>::iterator* b, list<
         if (inc) --(*i);
     }
 }
+
+bool Assistant::checkdecls(string str, bool in)
+{
+	
+		if ((str.find("int *")!=string::npos || str.find("char *")!=string::npos 
+			|| str.find("signed int *")!=string::npos || str.find("signed char *")!=string::npos 
+			|| str.find("unsigned int *")!=string::npos || str.find("unsigned char *")!=string::npos 
+			|| str.find("long *")!=string::npos || str.find("short *")!=string::npos 
+			|| str.find("signed long *")!=string::npos || str.find("signed short *")!=string::npos 
+			|| str.find("unsigned long *")!=string::npos || str.find("unsigned short *")!=string::npos ) && str.find("sub_")==string::npos)
+        {
+			size_t found = str.find("unsigned int *");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(14) ]->sett("unsigned int");
+				rtn->back()->Vars[s.substr(14) ]->setp(true);
+				if (in) rtn->back()->Vars[s.substr(14) ]->setuse(input);
+			}
+			found = str.find("signed int *");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(12) ]->sett("signed int");
+				rtn->back()->Vars[s.substr(12) ]->setp(true);
+				if (in) rtn->back()->Vars[s.substr(12) ]->setuse(input);
+			}
+			found = str.find("int *");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(5) ]->sett("int");
+				rtn->back()->Vars[s.substr(5) ]->setp(true);
+				if (in) rtn->back()->Vars[s.substr(5) ]->setuse(input);
+			}
+			found = str.find("unsigned long *");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(15) ]->sett("unsigned long");
+				rtn->back()->Vars[s.substr(15) ]->setp(true);
+				if (in) rtn->back()->Vars[s.substr(15) ]->setuse(input);
+			}
+			found = str.find("signed long *");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(13) ]->sett("signed long");
+				rtn->back()->Vars[s.substr(13) ]->setp(true);
+				if (in) rtn->back()->Vars[s.substr(13) ]->setuse(input);
+			}
+			found = str.find("long *");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(6) ]->sett("long");
+				rtn->back()->Vars[s.substr(6) ]->setp(true);
+				if (in) rtn->back()->Vars[s.substr(6) ]->setuse(input);
+			}
+			found = str.find("unsigned char *");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(15) ]->sett("unsigned char");
+				rtn->back()->Vars[s.substr(15) ]->setp(true);
+				if (in) rtn->back()->Vars[s.substr(15) ]->setuse(input);
+			}
+			found = str.find("signed char *");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(13) ]->sett("signed char");
+				rtn->back()->Vars[s.substr(13) ]->setp(true);
+				if (in) rtn->back()->Vars[s.substr(13) ]->setuse(input);
+			}
+			found = str.find("char *");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(6) ]->sett("char");
+				rtn->back()->Vars[s.substr(6) ]->setp(true);
+				if (in) rtn->back()->Vars[s.substr(6) ]->setuse(input);
+			}
+			found = str.find("unsigned short *");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(16) ]->sett("unsigned short");
+				rtn->back()->Vars[s.substr(16) ]->setp(true);
+				if (in) rtn->back()->Vars[s.substr(16) ]->setuse(input);
+			}
+			found = str.find("signed short *");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(14) ]->sett("signed short");
+				rtn->back()->Vars[s.substr(14) ]->setp(true);
+				if (in) rtn->back()->Vars[s.substr(14) ]->setuse(input);
+			}
+			found = str.find("short *");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(7) ]->sett("short");
+				rtn->back()->Vars[s.substr(7) ]->setp(true);
+				if (in) rtn->back()->Vars[s.substr(7) ]->setuse(input);
+			}
+			return true;
+		}
+
+		else if ((str.find("int ")!=string::npos || str.find("char ")!=string::npos 
+			|| str.find("signed int")!=string::npos || str.find("signed char")!=string::npos 
+			|| str.find("unsigned int")!=string::npos || str.find("unsigned char")!=string::npos 
+			|| str.find("long")!=string::npos || str.find("short")!=string::npos 
+			|| str.find("signed long")!=string::npos || str.find("signed short")!=string::npos 
+			|| str.find("unsigned long")!=string::npos || str.find("unsigned short")!=string::npos ) && str.find("sub_")==string::npos)
+        {
+			size_t found = str.find("unsigned int ");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(13) ]->sett("unsigned int");
+				if (in) rtn->back()->Vars[s.substr(13) ]->setuse(input);
+			}
+			found = str.find("signed int ");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(11) ]->sett("signed int");
+				if (in) rtn->back()->Vars[s.substr(11) ]->setuse(input);
+			}
+			found = str.find("int ");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+				rtn->back()->Vars[s.substr(4) ]->sett("int");
+				if (in) rtn->back()->Vars[s.substr(4) ]->setuse(input);
+
+			}
+			found = str.find("unsigned long ");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(14) ]->sett("unsigned long");
+				if (in) rtn->back()->Vars[s.substr(14) ]->setuse(input);
+			}
+			found = str.find("signed long ");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(12) ]->sett("signed long");
+				if (in) rtn->back()->Vars[s.substr(12) ]->setuse(input);
+			}
+			found = str.find("long ");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(5) ]->sett("long");
+				if (in) rtn->back()->Vars[s.substr(5) ]->setuse(input);
+			}
+			found = str.find("unsigned char ");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(14) ]->sett("unsigned char");
+				if (in) rtn->back()->Vars[s.substr(14) ]->setuse(input);
+			}
+			found = str.find("signed char ");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(12) ]->sett("signed char");
+				if (in) rtn->back()->Vars[s.substr(12) ]->setuse(input);
+			}
+			found = str.find("char ");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(5) ]->sett("char");
+				if (in) rtn->back()->Vars[s.substr(5) ]->setuse(input);
+			}
+			found = str.find("unsigned short ");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(15) ]->sett("unsigned short");
+				if (in) rtn->back()->Vars[s.substr(15) ]->setuse(input);
+			}
+			found = str.find("signed short ");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(13) ]->sett("signed short");
+				if (in) rtn->back()->Vars[s.substr(13) ]->setuse(input);
+			}
+			found = str.find("short ");
+			if (found != string::npos)
+			{
+				string s = str.substr(found);
+
+				rtn->back()->Vars[s.substr(6) ]->sett("short");
+				if (in) rtn->back()->Vars[s.substr(6) ]->setuse(input);
+			}
+			return true;
+		}
+	else return false;
+}
+
 
 void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 {
@@ -451,11 +704,16 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 			{
 				if (var[0] == ' ') var.erase( 0, 1);
 				if (var[var.size()-1] == ')') var.erase( var.size() -1, 1);
-				COperand* op = rtn->back()->Vars[var];
-				op->setuse(0);
-			}
-            string tmp = "		<Function Name=\"" + tmp2 + "\">";
+				if (!var.empty())
+				{
 
+					/*COperand* op = rtn->back()->Vars[var];
+
+					op->setuse(input);*/
+					checkdecls(var, true);
+					
+				}
+			}
             ++i;
             list<Line>::iterator a, b;
             setiters(&a, &b, &i);
@@ -463,315 +721,36 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 
         }
 		
-		else if ((i->gets().find("int * ")!=string::npos || i->gets().find("char *")!=string::npos 
-			|| i->gets().find("signed int *")!=string::npos || i->gets().find("signed char *")!=string::npos 
-			|| i->gets().find("unsigned int *")!=string::npos || i->gets().find("unsigned char *")!=string::npos 
-			|| i->gets().find("long *")!=string::npos || i->gets().find("short *")!=string::npos 
-			|| i->gets().find("signed long *")!=string::npos || i->gets().find("signed short *")!=string::npos 
-			|| i->gets().find("unsigned long *")!=string::npos || i->gets().find("unsigned short *")!=string::npos ) && i->gets().find("sub_")==string::npos)
-        {
-			size_t found = i->gets().find("unsigned int *");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(14) ]->sett("unsigned int");
-				rtn->back()->Vars[s.substr(14) ]->setp(true);
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("signed int *");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(12) ]->sett("signed int");
-				rtn->back()->Vars[s.substr(12) ]->setp(true);
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("int *");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(5) ]->sett("int");
-				rtn->back()->Vars[s.substr(5) ]->setp(true);
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-
-			}
-			found = i->gets().find("unsigned long *");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(15) ]->sett("unsigned long");
-				rtn->back()->Vars[s.substr(15) ]->setp(true);
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("signed long *");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(13) ]->sett("signed long");
-				rtn->back()->Vars[s.substr(13) ]->setp(true);
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("long *");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(6) ]->sett("long");
-				rtn->back()->Vars[s.substr(6) ]->setp(true);
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("unsigned char *");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(15) ]->sett("unsigned char");
-				rtn->back()->Vars[s.substr(15) ]->setp(true);
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("signed char *");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(13) ]->sett("signed char");
-				rtn->back()->Vars[s.substr(13) ]->setp(true);
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("char *");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(6) ]->sett("char");
-				rtn->back()->Vars[s.substr(6) ]->setp(true);
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("unsigned short *");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(16) ]->sett("unsigned short");
-				rtn->back()->Vars[s.substr(16) ]->setp(true);
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("signed short *");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(14) ]->sett("signed short");
-				rtn->back()->Vars[s.substr(14) ]->setp(true);
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("short *");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(7) ]->sett("short");
-				rtn->back()->Vars[s.substr(7) ]->setp(true);
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
+		else if ( checkdecls(i->gets(), false ) )
+		{
+			list<Line>::iterator j=i;
+			--i;
+			lines->erase(j);
 		}
 
-		else if ((i->gets().find("int ")!=string::npos || i->gets().find("char ")!=string::npos 
-			|| i->gets().find("signed int")!=string::npos || i->gets().find("signed char")!=string::npos 
-			|| i->gets().find("unsigned int")!=string::npos || i->gets().find("unsigned char")!=string::npos 
-			|| i->gets().find("long")!=string::npos || i->gets().find("short")!=string::npos 
-			|| i->gets().find("signed long")!=string::npos || i->gets().find("signed short")!=string::npos 
-			|| i->gets().find("unsigned long")!=string::npos || i->gets().find("unsigned short")!=string::npos ) && i->gets().find("sub_")==string::npos)
+		else if (i->gets().find("return")!=string::npos && i->gets().find("sub_")==string::npos)
         {
-			size_t found = i->gets().find("unsigned int ");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(13) ]->sett("unsigned int");
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("signed int ");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(11) ]->sett("signed int");
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("int ");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found), t = "int";
-				size_t exists = s.find(";");
-				if ( exists != string::npos )
-					s.erase( exists, s.size() );
-
-				rtn->back()->Vars[s.substr(4) ]->sett("int");
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-
-			}
-			found = i->gets().find("unsigned long ");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(14) ]->sett("unsigned long");
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("signed long ");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(12) ]->sett("signed long");
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("long ");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(5) ]->sett("long");
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("unsigned char ");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(14) ]->sett("unsigned char");
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("signed char ");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(12) ]->sett("signed char");
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("char ");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(5) ]->sett("char");
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("unsigned short ");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(15) ]->sett("unsigned short");
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("signed short ");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(13) ]->sett("signed short");
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-			found = i->gets().find("short ");
-			if (found != string::npos)
-			{
-				string s = i->gets().substr(found);
-
-				rtn->back()->Vars[s.substr(6) ]->sett("short");
-
-				list<Line>::iterator j=i;
-				--i;
-				lines->erase(j);
-			}
-		}
-
+			string tmp = i->gets().substr( i->gets().find("return") + 7, i->gets().size() );
+			rtn->back()->Vars[tmp]->setuse(output);
+			cnt->push_back( new  Unc_jump("Return", -2, rtn->back()->Vars[tmp]));
+			newblock();
+        }
+		
+		else if (i->gets().find("return")!=string::npos && i->gets().find("sub_")!=string::npos)
+        {
+			string tmp = i->gets().substr( i->gets().find("return") + 7, i->gets().size() );
+			string tmp2 = tmp;
+			tmp2.erase( tmp2.find( "(" ) , tmp2.size() );
+			cnt->push_back( new  Call(tmp, rtn->back()->Vars[tmp2]));
+			rtn->back()->Vars[tmp2]->setuse(output);
+			cnt->push_back( new  Unc_jump("Return", -2, rtn->back()->Vars[tmp2]));
+			newblock();
+        }
+		
         else if (i->gets().find("sub_")!=string::npos)
         {
             cnt->push_back( new  Call(i->gets()));
         }
-
-		else if (i->gets().find("return")!=string::npos)
-        {
-			string tmp = i->gets().substr( i->gets().find("return") + 7, i->gets().size() );
-			rtn->back()->Vars[tmp]->setuse(1);
-			cnt->push_back( new  Unc_jump("Returnblabla", -2, rtn->back()->Vars[tmp]));
-			newblock();
-        }
-		//Test comment.
-		//Test comment 2
 
         else if (i->gets() == "")
         {

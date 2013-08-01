@@ -8,16 +8,14 @@ using namespace std;
 
 class Call : public CThreeAdressInstruction
 {
-    string s;
+    string str;
+	COperand* result;
 public:
-    Call(string s):s(s){}
-    string gets() { return s; }
-    void print(stringstream& str)
-    {
-#ifdef DEBUG
-        str  << "		<Instruction Type=\"original\" Label=\"" << s << "<\">/Instruction><!-- CALL -->" << endl;
-#endif
-    }
+    Call(string s):str(s){ result=nullptr; }
+	Call(string s, COperand* res):str(s), result(res){}
+
+    string gets() { return str; }
+    void print(stringstream& s);
 };
 
 #endif // CALL_H

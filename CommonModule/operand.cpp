@@ -7,7 +7,7 @@ COperand::COperand(std::string s)
 	UuidCreate( &id );
     name = s;
     type = variable;
-	usetype = 2;
+	usetype = local;
 	p = false;
 
     /* temporary variables are like: t_xx */
