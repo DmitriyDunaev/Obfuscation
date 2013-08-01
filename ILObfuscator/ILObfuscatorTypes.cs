@@ -11,13 +11,13 @@ namespace ILObfuscator
     {
         // Attributes
         private string description;
-        public List<Function> functions = new List<Function>();
+        public List<Function> Functions = new List<Function>();
         // Constructor
         public Routine(Exchange doc)
         {
             description = doc.Routine[0].Description.Value;
             foreach (FunctionType function in doc.Routine[0].Function)
-                functions.Add(new Function(function));
+                Functions.Add(new Function(function, this));
         }
     }
 
@@ -25,13 +25,20 @@ namespace ILObfuscator
     public class Function
     {
         // Attributes
+        public Routine parent;
         public IDManager ID = new IDManager();
+        public CalledFromType.EnumValues calledFrom;
+        public string externalLabel;
         public List<Variable> Variables = new List<Variable>();
         public List<BasicBlock> BasicBlocks = new List<BasicBlock>();
         // Constructor
-        public Function(FunctionType function)
+        public Function(FunctionType function, Routine par)
         {
             ID = new IDManager(function.ID.Value);
+            parent = par;
+            calledFrom = function.CalledFrom.EnumerationValue;
+            externalLabel = function.ExternalLabel.Value;
+            // Collecting all variables
             if (function.Inputs.Exists && function.Inputs[0].Original.Exists && function.Inputs[0].Original[0].Variable.Exists)
                 foreach (VariableType var in function.Inputs[0].Original[0].Variable)
                     Variables.Add(new Variable(var, Variable.Kind_IO.Input, Variable.Kind_OF.Original));
@@ -50,9 +57,9 @@ namespace ILObfuscator
             if (function.Locals.Exists && function.Locals[0].Fake.Exists && function.Locals[0].Fake[0].Variable.Exists)
                 foreach (VariableType var in function.Locals[0].Fake[0].Variable)
                     Variables.Add(new Variable(var, Variable.Kind_IO.Local, Variable.Kind_OF.Fake));
-            //foreach (BasicBlockType bb in function.BasicBlock)
-            //    BasicBlocks.Add(new BasicBlock(bb));
 
+            foreach (BasicBlockType bb in function.BasicBlock)
+                BasicBlocks.Add(new BasicBlock(bb, this));
         }
     }
 
@@ -100,10 +107,63 @@ namespace ILObfuscator
     public class BasicBlock
     {
         public IDManager ID = new IDManager();
-        public List<BasicBlock> predecessors = new List<BasicBlock>();
-        public List<BasicBlock> successors = new List<BasicBlock>();
-        public List<Instruction> instructions = new List<Instruction>();
+
+        public Function parent;
+        
+        private List<BasicBlock> Predecessors = new List<BasicBlock>();
+        private List<BasicBlock> Successors = new List<BasicBlock>();
+        private List<IDManager> RefPredecessors = new List<IDManager>();
+        private List<IDManager> RefSuccessors = new List<IDManager>();
+
+        public List<BasicBlock> getAllPredeccessors()
+        {
+            if (RefPredecessors.Count.Equals(0))
+                return Predecessors;
+            foreach (IDManager id in RefPredecessors)
+                foreach (BasicBlock bb in parent.BasicBlocks)
+                    if (bb.ID.Equals(id))
+                        Predecessors.Add(bb);
+            if (RefPredecessors.Count.Equals(Predecessors.Count))
+            {
+                RefPredecessors.Clear();
+                return Predecessors;
+            }
+            else
+                throw new Exception("Referenced basic block was not found. Reference ID=" + RefPredecessors[0].getID());
+        }
+
+        public List<BasicBlock> getAllSuccessors()
+        {
+            if (RefSuccessors.Count.Equals(0))
+                return Successors;
+            foreach (IDManager id in RefSuccessors)
+                foreach (BasicBlock bb in parent.BasicBlocks)
+                    if (bb.ID.Equals(id))
+                        Successors.Add(bb);
+            if (RefSuccessors.Count.Equals(Successors.Count))
+            {
+                RefSuccessors.Clear();
+                return Successors;
+            }
+            else
+                throw new Exception("Referenced basic block was not found. Reference ID=" + RefSuccessors[0].getID());
+        }
+
+        public List<Instruction> Instructions = new List<Instruction>();
+        
+        public BasicBlock(BasicBlockType bb, Function func)
+        {
+            ID = new IDManager(bb.ID.Value);
+            parent = func;
+            if (bb.Predecessors.Exists())
+                foreach(string pid in bb.Predecessors.Value.Split(' '))
+                    RefPredecessors.Add(new IDManager(pid));
+            if (bb.Successors.Exists())
+                foreach (string sid in bb.Successors.Value.Split(' '))
+                    RefSuccessors.Add(new IDManager(sid));
+        }
     }
+
 
     public class Instruction
     {
@@ -134,6 +194,12 @@ namespace ILObfuscator
             Guid value = new Guid(ID.Substring(3));
             ID = string.Concat(startID, value.ToString()).ToUpper();
         }
+        
+        public override bool Equals(object obj)
+        {
+ 	        return(((IDManager)obj).ID==ID);
+        }
+
         public string getID() { return ID; }
     }
 
