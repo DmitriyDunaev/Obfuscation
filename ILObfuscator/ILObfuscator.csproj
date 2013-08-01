@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="meshing_algorithm.cs" />
     <Compile Include="constant_calc_algortihm.cs" />
     <Compile Include="dead_vars_algorithm.cs" />
     <Compile Include="ILObfuscator.cs" />
