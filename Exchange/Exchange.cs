@@ -12,7 +12,7 @@
 //
 ////////////////////////////////////////////////////////////////////////
 		
-namespace Obfuscator
+namespace ExchangeFormat
 {
 	abstract class EnumeratorBase : System.Collections.IEnumerator
 	{

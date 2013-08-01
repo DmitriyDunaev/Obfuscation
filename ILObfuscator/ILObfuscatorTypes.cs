@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Obfuscator;
+using ExchangeFormat;
 
 namespace ILObfuscator
 {
@@ -11,7 +11,7 @@ namespace ILObfuscator
     {
         // Attributes
         private string description;
-        private List<Function> Functions = new List<Function>();
+        public List<Function> Functions = new List<Function>();
         // Constructor
         public Routine(Exchange doc)
         {
@@ -27,7 +27,7 @@ namespace ILObfuscator
         // Attributes
         public Routine parent;
         private IDManager ID = new IDManager();
-        private CalledFromType.EnumValues calledFrom;
+        public CalledFromType.EnumValues calledFrom;
         private string externalLabel;
         public List<Variable> Variables = new List<Variable>();
         public List<BasicBlock> BasicBlocks = new List<BasicBlock>();
@@ -86,7 +86,7 @@ namespace ILObfuscator
         }
         public string name;
         public List<int> constValueInParam;
-        public Obfuscator.SizeType.EnumValues size;
+        public ExchangeFormat.SizeType.EnumValues size;
         public bool pointer;
         public Kind_IO kind_io;
         public Kind_OF kind_of;
@@ -178,10 +178,11 @@ namespace ILObfuscator
     {
         public BasicBlock parent;
         private IDManager ID = new IDManager();
-        public Obfuscator.StatementTypeType.EnumValues statementType;
+        public ExchangeFormat.StatementTypeType.EnumValues statementType;
         public string text;
         public bool polyRequired;
         public List<Variable> RefVariables = new List<Variable>();
+        public List<Variable> DeadVariables = new List<Variable>();
 
         public Instruction(InstructionType instr, BasicBlock par)
         {
@@ -202,11 +203,12 @@ namespace ILObfuscator
                     }
                 }
                 if(!instr.RefVars.Value.Split(' ').Length.Equals(RefVariables.Count))
-                    throw new Exception("Referenced variable was not found. Instruction:" + instr.ID.Value);
+                    throw new Exception("Referenced variable was not found. Instruction: " + instr.ID.Value);
             }
 
         }
     }
+
 
     public class IDManager
     {

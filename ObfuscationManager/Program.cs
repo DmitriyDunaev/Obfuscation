@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using CommonModule;
 using System.Xml;
 using System.IO;
-using Obfuscator;
+using ExchangeFormat;
 
 
 namespace ObfuscationManager
@@ -90,8 +90,12 @@ namespace ObfuscationManager
             // For debugging
             exch.SaveToFile("Exchange1.xml", true);
 
-            // Creating a routine
-            ILObfuscator.Routine routine = new ILObfuscator.Routine(exch);
+            // Sending Exchange format to obfuscator
+            ILObfuscator.ILObfuscator obfuscator = new ILObfuscator.ILObfuscator();
+            obfuscator.Obfuscate(exch);
+
+
+            
 
 
             //   ...

@@ -5,7 +5,7 @@
 
 using Altova.TypeInfo;
 
-namespace Obfuscator
+namespace ExchangeFormat
 {
 	public class Exchange_TypeInfo
 	{
