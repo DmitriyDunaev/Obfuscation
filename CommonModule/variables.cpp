@@ -30,7 +30,7 @@ void CVariables::dump(stringstream &s)
 		{
 			s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" ";
 			string t = i->second->gett();
-			if ( t != "\0")
+			if ( !t.empty())
 			{
 				if ( t == "char" )
 					s << "Size=\"byte\" ";
@@ -50,7 +50,17 @@ void CVariables::dump(stringstream &s)
     {
 		if ( (i->second)->getuse() == 1 )
 		{
-			s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" Size=\"unknown\" Pointer=\"false\">";
+			s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" ";
+			string t = i->second->gett();
+			if ( !t.empty())
+			{
+				if ( t == "char" )
+					s << "Size=\"byte\" ";
+				else if ( t == "int" )
+					s << "Size=\"word\" ";
+				
+			} else s << "Size=\"unknown\" ";
+			s << "Pointer=\"false\">";
 			((*i).second)->print(s);
 			s << "</Variable>\n";
 		}
@@ -62,7 +72,17 @@ void CVariables::dump(stringstream &s)
     {
 		if ( (i->second)->getuse() == 2 )
 		{
-			s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" Size=\"unknown\" Pointer=\"false\">";
+			s << "				<Variable ID=\"ID_" << ((*i).second)->getid() << "\" ";
+			string t = i->second->gett();
+			if ( !t.empty())
+			{
+				if ( t == "char" )
+					s << "Size=\"byte\" ";
+				else if ( t == "int" )
+					s << "Size=\"word\" ";
+				
+			} else s << "Size=\"unknown\" ";
+			s << "Pointer=\"false\">";
 			((*i).second)->print(s);
 			s << "</Variable>\n";
 		}

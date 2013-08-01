@@ -178,7 +178,7 @@ void Assistant::preproc()
             found = i->gets().find("*(_DWORD *)");
         }
     }
-
+/*
     for (list<Line>::iterator i = lines->begin(); i != lines->end(); ++i)
     {
         size_t found2 = i->gets().find("sub_");
@@ -225,7 +225,7 @@ void Assistant::preproc()
             lines->erase(j);
         }
     }
-
+*/
     // (*(_BYTE *)  is...?
 	
     for (list<Line>::iterator i = lines->begin(); i != lines->end(); ++i)
@@ -463,6 +463,48 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
             work( a, b);
 
         }
+
+		else if ((i->gets().find("int ")!=string::npos || i->gets().find("char ")!=string::npos || i->gets().find("signed int")!=string::npos || i->gets().find("signed char")!=string::npos ) && i->gets().find("sub_")==string::npos)
+        {
+			size_t found = i->gets().find("signed intint ");
+			if (found != string::npos)
+			{
+				string s = i->gets().substr(found), t = "signed int";
+
+				cout << rtn->back()->Vars[s.substr(4) ]->getname() << endl;
+
+				rtn->back()->Vars[s.substr(11) ]->sett("signed int");
+				list<Line>::iterator j=i;
+				--i;
+				lines->erase(j);
+			}
+			found = i->gets().find("int ");
+			if (found != string::npos)
+			{
+				string s = i->gets().substr(found), t = "int";
+				size_t exists = s.find(";");
+				if ( exists != string::npos )
+					s.erase( exists, s.size() );
+
+				cout << rtn->back()->Vars[s.substr(4) ]->getname() << endl;
+
+				rtn->back()->Vars[s.substr(4) ]->sett("int");
+				list<Line>::iterator j=i;
+				--i;
+				lines->erase(j);
+			}
+			found = i->gets().find("char ");
+			if (found != string::npos)
+			{
+				string s = i->gets().substr(found);
+
+				rtn->back()->Vars[s.substr(5) ]->sett("char");
+
+				list<Line>::iterator j=i;
+				--i;
+				lines->erase(j);
+			}
+		}
 
         else if (i->gets().find("sub_")!=string::npos)
         {

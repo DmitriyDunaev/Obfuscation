@@ -6,7 +6,6 @@ COperand::COperand(std::string s)
 {
 	UuidCreate( &id );
     name = s;
-    t = "\0";
     type = variable;
 	usetype = 2;
 
