@@ -92,6 +92,13 @@ namespace ObfuscationManager
                         // Checking RefVar ID for variables
                         foreach (InstructionType inst in bb.Instruction)
                         {
+                            // Checking instruction text (TAC) for being empty
+                            if (string.IsNullOrWhiteSpace(inst.Value))
+                            {
+                                error_message = "TAC command (text) is empty at instruction " + inst.ID.Value;
+                                return false;
+                            }
+
                             //Checking 'Instruction ID' for correctness
                             if (!checkIDcorrectness(inst.ID.Value, ref error_message))
                                 return false;
@@ -196,8 +203,29 @@ namespace ObfuscationManager
                         return true;
                     break;
                 case StatementTypeType.EnumValues.eProcedural:
-                    if (!inst.RefVars.Exists() || (inst.RefVars.Exists() && inst.RefVars.Value.Split(' ').Length == 1 && !string.IsNullOrWhiteSpace(inst.Value) && (
-                        inst.Value.Split(' ')[0].ToUpper().Equals("PARAM") || 
+
+                    // Checking possible instruction types
+                    string command = inst.Value.Split(' ')[0].ToUpper();
+                    string[] coms = {"CALL","PARAM", "RETURN", "RETRIEVE", "ENTER", "LEAVE"};
+                    if (!coms.Contains(command))
+                    {
+                        error_message = "Wrong TAC command (text) for procedural instruction " + inst.ID.Value;
+                        return false;
+                    }
+
+                    if (inst.Value.Split(' ')[0].ToUpper() == "CALL")
+                    {
+                        int res = 0;
+                        if (inst.Value.Split(' ').Length != 3 || !Int32.TryParse(inst.Value.Split(' ')[2], out res))
+                        {
+                            error_message = "Wrong TAC command (text) for CALL instruction " + inst.ID.Value;
+                            return false;
+                        }
+                    }
+
+                    // Checking presence and number of RefVars
+                    if (!inst.RefVars.Exists() || (inst.RefVars.Exists() && inst.RefVars.Value.Split(' ').Length == 1 && (
+                        inst.Value.Split(' ')[0].ToUpper().Equals("PARAM") ||
                         inst.Value.Split(' ')[0].ToUpper().Equals("RETURN") ||
                         inst.Value.Split(' ')[0].ToUpper().Equals("RETRIEVE"))))
                         return true;
