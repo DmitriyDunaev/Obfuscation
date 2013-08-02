@@ -12,7 +12,7 @@
 						<xs:enumeration value="Copy"/>
 						<xs:enumeration value="UnconditionalJump"/>
 						<xs:enumeration value="ConditionalJump"/>
-						<xs:enumeration value="Call"/>
+						<xs:enumeration value="Procedural"/>
 						<xs:enumeration value="IndexedAssignment"/>
 						<xs:enumeration value="PointerAssignment"/>
 						<xs:enumeration value="Unknown"/>
