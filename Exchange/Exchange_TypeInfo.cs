@@ -345,7 +345,7 @@ namespace ExchangeFormat
 					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "Copy", 0 ), 
 					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "UnconditionalJump", 0 ), 
 					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "ConditionalJump", 0 ), 
-					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "Call", 0 ), 
+					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "Procedural", 0 ), 
 					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "IndexedAssignment", 0 ), 
 					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "PointerAssignment", 0 ), 
 					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "Unknown", 0 ), 

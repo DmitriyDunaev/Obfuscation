@@ -65,7 +65,7 @@ namespace ObfuscationManager
 
             // Validating XML by Schema
             string error;
-            /*if (!Validator.ValidateXML(doc, out error))
+            if (!Validator.ValidateXML(doc, out error))
             {
                 Console.WriteLine("Document invalid: " + error);
                 return;
@@ -73,10 +73,13 @@ namespace ObfuscationManager
             else
             {
                 Console.WriteLine("Document is valid.");
-            }*/
+            }
 
             // Converting XML to Exchange
             Exchange exch = Validator.ConvertXMLToExchangeType(doc);
+
+            // For debugging
+            exch.SaveToFile("Exchange1.xml", true);
 
             // Performing logical control
             if (!Validator.ValidateExchangeType(exch, out error))
@@ -86,9 +89,6 @@ namespace ObfuscationManager
             }
             else
                 Console.WriteLine("Document is logically correct.\n");
-
-            // For debugging
-            exch.SaveToFile("Exchange1.xml", true);
 
             // Sending Exchange format to obfuscator
             Obfuscator.ILObfuscator obfuscator = new Obfuscator.ILObfuscator();

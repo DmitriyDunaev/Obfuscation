@@ -77,6 +77,13 @@ namespace ObfuscationManager
                     List<string> basicblock_IDs = new List<string>();
                     foreach (BasicBlockType bb in function.BasicBlock)
                     {
+                        // If BB has no successors and no predeccessors, it is incorrect
+                        if (!bb.Successors.Exists() && !bb.Predecessors.Exists())
+                        {
+                            error_message = "No references for predecessors and successors found in the basic block " + bb.ID.Value;
+                            return false;
+                        }
+
                         // Checking 'BasicBlock ID' for correctness
                         if (!checkIDcorrectness(bb.ID.Value, ref error_message))
                             return false;
@@ -99,10 +106,9 @@ namespace ObfuscationManager
                                         return false;
                                     }
                             }
-                            //Checking correctness of instruction text (TAC instruction)
-                            if(!checkTACcorrectness(inst))
+                            //Checking correctness of instruction text (TAC instruction) and number of RefVars by StatementType
+                            if(!checkInstructionCorrectness(inst, ref error_message))
                             {
-                                error_message = @"TAC instruction is incorrect.\n\tPresent value: '" + inst.Value + @"'";
                                 return false;
                             }
                         }
@@ -154,7 +160,7 @@ namespace ObfuscationManager
             }
         }
 
-        private static bool checkTACcorrectness(InstructionType inst)
+        private static bool checkInstructionCorrectness(InstructionType inst, ref string error_message)
         {
             string instr = inst.Value;
             string[] operands = instr.Split(' ');
@@ -163,18 +169,51 @@ namespace ObfuscationManager
             foreach (string op in operands)
                 instr2 = instr2 + ' ' + op;
             instr2 = instr2.Trim();
-            if (string.Equals(instr, instr2))
-                return true;
-            else
+            if (!string.Equals(instr, instr2))
+            {
+                error_message = @"TAC instruction is incorrect (excess whitespaces?).\n\tPresent value: '" + inst.Value + @"'";
                 return false;
-            // wwwwwwwwwwwwww
+            }
 
-            //if (inst.StatementType.EnumerationValue == StatementTypeType.EnumValues.eUnconditionalJump && inst.RefVars.Exists())
-            //    return false;
-            //if (inst.StatementType.EnumerationValue == StatementTypeType.EnumValues.)
-            //{
-                
-            //}
+            switch (inst.StatementType.EnumerationValue)
+            {
+                case StatementTypeType.EnumValues.eFullAssignment:
+                    if (inst.RefVars.Exists() && inst.RefVars.Value.Split(' ').Length >= 1 && inst.RefVars.Value.Split(' ').Length <= 3)
+                        return true;
+                    break;
+                case StatementTypeType.EnumValues.eUnaryAssignment:
+                case StatementTypeType.EnumValues.eCopy:
+                case StatementTypeType.EnumValues.ePointerAssignment:
+                    if (inst.RefVars.Exists() && inst.RefVars.Value.Split(' ').Length >= 1 && inst.RefVars.Value.Split(' ').Length <= 2)
+                        return true;
+                    break;
+                case StatementTypeType.EnumValues.eUnconditionalJump:
+                    if (!inst.RefVars.Exists())
+                        return true;
+                    break;
+                case StatementTypeType.EnumValues.eConditionalJump:
+                    if (!inst.RefVars.Exists() || (inst.RefVars.Exists() && inst.RefVars.Value.Split(' ').Length >= 1 && inst.RefVars.Value.Split(' ').Length <= 2))
+                        return true;
+                    break;
+                case StatementTypeType.EnumValues.eProcedural:
+                    if (!inst.RefVars.Exists() || (inst.RefVars.Exists() && inst.RefVars.Value.Split(' ').Length == 1 && !string.IsNullOrWhiteSpace(inst.Value) && (
+                        inst.Value.Split(' ')[0].ToUpper().Equals("PARAM") || 
+                        inst.Value.Split(' ')[0].ToUpper().Equals("RETURN") ||
+                        inst.Value.Split(' ')[0].ToUpper().Equals("RETRIEVE"))))
+                        return true;
+                    break;
+                case StatementTypeType.EnumValues.eIndexedAssignment:
+                    if (inst.RefVars.Exists() && inst.RefVars.Value.Split(' ').Length >= 2 && inst.RefVars.Value.Split(' ').Length <= 3)
+                        return true;
+                    break;
+                case StatementTypeType.EnumValues.eUnknown:
+                    return true;
+                default:
+                    error_message = "Statement type is not found. Internal error. Instruction: " + inst.ID.Value;
+                    return false;
+            }
+            error_message = "Statement type does not match RefVars in instruction: " + inst.ID.Value;
+            return false;
         }
     }
 }
