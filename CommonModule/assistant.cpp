@@ -730,12 +730,31 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 		
 		else if (i->gets().find("return")!=string::npos && i->gets().find("sub_")!=string::npos)
         {
+			stringstream s;
 			string tmp = i->gets().substr( i->gets().find("return") + 7, i->gets().size() );
-			string tmp2 = tmp;
-			tmp2.erase( tmp2.find( "(" ) , tmp2.size() );
-			cnt->push_back( new  Call(tmp, rtn->back()->Vars[tmp2]));
-			rtn->back()->Vars[tmp2]->setuse(output);
-			cnt->push_back( new  Unc_jump("Return", -2, rtn->back()->Vars[tmp2]));
+			tmp.erase( tmp.find("(") );
+			s << tmp;
+			stringstream ss (i->gets().substr( i->gets().find("(")+1 ) );
+			string var;
+			int par = 0;
+			while ( getline(ss, var, ',') )
+			{
+				if (var[0] == ' ') var.erase( 0, 1);
+				if (var[var.size()-1] == ')') var.erase( var.size() -1, 1);
+				if (!var.empty())
+				{
+
+					cnt->push_back( new  Call( s.str(), rtn->back()->Vars[var], true ));
+					par++;
+				}
+				
+			}
+			
+			s << " " << par;
+			cnt->push_back( new  Call( s.str() ));
+			cnt->push_back( new Call( s.str(), rtn->back()->Vars[tmp], false, true));
+			cnt->push_back( new  Unc_jump("Return", -2, rtn->back()->Vars[tmp]));
+			rtn->back()->Vars[tmp]->setuse(output);
 			newblock();
         }
 		
@@ -764,6 +783,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 			
 			s << " " << par;
 			cnt->push_back( new  Call( s.str() ));
+
         }
 		else if (i->gets().find("sub_")!=string::npos && i->gets().find("=")!=string::npos)
         {
