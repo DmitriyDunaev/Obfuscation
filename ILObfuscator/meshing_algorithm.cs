@@ -25,15 +25,85 @@
 
 // Dmitriy: Agree on that, but we can easily solve it. Let's discuss it on Friday!
 
-list<BasicBlock> Function::getBBUncJumps( Function ActualFunction )
-{
 
+/*
+ * This is the main function, it meshes up the single unconditional and
+ * unconditional jumps,
+ */
+
+void MeshFunction( Function actualfunction)
+{
+    /*
+     * The getBBCunJumps returns a list of the basic blocks that has an
+     * one successor, wich also has a sucessor. Not all of them, but some,
+     * depending on the CFTRatio.
+     */
+    list<BasicBlock> basicblocks = Function::getBBUncJumps( actualfunction );
+    /*
+     * Now we go through the list, and mesh the jumps.
+     */
+    foreach ( BasicBlock bb in basicblocks )
+        MeshUnconditional( bb )
+    /*
+     * Now we need the list of the conditional jumps.
+     */
+    basicblocks = Function::getBBCondJumps( actualfunction );
+    /*
+     * And go through the list of conditional jumps as well.
+     */
+    foreach ( BasicBlock bb in basicblocks )
+        MeshConditional( bb );
+}
+/*
+ * The MeshUncoditional function gets a BasicBlock, and creates
+ * the Control Flow Transition.
+ */
+void MeshUnconditional( BasicBlock actualbb )
+{
+    /* First we insert an entry point. */
+    InsertEntryPoint( actualbb );
+    /* Next, we insert the fake flow, with one fake block, and
+     * we create a copy of the successor of the actual basic block. */
+    InsertFakeFlow( actualbb );
+    /* Finally comes the dead flow, with 3 blocks. They are all dead. */
+    InsertDeadFlow( actualbb );
 }
 
-
-void ( list<BasicBlock> unc_jmp_set)
+/*
+ * The InsertEntryPoint is the function that inserts the fake basic block
+ * which will serve as the entry point of the CFT.
+ */
+void InsertEntryPoint( BasicBlock bb )
 {
-    
+    /* We need a new BB. */
+    BasicBlock ep = new BasicBlock();
+    /* Some function now creates an instruction with a fake conditional jump,
+     * and it is fake becouse it always continues in the true way. */
+    Instruction i = CreateFakeCondJump( bb.Instructions[0].getID() );
+    /* Appending the instruction to the block we just created. */
+    ep.Append( i );
+    /* And setting its successor to the actual block. */
+    ep.Successors.Add( bb );
+    /* Now we use the ChangeGotos function, and it changes all goto-s in the
+     * function with one ID, to have an other ID */
+    bb.parent.ChangeGotos( bb.Instructions[0].getID(), ep.Instructions[0].getID() );
+    /* And finally we set the bacisblocks' predecessors and successors, so
+     * the edges in the CFG. */
+    foreach ( BasicBlock pred in pp.Predecessors )
+    {
+        pred.Successors.Delete( bb );
+        pred.Successors.Add( ep );
+        bb.Predecessors.Delete( pred );
+    }
+    bb.Predecessors.Add( ep );   
 }
+
+/* Still to do:
+ * 
+ * void InsertFakeFlow();
+ * void InsertDeadFlow();
+ * 
+ * void MeshConditional();
+ */
 
 #endif
