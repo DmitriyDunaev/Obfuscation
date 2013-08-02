@@ -24,7 +24,7 @@ namespace Obfuscator
         }
 
         /// <summary>
-        /// Gets preceding instructions within a function 
+        /// Gets a list of the instructions followed by the actual instruction
         /// </summary>
         /// <param name="instr">Actual Instruction</param>
         /// <returns>A list of preceding instructions (or empty list if no such found)</returns>
