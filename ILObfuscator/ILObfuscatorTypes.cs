@@ -183,7 +183,7 @@ namespace Obfuscator
     }
 
 
-    public class Instruction
+    public class Instruction : IComparable
     {
         public BasicBlock parent;
         private IDManager ID = new IDManager();
@@ -215,6 +215,29 @@ namespace Obfuscator
                     throw new Exception("Referenced variable was not found. Instruction: " + instr.ID.Value);
             }
 
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
+            // Equal
+            if ((obj as Instruction).ID.Equals(ID))
+                return 0;
+            foreach(Instruction instr in parent.Instructions)
+            {
+                if(instr.ID.Equals(ID))
+                    return -1;
+                if(instr.ID.Equals((obj as Instruction).ID))
+                    return 1;
+            }
+               throw new ArgumentException("Comparison error! Instruction " + (obj as Instruction).ID.getID() + " is not found in basic block.");
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+            return (obj as Instruction).ID.Equals(ID);
         }
     }
 
