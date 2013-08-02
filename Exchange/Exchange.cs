@@ -1203,7 +1203,7 @@ namespace ExchangeFormat
 			eCopy = 2, // Copy
 			eUnconditionalJump = 3, // UnconditionalJump
 			eConditionalJump = 4, // ConditionalJump
-			eCall = 5, // Call
+			eProcedural = 5, // Call
 			eIndexedAssignment = 6, // IndexedAssignment
 			ePointerAssignment = 7, // PointerAssignment
 			eUnknown = 8, // Unknown
