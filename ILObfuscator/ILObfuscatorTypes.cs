@@ -208,8 +208,7 @@ namespace Obfuscator
         public string text;
         public bool polyRequired;
         public List<Variable> RefVariables = new List<Variable>();
-        public List<Variable> DeadVariables = new List<Variable>();
-        public Dictionary<Variable, Variable.State> DeadVariables2 = new Dictionary<Variable, Variable.State>();
+        public Dictionary<Variable, Variable.State> DeadVariables = new Dictionary<Variable, Variable.State>();
 
         public Instruction(InstructionType instr, BasicBlock par)
         {
