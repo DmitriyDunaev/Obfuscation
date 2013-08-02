@@ -91,7 +91,7 @@ namespace ObfuscationManager
             exch.SaveToFile("Exchange1.xml", true);
 
             // Sending Exchange format to obfuscator
-            ILObfuscator.ILObfuscator obfuscator = new ILObfuscator.ILObfuscator();
+            Obfuscator.ILObfuscator obfuscator = new Obfuscator.ILObfuscator();
             obfuscator.Obfuscate(exch);
 
 

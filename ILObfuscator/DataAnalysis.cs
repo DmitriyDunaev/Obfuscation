@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ILObfuscator
+namespace Obfuscator
 {
     public static class DataAnalysis
     {

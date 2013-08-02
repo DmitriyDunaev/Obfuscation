@@ -7,7 +7,7 @@
     <ProjectGuid>{7BBCFCFC-F998-41D8-846A-EE3FF0A3D7B6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ILObfuscator</RootNamespace>
+    <RootNamespace>Obfuscator</RootNamespace>
     <AssemblyName>ILObfuscator</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

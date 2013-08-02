@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ExchangeFormat;
 
-namespace ILObfuscator
+namespace Obfuscator
 {
     public class Routine
     {
@@ -61,6 +61,15 @@ namespace ILObfuscator
             foreach (BasicBlockType bb in function.BasicBlock)
                 BasicBlocks.Add(new BasicBlock(bb, this));
         }
+        // Methods
+        public BasicBlock GetLastBasicBlock()
+        {
+            // It works, because we always have one single "fake end block"
+            foreach (BasicBlock bb in BasicBlocks)
+                if (bb.getAllSuccessors().Count.Equals(0))
+                    return bb;
+            return null;
+        }
     }
 
 
@@ -113,7 +122,7 @@ namespace ILObfuscator
         private IDManager ID = new IDManager();
 
         public Function parent;
-        
+
         private List<BasicBlock> Predecessors = new List<BasicBlock>();
         private List<BasicBlock> Successors = new List<BasicBlock>();
         private List<IDManager> RefPredecessors = new List<IDManager>();
@@ -154,13 +163,13 @@ namespace ILObfuscator
         }
 
         public List<Instruction> Instructions = new List<Instruction>();
-        
+
         public BasicBlock(BasicBlockType bb, Function func)
         {
             ID = new IDManager(bb.ID.Value);
             parent = func;
             if (bb.Predecessors.Exists())
-                foreach(string pid in bb.Predecessors.Value.Split(' '))
+                foreach (string pid in bb.Predecessors.Value.Split(' '))
                     RefPredecessors.Add(new IDManager(pid));
             if (bb.Successors.Exists())
                 foreach (string sid in bb.Successors.Value.Split(' '))
@@ -202,7 +211,7 @@ namespace ILObfuscator
                             RefVariables.Add(var);
                     }
                 }
-                if(!instr.RefVars.Value.Split(' ').Length.Equals(RefVariables.Count))
+                if (!instr.RefVars.Value.Split(' ').Length.Equals(RefVariables.Count))
                     throw new Exception("Referenced variable was not found. Instruction: " + instr.ID.Value);
             }
 
@@ -229,10 +238,10 @@ namespace ILObfuscator
             Guid value = new Guid(ID.Substring(3));
             ID = string.Concat(startID, value.ToString()).ToUpper();
         }
-        
+
         public override bool Equals(object obj)
         {
- 	        return(((IDManager)obj).ID==ID);
+            return (((IDManager)obj).ID == ID);
         }
 
         public override int GetHashCode()
