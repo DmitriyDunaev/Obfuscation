@@ -27,6 +27,10 @@ namespace Obfuscator
         // Attributes
         public Routine parent;
         private IDManager ID = new IDManager();
+        public string getID()
+        {
+            return ID.ToString();
+        }
         public CalledFromType.EnumValues calledFrom;
         private string externalLabel;
         public List<Variable> Variables = new List<Variable>();
@@ -89,9 +93,9 @@ namespace Obfuscator
         }
         // Attributes
         private IDManager ID = new IDManager();
-        public IDManager getID()
+        public string getID()
         {
-            return ID;
+            return ID.ToString();
         }
         public string name;
         public List<int> constValueInParam;
@@ -120,7 +124,10 @@ namespace Obfuscator
     public class BasicBlock
     {
         private IDManager ID = new IDManager();
-
+        public string getID()
+        {
+            return ID.ToString();
+        }
         public Function parent;
 
         private List<BasicBlock> Predecessors = new List<BasicBlock>();
@@ -142,7 +149,7 @@ namespace Obfuscator
                 return Predecessors;
             }
             else
-                throw new Exception("Referenced basic block was not found. Referenced block:" + RefPredecessors[0].getID());
+                throw new Exception("Referenced basic block was not found. Referenced block:" + RefPredecessors[0].ToString());
         }
 
         public List<BasicBlock> getAllSuccessors()
@@ -159,7 +166,7 @@ namespace Obfuscator
                 return Successors;
             }
             else
-                throw new Exception("Referenced basic block was not found. Referenced block:" + RefSuccessors[0].getID());
+                throw new Exception("Referenced basic block was not found. Referenced block:" + RefSuccessors[0].ToString());
         }
 
         public List<Instruction> Instructions = new List<Instruction>();
@@ -187,6 +194,10 @@ namespace Obfuscator
     {
         public BasicBlock parent;
         private IDManager ID = new IDManager();
+        public string getID()
+        {
+            return ID.ToString();
+        }
         public ExchangeFormat.StatementTypeType.EnumValues statementType;
         public string text;
         public bool polyRequired;
@@ -223,14 +234,14 @@ namespace Obfuscator
             // Equal
             if ((obj as Instruction).ID.Equals(ID))
                 return 0;
-            foreach(Instruction instr in parent.Instructions)
+            foreach (Instruction instr in parent.Instructions)
             {
-                if(instr.ID.Equals(ID))
+                if (instr.ID.Equals(ID))
                     return -1;
-                if(instr.ID.Equals((obj as Instruction).ID))
+                if (instr.ID.Equals((obj as Instruction).ID))
                     return 1;
             }
-               throw new ArgumentException("Comparison error! Instruction " + (obj as Instruction).ID.getID() + " is not found in basic block.");
+            throw new ArgumentException("Comparison error! Instruction " + (obj as Instruction).ID.ToString() + " is not found in basic block.");
         }
 
         public override bool Equals(object obj)
@@ -272,7 +283,9 @@ namespace Obfuscator
             return base.GetHashCode();
         }
 
-        public string getID() { return ID; }
+        public override string ToString()
+        {
+            return ID;
+        }
     }
-
 }
