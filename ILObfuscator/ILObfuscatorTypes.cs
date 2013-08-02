@@ -218,7 +218,7 @@ namespace Obfuscator
                 {
                     foreach (Variable var in parent.parent.Variables)
                     {
-                        if (var.getID().Equals(new IDManager(vid)))
+                        if (var.getID().Equals(vid))
                             RefVariables.Add(var);
                     }
                 }

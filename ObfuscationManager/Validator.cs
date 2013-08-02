@@ -100,7 +100,7 @@ namespace ObfuscationManager
                                     }
                             }
                             //Checking correctness of instruction text (TAC instruction)
-                            if(!checkTACcorrectness(inst.Value))
+                            if(!checkTACcorrectness(inst))
                             {
                                 error_message = @"TAC instruction is incorrect.\n\tPresent value: '" + inst.Value + @"'";
                                 return false;
@@ -154,8 +154,9 @@ namespace ObfuscationManager
             }
         }
 
-        private static bool checkTACcorrectness(string instr)
+        private static bool checkTACcorrectness(InstructionType inst)
         {
+            string instr = inst.Value;
             string[] operands = instr.Split(' ');
             operands = operands.Where(x => !string.IsNullOrEmpty(x)).ToArray();
             string instr2 = string.Empty;
@@ -166,6 +167,14 @@ namespace ObfuscationManager
                 return true;
             else
                 return false;
+            // wwwwwwwwwwwwww
+
+            //if (inst.StatementType.EnumerationValue == StatementTypeType.EnumValues.eUnconditionalJump && inst.RefVars.Exists())
+            //    return false;
+            //if (inst.StatementType.EnumerationValue == StatementTypeType.EnumValues.)
+            //{
+                
+            //}
         }
     }
 }
