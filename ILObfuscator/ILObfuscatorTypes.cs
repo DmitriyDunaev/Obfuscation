@@ -11,11 +11,16 @@ namespace Obfuscator
     {
         // Attributes
         private string description;
+        private List<string> RefGlobalVars = new List<string>();
         public List<Function> Functions = new List<Function>();
+
         // Constructor
         public Routine(Exchange doc)
         {
             description = doc.Routine[0].Description.Value;
+            if (doc.Routine[0].RefGlobalVars.Exists())
+                foreach (string gvid in doc.Routine[0].RefGlobalVars.Value.Split(' '))
+                    RefGlobalVars.Add(gvid);
             foreach (FunctionType function in doc.Routine[0].Function)
                 Functions.Add(new Function(function, this));
         }
@@ -83,7 +88,8 @@ namespace Obfuscator
         {
             Input = 0,
             Output = 1,
-            Local = 2
+            Local = 2,
+            Global =3
         }
         public enum Kind_OF
         {

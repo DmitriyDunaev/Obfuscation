@@ -125,27 +125,28 @@ namespace ExchangeFormat
 
 		public static readonly int _altova_mif_altova_RoutineType = _altova_mil_altova_CalledFromType ;
 		public static readonly int _altova_mi_altova_RoutineType_altova_Description = _altova_mif_altova_RoutineType ;
-		public static readonly int _altova_mi_altova_RoutineType_altova_Function = 24 ;
-		public static readonly int _altova_mil_altova_RoutineType = 25 ;
+		public static readonly int _altova_mi_altova_RoutineType_altova_RefGlobalVars = 24 ;
+		public static readonly int _altova_mi_altova_RoutineType_altova_Function = 25 ;
+		public static readonly int _altova_mil_altova_RoutineType = 26 ;
 
 		public static readonly int _altova_mif_altova_VariableType = _altova_mil_altova_RoutineType ;
 		public static readonly int _altova_mi_altova_VariableType_altova_unnamed = _altova_mif_altova_VariableType ;
-		public static readonly int _altova_mi_altova_VariableType_altova_ID = 26 ;
-		public static readonly int _altova_mi_altova_VariableType_altova_Size = 27 ;
-		public static readonly int _altova_mi_altova_VariableType_altova_Pointer = 28 ;
-		public static readonly int _altova_mi_altova_VariableType_altova_ConstValueInParam = 29 ;
-		public static readonly int _altova_mil_altova_VariableType = 30 ;
+		public static readonly int _altova_mi_altova_VariableType_altova_ID = 27 ;
+		public static readonly int _altova_mi_altova_VariableType_altova_Size = 28 ;
+		public static readonly int _altova_mi_altova_VariableType_altova_Pointer = 29 ;
+		public static readonly int _altova_mi_altova_VariableType_altova_ConstValueInParam = 30 ;
+		public static readonly int _altova_mil_altova_VariableType = 31 ;
 
 		public static readonly int _altova_mif_altova_SizeType = _altova_mil_altova_VariableType ;
 		public static readonly int _altova_mil_altova_SizeType = _altova_mif_altova_SizeType ;
 
 		public static readonly int _altova_mif_altova_OriginalType = _altova_mil_altova_SizeType ;
 		public static readonly int _altova_mi_altova_OriginalType_altova_Variable = _altova_mif_altova_OriginalType ;
-		public static readonly int _altova_mil_altova_OriginalType = 31 ;
+		public static readonly int _altova_mil_altova_OriginalType = 32 ;
 
 		public static readonly int _altova_mif_altova_FakeType = _altova_mil_altova_OriginalType ;
 		public static readonly int _altova_mi_altova_FakeType_altova_Variable = _altova_mif_altova_FakeType ;
-		public static readonly int _altova_mil_altova_FakeType = 32 ;
+		public static readonly int _altova_mil_altova_FakeType = 33 ;
 
 		public static readonly int _altova_mif_altova_StatementTypeType = _altova_mil_altova_FakeType ;
 		public static readonly int _altova_mil_altova_StatementTypeType = _altova_mif_altova_StatementTypeType ;
@@ -188,7 +189,7 @@ namespace ExchangeFormat
 
 		public static readonly int _altova_mif_xs_altova_anyType = _altova_mil_xs_altova_anySimpleType ;
 		public static readonly int _altova_mi_xs_altova_anyType_altova_unnamed = _altova_mif_xs_altova_anyType ;
-		public static readonly int _altova_mil_xs_altova_anyType = 33 ;
+		public static readonly int _altova_mil_xs_altova_anyType = 34 ;
 
 		public static readonly int _altova_mif_xs_altova_anyURI = _altova_mil_xs_altova_anyType ;
 		public static readonly int _altova_mil_xs_altova_anyURI = _altova_mif_xs_altova_anyURI ;
@@ -620,8 +621,8 @@ namespace ExchangeFormat
 		// array of all members
 		public static MemberInfo[] members = 
 		{
-			new MemberInfo (binder, "", "Original", _altova_ti_altova_VariablesType, _altova_ti_altova_OriginalType, MemberFlags.None, 1, 1),
-			new MemberInfo (binder, "", "Fake", _altova_ti_altova_VariablesType, _altova_ti_altova_FakeType, MemberFlags.None, 1, 1),
+			new MemberInfo (binder, "", "Original", _altova_ti_altova_VariablesType, _altova_ti_altova_OriginalType, MemberFlags.None, 0, 1),
+			new MemberInfo (binder, "", "Fake", _altova_ti_altova_VariablesType, _altova_ti_altova_FakeType, MemberFlags.None, 0, 1),
 
 			new MemberInfo (binder, "", "BasicBlock", _altova_ti_altova_Exchange2, _altova_ti_altova_BasicBlockType, MemberFlags.None, 0, 1),
 			new MemberInfo (binder, "", "Function", _altova_ti_altova_Exchange2, _altova_ti_altova_FunctionType, MemberFlags.None, 0, 1),
@@ -643,19 +644,20 @@ namespace ExchangeFormat
 			new MemberInfo (binder, "", "ID", _altova_ti_altova_FunctionType, _altova_ti_xs_altova_ID, MemberFlags.None|MemberFlags.IsAttribute, 1, 1),
 			new MemberInfo (binder, "", "ExternalLabel", _altova_ti_altova_FunctionType, _altova_ti_xs_altova_anySimpleType, MemberFlags.None|MemberFlags.IsAttribute, 1, 1),
 			new MemberInfo (binder, "", "CalledFrom", _altova_ti_altova_FunctionType, _altova_ti_altova_CalledFromType, MemberFlags.None|MemberFlags.IsAttribute, 1, 1),
-			new MemberInfo (binder, "", "Inputs", _altova_ti_altova_FunctionType, _altova_ti_altova_VariablesType, MemberFlags.None, 1, 1),
-			new MemberInfo (binder, "", "Outputs", _altova_ti_altova_FunctionType, _altova_ti_altova_VariablesType, MemberFlags.None, 1, 1),
-			new MemberInfo (binder, "", "Locals", _altova_ti_altova_FunctionType, _altova_ti_altova_VariablesType, MemberFlags.None, 1, 1),
+			new MemberInfo (binder, "", "Inputs", _altova_ti_altova_FunctionType, _altova_ti_altova_VariablesType, MemberFlags.None, 0, 1),
+			new MemberInfo (binder, "", "Outputs", _altova_ti_altova_FunctionType, _altova_ti_altova_VariablesType, MemberFlags.None, 0, 1),
+			new MemberInfo (binder, "", "Locals", _altova_ti_altova_FunctionType, _altova_ti_altova_VariablesType, MemberFlags.None, 0, 1),
 			new MemberInfo (binder, "", "BasicBlock", _altova_ti_altova_FunctionType, _altova_ti_altova_BasicBlockType, MemberFlags.None, 1, -1),
 
 			new MemberInfo (binder, "", "Description", _altova_ti_altova_RoutineType, _altova_ti_xs_altova_string2, MemberFlags.None|MemberFlags.IsAttribute, 1, 1),
+			new MemberInfo (binder, "", "RefGlobalVars", _altova_ti_altova_RoutineType, _altova_ti_xs_altova_IDREFS, MemberFlags.None|MemberFlags.IsAttribute, 0, 1),
 			new MemberInfo (binder, "", "Function", _altova_ti_altova_RoutineType, _altova_ti_altova_FunctionType, MemberFlags.None, 1, -1),
 
 			new MemberInfo (binder, "", "", _altova_ti_altova_VariableType, _altova_ti_xs_altova_anySimpleType, MemberFlags.None|MemberFlags.IsAttribute, 0, -1),
 			new MemberInfo (binder, "", "ID", _altova_ti_altova_VariableType, _altova_ti_xs_altova_ID, MemberFlags.None|MemberFlags.IsAttribute, 1, 1),
 			new MemberInfo (binder, "", "Size", _altova_ti_altova_VariableType, _altova_ti_altova_SizeType, MemberFlags.None|MemberFlags.IsAttribute, 1, 1),
 			new MemberInfo (binder, "", "Pointer", _altova_ti_altova_VariableType, _altova_ti_xs_altova_boolean, MemberFlags.None|MemberFlags.IsAttribute, 1, 1),
-			new MemberInfo (binder, "", "ConstValueInParam", _altova_ti_altova_VariableType, _altova_ti_xs_altova_string2, MemberFlags.None|MemberFlags.IsAttribute, 0, 1),
+			new MemberInfo (binder, "", "ConstValueInParam", _altova_ti_altova_VariableType, _altova_ti_xs_altova_int2, MemberFlags.None|MemberFlags.IsAttribute, 0, 1),
 
 			new MemberInfo (binder, "", "Variable", _altova_ti_altova_OriginalType, _altova_ti_altova_VariableType, MemberFlags.None, 0, -1),
 

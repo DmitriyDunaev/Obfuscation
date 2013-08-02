@@ -150,6 +150,8 @@ namespace ObfuscationManager
 
         private static bool checkIDcorrectness(string id, ref string error_message)
         {
+            // Variable: \b[vtc]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b
+            // Variable or integer number: (\b[vtcf]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b)|([-+]?\b\d+\b)?
             try
             {
                 if (Regex.IsMatch(id, @"\bID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b", RegexOptions.None))
