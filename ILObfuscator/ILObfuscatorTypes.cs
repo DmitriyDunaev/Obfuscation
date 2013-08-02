@@ -21,7 +21,6 @@ namespace Obfuscator
         }
     }
 
-
     public class Function
     {
         // Attributes
@@ -90,6 +89,13 @@ namespace Obfuscator
         {
             Original = 0,
             Fake = 1
+        }
+        public enum State
+        {
+            Free = 0,
+            Filled = 1,
+            Used = 2,
+            Not_Initialized = 3
         }
         // Attributes
         private IDManager ID = new IDManager();
@@ -203,6 +209,7 @@ namespace Obfuscator
         public bool polyRequired;
         public List<Variable> RefVariables = new List<Variable>();
         public List<Variable> DeadVariables = new List<Variable>();
+        public Dictionary<Variable, Variable.State> DeadVariables2 = new Dictionary<Variable, Variable.State>();
 
         public Instruction(InstructionType instr, BasicBlock par)
         {
