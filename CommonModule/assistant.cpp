@@ -677,14 +677,6 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
             newblock();
         }
 
-//----------------------------------EQU-LIKE----------------------------
-
-        else if (i->gets().find("=")!=string::npos || i->gets().find("++")!=string::npos || i->gets().find("--")!=string::npos)
-        {
-            Parser p(i->gets(), *cnt, rtn->back()->Vars);
-            p.work();
-            //cnt->push_back( new  CThreeAdressInstruction(i->gets()));
-        }
 
 //----------------------------------OTHER-STUFF-------------------------
 
@@ -749,10 +741,14 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 		
         else if (i->gets().find("sub_")!=string::npos && i->gets().find("=")==string::npos)
         {
-            string s (i->gets().substr( i->gets().find("sub_")+4 ));
-			stringstream ss (i->gets().substr( i->gets().find("(") ) );
+            stringstream s;
+			string tmp(i->gets().substr( i->gets().find("sub_") ));
+			tmp.erase( tmp.find("(") );
+			s << tmp;
+			stringstream ss (i->gets().substr( i->gets().find("(")+1 ) );
 
 			string var;
+			int par = 0;
 			while ( getline(ss, var, ',') )
 			{
 				if (var[0] == ' ') var.erase( 0, 1);
@@ -760,11 +756,49 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 				if (!var.empty())
 				{
 
-					cnt->push_back( new  Call( s, rtn->back()->Vars[var], true ));
-					
+					cnt->push_back( new  Call( s.str(), rtn->back()->Vars[var], true ));
+					par++;
+				}
+				
+			}
+			
+			s << " " << par;
+			cnt->push_back( new  Call( s.str() ));
+        }
+		else if (i->gets().find("sub_")!=string::npos && i->gets().find("=")!=string::npos)
+        {
+            stringstream s;
+			string tmp(i->gets().substr( i->gets().find("sub_") ));
+			tmp.erase( tmp.find("(") );
+			s << tmp;
+			string retr = i->gets();
+			retr.erase( retr.find(" "), retr.size() );
+			stringstream ss (i->gets().substr( i->gets().find("(")+1 ) );
+
+			string var;
+			int par=0;
+			while ( getline(ss, var, ',') )
+			{
+				if (var[0] == ' ') var.erase( 0, 1);
+				if (var[var.size()-1] == ')') var.erase( var.size() -1, 1);
+				if (!var.empty())
+				{
+
+					cnt->push_back( new  Call( s.str(), rtn->back()->Vars[var], true ));
+					par++;
 				}
 			}
-			cnt->push_back( new  Call( s ));
+			s << " " << par;
+			cnt->push_back( new  Call( s.str() ));
+			cnt->push_back( new Call( s.str(), rtn->back()->Vars[retr], false, true));
+        }
+//----------------------------------EQU-LIKE----------------------------
+
+        else if (i->gets().find("=")!=string::npos || i->gets().find("++")!=string::npos || i->gets().find("--")!=string::npos)
+        {
+            Parser p(i->gets(), *cnt, rtn->back()->Vars);
+            p.work();
+            //cnt->push_back( new  CThreeAdressInstruction(i->gets()));
         }
 
         else if (i->gets() == "")

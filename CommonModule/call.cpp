@@ -4,17 +4,23 @@ void Call::print(stringstream& s)
 {
     s << "<Instruction PolyRequired=\"false\" ID=\"ID_";
 	s << getid() << "\" StatementType=\"";
-	s << "Procedural" << "\"";
-	if (!param)
+	s << "Procedural\"";
+	if (retr)
 	{
-		s << ">";
-		if (result != nullptr) s << result->getname() << " = ";
+		if (result->gettype() !=constant) s << " RefVars=\"ID_" << result->getid() << "\"";
+		s << ">retrieve " << result->getname();
+
+	}
+	else if (!param)
+	{
+		s << ">call ";
 		s << str;
+
 	}
 	else
 	{
-		s << " RefVars=\"ID_" << result->getid() << "\">";
-		s << "param " << result->getname();
+		if (result->gettype() !=constant) s << " RefVars=\"ID_" << result->getid() <<"\"";
+		s << ">param " << result->getname();
 	}
     s << "</Instruction>"<< std::endl;
 }

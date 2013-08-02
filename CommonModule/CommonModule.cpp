@@ -59,7 +59,7 @@ string CommonModule::Reader::DoStuff()
     ss << " += 4;\n}\nreturn *(_DWORD *)v3;";*/
 //
 
-ss << "int __cdecl sub_401334()\n{\n  sub_401980();\n  return sub_401368(0, 1);\n}\n";
+ss << "int __cdecl sub_401334()\n{\n  sub_401980();\n  x = sub_401368(0, 1);\n return x;\n}\n";
 ss << "int __cdecl sub_401368(int a1, int a2)\n{\n  char v3; // [sp+8h] [bp-38h]@1\n";
 ss << "  int v4; // [sp+1Ch] [bp-24h]@1\n  char *v5; // [sp+30h] [bp-10h]@1\n";
 ss << "  int i; // [sp+34h] [bp-Ch]@1\n  int *v7; // [sp+38h] [bp-8h]@1\n";
@@ -113,9 +113,9 @@ ss << "    *(_DWORD *)v7 = a2;\n    v8 += 4;\n    ++v7;\n  }\n  return *(_DWORD 
     Reader.printlist(s);
 	//cout << s.str();
 
-	/*fstream f("Debug.xml", fstream::trunc | fstream::out );
+	fstream f("Debug.xml", fstream::trunc | fstream::out );
 	f << s.str();
-	f.close();*/
+	f.close();
 
 	return s.str();
 
