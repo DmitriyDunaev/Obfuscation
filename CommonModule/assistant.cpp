@@ -747,9 +747,24 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 			newblock();
         }
 		
-        else if (i->gets().find("sub_")!=string::npos)
+        else if (i->gets().find("sub_")!=string::npos && i->gets().find("=")==string::npos)
         {
-            cnt->push_back( new  Call(i->gets()));
+            string s (i->gets().substr( i->gets().find("sub_")+4 ));
+			stringstream ss (i->gets().substr( i->gets().find("(") ) );
+
+			string var;
+			while ( getline(ss, var, ',') )
+			{
+				if (var[0] == ' ') var.erase( 0, 1);
+				if (var[var.size()-1] == ')') var.erase( var.size() -1, 1);
+				if (!var.empty())
+				{
+
+					cnt->push_back( new  Call( s, rtn->back()->Vars[var], true ));
+					
+				}
+			}
+			cnt->push_back( new  Call( s ));
         }
 
         else if (i->gets() == "")

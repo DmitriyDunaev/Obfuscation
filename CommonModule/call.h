@@ -10,9 +10,10 @@ class Call : public CThreeAdressInstruction
 {
     string str;
 	COperand* result;
+	bool param;
 public:
-    Call(string s):str(s){ result=nullptr; }
-	Call(string s, COperand* res):str(s), result(res){}
+    Call(string s):str(s), param(false) { result=nullptr; }
+	Call(string s, COperand* res, bool p = false):str(s), result(res), param(p) {}
 
     string gets() { return str; }
     void print(stringstream& s);

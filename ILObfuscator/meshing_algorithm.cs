@@ -1,4 +1,4 @@
-﻿//#define PSEUDOCODE
+﻿#define PSEUDOCODE
 
 #if !PSEUDOCODE
 
@@ -25,9 +25,15 @@
 
 // Dmitriy: Agree on that, but we can easily solve it. Let's discuss it on Friday!
 
-//void define_jumps( list<BasicBlock> unc_jmp_set, list<BasicBlock> con_jmp_set)
-//{
+list<BasicBlock> Function::getBBUncJumps( Function ActualFunction )
+{
+
+}
+
+
+void ( list<BasicBlock> unc_jmp_set)
+{
     
-//}
+}
 
 #endif
