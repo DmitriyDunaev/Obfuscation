@@ -47,12 +47,15 @@ void Function::setconnections(LabelGenerator* l)
 				succ->predpush_back( *i );
 			}
         }
-        if ( lab != -1 && !(*i)->back()->isuncjmp())
+        if ( !(*i)->back()->isuncjmp() && !(*i)->back()->isexit() && !(*i)->front()->isexit())
         {
 			list<CInstructionsContainer*>::iterator j = i;
             ++i;
-            (*i)->predpush_back( (*j) );
-            (*j)->succpush_back( *i );
+			if ( !(*i)->back()->isexit() )
+			{
+				(*i)->predpush_back( (*j) );
+				(*j)->succpush_back( *i );
+			}
         }else
 			++i;
 		} else
