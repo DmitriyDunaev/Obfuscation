@@ -7,12 +7,6 @@
  *                                     constants (with that regexp thing), and returns
  *                                     a list of pairs that hold an instruction and a
  *                                     constant (integer) value.
- *            
- *             NOTE: an instruction can have more than one constants, and it's not a
- *                   problem, as long as the search_for_constants() function gives pairs
- *                   for all the constants separately like:
- *                   pair_1 = ( instruction, constant_1 )
- *                   pair_2 = ( instruction, constant_2 )
  *                   
  * - Function: add_vars() - adds a given set of variables of the function's variable list
  *                   

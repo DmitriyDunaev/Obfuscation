@@ -29,7 +29,7 @@ namespace Obfuscator
              * the function. During the algorithm we will remove the variables from these
              * lists that are not really dead at the given point.
              */
-            SetAllVariablesAsDead(func);
+            SetAllVariablesAsDead(func, Variable.State.Free);
 
             /*
              * We start from the point called "fake exit block", the one and only
@@ -100,12 +100,13 @@ namespace Obfuscator
             ins.DeadVariables.Remove(var);
 
             /*
-             * GetPrecedingInstructions() - gives a list of the instructions followed by the actual instruction
-             *                            - if we are in the middle of the basic block, then it consists of only one instruction
-             *                            - if we are at the beginning of the basic block then it is the list of all
-             *                              the predecessing basic block's last instruction
-             *                            - if we are at the beginning of the first basic block (the one with no predecessors)
-             *                              then it is an empty list, meaning that we have nothing left to do here
+             * GetPrecedingInstructions() 
+             *      - gives a list of the instructions followed by the actual instruction
+             *      - if we are in the middle of the basic block, then it consists of only one instruction
+             *      - if we are at the beginning of the basic block then it is the list of all
+             *        the predecessing basic block's last instruction
+             *      - if we are at the beginning of the first basic block (the one with no predecessors)
+             *        then it is an empty list, meaning that we have nothing left to do here
              */
             List<Instruction> previous = GetPrecedingInstructions(ins);
 
@@ -119,7 +120,7 @@ namespace Obfuscator
                  * If the variable is not in the instruction's dead variables list, then it indicates
                  * that we have dealt with this instruction.
                  */
-                if ( i.DeadVariables.Contains(var) )
+                if ( i.DeadVariables.ContainsKey(var) )
                     deal_with_var(var, i);
             }
         }
@@ -128,13 +129,14 @@ namespace Obfuscator
         /// Used once by the Data Analysis Algorithm and fills all DeadVariables lists with all variables defined in the function 
         /// </summary>
         /// <param name="func">Actual Function</param>
-        private static void SetAllVariablesAsDead(Function func)
+        private static void SetAllVariablesAsDead(Function func, Variable.State state)
         {
             foreach (BasicBlock bb in func.BasicBlocks)
                 foreach (Instruction inst in bb.Instructions)
                 {
                     inst.DeadVariables.Clear();
-                    inst.DeadVariables.AddRange(func.Variables);
+                    foreach (Variable var in func.Variables)
+                        inst.DeadVariables.Add(var, state);
                 }
         }
 
