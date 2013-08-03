@@ -64,17 +64,20 @@ namespace ObfuscationManager
             doc = ip.Read(InputType.PseudoCode, PlatformType.x86);
 
             // Validating XML by Schema
-            string error;
-            if (!Validator.ValidateXML(doc, out error))
+            try
             {
-                Console.WriteLine("Document invalid: " + error);
-                return;
+                Console.WriteLine("\nValidating XML . . .");
+                Validator.ValidateXML(doc);
             }
-            else
+            catch (ValidatorException exc)
             {
-                Console.WriteLine("Document is valid.");
+                Console.WriteLine(exc.Message);
+                if (exc.InnerException != null)
+                    throw exc.InnerException;
+                else throw exc;
             }
-
+            Console.WriteLine("XML document is well-formed and complies with XSD.");
+            
             // Converting XML to Exchange
             Exchange exch = Validator.ConvertXMLToExchangeType(doc);
 
@@ -82,13 +85,20 @@ namespace ObfuscationManager
             exch.SaveToFile("Exchange1.xml", true);
 
             // Performing logical control
-            if (!Validator.ValidateExchangeType(exch, out error))
+            try
             {
-                Console.WriteLine("Document is logically incorrect!\n" + error);
-                return;
+                Console.WriteLine("\nValidating Exchange type . . .");
+                Validator.ValidateExchangeType(exch);
             }
-            else
-                Console.WriteLine("Document is logically correct.\n");
+            catch(ValidatorException exc)
+            {
+                Console.WriteLine(exc.Message);
+                if (exc.InnerException != null)
+                    throw exc.InnerException;
+                else throw exc;
+            }
+            
+                Console.WriteLine("Exchange type is logically correct.\n");
 
             // Sending Exchange format to obfuscator
             Obfuscator.ILObfuscator obfuscator = new Obfuscator.ILObfuscator();

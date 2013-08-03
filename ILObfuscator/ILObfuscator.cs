@@ -14,7 +14,6 @@ namespace Obfuscator
             Routine routine = new Routine(exch);
             foreach (Function func in routine.Functions)
                 DataAnalysis.DeadVarsAlgortihm(func);
-
         }
     }
 }
