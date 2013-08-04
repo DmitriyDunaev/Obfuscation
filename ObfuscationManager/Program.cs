@@ -85,18 +85,18 @@ namespace ObfuscationManager
             exch.SaveToFile("Exchange1.xml", true);
 
             // Performing logical control
-            try
-            {
-                Console.WriteLine("\nValidating Exchange type . . .");
-                Validator.ValidateExchangeType(exch);
-            }
-            catch(ValidatorException exc)
-            {
-                Console.WriteLine(exc.Message);
-                if (exc.InnerException != null)
-                    throw exc.InnerException;
-                else throw exc;
-            }
+            //try
+            //{
+            //    Console.WriteLine("\nValidating Exchange type . . .");
+            //    Validator.ValidateExchangeType(exch);
+            //}
+            //catch(ValidatorException exc)
+            //{
+            //    Console.WriteLine(exc.Message);
+            //    if (exc.InnerException != null)
+            //        throw exc.InnerException;
+            //    else throw exc;
+            //}
             
                 Console.WriteLine("Exchange type is logically correct.\n");
 
@@ -135,6 +135,7 @@ namespace ObfuscationManager
             }
             catch (Exception e)
             {
+                Console.WriteLine("Exception data:");
                 Console.WriteLine(e);
                 return 1;
             }

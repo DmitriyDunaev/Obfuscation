@@ -38,93 +38,93 @@ namespace ObfuscationManager
         }
 
 
-        public static void ValidateExchangeType(Exchange exch)
-        {
-            foreach (RoutineType routine in exch.Routine)
-            {
-                foreach (FunctionType function in routine.Function)
-                {
-                    //Check ID correctness
-                    checkIDcorrectness(function.ID.Value+"ZZZ");
+        //public static void ValidateExchangeType(Exchange exch)
+        //{
+        //    foreach (RoutineType routine in exch.Routine)
+        //    {
+        //        foreach (FunctionType function in routine.Function)
+        //        {
+        //            //Check ID correctness
+        //            checkIDcorrectness(function.ID.Value);
 
-                    // Collecting IDs for all variables within a function
-                    List<string> variable_IDs = new List<string>();
-                    if (function.Inputs.Exists && function.Inputs[0].Original.Exists && function.Inputs[0].Original[0].Variable.Exists)
-                        foreach (VariableType var in function.Inputs[0].Original[0].Variable)
-                            variable_IDs.Add(var.ID.Value);
-                    if (function.Inputs.Exists && function.Inputs[0].Fake.Exists && function.Inputs[0].Fake[0].Variable.Exists)
-                        foreach (VariableType var in function.Inputs[0].Fake[0].Variable)
-                            variable_IDs.Add(var.ID.Value);
-                    if (function.Outputs.Exists && function.Outputs[0].Original.Exists && function.Outputs[0].Original[0].Variable.Exists)
-                        foreach (VariableType var in function.Outputs[0].Original[0].Variable)
-                            variable_IDs.Add(var.ID.Value);
-                    if (function.Outputs.Exists && function.Outputs[0].Fake.Exists && function.Outputs[0].Fake[0].Variable.Exists)
-                        foreach (VariableType var in function.Outputs[0].Fake[0].Variable)
-                            variable_IDs.Add(var.ID.Value);
-                    if (function.Locals.Exists && function.Locals[0].Original.Exists && function.Locals[0].Original[0].Variable.Exists)
-                        foreach (VariableType var in function.Locals[0].Original[0].Variable)
-                            variable_IDs.Add(var.ID.Value);
-                    if (function.Locals.Exists && function.Locals[0].Fake.Exists && function.Locals[0].Fake[0].Variable.Exists)
-                        foreach (VariableType var in function.Locals[0].Fake[0].Variable)
-                            variable_IDs.Add(var.ID.Value);
-                    if (routine.RefGlobalVars.Exists())
-                        variable_IDs.AddRange(routine.RefGlobalVars.Value.Split(' '));
+        //            //// Collecting IDs for all variables within a function
+        //            //List<string> variable_IDs = new List<string>();
+        //            //if (function.Inputs.Exists && function.Inputs[0].Original.Exists && function.Inputs[0].Original[0].Variable.Exists)
+        //            //    foreach (VariableType var in function.Inputs[0].Original[0].Variable)
+        //            //        variable_IDs.Add(var.ID.Value);
+        //            //if (function.Inputs.Exists && function.Inputs[0].Fake.Exists && function.Inputs[0].Fake[0].Variable.Exists)
+        //            //    foreach (VariableType var in function.Inputs[0].Fake[0].Variable)
+        //            //        variable_IDs.Add(var.ID.Value);
+        //            //if (function.Outputs.Exists && function.Outputs[0].Original.Exists && function.Outputs[0].Original[0].Variable.Exists)
+        //            //    foreach (VariableType var in function.Outputs[0].Original[0].Variable)
+        //            //        variable_IDs.Add(var.ID.Value);
+        //            //if (function.Outputs.Exists && function.Outputs[0].Fake.Exists && function.Outputs[0].Fake[0].Variable.Exists)
+        //            //    foreach (VariableType var in function.Outputs[0].Fake[0].Variable)
+        //            //        variable_IDs.Add(var.ID.Value);
+        //            //if (function.Locals.Exists && function.Locals[0].Original.Exists && function.Locals[0].Original[0].Variable.Exists)
+        //            //    foreach (VariableType var in function.Locals[0].Original[0].Variable)
+        //            //        variable_IDs.Add(var.ID.Value);
+        //            //if (function.Locals.Exists && function.Locals[0].Fake.Exists && function.Locals[0].Fake[0].Variable.Exists)
+        //            //    foreach (VariableType var in function.Locals[0].Fake[0].Variable)
+        //            //        variable_IDs.Add(var.ID.Value);
+        //            //if (routine.RefGlobalVars.Exists())
+        //            //    variable_IDs.AddRange(routine.RefGlobalVars.Value.Split(' '));
 
-                    // Checking 'Variable ID' for correctness
-                    foreach (string var in variable_IDs)
-                        checkIDcorrectness(var);
+        //            // Checking 'Variable ID' for correctness
+        //            //foreach (string var in variable_IDs)
+        //            //    checkIDcorrectness(var);
 
-                    // Collecting IDs for Basic Blocks and checking the consistence of Predecessors and Successors.
-                    List<string> basicblock_IDs = new List<string>();
-                    foreach (BasicBlockType bb in function.BasicBlock)
-                    {
-                        // If BB has no successors and no predeccessors, it is incorrect
-                        if (!bb.Successors.Exists() && !bb.Predecessors.Exists())
-                            throw new ValidatorException("Basic block " + bb.ID.Value + " has no predecessors and no successors.");
+        //            // Collecting IDs for Basic Blocks and checking the consistence of Predecessors and Successors.
+        //            List<string> basicblock_IDs = new List<string>();
+        //            foreach (BasicBlockType bb in function.BasicBlock)
+        //            {
+        //                // If BB has no successors and no predeccessors, it is incorrect
+        //                if (!bb.Successors.Exists() && !bb.Predecessors.Exists())
+        //                    throw new ValidatorException("Basic block " + bb.ID.Value + " has no predecessors and no successors.");
 
-                        // Checking 'BasicBlock ID' for correctness
-                        checkIDcorrectness(bb.ID.Value);
+        //                // Checking 'BasicBlock ID' for correctness
+        //                checkIDcorrectness(bb.ID.Value);
 
-                        basicblock_IDs.Add(bb.ID.Value);
-                        // Checking RefVar ID for variables
-                        foreach (InstructionType inst in bb.Instruction)
-                        {
-                            //Checking 'Instruction ID' for correctness
-                            checkIDcorrectness(inst.ID.Value);
+        //                basicblock_IDs.Add(bb.ID.Value);
+        //                // Checking RefVar ID for variables
+        //                foreach (InstructionType inst in bb.Instruction)
+        //                {
+        //                    //Checking 'Instruction ID' for correctness
+        //                    checkIDcorrectness(inst.ID.Value);
 
-                            //Checking correct number of RefVars by StatementType
-                            checkWhitespacesInTAC(inst);
+        //                    //Checking correct number of RefVars by StatementType
+        //                    checkWhitespacesInTAC(inst);
 
-                            // Checking if each RefVar really references an existing variable
-                            if (inst.RefVars.Exists())
-                            {
-                                string[] refvars = inst.RefVars.Value.Split(' ');
-                                foreach (string refvar in refvars)
-                                    if (!variable_IDs.Contains(refvar))
-                                        throw new ValidatorException("An instruction contains reference to a non-existing variable.\nAdditional information:\n- Referenced variable (not found): " + refvar + "\n- Instruction: " + inst.ID.Value + ",\n- Basic Block: " + bb.ID.Value + ",\n- Function: " + function.ID.Value + ".");
-                            }
-                        }
-                    }
-                    foreach (BasicBlockType bb in function.BasicBlock)
-                    {
-                        if (bb.Predecessors.Exists())
-                        {
-                            string[] predecessors = bb.Predecessors.Value.Split(' ');
-                            foreach (string pred in predecessors)
-                                if (!basicblock_IDs.Contains(pred))
-                                    throw new ValidatorException("'Predecessors' reference is invalid in the basic block.\nAdditional information:\n- Basic block: " + bb.ID.Value + "\n- Predecessor ID (not found): " + pred + "\n- Function:" + function.ID.Value + ".");
-                        }
-                        if (bb.Successors.Exists())
-                        {
-                            string[] successors = bb.Successors.Value.Split(' ');
-                            foreach (string succ in successors)
-                                if (!basicblock_IDs.Contains(succ))
-                                    throw new ValidatorException("'Successors' reference is invalid in the basic block.\nAdditional information:\n- Basic block: " + bb.ID.Value + "\n- Successor ID (not found): " + succ + "\n- Function:" + function.ID.Value + ".");
-                        }
-                    }
-                }
-            }
-        }
+        //                    // Checking if each RefVar really references an existing variable
+        //                    if (inst.RefVars.Exists())
+        //                    {
+        //                        string[] refvars = inst.RefVars.Value.Split(' ');
+        //                        foreach (string refvar in refvars)
+        //                            if (!variable_IDs.Contains(refvar))
+        //                                throw new ValidatorException("An instruction contains reference to a non-existing variable.\nAdditional information:\n- Referenced variable (not found): " + refvar + "\n- Instruction: " + inst.ID.Value + ",\n- Basic Block: " + bb.ID.Value + ",\n- Function: " + function.ID.Value + ".");
+        //                    }
+        //                }
+        //            }
+        //            foreach (BasicBlockType bb in function.BasicBlock)
+        //            {
+        //                if (bb.Predecessors.Exists())
+        //                {
+        //                    string[] predecessors = bb.Predecessors.Value.Split(' ');
+        //                    foreach (string pred in predecessors)
+        //                        if (!basicblock_IDs.Contains(pred))
+        //                            throw new ValidatorException("'Predecessors' reference is invalid in the basic block.\nAdditional information:\n- Basic block: " + bb.ID.Value + "\n- Predecessor ID (not found): " + pred + "\n- Function:" + function.ID.Value + ".");
+        //                }
+        //                if (bb.Successors.Exists())
+        //                {
+        //                    string[] successors = bb.Successors.Value.Split(' ');
+        //                    foreach (string succ in successors)
+        //                        if (!basicblock_IDs.Contains(succ))
+        //                            throw new ValidatorException("'Successors' reference is invalid in the basic block.\nAdditional information:\n- Basic block: " + bb.ID.Value + "\n- Successor ID (not found): " + succ + "\n- Function:" + function.ID.Value + ".");
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         private static void checkIDcorrectness(string id)
         {

@@ -135,7 +135,7 @@ namespace Obfuscator
                 foreach (Instruction inst in bb.Instructions)
                 {
                     inst.DeadVariables.Clear();
-                    foreach (Variable var in func.Variables)
+                    foreach (Variable var in func.LocalVariables)
                         inst.DeadVariables.Add(var, state);
                 }
         }

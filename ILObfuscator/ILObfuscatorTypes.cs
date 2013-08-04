@@ -11,16 +11,16 @@ namespace Obfuscator
     {
         // Attributes
         private string description;
-        private List<string> RefGlobalVars = new List<string>();
+        public List<Variable> GlobalVariables = new List<Variable>();
         public List<Function> Functions = new List<Function>();
 
         // Constructor
         public Routine(Exchange doc)
         {
             description = doc.Routine[0].Description.Value;
-            if (doc.Routine[0].RefGlobalVars.Exists())
-                foreach (string gvid in doc.Routine[0].RefGlobalVars.Value.Split(' '))
-                    RefGlobalVars.Add(gvid);
+            if (doc.Routine[0].Global.Exists)
+                foreach (VariableType var in doc.Routine[0].Global[0].Variable)
+                    GlobalVariables.Add(new Variable(var, Variable.Kind_IO.Global, Variable.Kind_OF.Original));
             foreach (FunctionType function in doc.Routine[0].Function)
                 Functions.Add(new Function(function, this));
         }
@@ -35,40 +35,40 @@ namespace Obfuscator
         {
             return ID.ToString();
         }
+        private string globalID;
+        public string getGlobalID()
+        {
+            return globalID;
+        }
         public CalledFromType.EnumValues calledFrom;
-        private string externalLabel;
-        public List<Variable> Variables = new List<Variable>();
+        
+        public List<Variable> LocalVariables = new List<Variable>();
         public List<BasicBlock> BasicBlocks = new List<BasicBlock>();
+
         // Constructor
         public Function(FunctionType function, Routine par)
         {
             ID = new IDManager(function.ID.Value);
             parent = par;
             calledFrom = function.CalledFrom.EnumerationValue;
-            externalLabel = function.ExternalLabel.Value;
+            globalID = function.GlobalID.Value;
             // Collecting all variables
-            if (function.Inputs.Exists && function.Inputs[0].Original.Exists && function.Inputs[0].Original[0].Variable.Exists)
-                foreach (VariableType var in function.Inputs[0].Original[0].Variable)
-                    Variables.Add(new Variable(var, Variable.Kind_IO.Input, Variable.Kind_OF.Original));
-            if (function.Inputs.Exists && function.Inputs[0].Fake.Exists && function.Inputs[0].Fake[0].Variable.Exists)
-                foreach (VariableType var in function.Inputs[0].Fake[0].Variable)
-                    Variables.Add(new Variable(var, Variable.Kind_IO.Input, Variable.Kind_OF.Fake));
-            if (function.Outputs.Exists && function.Outputs[0].Original.Exists && function.Outputs[0].Original[0].Variable.Exists)
-                foreach (VariableType var in function.Outputs[0].Original[0].Variable)
-                    Variables.Add(new Variable(var, Variable.Kind_IO.Output, Variable.Kind_OF.Original));
-            if (function.Outputs.Exists && function.Outputs[0].Fake.Exists && function.Outputs[0].Fake[0].Variable.Exists)
-                foreach (VariableType var in function.Outputs[0].Fake[0].Variable)
-                    Variables.Add(new Variable(var, Variable.Kind_IO.Output, Variable.Kind_OF.Fake));
-            if (function.Locals.Exists && function.Locals[0].Original.Exists && function.Locals[0].Original[0].Variable.Exists)
-                foreach (VariableType var in function.Locals[0].Original[0].Variable)
-                    Variables.Add(new Variable(var, Variable.Kind_IO.Local, Variable.Kind_OF.Original));
-            if (function.Locals.Exists && function.Locals[0].Fake.Exists && function.Locals[0].Fake[0].Variable.Exists)
-                foreach (VariableType var in function.Locals[0].Fake[0].Variable)
-                    Variables.Add(new Variable(var, Variable.Kind_IO.Local, Variable.Kind_OF.Fake));
-
+            if (function.Local.Exists)
+            {
+                foreach (VariableType var in function.Local[0].Variable)
+                {
+                    if (function.RefInputVars.Exists() && function.RefInputVars.Value.Split(' ').Contains(var.ID.Value))
+                        LocalVariables.Add(new Variable(var, Variable.Kind_IO.Input));
+                    else if (function.RefOutputVars.Exists() && function.RefOutputVars.Value.Split(' ').Contains(var.ID.Value))
+                        LocalVariables.Add(new Variable(var, Variable.Kind_IO.Output));
+                    else
+                        LocalVariables.Add(new Variable(var, Variable.Kind_IO.Local));
+                }
+            }
             foreach (BasicBlockType bb in function.BasicBlock)
                 BasicBlocks.Add(new BasicBlock(bb, this));
         }
+
         // Methods
         public BasicBlock GetLastBasicBlock()
         {
@@ -108,25 +108,29 @@ namespace Obfuscator
         public string getID()
         {
             return ID.ToString();
-        }
-        public string name;
-        public List<int> constValueInParam;
+        }        
         public ExchangeFormat.SizeType.EnumValues size;
         public bool pointer;
+        string name;
+        string fixedValue = string.Empty;
+        string globalID = string.Empty;
+        bool fake = false;
         public Kind_IO kind_io;
         public Kind_OF kind_of;
+        
         // Constructor
-        public Variable(VariableType var, Kind_IO kind_io1, Kind_OF kind_of1)
+        public Variable(VariableType var, Kind_IO kind_io1, Kind_OF kind_of1 = Kind_OF.Original)
         {
             ID = new IDManager(var.ID.Value);
             name = var.Value;
-            if (var.ConstValueInParam.Exists())
-            {
-                constValueInParam = new List<int>(1);
-                constValueInParam.Add(var.ConstValueInParam.Value);
-            }
             size = var.Size.EnumerationValue;
             pointer = var.Pointer.Value;
+            if (var.FixedValue.Exists())
+                fixedValue = var.FixedValue.Value;
+            if (var.GlobalID.Exists())
+                globalID = var.GlobalID.Value;
+            if (var.Fake.Exists())
+                fake = var.Fake.Value;
             kind_io = kind_io1;
             kind_of = kind_of1;
         }
@@ -228,7 +232,7 @@ namespace Obfuscator
             {
                 foreach (string vid in instr.RefVars.Value.Split(' '))
                 {
-                    foreach (Variable var in parent.parent.Variables)
+                    foreach (Variable var in parent.parent.LocalVariables)
                     {
                         if (var.getID().Equals(vid))
                             RefVariables.Add(var);
