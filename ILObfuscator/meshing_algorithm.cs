@@ -1,4 +1,4 @@
-﻿//#define PSEUDOCODE
+﻿#define PSEUDOCODE
 
 #if !PSEUDOCODE
 

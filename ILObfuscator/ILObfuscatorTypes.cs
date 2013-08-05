@@ -246,7 +246,7 @@ namespace Obfuscator
                 if (instr.ID.Equals((obj as Instruction).ID))
                     return 1;
             }
-            throw new ArgumentException("Comparison error! Instruction " + (obj as Instruction).ID.ToString() + " is not found in basic block.");
+            throw new ArgumentException("Comparison error! Instruction " + (obj as Instruction).ID + " is not found in basic block.");
         }
 
         public override bool Equals(object obj)

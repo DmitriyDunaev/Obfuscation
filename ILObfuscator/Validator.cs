@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -19,7 +20,7 @@ namespace Obfuscator
     {
         public void Validate()
         {
-            if(this.Functions.Count==0)
+            if (this.Functions.Count == 0)
                 throw new ValidatorException("Routine has no functions!");
             foreach (Variable var in this.GlobalVariables)
             {
@@ -44,12 +45,13 @@ namespace Obfuscator
         {
             if (this.calledFrom == ExchangeFormat.CalledFromType.EnumValues.eExternalOnly || this.calledFrom == ExchangeFormat.CalledFromType.EnumValues.eBoth)
                 if (string.IsNullOrWhiteSpace(globalID))
-                    throw new ValidatorException("The function, which can be called from outside the routine, must have a non-empty GlobalID property. Function: " + this.ID.ToString());
+                    throw new ValidatorException("The function, which can be called from outside the routine, must have a non-empty GlobalID property. Function: " + this.ID);
 
             foreach (BasicBlock bb in this.BasicBlocks)
             {
-                if(bb.parent != this)
-                    throw new ValidatorException("Basic block's 'parent' property is incorrect. Basic block: " + bb.ID); 
+                if (bb.parent != this)
+                    throw new ValidatorException("Basic block's 'parent' property is incorrect. Basic block: " + bb.ID);
+                bb.Validate();
             }
         }
     }
@@ -81,9 +83,11 @@ namespace Obfuscator
             }
             // Actual validation
             if (Predecessors.Count == 0 && Successors.Count == 0)
-                throw new ValidatorException("No predecessors and no successors found for basic block " + ID.ToString());
+                throw new ValidatorException("No predecessors and no successors found for basic block " + ID);
             if (Instructions.Count == 0)
-                throw new ValidatorException("No instructions found for basic block " + ID.ToString());
+                throw new ValidatorException("No instructions found for basic block " + ID);
+            if (Successors.Count > 2)
+                throw new ValidatorException("More than two successors found in basic block " + ID);
             foreach (Instruction inst in this.Instructions)
             {
                 if (inst.parent != this)
@@ -97,8 +101,8 @@ namespace Obfuscator
     {
         public void Validate()
         {
-             //Test 1: Depending on Statement type the number of RefVars is fixed
-            switch (this.statementType)
+            //Test 1: Depending on Statement type the number of RefVars is fixed
+            switch (statementType)
             {
                 case StatementTypeType.EnumValues.eFullAssignment:
                     if (RefVariables.Count < 1 || RefVariables.Count > 3)
@@ -124,8 +128,89 @@ namespace Obfuscator
                         throw new ValidatorException("Number of referenced variables does not match statement type in instruction " + ID);
                     break;
                 case StatementTypeType.EnumValues.Invalid:
+                case StatementTypeType.EnumValues.eReserved:
                 default:
                     throw new ValidatorException("Invalid statement type in instruction " + ID);
+            }
+
+            // Test 2: TAC text by Regexp
+            switch (statementType)
+            {
+                case StatementTypeType.EnumValues.eFullAssignment:
+                    // var := var op var OR var:= var op number
+                    if (Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} [-+*/] ([vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})$", RegexOptions.None)
+                        | Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} [-+*/] ([-+]?\d+)$", RegexOptions.None))
+                        break;
+                    else
+                        throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
+                case StatementTypeType.EnumValues.eUnaryAssignment:
+                    // var := op var
+                    if (Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [-!] [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
+                        break;
+                    else
+                        throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
+                case StatementTypeType.EnumValues.eCopy:
+                    // var := var
+                    if (Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
+                        break;
+                    else
+                        throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
+                case StatementTypeType.EnumValues.eUnconditionalJump:
+                    if (Regex.IsMatch(text, @"^goto ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
+                        break;
+                    else
+                        throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
+                case StatementTypeType.EnumValues.eConditionalJump:
+                    // if var relop var goto ID_GUID OR if var relop number goto ID_GUID
+                    if (Regex.IsMatch(text, @"^if [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} (?:==|!=|>|<|>=|<=) [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} goto ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                        Regex.IsMatch(text, @"^if [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} (?:==|!=|>|<|>=|<=) ([-+]?\d+) goto ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
+                        break;
+                    else
+                        throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
+                case StatementTypeType.EnumValues.eProcedural:
+                    // param var OR param number
+                    if (Regex.IsMatch(text, @"^param [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                        Regex.IsMatch(text, @"^param ([-+]?\d+)$", RegexOptions.None) |
+                    // call some_string decimal
+                        Regex.IsMatch(text, @"^call \w+ \d+$", RegexOptions.None) |
+                    // return 
+                        Regex.IsMatch(text, @"^return$", RegexOptions.None) |
+                    // return number
+                        Regex.IsMatch(text, @"^return ([-+]?\d+)$", RegexOptions.None) |
+                    // return var
+                        Regex.IsMatch(text, @"^return [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                    // retrieve var
+                        Regex.IsMatch(text, @"^retrieve [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                    // enter ID_GUID
+                        Regex.IsMatch(text, @"^enter ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                    // leave ID_GUID
+                        Regex.IsMatch(text, @"^leave ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) 
+                        )
+                        break;
+                    else
+                        throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
+                case StatementTypeType.EnumValues.eIndexedAssignment:
+                    // var := var[number] OR var[number] := var OR var[number] = number;
+                    if (Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \[\d+\]$", RegexOptions.None) |
+                        Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \[\d+\] := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                        Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \[\d+\] := ([-+]?\d+)$", RegexOptions.None))
+                        break;
+                    else
+                        throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
+                case StatementTypeType.EnumValues.ePointerAssignment:
+                    // var := & var
+                    if (Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := & [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                    // var := * var
+                        Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := \* [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                    // * var := var 
+                        Regex.IsMatch(text, @"^\* [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                    // * var = number
+                        Regex.IsMatch(text, @"^\* [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := ([-+]?\d+)$", RegexOptions.None))
+                        break;
+                    else
+                        throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
+                default:
+                    break;
             }
         }
     }
