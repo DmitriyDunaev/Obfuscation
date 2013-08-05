@@ -1,4 +1,4 @@
-﻿#define PSEUDOCODE
+﻿//#define PSEUDOCODE
 
 #if !PSEUDOCODE
 
@@ -28,7 +28,7 @@
 
 /*
  * This is the main function, it meshes up the single conditional and
- * unconditional jumps,
+ * unconditional jumps.
  */
 
 void MeshFunction( Function actualfunction )
@@ -94,6 +94,10 @@ void InsertEntryPoint( BasicBlock bb )
 
     BasicBlock ep = new BasicBlock();
 
+    /* And we need to ad it to the function. */
+
+    bb.getParent.BasicBlocks.Add( ep );
+
     /* A function now creates an instruction with a fake conditional jump,
      * and it is fake because it always continues in the true way. */
 
@@ -152,7 +156,7 @@ void InsertEntryPoint( BasicBlock bb )
 
 void InsertFakeFlow( BasicBlock bb )
 {
-    // succ will be the only successor of bb. It only have one, because there is 
+    // succ will be the only successor of bb. It only has one, because there is 
     // an unconditional jump at the end of it.
 
     BaisBlock succ = bb.Successors[0];
@@ -160,6 +164,10 @@ void InsertFakeFlow( BasicBlock bb )
     // Creating a new basic block, that'll be our fake block.
 
     BasicBlock fake = new BasicBlock();
+
+    // Adding it to the function.
+
+    bb.getParent.BasicBlocks.Add( fake );
 
     // We fill it with fake code. Todo: Create this alg.
 
@@ -193,17 +201,104 @@ ChangeToCond( Instruction );
  * It needs the entry point for parameter.
  */
 
+/*
+ * Now here comes the dead part of the control flow transition,
+ * wich looks like this:
+ * 
+ *            ------------------
+ *          | Fake entry block |
+ *           ------------------
+ *                           \ (False)
+ *                           ---------
+ *                          |   bb1   | 
+ *                           ---------
+ *                      (True) /    \ (False)
+ *                         ------  ------
+ *                        | bb2  || bb3  |
+ *                         ------  ------
+ *                            |       |
+ *                        (Random) (Random)
+ * 
+ * 
+ */
+
 void InsertDeadFlow( BasicBlock ep )
 {
     
+    BasicBlock bb1 = new BasicBlock(); // 
+    BasicBlock bb2 = new BasicBlock(); // Creating the three dead basic blocks.
+    BasicBlock bb3 = new BasicBlock(); //
+    
+    ep.getParent.BasicBlocks.Add( bb1 ); //
+    ep.getParent.BasicBlocks.Add( bb2 ); // Adding the blocks to the function.
+    ep.getParent.BasicBlocks.Add( bb3 ); //
+
+    InsertDeadCode( bb1 ); //
+    InsertDeadCode( bb2 ); // Inserting dead code into them.
+    InsertDeadCode( bb3 ); //
+    
+    // Creating the conditional jump.
+    Instruction conditional = CreateDeadCondJump( bb2.Instructions[0].getID );
+    
+    // And appending it to the bb1 block.
+    bb1.Inctructions.Append( conditional );
+    
+    // Setting the edges.
+    bb1.getPredecessors.Add( ep );
+    bb1.getSuccessors.Add( bb1 );
+    bb1.getSuccessors.Add( bb2 );
+    bb2.getPredecessors.Add( bb1 );
+    bb3.getPredecessors.Add( bb1 );
+    
+    // Setting the exit points to random basicblocks in the function.
+    BasicBlock rnd = ep.getParent.getRandomBasicBlock()
+    bb2.getSuccessors.Add( rnd );
+    Instruction unconditional = CreateDeadUncJump( rnd.Instructions[0].getID );
+    bb2.Instructions.Append( cunconditional );
+
+    rnd = ep.getParent.getRandomBasicBlock()
+    bb2.getSuccessors.Add( rnd );
+    unconditional = CreateDeadUncJump( rnd.Instructions[0].getID );
+    bb2.Instructions.Append( cunconditional );
+
 }
+
+/*
+ * So now, we have the full CFT of the unconditional jump:
+ * 
+ *           ------------------
+ *          | Fake entry block |
+ *           ------------------
+ *      (True) /             \ (False)
+ *        -----------       ----------
+ *       | Actual BB |      |   bb1   | 
+ *        -----------       ----------
+ *  (False) /   \ (True) (True) /    \ (False)
+ *  ------------ \          ------  ------
+ * | Fake Block | |         | bb2  || bb3  |
+ *  ------------ /          ------  ------
+ * |  Actual    |              |       |
+ * | Successor  |          (Random) (Random)
+ *  ------------
+ *  
+ */
+
+/*
+ * Now the next step is the conditional jump, which will be a tough one,
+ * if I guess right. I start with analyzing the sheet wich describes the
+ * method of meshing the conditional jumps, and later on I will try to create
+ * the algorithm itself.
+ */
 
 /* Still to do:
  * 
  * void InsertFakeFlow(...); <- Done, details needed
- * void InsertDeadFlow(...);
+ * void InsertDeadFlow(...); <- Done, same situation
  * 
- * void MeshConditional();
+ * These details include the discussion of the way helper functions
+ * will work, and so on.
+ * 
+ * void MeshConditional(); <- Started brainstorming
  */
 
 #endif
