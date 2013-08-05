@@ -10,11 +10,19 @@ void Unc_jump::print(stringstream& s)
 		s << "Procedural";
 		s << "\" RefVars=\"";
 		if (ret->gettype() != constant) s << "ID_" << ret->getid();
+		s << "\">";
 	}
-	else
+	if ( i > -3 )
+	{
 		s << "UnconditionalJump";
-	s << "\" >";
-	if ( ret == nullptr ) s << "goto ID_" << target->getid();
-	else s << "return " << ret->getname();
-    s << "</Instruction>"<< std::endl;
+		s << "\" >";
+		if ( ret == nullptr ) s << "goto ID_" << target->getid();
+		else { s << "return";
+		s << " " << ret->getname(); }
+	} else 
+	{
+		s << "Procedural";
+		s << "\">" << "return";
+	}
+	s << "</Instruction>"<< std::endl;
 }

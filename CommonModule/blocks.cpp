@@ -29,7 +29,7 @@ void Function::setconnections(LabelGenerator* l)
 	UUID id = l->getid();
     blocks.push_back(new CInstructionsContainer(id));
     blocks.back()->push_back( new FakeExitBlock );
-    blocks.back()->push_back( new Line("Fake Exit Block") );
+    blocks.back()->push_back( new Unc_jump("Fake Exit Block", -3) );
 
 	list<CInstructionsContainer*>::iterator i = blocks.begin();
 

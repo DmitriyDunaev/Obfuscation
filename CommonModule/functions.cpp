@@ -17,3 +17,17 @@ void Routine::cleanup()
 			++i;
 	}
 }
+
+void Routine::dump(stringstream& s)
+{
+    for ( std::list<Function*>::iterator i = functs.begin(); i != functs.end(); ++i )
+	{
+		s << "<Function GlobalID=\"" << (*i)->getname() <<  "\" CalledFrom=\"ExternalOnly\" ID=\"ID_";
+		s << (*i)->getid();
+		/*s << "\" ExternalLabel=\"";
+		s << (*i)->getname();*/
+		s << "\" ";
+        (*i)->dump(s);
+		s << "</Function>\n";
+	}
+}

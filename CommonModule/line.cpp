@@ -4,7 +4,7 @@ void Line::print(stringstream& s)
 {
     s << "<Instruction PolyRequired=\"false\" ID=\"ID_";
 	s << getid() << "\" StatementType=\"";
-	s << "Unknown" << "\">";
+	s << "Reserved" << "\">";
 	s << name;
     s << "</Instruction>"<< std::endl;
 }

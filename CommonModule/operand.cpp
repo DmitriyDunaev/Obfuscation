@@ -23,9 +23,16 @@ COperand::COperand(std::string s)
     /* if we got here, than it's really a variable*/
 }
 
-std::string COperand::getname()
+std::string COperand::getoriginalname()
 {
     return name;
+}
+
+std::string COperand::getname()
+{
+	stringstream s;
+	s << "v_ID_" << getid();
+    return s.str();
 }
 
 std::string COperand::getid()
@@ -62,7 +69,10 @@ std::string COperand::getid()
 #ifdef DEBUG
 void COperand::print (stringstream &s)
 {
-    s << name;
+    //s << name;
+
+	s << "v_ID_" << getid();
+
     /*if (type == constant)
         cout << "constant";
     if (type == temp_var)

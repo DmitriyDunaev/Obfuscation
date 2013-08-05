@@ -113,9 +113,9 @@ ss << "    *(_DWORD *)v7 = a2;\n    v8 += 4;\n    ++v7;\n  }\n  return *(_DWORD 
     Reader.printlist(s);
 	//cout << s.str();
 
-	/*fstream f("Debug.xml", fstream::trunc | fstream::out );
+	fstream f("Debug.xml", fstream::trunc | fstream::out );
 	f << s.str();
-	f.close();*/
+	f.close();
 
 	return s.str();
 

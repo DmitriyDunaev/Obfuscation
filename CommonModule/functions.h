@@ -33,19 +33,8 @@ public:
 	{ for ( std::list<Function*>::iterator i = functs.begin(); i != functs.end(); ++i )
     (*i)->setjumps(); }
 
-    void dump(stringstream& s)
-    {
-        for ( std::list<Function*>::iterator i = functs.begin(); i != functs.end(); ++i )
-		{
-			s << "<Function CalledFrom=\"ExternalOnly\" ID=\"ID_";
-			s << (*i)->getid();
-			s << "\" ExternalLabel=\"";
-			s << (*i)->getname();
-			s << "\">\n";
-            (*i)->dump(s);
-			s << "</Function>\n";
-		}
-    }
+    void dump(stringstream& s);
+
 };
 
 

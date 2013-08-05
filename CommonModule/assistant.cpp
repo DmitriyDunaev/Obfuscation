@@ -685,7 +685,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
             
 
 
-			string tmp2 = i->gets().substr(i->gets().find("sub")+3, i->gets().size());
+			string tmp2 = i->gets().substr(i->gets().find("sub"), i->gets().size());
 			stringstream ss(tmp2.substr(tmp2.find("(")+1, tmp2.find(")")-1));
 			
 			rtn->push_back( new Function( l.getid(), tmp2 , l.getid()) );

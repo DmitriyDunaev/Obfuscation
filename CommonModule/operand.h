@@ -40,6 +40,7 @@ public:
 
     void print(std::stringstream &s);
     std::string getname();
+	std::string COperand::getoriginalname();
 	bool getp() { return p; }
 	void setp(bool i) { 
 		p=i; 

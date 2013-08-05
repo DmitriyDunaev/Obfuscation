@@ -94,6 +94,7 @@ public:
             for (std::list<CThreeAdressInstruction*>::iterator i = InstructionList.begin();
                                             i != InstructionList.end(); ++i)
                 {
+					s << "		";
                     (*i)->print(s);
                 }
             s << "	</BasicBlock>\n";
