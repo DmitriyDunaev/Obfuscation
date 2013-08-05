@@ -71,16 +71,16 @@ namespace Obfuscator
              * We have finished the task with this basic block, and we should not
              * come back here anymore, so we save its ID into the done_ids list.
              */
-            done_ids.Add(actual.getID());
+            done_ids.Add(actual.ID);
 
             /*
              * Now that this basic block is finished we should do the same things
              * with its predecessors recursively.
              * We only should deal with the basic blocks not marked as done.
              */
-            foreach (BasicBlock block in actual.getAllPredeccessors())
+            foreach (BasicBlock block in actual.getPredecessors)
             {
-                if ( !done_ids.Contains(block.getID()) )
+                if ( !done_ids.Contains(block.ID) )
                     recursive(block);
             }
         }
@@ -156,7 +156,7 @@ namespace Obfuscator
             }
             else if (number == 0)
             {
-                foreach (BasicBlock bb in instr.parent.getAllPredeccessors())
+                foreach (BasicBlock bb in instr.parent.getPredecessors)
                 {
                     preceding.Add(bb.Instructions[bb.Instructions.Count - 1]);
                 }

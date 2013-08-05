@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ExchangeFormat;
+using System.Text.RegularExpressions;
 
 namespace Obfuscator
 {
-    public class Routine
+    public partial class Routine: IValidate
     {
         // Attributes
         private string description;
@@ -20,27 +21,25 @@ namespace Obfuscator
             description = doc.Routine[0].Description.Value;
             if (doc.Routine[0].Global.Exists)
                 foreach (VariableType var in doc.Routine[0].Global[0].Variable)
-                    GlobalVariables.Add(new Variable(var, Variable.Kind_IO.Global, Variable.Kind_OF.Original));
+                    GlobalVariables.Add(new Variable(var, Variable.Kind.Global));
             foreach (FunctionType function in doc.Routine[0].Function)
                 Functions.Add(new Function(function, this));
         }
     }
 
-    public class Function
+
+    public partial class Function: IValidate
     {
         // Attributes
-        public Routine parent;
-        private IDManager ID = new IDManager();
-        public string getID()
+        public Routine parent { get; private set; }
+        private IDManager _ID;
+        public string ID
         {
-            return ID.ToString();
+            get { return _ID.ToString(); }
         }
-        private string globalID;
-        public string getGlobalID()
-        {
-            return globalID;
-        }
-        public CalledFromType.EnumValues calledFrom;
+        public string globalID { get; private set; }
+
+        public CalledFromType.EnumValues calledFrom { get; private set; }
         
         public List<Variable> LocalVariables = new List<Variable>();
         public List<BasicBlock> BasicBlocks = new List<BasicBlock>();
@@ -48,7 +47,7 @@ namespace Obfuscator
         // Constructor
         public Function(FunctionType function, Routine par)
         {
-            ID = new IDManager(function.ID.Value);
+            _ID = new IDManager(function.ID.Value);
             parent = par;
             calledFrom = function.CalledFrom.EnumerationValue;
             globalID = function.GlobalID.Value;
@@ -58,13 +57,24 @@ namespace Obfuscator
                 foreach (VariableType var in function.Local[0].Variable)
                 {
                     if (function.RefInputVars.Exists() && function.RefInputVars.Value.Split(' ').Contains(var.ID.Value))
-                        LocalVariables.Add(new Variable(var, Variable.Kind_IO.Input));
+                        LocalVariables.Add(new Variable(var, Variable.Kind.Input));
                     else if (function.RefOutputVars.Exists() && function.RefOutputVars.Value.Split(' ').Contains(var.ID.Value))
-                        LocalVariables.Add(new Variable(var, Variable.Kind_IO.Output));
+                        LocalVariables.Add(new Variable(var, Variable.Kind.Output));
                     else
-                        LocalVariables.Add(new Variable(var, Variable.Kind_IO.Local));
+                        LocalVariables.Add(new Variable(var, Variable.Kind.Local));
                 }
             }
+            // Testing incoming data for correctness
+            Func<Variable, bool> inputVariables = delegate(Variable v) { return v.kind == Variable.Kind.Input; };
+            Func<Variable, bool> outputVariables = delegate(Variable v) { return v.kind == Variable.Kind.Output; };
+            int input_vars = LocalVariables.Count(inputVariables);
+            int output_vars = LocalVariables.Count(outputVariables);
+            if (function.RefInputVars.Exists() && (function.RefInputVars.Value.Split(' ').Count() != input_vars))
+                throw new ValidatorException("Referenced input variables were not found in function " + function.ID.Value);
+            if (function.RefOutputVars.Exists() && (function.RefOutputVars.Value.Split(' ').Count() != output_vars))
+                throw new ValidatorException("Referenced output variables were not found in function " + function.ID.Value);
+
+            // Getting basic blocks
             foreach (BasicBlockType bb in function.BasicBlock)
                 BasicBlocks.Add(new BasicBlock(bb, this));
         }
@@ -74,27 +84,74 @@ namespace Obfuscator
         {
             // It works, because we always have one single "fake end block"
             foreach (BasicBlock bb in BasicBlocks)
-                if (bb.getAllSuccessors().Count.Equals(0))
+                if (bb.getSuccessors.Count.Equals(0))
                     return bb;
             return null;
         }
     }
 
+    
+    public partial class BasicBlock: IValidate
+    {
+        private IDManager _ID;
+        public string ID
+        {
+            get { return _ID.ToString(); }
+        } 
+        public Function parent { get; private set; }
 
-    public class Variable
+        private List<string> RefPredecessors = new List<string>();
+        private List<string> RefSuccessors = new List<string>();
+
+        private List<BasicBlock> Predecessors = new List<BasicBlock>();
+        public List<BasicBlock> getPredecessors
+        {
+            get
+            {
+                Validate();
+                return Predecessors;
+            }
+        }
+        private List<BasicBlock> Successors = new List<BasicBlock>();
+        public List<BasicBlock> getSuccessors
+        {
+            get
+            {
+                Validate();
+                return Successors;
+            }
+        }
+
+        public List<Instruction> Instructions = new List<Instruction>();
+
+        public BasicBlock(BasicBlockType bb, Function func)
+        {
+            _ID = new IDManager(bb.ID.Value);
+            parent = func;
+            if (bb.Predecessors.Exists())
+                foreach (string pid in bb.Predecessors.Value.Split(' '))
+                    RefPredecessors.Add(pid);
+            if (bb.Successors.Exists())
+                foreach (string sid in bb.Successors.Value.Split(' '))
+                    RefSuccessors.Add(sid);
+            // Adding instructions to basic block
+            foreach (InstructionType instr in bb.Instruction)
+            {
+                Instructions.Add(new Instruction(instr, this));
+            }
+        }
+    }
+    
+
+    public partial class Variable : IValidate
     {
         // Enumerations
-        public enum Kind_IO
+        public enum Kind
         {
             Input = 0,
             Output = 1,
             Local = 2,
-            Global =3
-        }
-        public enum Kind_OF
-        {
-            Original = 0,
-            Fake = 1
+            Global = 3
         }
         public enum State
         {
@@ -104,144 +161,76 @@ namespace Obfuscator
             Not_Initialized = 3
         }
         // Attributes
-        private IDManager ID = new IDManager();
-        public string getID()
+        private IDManager _ID;
+        public string ID
         {
-            return ID.ToString();
-        }        
-        public ExchangeFormat.SizeType.EnumValues size;
-        public bool pointer;
-        string name;
-        string fixedValue = string.Empty;
-        string globalID = string.Empty;
-        bool fake = false;
-        public Kind_IO kind_io;
-        public Kind_OF kind_of;
-        
+            get { return _ID.ToString(); }
+        }
+        public ExchangeFormat.SizeType.EnumValues size { get; private set; }
+        public bool pointer { get; private set; }
+        public string name { get; private set; }
+        public string fixedValue { get; private set; }
+        public string globalID { get; private set; }
+        public bool fake { get; private set; }
+        public Kind kind { get; private set; }
+
         // Constructor
-        public Variable(VariableType var, Kind_IO kind_io1, Kind_OF kind_of1 = Kind_OF.Original)
+        public Variable(VariableType var, Kind kind1)
         {
-            ID = new IDManager(var.ID.Value);
+            _ID = new IDManager(var.ID.Value);
             name = var.Value;
             size = var.Size.EnumerationValue;
             pointer = var.Pointer.Value;
-            if (var.FixedValue.Exists())
-                fixedValue = var.FixedValue.Value;
-            if (var.GlobalID.Exists())
-                globalID = var.GlobalID.Value;
-            if (var.Fake.Exists())
-                fake = var.Fake.Value;
-            kind_io = kind_io1;
-            kind_of = kind_of1;
+            fixedValue = var.FixedValue.Exists() ? var.FixedValue.Value : string.Empty;
+            globalID = var.GlobalID.Exists() ? var.GlobalID.Value : string.Empty;
+            fake = var.Fake.Exists() ? var.Fake.Value : false;
+            kind = kind1;
         }
     }
 
 
-    public class BasicBlock
+    public partial class Instruction : IComparable, IValidate
     {
-        private IDManager ID = new IDManager();
-        public string getID()
+        public BasicBlock parent { get; private set; }
+        private IDManager _ID;
+        public string ID
         {
-            return ID.ToString();
+            get { return _ID.ToString(); }
         }
-        public Function parent;
+        public ExchangeFormat.StatementTypeType.EnumValues statementType { get; private set; }
+        public string text { get; private set; }
+        public bool polyRequired { get; private set; }
 
-        private List<BasicBlock> Predecessors = new List<BasicBlock>();
-        private List<BasicBlock> Successors = new List<BasicBlock>();
-        private List<IDManager> RefPredecessors = new List<IDManager>();
-        private List<IDManager> RefSuccessors = new List<IDManager>();
-
-        public List<BasicBlock> getAllPredeccessors()
-        {
-            if (RefPredecessors.Count.Equals(0))
-                return Predecessors;
-            foreach (IDManager id in RefPredecessors)
-                foreach (BasicBlock bb in parent.BasicBlocks)
-                    if (bb.ID.Equals(id))
-                        Predecessors.Add(bb);
-            if (RefPredecessors.Count.Equals(Predecessors.Count))
-            {
-                RefPredecessors.Clear();
-                return Predecessors;
-            }
-            else
-                throw new Exception("Referenced basic block was not found. Referenced block:" + RefPredecessors[0].ToString());
-        }
-
-        public List<BasicBlock> getAllSuccessors()
-        {
-            if (RefSuccessors.Count.Equals(0))
-                return Successors;
-            foreach (IDManager id in RefSuccessors)
-                foreach (BasicBlock bb in parent.BasicBlocks)
-                    if (bb.ID.Equals(id))
-                        Successors.Add(bb);
-            if (RefSuccessors.Count.Equals(Successors.Count))
-            {
-                RefSuccessors.Clear();
-                return Successors;
-            }
-            else
-                throw new Exception("Referenced basic block was not found. Referenced block:" + RefSuccessors[0].ToString());
-        }
-
-        public List<Instruction> Instructions = new List<Instruction>();
-
-        public BasicBlock(BasicBlockType bb, Function func)
-        {
-            ID = new IDManager(bb.ID.Value);
-            parent = func;
-            if (bb.Predecessors.Exists())
-                foreach (string pid in bb.Predecessors.Value.Split(' '))
-                    RefPredecessors.Add(new IDManager(pid));
-            if (bb.Successors.Exists())
-                foreach (string sid in bb.Successors.Value.Split(' '))
-                    RefSuccessors.Add(new IDManager(sid));
-            // Adding instructions to basic block
-            foreach (InstructionType instr in bb.Instruction)
-            {
-                Instructions.Add(new Instruction(instr, this));
-            }
-        }
-    }
-
-
-    public class Instruction : IComparable
-    {
-        public BasicBlock parent;
-        private IDManager ID = new IDManager();
-        public string getID()
-        {
-            return ID.ToString();
-        }
-        public ExchangeFormat.StatementTypeType.EnumValues statementType;
-        public string text;
-        public bool polyRequired;
         public List<Variable> RefVariables = new List<Variable>();
         public Dictionary<Variable, Variable.State> DeadVariables = new Dictionary<Variable, Variable.State>();
 
         public Instruction(InstructionType instr, BasicBlock par)
         {
             parent = par;
-            ID = new IDManager(instr.ID.Value);
+            _ID = new IDManager(instr.ID.Value);
             statementType = instr.StatementType.EnumerationValue;
             text = instr.Value;
-            if (instr.PolyRequired.Exists())
-                polyRequired = instr.PolyRequired.Value;
+            polyRequired = instr.PolyRequired.Exists() ? instr.PolyRequired.Value : false;
             if (instr.RefVars.Exists())
             {
                 foreach (string vid in instr.RefVars.Value.Split(' '))
                 {
+                    // Searching in local variables
                     foreach (Variable var in parent.parent.LocalVariables)
                     {
-                        if (var.getID().Equals(vid))
+                        if (var.ID.Equals(vid))
+                            RefVariables.Add(var);
+                    }
+                    // Searching in global variables
+                    foreach (Variable var in parent.parent.parent.GlobalVariables)
+                    {
+                        if (var.ID.Equals(vid))
                             RefVariables.Add(var);
                     }
                 }
                 if (!instr.RefVars.Value.Split(' ').Length.Equals(RefVariables.Count))
-                    throw new Exception("Referenced variable was not found. Instruction: " + instr.ID.Value);
+                    throw new ValidatorException("Referenced variable was not found. Instruction: " + instr.ID.Value);
             }
-
         }
 
         public int CompareTo(object obj)
@@ -266,6 +255,11 @@ namespace Obfuscator
                 return false;
             return (obj as Instruction).ID.Equals(ID);
         }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
 
@@ -281,12 +275,12 @@ namespace Obfuscator
         {
             ID = id;
         }
-        public void setAndCheckID(string ID)
+        public void setAndCheckID(string id)
         {
-            if (!ID.ToUpper().StartsWith(startID))
-                throw new FormatException("ID has inappropriate format: it should start with " + startID + " followed by a GUID.");
-            Guid value = new Guid(ID.Substring(3));
-            ID = string.Concat(startID, value.ToString()).ToUpper();
+            if (Regex.IsMatch(id, @"^ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
+                ID = id;
+            else
+                throw new ArgumentException("Incorrect ID. The unique identifier " + id + " is not in a form ID_'GUID'");
         }
 
         public override bool Equals(object obj)
