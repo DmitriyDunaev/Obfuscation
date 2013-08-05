@@ -36,22 +36,6 @@ namespace ObfuscationManager
             // For debugging
             exch.SaveToFile("Exchange1.xml", true);
 
-            // Performing logical control
-            //try
-            //{
-            //    Console.WriteLine("\nValidating Exchange type . . .");
-            //    Validator.ValidateExchangeType(exch);
-            //}
-            //catch(ValidatorException exc)
-            //{
-            //    Console.WriteLine(exc.Message);
-            //    if (exc.InnerException != null)
-            //        throw exc.InnerException;
-            //    else throw exc;
-            //}
-            
-                //Console.WriteLine("Exchange type is logically correct.\n");
-
             // Sending Exchange format to obfuscator
             Obfuscator.ILObfuscator obfuscator = new Obfuscator.ILObfuscator();
             obfuscator.Obfuscate(exch);

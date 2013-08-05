@@ -12,8 +12,10 @@ namespace Obfuscator
         public void Obfuscate(Exchange exch)
         {
             Routine routine = new Routine(exch);
+            routine.Validate();
             foreach (Function func in routine.Functions)
                 DataAnalysis.DeadVarsAlgortihm(func);
+            routine.Validate();
         }
     }
 }
