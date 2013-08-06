@@ -79,15 +79,23 @@ namespace Obfuscator
                 BasicBlocks.Add(new BasicBlock(bb, this));
         }
 
-        // Methods
+        /// <summary>
+        /// Gets the last basic block, which is a "fake end block"
+        /// </summary>
+        /// <returns>The last basic block in a function</returns>
         public BasicBlock GetLastBasicBlock()
         {
-            // It works, because we always have one single "fake end block"
             foreach (BasicBlock bb in BasicBlocks)
                 if (bb.getSuccessors.Count.Equals(0))
                     return bb;
             return null;
         }
+
+        //public BasicBlock InsertBeforeGroup(Function func, BasicBlock left, BasicBlock right, List<Instruction> insts)
+        //{
+
+        //}
+
     }
 
     
@@ -212,6 +220,7 @@ namespace Obfuscator
         public ExchangeFormat.StatementTypeType.EnumValues statementType { get; private set; }
         public string text { get; private set; }
         public bool polyRequired { get; private set; }
+        public bool isFake { get; private set; }
 
         public List<Variable> RefVariables = new List<Variable>();
         public Dictionary<Variable, Variable.State> DeadVariables = new Dictionary<Variable, Variable.State>();
@@ -222,6 +231,7 @@ namespace Obfuscator
             _ID = new IDManager(instr.ID.Value);
             statementType = instr.StatementType.EnumerationValue;
             text = instr.Value;
+            isFake = false;
             polyRequired = instr.PolyRequired.Exists() ? instr.PolyRequired.Value : false;
             if (instr.RefVars.Exists())
             {
