@@ -63,15 +63,15 @@ void CVariables::dump(stringstream &s)
 			if ( !t.empty())
 			{
 				if ( t == "char" ||  t == "signed char" ||  t == "unsigned char" )
-					s << "Size=\"byte\" ";
+					s << "SizeInBytes=\"1\" ";
 				else if ( t == "int" ||  t == "signed int" ||  t == "unsigned int" )
-					s << "Size=\"dword\" ";
+					s << "SizeInBytes=\"4\" ";
 				else if ( t == "short" ||  t == "signed short" ||  t == "unsigned short" )
-					s << "Size=\"word\" ";
+					s << "SizeInBytes=\"2\" ";
 				else if ( t == "long" ||  t == "signed long" ||  t == "unsigned long" )
-					s << "Size=\"qword\" ";
+					s << "SizeInBytes=\"8\" ";
 				
-			} else s << "Size=\"dword\" ";
+			} else s << "SizeInBytes=\"4\" ";
 			s << "Pointer=\"";
 			if ( i->second->getp() ) s << "true\"";
 			else s << "false\"";

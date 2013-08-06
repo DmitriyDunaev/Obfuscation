@@ -40,7 +40,7 @@ void MeshFunction( Function actualfunction )
      */
     
     list<BasicBlock> basicblocks = Function.getBBUncJumps( actualfunction );
-    
+    // TODO: Ebből az alhalmazt, Ratio alapján
     /*
      * Now we go through the list, and mesh the jumps.
      */
@@ -96,8 +96,8 @@ void InsertEntryPoint( BasicBlock bb )
 
     /* And we need to ad it to the function. */
 
-    bb.getParent.BasicBlocks.Add( ep );
-
+    bb.parent.BasicBlocks.Add( ep );
+    //parent...
     /* A function now creates an instruction with a fake conditional jump,
      * and it is fake because it always continues in the true way. */
 
@@ -321,7 +321,8 @@ void MeshConditional( BasicBlock bb )
     // Generating the constants based on C
     list<K> KList;
     GenerateList( KList, C);
-
+    
+    // Iterating K[i] 
     while ( !AllUsed( KList ) )
     {
         K selected = Select_i(KList);
