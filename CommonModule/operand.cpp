@@ -31,7 +31,8 @@ std::string COperand::getoriginalname()
 std::string COperand::getname()
 {
 	stringstream s;
-	s << "v_ID_" << getid();
+	if ( gettype() != constant ) s << "v_ID_" << getid();
+	else s << getoriginalname();
     return s.str();
 }
 
