@@ -140,6 +140,22 @@ namespace Obfuscator
                 Instructions.Add(new Instruction(instr, this));
             }
         }
+
+        public override bool Equals(object obj)
+        {
+
+            return base.Equals(obj);
+        }
+
+        public bool isLoopBody()
+        {
+            foreach (BasicBlock bb in Successors)
+            {
+                if(bb.Equals(this)) return true;
+            }
+
+            return false;
+        }
     }
     
 
@@ -251,9 +267,7 @@ namespace Obfuscator
 
         public override bool Equals(object obj)
         {
-            if (obj == null)
-                return false;
-            return (obj as Instruction).ID.Equals(ID);
+            return (obj as BasicBlock) == null ? base.Equals(obj) : ((BasicBlock)obj).ID == ID;
         }
 
         public override int GetHashCode()
@@ -285,7 +299,7 @@ namespace Obfuscator
 
         public override bool Equals(object obj)
         {
-            return (((IDManager)obj).ID == ID);
+            return (obj as IDManager) == null ? base.Equals(obj) : ((IDManager)obj).ID == ID;
         }
 
         public override int GetHashCode()

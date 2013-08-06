@@ -14,7 +14,7 @@ namespace Obfuscator
             Routine routine = new Routine(exch);
             Console.WriteLine("\nValidating data in Routine. . .");
             routine.Validate();
-            Console.WriteLine("Routine validation has passed successfully. Congratulations to Andras!\n\n");
+            Console.WriteLine("Routine validation has passed successfully.\n\n");
             foreach (Function func in routine.Functions)
                 DataAnalysis.DeadVarsAlgortihm(func);
             routine.Validate();
