@@ -108,7 +108,7 @@ namespace Obfuscator
              *      - if we are at the beginning of the first basic block (the one with no predecessors)
              *        then it is an empty list, meaning that we have nothing left to do here
              */
-            List<Instruction> previous = GetPrecedingInstructions(ins);
+            List<Instruction> previous = ins.GetPrecedingInstructions();
 
             /*
              * Now we have that list of instructions, we should do the same thing we have done
@@ -138,31 +138,6 @@ namespace Obfuscator
                     foreach (Variable var in func.LocalVariables)
                         inst.DeadVariables.Add(var, state);
                 }
-        }
-
-        /// <summary>
-        /// Gets a list of the instructions followed by the actual instruction
-        /// </summary>
-        /// <param name="instr">Actual Instruction</param>
-        /// <returns>A list of preceding instructions (or empty list if no such found)</returns>
-        public static List<Instruction> GetPrecedingInstructions(Instruction instr)
-        {
-            List<Instruction> preceding = new List<Instruction>();
-            int number = instr.parent.Instructions.BinarySearch(instr);
-            if (number > 0)
-            {
-                preceding.Add(instr.parent.Instructions[number - 1]);
-                return preceding;
-            }
-            else if (number == 0)
-            {
-                foreach (BasicBlock bb in instr.parent.getPredecessors)
-                {
-                    preceding.Add(bb.Instructions[bb.Instructions.Count - 1]);
-                }
-                return preceding;
-            }
-            else return null;
         }
     }
 }
