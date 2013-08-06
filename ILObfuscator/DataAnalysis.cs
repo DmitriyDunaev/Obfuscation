@@ -139,5 +139,68 @@ namespace Obfuscator
                         inst.DeadVariables.Add(var, state);
                 }
         }
+
+        /* -------------- isLoopBody algorithm starts ---------------- */
+
+        /*
+         * We decided that this function should be not in the BasicBlock, rather
+         * outside it. In the future it can be placed to a more proper place,
+         * now it's here just to make debugging possible...
+         */
+
+        /// <summary>
+        /// List to hold the id's of the basic blocks we already reached.
+        /// Used by the isLoopBody function.
+        /// </summary>
+        private static List<string> found_ids = new List<string>();
+
+        /// <summary>
+        /// Function to find out whether a basic block is in a loop body, or not.
+        /// </summary>
+        /// <param name="actual">The questioned basic block.</param>
+        /// <returns>True if the basic block is in a loop, False if not.</returns>
+        public static bool isLoopBody (BasicBlock bb)
+        {
+            /*
+             * We clear the former found_ids list, because we don't want the previous run of
+             * the algorithm to influence the present one.
+             */
+            found_ids.Clear();
+
+            foreach (BasicBlock item in bb.getSuccessors)
+                reachable_from(item);
+
+            /*
+             * If and only if we have got to this basic block during the algorithm,
+             * then it is inside a loop.
+             */
+            if (found_ids.Contains(bb.ID))
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Adds this basic block to the found_ids list, and calls itself for all the BB's successors.
+        /// </summary>
+        /// <param name="actual">Actual BasicBlock</param>
+        private static void reachable_from(BasicBlock actual)
+        {
+            /*
+             * First we check whether the actual basic block has been already
+             * found. If yes, we have nothing to do left.
+             */
+            if (!found_ids.Contains(actual.ID))
+            {
+                /* We add the actual basic block's ID to the found_ids list. */
+                found_ids.Add(actual.ID);
+
+                /* Then we continue with all its successors. */
+                foreach (BasicBlock item in actual.getSuccessors)
+                    reachable_from(item);
+            }      
+        }
+
+        /* ---------------- isLoopBody algorithm ends ------------------ */
     }
 }
