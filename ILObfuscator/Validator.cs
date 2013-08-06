@@ -20,8 +20,6 @@ namespace Obfuscator
     {
         public void Validate()
         {
-            if (this.Functions.Count == 0)
-                throw new ValidatorException("Routine has no functions!");
             foreach (Variable var in this.GlobalVariables)
             {
                 if (var.kind != Variable.Kind.Global)
@@ -47,6 +45,10 @@ namespace Obfuscator
                 if (string.IsNullOrWhiteSpace(globalID))
                     throw new ValidatorException("The function, which can be called from outside the routine, must have a non-empty GlobalID property. Function: " + this.ID);
 
+            //if (!Regex.IsMatch(BasicBlocks[0].Instructions[0].text, @"^enter ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) ||
+            //    !Regex.IsMatch(BasicBlocks[BasicBlocks.Count-1].Instructions[0].text, @"^leave ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
+            //    throw new ValidatorException("No 'enter' and/or 'leave' instructions found in function " + ID);
+            
             foreach (BasicBlock bb in this.BasicBlocks)
             {
                 if (bb.parent != this)
