@@ -150,12 +150,14 @@ namespace Obfuscator
                     else
                         throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
                 case StatementTypeType.EnumValues.eCopy:
-                    // var := var
-                    if (Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
+                    // var := var OR var := number
+                    if (Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                        Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := ([-+]?\d+)$", RegexOptions.None))
                         break;
                     else
                         throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
                 case StatementTypeType.EnumValues.eUnconditionalJump:
+                    // goto ID_GUID
                     if (Regex.IsMatch(text, @"^goto ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
                         break;
                     else
