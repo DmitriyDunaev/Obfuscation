@@ -143,10 +143,13 @@ namespace Obfuscator
 
         public override bool Equals(object obj)
         {
-
-            return base.Equals(obj);
+            return (obj as BasicBlock) == null ? base.Equals(obj) : ((BasicBlock)obj).ID == ID;
         }
 
+        /// <summary>
+        /// Function to find out whether a basic block is in a loop body, or not.
+        /// </summary>
+        /// <returns>True if the basic block is in a loop, False if not.</returns>
         public bool isLoopBody()
         {
             foreach (BasicBlock bb in Successors)
