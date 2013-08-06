@@ -290,6 +290,45 @@ void InsertDeadFlow( BasicBlock ep )
  * the algorithm itself.
  */
 
+enum Relop
+	{
+	    equ,
+        great,
+        greatequ,
+        less,
+        lessequ
+	}
+
+struct K
+    {
+		int i;
+        bool usable_relops[5];
+        bool used;
+        K(int i) : i(i), used(false)
+        {
+            for (int i=0; i<5; i++)
+                usable_relops[i] = true;
+        }
+	}
+
+void MeshConditional( BasicBlock bb )
+{
+    int C = ReadConst( bb.Instructions.Last() );
+    Relop r = ReadRelop( bb.Instructions.Last() );
+    // Select m;
+    m = 5; // At first we choose a constant number.
+    
+    // Generating the constants based on C
+    list<K> KList;
+    GenerateList( KList, C);
+
+    while ( !AllUsed( KList ) )
+    {
+        K selected = Select_i(KList);
+        Relop act_r = SelectUsableRelop( selected );
+    }
+}
+
 /* Still to do:
  * 
  * void InsertFakeFlow(...); <- Done, details needed
