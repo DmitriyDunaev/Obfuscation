@@ -19,6 +19,7 @@ void Quadruple::print(stringstream& s)
 	if (ops[2]->gettype() != constant) s << " ID_" << ops[2]->getid();
 	s << "\">";
 	s << ops[0]->getname() << " := ";
-    s << ops[1]->getname() << " " << oprtr << " " << ops[2]->getname();
+    if (ops[1]->gettype() != constant) s << ops[1]->getname() << " " << oprtr << " " << ops[2]->getname();
+	else s << ops[2]->getname() << " " << oprtr << " " << ops[1]->getname();
     s << "</Instruction>"<< std::endl;
 }

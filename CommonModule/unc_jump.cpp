@@ -5,19 +5,12 @@ void Unc_jump::print(stringstream& s)
     s << "<Instruction PolyRequired=\"false\" ID=\"ID_";
 	s << getid() << "\" StatementType=\"";
 	
-	if (ret != nullptr )
-	{
-		s << "Procedural";
-		s << "\" RefVars=\"";
-		if (ret->gettype() != constant) s << "ID_" << ret->getid();
-		s << "\">";
-	}
 	if ( i > -3 )
 	{
-		s << "UnconditionalJump";
-		s << "\" >";
-		if ( ret == nullptr ) s << "goto ID_" << target->getid();
-		else { s << "return";
+		if ( ret == nullptr) s << "UnconditionalJump" << "\" >" << "goto ID_" << target->getid();
+		else { s << "Procedural" << "\" RefVars=\"";
+		if (ret->gettype() != constant) s << "ID_" << ret->getid();
+		s << "\">" << "return";
 		s << " " << ret->getname(); }
 	} else 
 	{
