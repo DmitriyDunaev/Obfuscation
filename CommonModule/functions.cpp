@@ -10,13 +10,16 @@ Function* Routine::find ( string s )
 	return nullptr;
 }
 
-//void Routine::setfunctions()
-//{
-//	for ( list<Function*>::iterator	i = functs.begin(); i != functs.end(); ++i)
-//	{
-//		if (  find( (*i)->getname() ) 
-//	}
-//}
+void Routine::setfunctions()
+{
+	for ( list<Function*>::iterator	i = functs.begin(); i != functs.end(); ++i)
+	{
+		for ( list<Function*>::iterator	j = functs.begin(); j != functs.end(); ++j)
+		{
+			if (  (*j)->findcall( (*i)->getname()  ) ) (*i)->setcalledfrom( "Both" );
+		}
+	}
+}
 
 void Routine::cleanup()
 {
@@ -40,7 +43,7 @@ void Routine::dump(stringstream& s)
 {
     for ( std::list<Function*>::iterator i = functs.begin(); i != functs.end(); ++i )
 	{
-		s << "<Function GlobalID=\"" << (*i)->getname() <<  "\" CalledFrom=\"ExternalOnly\" ID=\"ID_";
+		s << "<Function GlobalID=\"" << (*i)->getname() <<  "\" CalledFrom=\"" << (*i)->getcalledfrom() << "\" ID=\"ID_";
 		s << (*i)->getid();
 		/*s << "\" ExternalLabel=\"";
 		s << (*i)->getname();*/

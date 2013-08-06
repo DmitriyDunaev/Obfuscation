@@ -30,7 +30,8 @@ public:
     virtual void print(stringstream& s) {}
 	virtual void settarget( CThreeAdressInstruction* t ) {}
 	virtual void seti(int i) {}
-
+	virtual std::string gets() { return ""; }
+	
 	string getid();
 
 };

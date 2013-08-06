@@ -19,12 +19,24 @@ class Function
     CVariables Vars;
 	UUID id;
 	string name;
+	string calledfrom;
 public:
-    Function(UUID i, string n, UUID j) : id(i), name(n) { blocks.push_back( new CInstructionsContainer(j) ); }
+    Function(UUID i, string n, UUID j) : id(i), name(n), calledfrom("ExternalOnly") { blocks.push_back( new CInstructionsContainer(j) ); }
     ~Function() { clear(); }
 
 	string getname() { return name; }
 	string getid();
+	string getcalledfrom() { return calledfrom; }
+	void setcalledfrom( string s ) { calledfrom = s; }
+
+	bool findcall(string s)
+	{
+		for ( list<CInstructionsContainer*>::iterator i = blocks.begin(); i != blocks.end(); ++i)
+		{
+			if ((*i)->findcall(s) == true ) return true;
+		}
+		return false;
+	}
 
     void clear ()
     { for ( std::list<CInstructionsContainer*>::iterator i = blocks.begin(); i != blocks.end(); ++i )

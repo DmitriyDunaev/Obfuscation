@@ -54,6 +54,16 @@ public:
 
     string getid();
 
+	bool findcall( string s )
+	{
+		for ( list<CThreeAdressInstruction*>::iterator	i = InstructionList.begin(); i != InstructionList.end(); ++i)
+		{
+			if( (*i)->gets().find( s ) != string::npos ) 
+				return true;
+		}
+		return false;
+	}
+
 #ifdef DEBUG
         void dump (stringstream& s)
         {

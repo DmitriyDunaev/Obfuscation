@@ -838,5 +838,5 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 
 void Assistant::setfunctions()
 {
-	//rtn->setfunctions();
+	rtn->setfunctions();
 }
