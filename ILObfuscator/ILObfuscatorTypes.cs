@@ -150,20 +150,6 @@ namespace Obfuscator
         {
             return ID.GetHashCode();
         }
-
-        /// <summary>
-        /// Function to find out whether a basic block is in a loop body, or not.
-        /// </summary>
-        /// <returns>True if the basic block is in a loop, False if not.</returns>
-        public bool isLoopBody()
-        {
-            foreach (BasicBlock bb in Successors)
-            {
-                if(bb.Equals(this)) return true;
-            }
-
-            return false;
-        }
     }
     
 
