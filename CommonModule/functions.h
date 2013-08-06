@@ -15,6 +15,8 @@ public:
 		UuidCreate( &j );
 		functs.push_back( new Function(i, "noname", j) ); }
     ~Routine() { clear(); }
+	Function* find( string s );
+	void setfunctions();
     void clear ()
     { for ( std::list<Function*>::iterator i = functs.begin(); i != functs.end(); ++i )
     (*i)->clear(); }

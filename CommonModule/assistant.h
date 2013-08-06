@@ -36,6 +36,8 @@ public:
     void setconnentions() { rtn->setconnections(&l); rtn->setjumps(); }
 	bool checkdecls(string str, bool in);
 
+	void setfunctions();
+
     void getfor(string from, string *s1, string *s2, string *s3);
     void getwhile(string from, string *s1);
     void getif(string from, string *s1);

@@ -109,6 +109,8 @@ ss << "    *(_DWORD *)v7 = a2;\n    v8 += 4;\n    ++v7;\n  }\n  return *(_DWORD 
 
     Reader.setconnentions();
 
+	//Reader.setfunctions();
+
 	stringstream s;
     Reader.printlist(s);
 	//cout << s.str();

@@ -686,6 +686,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 
 
 			string tmp2 = i->gets().substr(i->gets().find("sub"), i->gets().size());
+			tmp2.erase( tmp2.find( "(" ) );
 			stringstream ss(tmp2.substr(tmp2.find("(")+1, tmp2.find(")")-1));
 			
 			rtn->push_back( new Function( l.getid(), tmp2 , l.getid()) );
@@ -751,7 +752,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 			}
 			
 			s << " " << par;
-			cnt->push_back( new  Call( s.str() ));
+			cnt->push_back( new  Call( s.str(), rtn ));
 			cnt->push_back( new Call( s.str(), rtn->back()->Vars[tmp], false, true));
 			cnt->push_back( new  Unc_jump("Return", -2, rtn->back()->Vars[tmp]));
 			rtn->back()->Vars[tmp]->setuse(output);
@@ -782,7 +783,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 			}
 			
 			s << " " << par;
-			cnt->push_back( new  Call( s.str() ));
+			cnt->push_back( new  Call( s.str(), rtn ));
 
         }
 		else if (i->gets().find("sub_")!=string::npos && i->gets().find("=")!=string::npos)
@@ -809,7 +810,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
 				}
 			}
 			s << " " << par;
-			cnt->push_back( new  Call( s.str() ));
+			cnt->push_back( new  Call( s.str(), rtn ));
 			cnt->push_back( new Call( s.str(), rtn->back()->Vars[retr], false, true));
         }
 //----------------------------------EQU-LIKE----------------------------
@@ -835,4 +836,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
     rtn->cleanup();
 }
 
-
+void Assistant::setfunctions()
+{
+	//rtn->setfunctions();
+}

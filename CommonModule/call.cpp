@@ -14,8 +14,17 @@ void Call::print(stringstream& s)
 	else if (!param)
 	{
 		s << ">call ";
-		s << str;
-
+		string tmp = str;
+		tmp.erase( tmp.find( " " ) );
+		if ( rtn->find( tmp ) == nullptr )	
+			s << str;
+		else 
+		{
+			s << "ID_" << rtn->find( tmp )->getid();
+			string tmp2 = str;
+			tmp2.erase( 0, tmp.size() );
+			s << tmp2;
+		}
 	}
 	else
 	{

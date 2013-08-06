@@ -1,5 +1,23 @@
 #include "functions.h"
 
+Function* Routine::find ( string s )
+{
+	for ( std::list<Function*>::iterator i = functs.begin(); i != functs.end(); ++i)
+	{
+		if ( (*i)->getname() == s )
+			return *i;
+	}
+	return nullptr;
+}
+
+//void Routine::setfunctions()
+//{
+//	for ( list<Function*>::iterator	i = functs.begin(); i != functs.end(); ++i)
+//	{
+//		if (  find( (*i)->getname() ) 
+//	}
+//}
+
 void Routine::cleanup()
 {
 	std::list<Function*>::iterator i = functs.begin();
