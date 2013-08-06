@@ -146,6 +146,11 @@ namespace Obfuscator
             return (obj as BasicBlock) == null ? base.Equals(obj) : ((BasicBlock)obj).ID == ID;
         }
 
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
+        }
+
         /// <summary>
         /// Function to find out whether a basic block is in a loop body, or not.
         /// </summary>
@@ -355,7 +360,7 @@ namespace Obfuscator
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return ID.GetHashCode();
         }
 
         public override string ToString()
