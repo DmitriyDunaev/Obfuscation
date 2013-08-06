@@ -175,6 +175,8 @@ namespace Obfuscator
                         Regex.IsMatch(text, @"^param ([-+]?\d+)$", RegexOptions.None) |
                     // call some_string decimal
                         Regex.IsMatch(text, @"^call \w+ \d+$", RegexOptions.None) |
+                    // call ID_GUID decimal
+                        Regex.IsMatch(text, @"^call ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \d+$", RegexOptions.None) |
                     // return 
                         Regex.IsMatch(text, @"^return$", RegexOptions.None) |
                     // return number
