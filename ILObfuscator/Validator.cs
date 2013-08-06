@@ -223,6 +223,8 @@ namespace Obfuscator
     {
         public void Validate()
         {
+            if (!pointer && sizeMultiplier != 1)
+                throw new ValidatorException("Non-pointer variable should have SizeMultiplier = 1. Variable: " + ID);
         }
     }
 

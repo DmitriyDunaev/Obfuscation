@@ -70,18 +70,21 @@
 			<xs:simpleContent>
 				<xs:extension base="myVariable">
 					<xs:attribute name="ID" type="myID" use="required"/>
-					<xs:attribute name="Size" use="required">
+					<xs:attribute name="Pointer" type="xs:boolean" use="required"/>
+					<xs:attribute name="SizeInBytes" use="required">
 						<xs:simpleType>
-							<xs:restriction base="xs:string">
-								<xs:enumeration value="word"/>
-								<xs:enumeration value="dword"/>
-								<xs:enumeration value="byte"/>
-								<xs:enumeration value="qword"/>
-								<xs:enumeration value="reserved"/>
+							<xs:restriction base="xs:integer">
+								<xs:minExclusive value="0"/>
 							</xs:restriction>
 						</xs:simpleType>
 					</xs:attribute>
-					<xs:attribute name="Pointer" type="xs:boolean" use="required"/>
+					<xs:attribute name="SizeMultiplier" use="optional" default="1">
+						<xs:simpleType>
+							<xs:restriction base="xs:integer">
+								<xs:minExclusive value="0"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
 					<xs:attribute name="FixedValue" type="xs:string" use="optional"/>
 					<xs:attribute name="GlobalID" type="xs:string" use="optional"/>
 					<xs:attribute name="Fake" type="xs:boolean" use="optional"/>

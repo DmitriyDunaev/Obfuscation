@@ -28,58 +28,59 @@ namespace ExchangeFormat
         public static readonly int _altova_ti_altova_RoutineType = 9;
         public static readonly int _altova_ti_altova_VariableType = 10;
         public static readonly int _altova_ti_altova_myVariableType = 11;
-        public static readonly int _altova_ti_altova_SizeType = 12;
-        public static readonly int _altova_ti_altova_StatementTypeType = 13;
-        public static readonly int _altova_til = 14;
+        public static readonly int _altova_ti_altova_SizeInBytesType = 12;
+        public static readonly int _altova_ti_altova_SizeMultiplierType = 13;
+        public static readonly int _altova_ti_altova_StatementTypeType = 14;
+        public static readonly int _altova_til = 15;
 
         public static readonly int _altova_tif_xs = _altova_til;
         public static readonly int _altova_ti_xs_altova_ENTITIES = _altova_tif_xs;
-        public static readonly int _altova_ti_xs_altova_ENTITY = 15;
-        public static readonly int _altova_ti_xs_altova_ID = 16;
-        public static readonly int _altova_ti_xs_altova_IDREF = 17;
-        public static readonly int _altova_ti_xs_altova_IDREFS = 18;
-        public static readonly int _altova_ti_xs_altova_NCName = 19;
-        public static readonly int _altova_ti_xs_altova_NMTOKEN = 20;
-        public static readonly int _altova_ti_xs_altova_NMTOKENS = 21;
-        public static readonly int _altova_ti_xs_altova_NOTATION = 22;
-        public static readonly int _altova_ti_xs_altova_Name = 23;
-        public static readonly int _altova_ti_xs_altova_QName = 24;
-        public static readonly int _altova_ti_xs_altova_anySimpleType = 25;
-        public static readonly int _altova_ti_xs_altova_anyType = 26;
-        public static readonly int _altova_ti_xs_altova_anyURI = 27;
-        public static readonly int _altova_ti_xs_altova_base64Binary = 28;
-        public static readonly int _altova_ti_xs_altova_boolean = 29;
-        public static readonly int _altova_ti_xs_altova_byte2 = 30;
-        public static readonly int _altova_ti_xs_altova_date = 31;
-        public static readonly int _altova_ti_xs_altova_dateTime = 32;
-        public static readonly int _altova_ti_xs_altova_decimal2 = 33;
-        public static readonly int _altova_ti_xs_altova_double2 = 34;
-        public static readonly int _altova_ti_xs_altova_duration = 35;
-        public static readonly int _altova_ti_xs_altova_float2 = 36;
-        public static readonly int _altova_ti_xs_altova_gDay = 37;
-        public static readonly int _altova_ti_xs_altova_gMonth = 38;
-        public static readonly int _altova_ti_xs_altova_gMonthDay = 39;
-        public static readonly int _altova_ti_xs_altova_gYear = 40;
-        public static readonly int _altova_ti_xs_altova_gYearMonth = 41;
-        public static readonly int _altova_ti_xs_altova_hexBinary = 42;
-        public static readonly int _altova_ti_xs_altova_int2 = 43;
-        public static readonly int _altova_ti_xs_altova_integer = 44;
-        public static readonly int _altova_ti_xs_altova_language = 45;
-        public static readonly int _altova_ti_xs_altova_long2 = 46;
-        public static readonly int _altova_ti_xs_altova_negativeInteger = 47;
-        public static readonly int _altova_ti_xs_altova_nonNegativeInteger = 48;
-        public static readonly int _altova_ti_xs_altova_nonPositiveInteger = 49;
-        public static readonly int _altova_ti_xs_altova_normalizedString = 50;
-        public static readonly int _altova_ti_xs_altova_positiveInteger = 51;
-        public static readonly int _altova_ti_xs_altova_short2 = 52;
-        public static readonly int _altova_ti_xs_altova_string2 = 53;
-        public static readonly int _altova_ti_xs_altova_time = 54;
-        public static readonly int _altova_ti_xs_altova_token = 55;
-        public static readonly int _altova_ti_xs_altova_unsignedByte = 56;
-        public static readonly int _altova_ti_xs_altova_unsignedInt = 57;
-        public static readonly int _altova_ti_xs_altova_unsignedLong = 58;
-        public static readonly int _altova_ti_xs_altova_unsignedShort = 59;
-        public static readonly int _altova_til_xs = 60;
+        public static readonly int _altova_ti_xs_altova_ENTITY = 16;
+        public static readonly int _altova_ti_xs_altova_ID = 17;
+        public static readonly int _altova_ti_xs_altova_IDREF = 18;
+        public static readonly int _altova_ti_xs_altova_IDREFS = 19;
+        public static readonly int _altova_ti_xs_altova_NCName = 20;
+        public static readonly int _altova_ti_xs_altova_NMTOKEN = 21;
+        public static readonly int _altova_ti_xs_altova_NMTOKENS = 22;
+        public static readonly int _altova_ti_xs_altova_NOTATION = 23;
+        public static readonly int _altova_ti_xs_altova_Name = 24;
+        public static readonly int _altova_ti_xs_altova_QName = 25;
+        public static readonly int _altova_ti_xs_altova_anySimpleType = 26;
+        public static readonly int _altova_ti_xs_altova_anyType = 27;
+        public static readonly int _altova_ti_xs_altova_anyURI = 28;
+        public static readonly int _altova_ti_xs_altova_base64Binary = 29;
+        public static readonly int _altova_ti_xs_altova_boolean = 30;
+        public static readonly int _altova_ti_xs_altova_byte2 = 31;
+        public static readonly int _altova_ti_xs_altova_date = 32;
+        public static readonly int _altova_ti_xs_altova_dateTime = 33;
+        public static readonly int _altova_ti_xs_altova_decimal2 = 34;
+        public static readonly int _altova_ti_xs_altova_double2 = 35;
+        public static readonly int _altova_ti_xs_altova_duration = 36;
+        public static readonly int _altova_ti_xs_altova_float2 = 37;
+        public static readonly int _altova_ti_xs_altova_gDay = 38;
+        public static readonly int _altova_ti_xs_altova_gMonth = 39;
+        public static readonly int _altova_ti_xs_altova_gMonthDay = 40;
+        public static readonly int _altova_ti_xs_altova_gYear = 41;
+        public static readonly int _altova_ti_xs_altova_gYearMonth = 42;
+        public static readonly int _altova_ti_xs_altova_hexBinary = 43;
+        public static readonly int _altova_ti_xs_altova_int2 = 44;
+        public static readonly int _altova_ti_xs_altova_integer = 45;
+        public static readonly int _altova_ti_xs_altova_language = 46;
+        public static readonly int _altova_ti_xs_altova_long2 = 47;
+        public static readonly int _altova_ti_xs_altova_negativeInteger = 48;
+        public static readonly int _altova_ti_xs_altova_nonNegativeInteger = 49;
+        public static readonly int _altova_ti_xs_altova_nonPositiveInteger = 50;
+        public static readonly int _altova_ti_xs_altova_normalizedString = 51;
+        public static readonly int _altova_ti_xs_altova_positiveInteger = 52;
+        public static readonly int _altova_ti_xs_altova_short2 = 53;
+        public static readonly int _altova_ti_xs_altova_string2 = 54;
+        public static readonly int _altova_ti_xs_altova_time = 55;
+        public static readonly int _altova_ti_xs_altova_token = 56;
+        public static readonly int _altova_ti_xs_altova_unsignedByte = 57;
+        public static readonly int _altova_ti_xs_altova_unsignedInt = 58;
+        public static readonly int _altova_ti_xs_altova_unsignedLong = 59;
+        public static readonly int _altova_ti_xs_altova_unsignedShort = 60;
+        public static readonly int _altova_til_xs = 61;
 
 
 
@@ -142,21 +143,25 @@ namespace ExchangeFormat
         public static readonly int _altova_mif_altova_VariableType = _altova_mil_altova_RoutineType;
         public static readonly int _altova_mi_altova_VariableType_altova_unnamed = _altova_mif_altova_VariableType;
         public static readonly int _altova_mi_altova_VariableType_altova_ID = 26;
-        public static readonly int _altova_mi_altova_VariableType_altova_Size = 27;
-        public static readonly int _altova_mi_altova_VariableType_altova_Pointer = 28;
-        public static readonly int _altova_mi_altova_VariableType_altova_FixedValue = 29;
-        public static readonly int _altova_mi_altova_VariableType_altova_GlobalID = 30;
-        public static readonly int _altova_mi_altova_VariableType_altova_Fake = 31;
-        public static readonly int _altova_mil_altova_VariableType = 32;
+        public static readonly int _altova_mi_altova_VariableType_altova_Pointer = 27;
+        public static readonly int _altova_mi_altova_VariableType_altova_SizeInBytes = 28;
+        public static readonly int _altova_mi_altova_VariableType_altova_SizeMultiplier = 29;
+        public static readonly int _altova_mi_altova_VariableType_altova_FixedValue = 30;
+        public static readonly int _altova_mi_altova_VariableType_altova_GlobalID = 31;
+        public static readonly int _altova_mi_altova_VariableType_altova_Fake = 32;
+        public static readonly int _altova_mil_altova_VariableType = 33;
 
         public static readonly int _altova_mif_altova_myVariableType = _altova_mil_altova_VariableType;
         public static readonly int _altova_mi_altova_myVariableType_altova_unnamed = _altova_mif_altova_myVariableType;
-        public static readonly int _altova_mil_altova_myVariableType = 33;
+        public static readonly int _altova_mil_altova_myVariableType = 34;
 
-        public static readonly int _altova_mif_altova_SizeType = _altova_mil_altova_myVariableType;
-        public static readonly int _altova_mil_altova_SizeType = _altova_mif_altova_SizeType;
+        public static readonly int _altova_mif_altova_SizeInBytesType = _altova_mil_altova_myVariableType;
+        public static readonly int _altova_mil_altova_SizeInBytesType = _altova_mif_altova_SizeInBytesType;
 
-        public static readonly int _altova_mif_altova_StatementTypeType = _altova_mil_altova_SizeType;
+        public static readonly int _altova_mif_altova_SizeMultiplierType = _altova_mil_altova_SizeInBytesType;
+        public static readonly int _altova_mil_altova_SizeMultiplierType = _altova_mif_altova_SizeMultiplierType;
+
+        public static readonly int _altova_mif_altova_StatementTypeType = _altova_mil_altova_SizeMultiplierType;
         public static readonly int _altova_mil_altova_StatementTypeType = _altova_mif_altova_StatementTypeType;
 
         public static readonly int _altova_mif_xs_altova_ENTITIES = _altova_mil_altova_StatementTypeType;
@@ -197,7 +202,7 @@ namespace ExchangeFormat
 
         public static readonly int _altova_mif_xs_altova_anyType = _altova_mil_xs_altova_anySimpleType;
         public static readonly int _altova_mi_xs_altova_anyType_altova_unnamed = _altova_mif_xs_altova_anyType;
-        public static readonly int _altova_mil_xs_altova_anyType = 34;
+        public static readonly int _altova_mil_xs_altova_anyType = 35;
 
         public static readonly int _altova_mif_xs_altova_anyURI = _altova_mil_xs_altova_anyType;
         public static readonly int _altova_mil_xs_altova_anyURI = _altova_mif_xs_altova_anyURI;
@@ -335,7 +340,7 @@ namespace ExchangeFormat
 			new TypeInfo( binder, _altova_ni, "myVariable", _altova_ti_xs_altova_string2, _altova_mif_altova_myVariable, _altova_mil_altova_myVariable,  
 				new FacetInfo[]
 				{
-					new FacetInfo (null, "pattern", "[^\"\\r\\n]*", 0 ), 
+					new FacetInfo (null, "pattern", "[vtcfd]_ID_[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}", 0 ), 
 				},
 				WhitespaceType.Unknown, Altova.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _altova_ni, "Exchange", 0, _altova_mif_altova_Exchange2, _altova_mil_altova_Exchange2,  null, 				WhitespaceType.Unknown ),
@@ -353,16 +358,18 @@ namespace ExchangeFormat
 			new TypeInfo( binder, _altova_ni, "", _altova_ti_xs_altova_anyType, _altova_mif_altova_RoutineType, _altova_mil_altova_RoutineType,  null, 				WhitespaceType.Unknown ),
 			new TypeInfo( binder, _altova_ni, "", _altova_ti_altova_myVariableType, _altova_mif_altova_VariableType, _altova_mil_altova_VariableType,  null, 				WhitespaceType.Unknown, Altova.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _altova_ni, "", 0, _altova_mif_altova_myVariableType, _altova_mil_altova_myVariableType,  null, 				WhitespaceType.Unknown, Altova.Xml.Xs.AnySimpleTypeFormatter ),
-			new TypeInfo( binder, _altova_ni, "", _altova_ti_xs_altova_string2, _altova_mif_altova_SizeType, _altova_mil_altova_SizeType,  
+			new TypeInfo( binder, _altova_ni, "", _altova_ti_xs_altova_integer, _altova_mif_altova_SizeInBytesType, _altova_mil_altova_SizeInBytesType,  
 				new FacetInfo[]
 				{
-					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "word", 0 ), 
-					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "dword", 0 ), 
-					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "byte", 0 ), 
-					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "qword", 0 ), 
-					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "reserved", 0 ), 
+					new FacetInfo (null, "minExclusive", "0", 0 ), 
 				},
-				WhitespaceType.Unknown, Altova.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Unknown, Altova.Xml.Xs.DecimalFormatter ),
+			new TypeInfo( binder, _altova_ni, "", _altova_ti_xs_altova_integer, _altova_mif_altova_SizeMultiplierType, _altova_mil_altova_SizeMultiplierType,  
+				new FacetInfo[]
+				{
+					new FacetInfo (null, "minExclusive", "0", 0 ), 
+				},
+				WhitespaceType.Unknown, Altova.Xml.Xs.DecimalFormatter ),
 			new TypeInfo( binder, _altova_ni, "", _altova_ti_xs_altova_string2, _altova_mif_altova_StatementTypeType, _altova_mil_altova_StatementTypeType,  
 				new FacetInfo[]
 				{
@@ -679,8 +686,9 @@ namespace ExchangeFormat
 
 			new MemberInfo (binder, "", "", _altova_ti_altova_VariableType, _altova_ti_altova_myVariable, MemberFlags.None|MemberFlags.IsAttribute, 1, 1),
 			new MemberInfo (binder, "", "ID", _altova_ti_altova_VariableType, _altova_ti_altova_myID, MemberFlags.None|MemberFlags.IsAttribute, 1, 1),
-			new MemberInfo (binder, "", "Size", _altova_ti_altova_VariableType, _altova_ti_altova_SizeType, MemberFlags.None|MemberFlags.IsAttribute, 1, 1),
 			new MemberInfo (binder, "", "Pointer", _altova_ti_altova_VariableType, _altova_ti_xs_altova_boolean, MemberFlags.None|MemberFlags.IsAttribute, 1, 1),
+			new MemberInfo (binder, "", "SizeInBytes", _altova_ti_altova_VariableType, _altova_ti_altova_SizeInBytesType, MemberFlags.None|MemberFlags.IsAttribute, 1, 1),
+			new MemberInfo (binder, "", "SizeMultiplier", _altova_ti_altova_VariableType, _altova_ti_altova_SizeMultiplierType, MemberFlags.None|MemberFlags.IsAttribute, 0, 1),
 			new MemberInfo (binder, "", "FixedValue", _altova_ti_altova_VariableType, _altova_ti_xs_altova_string2, MemberFlags.None|MemberFlags.IsAttribute, 0, 1),
 			new MemberInfo (binder, "", "GlobalID", _altova_ti_altova_VariableType, _altova_ti_xs_altova_string2, MemberFlags.None|MemberFlags.IsAttribute, 0, 1),
 			new MemberInfo (binder, "", "Fake", _altova_ti_altova_VariableType, _altova_ti_xs_altova_boolean, MemberFlags.None|MemberFlags.IsAttribute, 0, 1),

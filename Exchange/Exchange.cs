@@ -1073,8 +1073,9 @@ namespace ExchangeFormat
         private void instantiateMembers()
         {
             ID = new MemberAttribute_ID(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_ID]);
-            Size = new MemberAttribute_Size(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_Size]);
             Pointer = new MemberAttribute_Pointer(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_Pointer]);
+            SizeInBytes = new MemberAttribute_SizeInBytes(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_SizeInBytes]);
+            SizeMultiplier = new MemberAttribute_SizeMultiplier(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_SizeMultiplier]);
             FixedValue = new MemberAttribute_FixedValue(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_FixedValue]);
             GlobalID = new MemberAttribute_GlobalID(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_GlobalID]);
             Fake = new MemberAttribute_Fake(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_Fake]);
@@ -1110,45 +1111,6 @@ namespace ExchangeFormat
 
             public Altova.Xml.Meta.Attribute Info { get { return new Altova.Xml.Meta.Attribute(info); } }
         }
-        public MemberAttribute_Size Size;
-        public class MemberAttribute_Size
-        {
-            private Altova.Xml.TypeBase owner;
-            private Altova.TypeInfo.MemberInfo info;
-            public MemberAttribute_Size(Altova.Xml.TypeBase owner, Altova.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
-            public string Value
-            {
-                get
-                {
-                    return (string)Altova.Xml.XmlTreeOperations.CastToString(Altova.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
-                }
-                set
-                {
-                    Altova.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
-                }
-            }
-            public bool Exists() { return owner.GetAttribute(info) != null; }
-            public void Remove() { owner.RemoveAttribute(info); }
-
-            public Altova.Xml.Meta.Attribute Info { get { return new Altova.Xml.Meta.Attribute(info); } }
-
-
-            public SizeType.EnumValues EnumerationValue
-            {
-                get
-                {
-                    return (SizeType.EnumValues)GetEnumerationIndex(info, Altova.Xml.XmlTreeOperations.CastToString(Altova.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info), 0, 5);
-                }
-
-                set
-                {
-                    if ((int)value >= 0 && (int)value < 5)
-                        Altova.Xml.XmlTreeOperations.SetValue(owner.Node, info, info.DataType.facets[(int)value + 0].stringValue);
-                    else
-                        throw new System.IndexOutOfRangeException();
-                }
-            }
-        }
         public MemberAttribute_Pointer Pointer;
         public class MemberAttribute_Pointer
         {
@@ -1160,6 +1122,50 @@ namespace ExchangeFormat
                 get
                 {
                     return (bool)Altova.Xml.XmlTreeOperations.CastToBool(Altova.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                }
+                set
+                {
+                    Altova.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                }
+            }
+            public bool Exists() { return owner.GetAttribute(info) != null; }
+            public void Remove() { owner.RemoveAttribute(info); }
+
+            public Altova.Xml.Meta.Attribute Info { get { return new Altova.Xml.Meta.Attribute(info); } }
+        }
+        public MemberAttribute_SizeInBytes SizeInBytes;
+        public class MemberAttribute_SizeInBytes
+        {
+            private Altova.Xml.TypeBase owner;
+            private Altova.TypeInfo.MemberInfo info;
+            public MemberAttribute_SizeInBytes(Altova.Xml.TypeBase owner, Altova.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            public decimal Value
+            {
+                get
+                {
+                    return (decimal)Altova.Xml.XmlTreeOperations.CastToDecimal(Altova.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                }
+                set
+                {
+                    Altova.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                }
+            }
+            public bool Exists() { return owner.GetAttribute(info) != null; }
+            public void Remove() { owner.RemoveAttribute(info); }
+
+            public Altova.Xml.Meta.Attribute Info { get { return new Altova.Xml.Meta.Attribute(info); } }
+        }
+        public MemberAttribute_SizeMultiplier SizeMultiplier;
+        public class MemberAttribute_SizeMultiplier
+        {
+            private Altova.Xml.TypeBase owner;
+            private Altova.TypeInfo.MemberInfo info;
+            public MemberAttribute_SizeMultiplier(Altova.Xml.TypeBase owner, Altova.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            public decimal Value
+            {
+                get
+                {
+                    return (decimal)Altova.Xml.XmlTreeOperations.CastToDecimal(Altova.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
@@ -1297,22 +1303,12 @@ namespace ExchangeFormat
 
     } // class myVariableType
 
-    public class SizeType : Altova.Xml.TypeBase
+    public class SizeInBytesType : Altova.Xml.TypeBase
     {
-        public static Altova.Xml.Meta.SimpleType StaticInfo { get { return new Altova.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._altova_ti_altova_SizeType]); } }
+        public static Altova.Xml.Meta.SimpleType StaticInfo { get { return new Altova.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._altova_ti_altova_SizeInBytesType]); } }
 
 
-        public enum EnumValues
-        {
-            eword = 0, // word
-            edword = 1, // dword
-            ebyte = 2, // byte
-            eqword = 3, // qword
-            ereserved = 4, // reserved
-            Invalid = -1, // Invalid value
-        };
-
-        public SizeType(System.Xml.XmlNode init)
+        public SizeInBytesType(System.Xml.XmlNode init)
             : base(init)
         {
             instantiateMembers();
@@ -1329,7 +1325,31 @@ namespace ExchangeFormat
 
         // Elements
 
-    } // class SizeType
+    } // class SizeInBytesType
+
+    public class SizeMultiplierType : Altova.Xml.TypeBase
+    {
+        public static Altova.Xml.Meta.SimpleType StaticInfo { get { return new Altova.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._altova_ti_altova_SizeMultiplierType]); } }
+
+
+        public SizeMultiplierType(System.Xml.XmlNode init)
+            : base(init)
+        {
+            instantiateMembers();
+        }
+
+        private void instantiateMembers()
+        {
+
+        }
+
+
+        // Attributes
+
+
+        // Elements
+
+    } // class SizeMultiplierType
 
     public class StatementTypeType : Altova.Xml.TypeBase
     {
