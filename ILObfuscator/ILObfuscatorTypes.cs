@@ -274,6 +274,54 @@ namespace Obfuscator
         {
             return base.GetHashCode();
         }
+
+        /// <summary>
+        /// Gets a list of the instructions followed by this instruction
+        /// </summary>
+        /// <returns>A list of preceding instructions (or empty list if no such found)</returns>
+        public List<Instruction> GetPrecedingInstructions()
+        {
+            List<Instruction> preceding = new List<Instruction>();
+            int number = parent.Instructions.BinarySearch(this);
+            if (number > 0)
+            {
+                preceding.Add(parent.Instructions[number - 1]);
+                return preceding;
+            }
+            else if (number == 0)
+            {
+                foreach (BasicBlock bb in parent.getPredecessors)
+                {
+                    preceding.Add(bb.Instructions[bb.Instructions.Count - 1]);
+                }
+                return preceding;
+            }
+            else return null;
+        }
+
+        /// <summary>
+        /// Gets a list of the instructions following this instruction
+        /// </summary>
+        /// <returns>A list of following instructions (or empty list if no such found)</returns>
+        public List<Instruction> GetNextInstructions()
+        {
+            List<Instruction> next = new List<Instruction>();
+            int number = parent.Instructions.BinarySearch(this);
+            if (number < parent.Instructions.Count - 1)
+            {
+                next.Add(parent.Instructions[number + 1]);
+                return next;
+            }
+            else if (number == parent.Instructions.Count - 1)
+            {
+                foreach (BasicBlock bb in parent.getSuccessors)
+                {
+                    next.Add(bb.Instructions[0]);
+                }
+                return next;
+            }
+            else return null;
+        }
     }
 
 
