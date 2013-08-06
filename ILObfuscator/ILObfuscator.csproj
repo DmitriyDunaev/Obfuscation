@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataAnalysis_reserved.cs" />
+    <Compile Include="dead_var_state_check.cs" />
     <Compile Include="DataAnalysis.cs" />
     <Compile Include="meshing_algorithm.cs" />
     <Compile Include="constant_calc_algortihm.cs" />
