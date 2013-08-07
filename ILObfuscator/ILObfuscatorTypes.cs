@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define WORKING_IN_PROGRESS
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -329,6 +331,69 @@ namespace Obfuscator
             }
             else return null;
         }
+
+#if !WORKING_IN_PROGRESS
+
+        /*
+         * There will be two cases when we call this function:
+         * 
+         * First is when we insert a new fake instruction, which changes the states
+         * of the dead variables in the following instructions.
+         * 
+         * Second, when we insert a whole bunch of fake basic blocks, and we call it
+         * for all the instructions present in the function, so that in the end we
+         * get appropriate states everywhere.
+         * (Naturally in this second case it won't do anything for the most of the instructions.)
+         */
+        /// <summary>
+        /// Refreshes the state of all following instructions' dead variables.
+        /// </summary>
+        public void RefreshNext()
+        {
+            /*
+             * If this is a fake instruction, then it works on the dead variables,
+             * consequently it changes their states.
+             * We should be able to determine from the TAC instruction that which
+             * dead variables' ( <- RefVariables ) state changes to what.
+             * 
+             * QUESTION: should this be here, or should this be an independent fuction?
+             */
+            if (isFake)
+                setStates();
+
+            /*
+             * For every used dead variable in the instruction we should push it's
+             * (changed) state through all the following instructions, so it will get
+             * the appropriate state everywhere.
+             */
+            foreach (Variable var in RefVariables)
+            {
+                if (DeadVariables.ContainsKey(var))
+                {
+                    foreach (Instruction ins in GetNextInstructions())
+                        ins.RefreshNext(var, DeadVariables[var]);
+                }
+            }
+        }
+
+        /*
+         * This function is called when we encounter a change in a dead variable's state.
+         * So we want to push this change through all the instructions, and deal with
+         * this variable only. That's why we don't need to check this instruction
+         * if it changes the state, because the change comes from above.
+         * 
+         * (the statements above may not be true. requires some more thinking...)
+         */
+        private void RefreshNext(Variable var, Variable.State state)
+        {
+            if (DeadVariables[var] != state)
+            {
+                DeadVariables[var] = state;
+                foreach (Instruction ins in GetNextInstructions())
+                    ins.RefreshNext(var, state);
+            }
+        }
+#endif
     }
 
 

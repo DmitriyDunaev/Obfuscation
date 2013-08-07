@@ -18,6 +18,11 @@ namespace Obfuscator
         private static List<string> done_ids = new List<string>();
 
         /// <summary>
+        /// It tells us how many times has the algortihm run so far.
+        /// </summary>
+        private static int counter = 0;
+
+        /// <summary>
         /// Fills the DeadVariables list of the function's instructions with proper information.
         /// </summary>
         /// <param name="func">Actual Function</param>
@@ -28,8 +33,15 @@ namespace Obfuscator
              * list of dead variables which is filled with all the variabes present in
              * the function. During the algorithm we will remove the variables from these
              * lists that are not really dead at the given point.
+             * 
+             * If it isn't the first run of the algorithm, then we shouldn't fill it with
+             * all the variables again, rather with the ones not present in the list already.
+             * So we won't spoil the information we have of them already.
              */
-            SetAllVariablesAsDead(func, Variable.State.Free);
+            if (counter == 0)
+                SetAllVariablesAsDead(func, Variable.State.Free);
+            else
+                RefreshVariables(func, Variable.State.Free);
 
             /*
              * We start from the point called "fake exit block", the one and only
@@ -54,17 +66,23 @@ namespace Obfuscator
         private static void recursive(BasicBlock actual)
         {
             /*
-             * We deal with every instruction in the basic block,
+             * We deal with every original(1) instruction in the basic block,
              * and in every instruction we deal with every referenced variable.
              * The referenced variables should be removed from the dead variables list
              * in all the instructions accesible from here.
+             * 
+             * (1): Only the original instructions determine whether a variable is dead
+             *      or not, because the fake instructions work with dead variables only.
              *
              * deal_with_var() - it will be described in detail in the forthcoming parts
              */
             foreach (Instruction ins in actual.Instructions)
             {
-                foreach (Variable var in ins.RefVariables)
-                    deal_with_var(var, ins);
+                if (ins.isFake == false) 
+                {
+                    foreach (Variable var in ins.RefVariables)
+                        deal_with_var(var, ins);
+                }
             }
 
             /*
@@ -137,6 +155,23 @@ namespace Obfuscator
                     inst.DeadVariables.Clear();
                     foreach (Variable var in func.LocalVariables)
                         inst.DeadVariables.Add(var, state);
+                }
+        }
+
+        /// <summary>
+        /// Fills the DeadVariables lists with the variables that aren't already in them.
+        /// </summary>
+        /// <param name="func">Actual Function</param>
+        private static void RefreshVariables(Function func, Variable.State state)
+        {
+            foreach (BasicBlock bb in func.BasicBlocks)
+                foreach (Instruction inst in bb.Instructions)
+                {
+                    foreach (Variable var in func.LocalVariables)
+                    {
+                        if ( !inst.DeadVariables.ContainsKey(var) )
+                            inst.DeadVariables.Add(var, state);
+                    }
                 }
         }
 
