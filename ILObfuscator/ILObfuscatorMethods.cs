@@ -103,15 +103,8 @@ namespace Obfuscator
 #if !WORKING_IN_PROGRESS
 
         /*
-         * There will be two cases when we call this function:
-         * 
-         * First is when we insert a new fake instruction, which changes the states
-         * of the dead variables in the following instructions.
-         * 
-         * Second, when we insert a whole bunch of fake basic blocks, and we call it
-         * for all the instructions present in the function, so that in the end we
-         * get appropriate states everywhere.
-         * (Naturally in this second case it won't do anything for the most of the instructions.)
+         * When we modify a fake instruction, we change the states in it, so we
+         * have to update the dead variables in the following instructions.
          */
         /// <summary>
         /// Refreshes the state of all following instructions' dead variables.
@@ -119,15 +112,10 @@ namespace Obfuscator
         public void RefreshNext()
         {
             /*
-             * If this is a fake instruction, then it works on the dead variables,
-             * consequently it changes their states.
              * We should be able to determine from the TAC instruction that which
              * dead variables' ( <- RefVariables ) state changes to what.
-             * 
-             * QUESTION: should this be here, or should this be an independent fuction?
              */
-            if (isFake)
-                setStates();
+              setStates();
 
             /*
              * For every used dead variable in the instruction we should push it's

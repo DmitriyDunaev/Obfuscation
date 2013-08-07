@@ -18,11 +18,6 @@ namespace Obfuscator
         private static List<string> done_ids = new List<string>();
 
         /// <summary>
-        /// It tells us how many times has the algortihm run so far.
-        /// </summary>
-        private static int counter = 0;
-
-        /// <summary>
         /// Fills the DeadVariables list of the function's instructions with proper information.
         /// </summary>
         /// <param name="func">Actual Function</param>
@@ -33,15 +28,8 @@ namespace Obfuscator
              * list of dead variables which is filled with all the variabes present in
              * the function. During the algorithm we will remove the variables from these
              * lists that are not really dead at the given point.
-             * 
-             * If it isn't the first run of the algorithm, then we shouldn't fill it with
-             * all the variables again, rather with the ones not present in the list already.
-             * So we won't spoil the information we have of them already.
              */
-            if (counter == 0)
-                SetAllVariablesAsDead(func, Variable.State.Free);
-            else
-                RefreshVariables(func, Variable.State.Free);
+             SetAllVariablesAsDead(func, Variable.State.Free);
 
             /*
              * We start from the point called "fake exit block", the one and only
@@ -56,17 +44,25 @@ namespace Obfuscator
              * referenced variables. At the and of this we will have the list of the dead
              * variables for all instructions.
              */
-            recursive(lastblock);
+            recursive(lastblock, Variable.State.Free);
 
-            /* Now that the algorithm has ended, we step the counter. */
-            counter++;
+            /* ---------- Here comes the detection of NOT_INITIALIZED variables. ---------- */
+
+            done_ids.Clear();
+
+            /*
+             * Like as above, we should now start with filled DeadVariables lists, and we get
+             * them out if they shouldn't be there. But now, we have to pay attention to the ones
+             * with FREE state, because we don't want to do anything to that ones.
+             */
+            RefreshVariables(func, Variable.State.Not_Initialized);
         }
 
         /// <summary>
         /// Recursive function to get to all the instructions of the Function.
         /// </summary>
         /// <param name="actual">Actual BasicBlock</param>
-        private static void recursive(BasicBlock actual)
+        private static void recursive(BasicBlock actual, Variable.State state)
         {
             /*
              * We deal with every original(1) instruction in the basic block,
@@ -84,7 +80,7 @@ namespace Obfuscator
                 if (ins.isFake == false) 
                 {
                     foreach (Variable var in ins.RefVariables)
-                        deal_with_var(var, ins);
+                        deal_with_var(var, ins, state);
                 }
             }
 
@@ -99,10 +95,11 @@ namespace Obfuscator
              * with its predecessors recursively.
              * We only should deal with the basic blocks not marked as done.
              */
-            foreach (BasicBlock block in actual.getPredecessors)
+            List<BasicBlock> bblist = (state == Variable.State.Free) ? actual.getPredecessors : actual.getSuccessors;
+            foreach (BasicBlock block in bblist)
             {
                 if ( !done_ids.Contains(block.ID) )
-                    recursive(block);
+                    recursive(block, state);
             }
         }
 
@@ -111,7 +108,7 @@ namespace Obfuscator
         /// </summary>
         /// <param name="var">the Variable we are dealing with</param>
         /// <param name="ins">Actual Instruction</param>
-        private static void deal_with_var(Variable var, Instruction ins)
+        private static void deal_with_var(Variable var, Instruction ins, Variable.State state)
         {
             /* 
              * This variable is used somewhere after this instruction, so it is alive here.
@@ -129,20 +126,20 @@ namespace Obfuscator
              *      - if we are at the beginning of the first basic block (the one with no predecessors)
              *        then it is an empty list, meaning that we have nothing left to do here
              */
-            List<Instruction> previous = ins.GetPrecedingInstructions();
+            List<Instruction> inslist = (state == Variable.State.Free) ? ins.GetPrecedingInstructions() : ins.GetNextInstructions();
 
             /*
              * Now we have that list of instructions, we should do the same thing we have done
              * to this instruction, assuming that it had not been done already.
              */
-            foreach (Instruction i in previous)
+            foreach (Instruction i in inslist)
             {
                 /*
                  * If the variable is not in the instruction's dead variables list, then it indicates
                  * that we have dealt with this instruction.
                  */
                 if ( i.DeadVariables.ContainsKey(var) )
-                    deal_with_var(var, i);
+                    deal_with_var(var, i, state);
             }
         }
 
