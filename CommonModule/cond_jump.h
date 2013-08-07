@@ -12,7 +12,7 @@ class Cond_jump : public CThreeAdressInstruction
 	COperand* ops[2];
 	int opnum;
     int i;
-	CThreeAdressInstruction* target;
+	string target;
 public:
     Cond_jump(string s, int i, CVariables* vars);
     string gets() { return op; }
@@ -20,8 +20,8 @@ public:
 	void seti( int in ) { i = in; }
     void print(stringstream& s);
 
-	CThreeAdressInstruction* gettarget() {return target;}
-	void settarget( CThreeAdressInstruction* t ) { target = t; }
+	string gettarget() {return target;}
+	void settarget( string t ) { target = t; }
 };
 
 #endif // UNC_JUMP_H

@@ -28,7 +28,7 @@ public:
     virtual bool isuncjmp() { return false; }
     virtual bool isexit() {return false;}
     virtual void print(stringstream& s) {}
-	virtual void settarget( CThreeAdressInstruction* t ) {}
+	virtual void settarget( string t ) {}
 	virtual void seti(int i) {}
 	virtual std::string gets() { return ""; }
 	

@@ -26,11 +26,11 @@ void Cond_jump::print(stringstream& s)
 			s << "&lt;=";
 		s << " " << ops[1]->getname();
 	}
-	s << " goto ID_" << target->getid();
+	s << " goto ID_" << target;
     s << "</Instruction>"<< std::endl;
 }
 
- Cond_jump::Cond_jump(std::string s, int i, CVariables* vars): i(i), target(this)
+ Cond_jump::Cond_jump(std::string s, int i, CVariables* vars): i(i)
  {
 	 if (((s.find("=")!= string::npos) || (s.find(">")!= string::npos) || (s.find("<")!= string::npos)))
 	 {

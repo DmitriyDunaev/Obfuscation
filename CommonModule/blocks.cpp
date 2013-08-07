@@ -110,7 +110,7 @@ void Function::setjumps()
 				succ = findjump( lab );
 				while (succ != NULL )
 				{
-					succ->back()->settarget( (*i)->frontplus() );
+					succ->back()->settarget( (*i)->getid() );
 					succ->back()->seti( -1 );
 					succ = findjump( lab );
 				}

@@ -9,18 +9,18 @@ class Unc_jump : public CThreeAdressInstruction
 {
     string label;
     int i;
-	CThreeAdressInstruction* target;
+	string target;
 	COperand* ret;
 public:
-    Unc_jump(string s, int i, COperand* r = nullptr):label(s), i(i), target(this), ret(r) {}
+    Unc_jump(string s, int i, COperand* r = nullptr):label(s), i(i), ret(r) {}
     string gets() { return label; }
     int geti() { return i; }
 	void seti ( int in ) { i = in; }
     bool isuncjmp() { return true; }
     void print(stringstream& s);
 	
-	CThreeAdressInstruction* gettarget() {return target;}
-	void settarget( CThreeAdressInstruction* t ) { target = t; }
+	string gettarget() {return target;}
+	void settarget( string t ) { target = t; }
 };
 
 #endif // UNC_JUMP_H

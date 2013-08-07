@@ -7,7 +7,7 @@ void Unc_jump::print(stringstream& s)
 	
 	if ( i > -3 )
 	{
-		if ( ret == nullptr) s << "UnconditionalJump" << "\" >" << "goto ID_" << target->getid();
+		if ( ret == nullptr) s << "UnconditionalJump" << "\" >" << "goto ID_" << target;
 		else { s << "Procedural" << "\" RefVars=\"";
 		if (ret->gettype() != constant) s << "ID_" << ret->getid();
 		s << "\">" << "return";
