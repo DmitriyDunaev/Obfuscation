@@ -71,14 +71,14 @@
 				<xs:extension base="myVariable">
 					<xs:attribute name="ID" type="myID" use="required"/>
 					<xs:attribute name="Pointer" type="xs:boolean" use="required"/>
-					<xs:attribute name="SizeInBytes" use="required">
+					<xs:attribute name="MemoryRegionSize" use="required">
 						<xs:simpleType>
 							<xs:restriction base="xs:integer">
 								<xs:minExclusive value="0"/>
 							</xs:restriction>
 						</xs:simpleType>
 					</xs:attribute>
-					<xs:attribute name="SizeMultiplier" use="optional" default="1">
+					<xs:attribute name="MemoryUnitSize" use="optional">
 						<xs:simpleType>
 							<xs:restriction base="xs:integer">
 								<xs:minExclusive value="0"/>

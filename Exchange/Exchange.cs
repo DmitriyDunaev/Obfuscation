@@ -1074,8 +1074,8 @@ namespace ExchangeFormat
         {
             ID = new MemberAttribute_ID(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_ID]);
             Pointer = new MemberAttribute_Pointer(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_Pointer]);
-            SizeInBytes = new MemberAttribute_SizeInBytes(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_SizeInBytes]);
-            SizeMultiplier = new MemberAttribute_SizeMultiplier(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_SizeMultiplier]);
+            MemoryRegionSize = new MemberAttribute_MemoryRegionSize(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_MemoryRegionSize]);
+            MemoryUnitSize = new MemberAttribute_MemoryUnitSize(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_MemoryUnitSize]);
             FixedValue = new MemberAttribute_FixedValue(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_FixedValue]);
             GlobalID = new MemberAttribute_GlobalID(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_GlobalID]);
             Fake = new MemberAttribute_Fake(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_Fake]);
@@ -1133,12 +1133,12 @@ namespace ExchangeFormat
 
             public Altova.Xml.Meta.Attribute Info { get { return new Altova.Xml.Meta.Attribute(info); } }
         }
-        public MemberAttribute_SizeInBytes SizeInBytes;
-        public class MemberAttribute_SizeInBytes
+        public MemberAttribute_MemoryRegionSize MemoryRegionSize;
+        public class MemberAttribute_MemoryRegionSize
         {
             private Altova.Xml.TypeBase owner;
             private Altova.TypeInfo.MemberInfo info;
-            public MemberAttribute_SizeInBytes(Altova.Xml.TypeBase owner, Altova.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            public MemberAttribute_MemoryRegionSize(Altova.Xml.TypeBase owner, Altova.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public decimal Value
             {
                 get
@@ -1155,12 +1155,12 @@ namespace ExchangeFormat
 
             public Altova.Xml.Meta.Attribute Info { get { return new Altova.Xml.Meta.Attribute(info); } }
         }
-        public MemberAttribute_SizeMultiplier SizeMultiplier;
-        public class MemberAttribute_SizeMultiplier
+        public MemberAttribute_MemoryUnitSize MemoryUnitSize;
+        public class MemberAttribute_MemoryUnitSize
         {
             private Altova.Xml.TypeBase owner;
             private Altova.TypeInfo.MemberInfo info;
-            public MemberAttribute_SizeMultiplier(Altova.Xml.TypeBase owner, Altova.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            public MemberAttribute_MemoryUnitSize(Altova.Xml.TypeBase owner, Altova.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public decimal Value
             {
                 get
@@ -1303,12 +1303,12 @@ namespace ExchangeFormat
 
     } // class myVariableType
 
-    public class SizeInBytesType : Altova.Xml.TypeBase
+    public class MemoryRegionSizeType : Altova.Xml.TypeBase
     {
-        public static Altova.Xml.Meta.SimpleType StaticInfo { get { return new Altova.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._altova_ti_altova_SizeInBytesType]); } }
+        public static Altova.Xml.Meta.SimpleType StaticInfo { get { return new Altova.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._altova_ti_altova_MemoryRegionSizeType]); } }
 
 
-        public SizeInBytesType(System.Xml.XmlNode init)
+        public MemoryRegionSizeType(System.Xml.XmlNode init)
             : base(init)
         {
             instantiateMembers();
@@ -1325,14 +1325,14 @@ namespace ExchangeFormat
 
         // Elements
 
-    } // class SizeInBytesType
+    } // class MemoryRegionSizeType
 
-    public class SizeMultiplierType : Altova.Xml.TypeBase
+    public class MemoryUnitSizeType : Altova.Xml.TypeBase
     {
-        public static Altova.Xml.Meta.SimpleType StaticInfo { get { return new Altova.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._altova_ti_altova_SizeMultiplierType]); } }
+        public static Altova.Xml.Meta.SimpleType StaticInfo { get { return new Altova.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._altova_ti_altova_MemoryUnitSizeType]); } }
 
 
-        public SizeMultiplierType(System.Xml.XmlNode init)
+        public MemoryUnitSizeType(System.Xml.XmlNode init)
             : base(init)
         {
             instantiateMembers();
@@ -1349,7 +1349,7 @@ namespace ExchangeFormat
 
         // Elements
 
-    } // class SizeMultiplierType
+    } // class MemoryUnitSizeType
 
     public class StatementTypeType : Altova.Xml.TypeBase
     {

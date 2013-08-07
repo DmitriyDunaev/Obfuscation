@@ -184,10 +184,10 @@ namespace Obfuscator
         {
             get { return _ID.ToString(); }
         }
-        public int size { get; private set; }
+        public int memoryUnitSize { get; private set; }
         public bool pointer { get; private set; }
         public string name { get; private set; }
-        public int sizeMultiplier { get; private set; }
+        public int memoryRegionSize { get; private set; }
         public string fixedValue { get; private set; }
         public string globalID { get; private set; }
         public bool fake { get; private set; }
@@ -196,10 +196,11 @@ namespace Obfuscator
         // Constructor
         public Variable(VariableType var, Kind kind1)
         {
+
             _ID = new IDManager(var.ID.Value);
             name = var.Value;
-            size = Convert.ToInt32(var.SizeInBytes.Value);
-            sizeMultiplier = var.SizeMultiplier.Exists() ? Convert.ToInt32(var.SizeMultiplier.Value) : 1;
+            memoryRegionSize = Convert.ToInt32(var.MemoryRegionSize.Value);
+            memoryUnitSize = var.MemoryUnitSize.Exists() ? Convert.ToInt32(var.MemoryUnitSize.Value) : 1;
             pointer = var.Pointer.Value;
             fixedValue = var.FixedValue.Exists() ? var.FixedValue.Value : string.Empty;
             globalID = var.GlobalID.Exists() ? var.GlobalID.Value : string.Empty;

@@ -225,8 +225,8 @@ namespace Obfuscator
     {
         public void Validate()
         {
-            if (!pointer && sizeMultiplier != 1)
-                throw new ValidatorException("Non-pointer variable should have SizeMultiplier = 1. Variable: " + ID);
+            if (!pointer && (memoryUnitSize != memoryRegionSize))
+                throw new ValidatorException("Non-pointer variable cannot have MemoryUnitSize not equal to MemoryRegionSize. Variable: " + ID);
         }
     }
 
