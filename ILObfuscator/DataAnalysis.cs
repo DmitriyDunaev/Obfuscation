@@ -17,45 +17,57 @@ namespace Obfuscator
         /// </summary>
         private static List<string> done_ids = new List<string>();
 
+        /*
+         * This is a wrapper function around the real algorithm.
+         * We have to find the dead variables in two steps: the FREE ones in one,
+         * and the NOT_INITIALIZED ones in the other.
+         * The order is not important, as I see it's fully changeable, and it does
+         * not influence the result.
+         */
         /// <summary>
         /// Fills the DeadVariables list of the function's instructions with proper information.
         /// </summary>
         /// <param name="func">Actual Function</param>
         public static void DeadVarsAlgortihm(Function func)
         {
+            /* First we clear all the DeadVariables lists. */
+            ClearDeadVarsLists(func);
+
+            /* Then we search for the FREE and the NOT_INITIALIZED dead variables. */
+            _DeadVarsAlgortihm(func, Variable.State.Free);
+            _DeadVarsAlgortihm(func, Variable.State.Not_Initialized);
+        }
+
+        private static void _DeadVarsAlgortihm(Function func, Variable.State state)
+        {
             /*
              * Before the algorithm starts we ensure that all instructions have a
-             * list of dead variables which is filled with all the variabes present in
+             * list of dead variables which is filled with all the variables present in
              * the function. During the algorithm we will remove the variables from these
              * lists that are not really dead at the given point.
              */
-             SetAllVariablesAsDead(func, Variable.State.Free);
+             SetAllVariablesAsDead(func, state);
 
             /*
-             * We start from the point called "fake exit block", the one and only
-             * ultimate endpoint of all functions ever created. Thank you Kohlmann!
-             *
-             * GetLastBasicBlock() - it is supposed to give the function's "fake exit block"
+             * If we are going upwards, we start from the point called "fake exit block",
+             * the one and only ultimate endpoint of all functions ever created. Thank you Kohlmann!
+             * 
+             * If going downwards, we start from the very first basic block (func.BasicBlocks[0]).
              */
-            BasicBlock lastblock = func.GetLastBasicBlock();
+            BasicBlock block = (state == Variable.State.Free) ? func.GetLastBasicBlock() : func.GetFirstBasicBlock();
 
             /*
              * We go through all the instructions and deal with all their
              * referenced variables. At the and of this we will have the list of the dead
              * variables for all instructions.
              */
-            recursive(lastblock, Variable.State.Free);
-
-            /* ---------- Here comes the detection of NOT_INITIALIZED variables. ---------- */
-
-            done_ids.Clear();
+            recursive(block, state);
 
             /*
-             * Like as above, we should now start with filled DeadVariables lists, and we get
-             * them out if they shouldn't be there. But now, we have to pay attention to the ones
-             * with FREE state, because we don't want to do anything to that ones.
+             * In the end we clear the done_ids list, so it won't influence the algorithm's
+             * future runs (if these will exist).
              */
-            RefreshVariables(func, Variable.State.Not_Initialized);
+            done_ids.Clear();
         }
 
         /// <summary>
@@ -138,31 +150,27 @@ namespace Obfuscator
                  * If the variable is not in the instruction's dead variables list, then it indicates
                  * that we have dealt with this instruction.
                  */
-                if ( i.DeadVariables.ContainsKey(var) )
+                if ( i.DeadVariables.ContainsKey(var) && i.DeadVariables[var] == state )
                     deal_with_var(var, i, state);
             }
         }
 
         /// <summary>
-        /// Used once by the Data Analysis Algorithm and fills all DeadVariables lists with all variables defined in the function 
+        /// Clears all the DeadVariables lists of the function's instructions.
         /// </summary>
         /// <param name="func">Actual Function</param>
-        private static void SetAllVariablesAsDead(Function func, Variable.State state)
+        private static void ClearDeadVarsLists(Function func)
         {
             foreach (BasicBlock bb in func.BasicBlocks)
                 foreach (Instruction inst in bb.Instructions)
-                {
                     inst.DeadVariables.Clear();
-                    foreach (Variable var in func.LocalVariables)
-                        inst.DeadVariables.Add(var, state);
-                }
         }
 
         /// <summary>
         /// Fills the DeadVariables lists with the variables that aren't already in them.
         /// </summary>
         /// <param name="func">Actual Function</param>
-        private static void RefreshVariables(Function func, Variable.State state)
+        private static void SetAllVariablesAsDead(Function func, Variable.State state)
         {
             foreach (BasicBlock bb in func.BasicBlocks)
                 foreach (Instruction inst in bb.Instructions)

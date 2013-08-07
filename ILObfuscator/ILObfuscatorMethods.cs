@@ -26,6 +26,11 @@ namespace Obfuscator
                     return bb;
             return null;
         }
+
+        public BasicBlock GetFirstBasicBlock()
+        {
+            return BasicBlocks[0];
+        }
     }
 
 
