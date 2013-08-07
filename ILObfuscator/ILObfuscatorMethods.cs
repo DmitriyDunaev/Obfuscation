@@ -37,14 +37,13 @@ namespace Obfuscator
         /// <param name="instruction">Instruction to be inserted</param>
         public void InsertFirstInstruction(Instruction instruction)
         {
-            if (Predecessors.Count > 0)
-            {
-                throw new ObfuscatorException("Not implemented yet!\n");
-                // Relink all GOTOs to a new inst.ID
-            }
             Instructions.Insert(0, instruction);
             instruction.parent = this;
         }
+
+    //    public BasicBlock InsertAfter(BasicBlock bbTarget)
+    //    {
+    //    }
     }
 
 
