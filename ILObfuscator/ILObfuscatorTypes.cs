@@ -197,14 +197,14 @@ namespace Obfuscator
     public partial class Instruction : IComparable, IValidate
     {
         //Attributes
-        public BasicBlock parent { get; private set; }
+        public BasicBlock parent { get; set; }
         private IDManager _ID;
         public string ID
         {
             get { return _ID.ToString(); }
         }
-        public ExchangeFormat.StatementTypeType.EnumValues statementType { get; private set; }
-        public string text { get; private set; }
+        public StatementTypeType.EnumValues statementType { get; private set; }
+        public string TACtext { get; private set; }
         public bool polyRequired { get; private set; }
         public bool isFake { get; private set; }
 
@@ -217,7 +217,7 @@ namespace Obfuscator
             parent = par;
             _ID = new IDManager(instr.ID.Value);
             statementType = instr.StatementType.EnumerationValue;
-            text = instr.Value;
+            TACtext = instr.Value;
             isFake = false;
             polyRequired = instr.PolyRequired.Exists() ? instr.PolyRequired.Value : false;
             if (instr.RefVars.Exists())
@@ -239,6 +239,38 @@ namespace Obfuscator
                 }
                 if (!instr.RefVars.Value.Split(' ').Length.Equals(RefVariables.Count))
                     throw new ValidatorException("Referenced variable was not found. Instruction: " + instr.ID.Value);
+            }
+        }
+
+        private void setInstructionValues(BasicBlock parent, StatementTypeType.EnumValues statementType, string TACtext, List<Variable> refVariables, bool polyRequired=false)
+        {
+            this._ID = new IDManager();
+            this.isFake = true;
+            this.parent = parent;
+            this.statementType = statementType;
+            this.TACtext = TACtext;
+            this.RefVariables = refVariables == null ? new List<Variable>() : refVariables;
+            this.polyRequired = polyRequired;
+        }
+
+        public Instruction(StatementTypeType.EnumValues statementType)
+        {
+            switch (statementType)
+            {
+                case StatementTypeType.EnumValues.eNoOperation:
+                    setInstructionValues(null, statementType, "nop", null);
+                    break;
+                case StatementTypeType.EnumValues.eFullAssignment:
+                case StatementTypeType.EnumValues.eUnaryAssignment:
+                case StatementTypeType.EnumValues.eCopy:
+                case StatementTypeType.EnumValues.eUnconditionalJump:
+                case StatementTypeType.EnumValues.eConditionalJump:
+                case StatementTypeType.EnumValues.eProcedural:
+                case StatementTypeType.EnumValues.eIndexedAssignment:
+                case StatementTypeType.EnumValues.ePointerAssignment:
+                case StatementTypeType.EnumValues.Invalid:
+                default:
+                    throw new ObfuscatorException("Not implemented yet!\n");
             }
         }
 

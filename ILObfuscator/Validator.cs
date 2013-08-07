@@ -41,7 +41,7 @@ namespace Obfuscator
     {
         public void Validate()
         {
-            if (this.calledFrom == ExchangeFormat.CalledFromType.EnumValues.eExternalOnly || this.calledFrom == ExchangeFormat.CalledFromType.EnumValues.eBoth)
+            if (this.calledFrom == CalledFromType.EnumValues.eExternalOnly || this.calledFrom == CalledFromType.EnumValues.eBoth)
                 if (string.IsNullOrWhiteSpace(globalID))
                     throw new ValidatorException("The function, which can be called from outside the routine, must have a non-empty GlobalID property. Function: " + this.ID);
 
@@ -140,83 +140,83 @@ namespace Obfuscator
             {
                 case StatementTypeType.EnumValues.eFullAssignment:
                     // var := var op var OR var:= var op number
-                    if (Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} [-+*/] ([vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})$", RegexOptions.None)
-                        | Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} [-+*/] ([-+]?\d+)$", RegexOptions.None))
+                    if (Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} [-+*/] ([vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})$", RegexOptions.None)
+                        | Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} [-+*/] ([-+]?\d+)$", RegexOptions.None))
                         break;
                     else
                         throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
                 case StatementTypeType.EnumValues.eUnaryAssignment:
                     // var := op var
-                    if (Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [-!] [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
+                    if (Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [-!] [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
                         break;
                     else
                         throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
                 case StatementTypeType.EnumValues.eCopy:
                     // var := var OR var := number
-                    if (Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
-                        Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := ([-+]?\d+)$", RegexOptions.None))
+                    if (Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := ([-+]?\d+)$", RegexOptions.None))
                         break;
                     else
                         throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
                 case StatementTypeType.EnumValues.eUnconditionalJump:
                     // goto ID_GUID
-                    if (Regex.IsMatch(text, @"^goto ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
+                    if (Regex.IsMatch(TACtext, @"^goto ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
                         break;
                     else
                         throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
                 case StatementTypeType.EnumValues.eConditionalJump:
                     // if var relop var goto ID_GUID OR if var relop number goto ID_GUID
-                    if (Regex.IsMatch(text, @"^if [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} (?:==|!=|>|<|>=|<=) [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} goto ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
-                        Regex.IsMatch(text, @"^if [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} (?:==|!=|>|<|>=|<=) ([-+]?\d+) goto ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
+                    if (Regex.IsMatch(TACtext, @"^if [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} (?:==|!=|>|<|>=|<=) [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} goto ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^if [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} (?:==|!=|>|<|>=|<=) ([-+]?\d+) goto ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
                         break;
                     else
                         throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
                 case StatementTypeType.EnumValues.eProcedural:
                     // param var OR param number
-                    if (Regex.IsMatch(text, @"^param [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
-                        Regex.IsMatch(text, @"^param ([-+]?\d+)$", RegexOptions.None) |
+                    if (Regex.IsMatch(TACtext, @"^param [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^param ([-+]?\d+)$", RegexOptions.None) |
                     // call some_string decimal
-                        Regex.IsMatch(text, @"^call \w+ \d+$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^call \w+ \d+$", RegexOptions.None) |
                     // call ID_GUID decimal
-                        Regex.IsMatch(text, @"^call ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \d+$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^call ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \d+$", RegexOptions.None) |
                     // return 
-                        Regex.IsMatch(text, @"^return$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^return$", RegexOptions.None) |
                     // return number
-                        Regex.IsMatch(text, @"^return ([-+]?\d+)$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^return ([-+]?\d+)$", RegexOptions.None) |
                     // return var
-                        Regex.IsMatch(text, @"^return [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^return [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
                     // retrieve var
-                        Regex.IsMatch(text, @"^retrieve [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^retrieve [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
                     // enter ID_GUID
-                        Regex.IsMatch(text, @"^enter ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^enter ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
                     // leave ID_GUID
-                        Regex.IsMatch(text, @"^leave ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) 
+                        Regex.IsMatch(TACtext, @"^leave ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) 
                         )
                         break;
                     else
                         throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
                 case StatementTypeType.EnumValues.eIndexedAssignment:
                     // var := var[number] OR var[number] := var OR var[number] = number;
-                    if (Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \[\d+\]$", RegexOptions.None) |
-                        Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \[\d+\] := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
-                        Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \[\d+\] := ([-+]?\d+)$", RegexOptions.None))
+                    if (Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \[\d+\]$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \[\d+\] := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \[\d+\] := ([-+]?\d+)$", RegexOptions.None))
                         break;
                     else
                         throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
                 case StatementTypeType.EnumValues.ePointerAssignment:
                     // var := & var
-                    if (Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := & [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                    if (Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := & [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
                     // var := * var
-                        Regex.IsMatch(text, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := \* [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := \* [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
                     // * var := var 
-                        Regex.IsMatch(text, @"^\* [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                        Regex.IsMatch(TACtext, @"^\* [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
                     // * var = number
-                        Regex.IsMatch(text, @"^\* [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := ([-+]?\d+)$", RegexOptions.None))
+                        Regex.IsMatch(TACtext, @"^\* [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := ([-+]?\d+)$", RegexOptions.None))
                         break;
                     else
                         throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
                 case StatementTypeType.EnumValues.eNoOperation:
-                    if (Regex.IsMatch(text, @"^nop$", RegexOptions.None))
+                    if (Regex.IsMatch(TACtext, @"^nop$", RegexOptions.None))
                         break;
                     else
                         throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);

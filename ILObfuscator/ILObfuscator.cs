@@ -18,6 +18,7 @@ namespace Obfuscator
             foreach (Function func in routine.Functions)
                 DataAnalysis.DeadVarsAlgortihm(func);
             routine.Validate();
+            Instruction inst = new Instruction(StatementTypeType.EnumValues.eNoOperation);
         }
     }
 }

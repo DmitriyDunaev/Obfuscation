@@ -31,6 +31,20 @@ namespace Obfuscator
 
     public partial class BasicBlock
     {
+        /// <summary>
+        /// Inserts an instruction to the beginning of a basic block
+        /// </summary>
+        /// <param name="instruction">Instruction to be inserted</param>
+        public void InsertFirstInstruction(Instruction instruction)
+        {
+            if (Predecessors.Count > 0)
+            {
+                throw new ObfuscatorException("Not implemented yet!\n");
+                // Relink all GOTOs to a new inst.ID
+            }
+            Instructions.Insert(0, instruction);
+            instruction.parent = this;
+        }
     }
 
 
@@ -83,6 +97,8 @@ namespace Obfuscator
             }
             else return null;
         }
+
+
 
 #if !WORKING_IN_PROGRESS
 
