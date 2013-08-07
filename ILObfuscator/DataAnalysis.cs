@@ -57,6 +57,9 @@ namespace Obfuscator
              * variables for all instructions.
              */
             recursive(lastblock);
+
+            /* Now that the algorithm has ended, we step the counter. */
+            counter++;
         }
 
         /// <summary>
