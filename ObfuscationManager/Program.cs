@@ -79,35 +79,18 @@ namespace ObfuscationManager
         }
 
 
-        static double srednee_primer (params int [] values)
-
- {
-
- int sum = 0;
-
- for(int i=0; i<values.Length; i++)
-
- sum=sum+values[i];
-
- return (sum/values.Length);
-
- }
-
-
         [STAThread]
         static int Main(string[] args)
         {
-            System.Collections.Generic.List<int> a = new System.Collections.Generic.List<int>();
-            System.Collections.Generic.List<int> b = new System.Collections.Generic.List<int>();
-            a.Add(1); a.Add(2); a.Add(3);
+            //System.Collections.Generic.List<int> a = new System.Collections.Generic.List<int>();
+            //System.Collections.Generic.List<int> b = new System.Collections.Generic.List<int>();
+            //a.Add(1); a.Add(2); a.Add(3);
 
-            b = TestFunc(DeepClone(a) as System.Collections.Generic.List<int>);
-            b = TestFunc(a);
+            //b = TestFunc(DeepClone(a) as System.Collections.Generic.List<int>);
+            //b = TestFunc(a);
             
-            b.Add(88);
-            a.Add(101);
-
-            srednee_primer(1, 2, 3, 4);
+            //b.Add(88);
+            //a.Add(101);
             
             try
             {

@@ -132,6 +132,17 @@ namespace Obfuscator
             }
         }
 
+        public BasicBlock(Function parent)
+        {
+            if (parent == null || parent.parent == null)
+            {
+                throw new ObfuscatorException("Basic block is created outside Function.");
+            }
+            this.parent = parent;
+            this.Predecessors = new List<BasicBlock>();
+            this.Successors = new List<BasicBlock>();
+        }
+
         // Overloaded methods
         public override bool Equals(object obj)
         {
