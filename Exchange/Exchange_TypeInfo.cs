@@ -381,7 +381,7 @@ namespace ExchangeFormat
 					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "Procedural", 0 ), 
 					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "IndexedAssignment", 0 ), 
 					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "PointerAssignment", 0 ), 
-					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "Reserved", 0 ), 
+					new FacetInfo (Altova.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "NoOperation", 0 ), 
 				},
 				WhitespaceType.Unknown, Altova.Xml.Xs.AnySimpleTypeFormatter ),
 

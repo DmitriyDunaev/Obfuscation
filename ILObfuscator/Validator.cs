@@ -118,6 +118,7 @@ namespace Obfuscator
                         throw new ValidatorException("Number of referenced variables does not match statement type in instruction " + ID);
                     break;
                 case StatementTypeType.EnumValues.eUnconditionalJump:
+                case StatementTypeType.EnumValues.eNoOperation:
                     if (RefVariables.Count != 0)
                         throw new ValidatorException("Number of referenced variables does not match statement type in instruction " + ID);
                     break;
@@ -130,7 +131,6 @@ namespace Obfuscator
                         throw new ValidatorException("Number of referenced variables does not match statement type in instruction " + ID);
                     break;
                 case StatementTypeType.EnumValues.Invalid:
-                case StatementTypeType.EnumValues.eReserved:
                 default:
                     throw new ValidatorException("Invalid statement type in instruction " + ID);
             }
@@ -215,6 +215,11 @@ namespace Obfuscator
                         break;
                     else
                         throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
+                case StatementTypeType.EnumValues.eNoOperation:
+                    if (Regex.IsMatch(text, @"^nop$", RegexOptions.None))
+                        break;
+                    else
+                        throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);
                 default:
                     break;
             }
@@ -251,18 +256,5 @@ namespace Obfuscator
                 throw new ValidatorException("XML could not be validated! It is not well-formed or does not comply with XSD.", ex);
             }
         }
-    }
-
-    public class ValidatorException : Exception
-    {
-        public ValidatorException(string message)
-            : base(message)
-        { }
-
-        public ValidatorException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
-    }
-
+    }      
 }

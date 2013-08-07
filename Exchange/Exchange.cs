@@ -1366,7 +1366,7 @@ namespace ExchangeFormat
             eProcedural = 5, // Procedural
             eIndexedAssignment = 6, // IndexedAssignment
             ePointerAssignment = 7, // PointerAssignment
-            eReserved = 8, // Reserved
+            eNoOperation = 8, // NoOperation
             Invalid = -1, // Invalid value
         };
 
