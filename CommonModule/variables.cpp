@@ -63,15 +63,15 @@ void CVariables::dump(stringstream &s)
 			if ( !t.empty())
 			{
 				if ( t == "char" ||  t == "signed char" ||  t == "unsigned char" )
-					s << "SizeInBytes=\"1\" ";
+					s << "MemoryRegionSize=\"1\" ";
 				else if ( t == "int" ||  t == "signed int" ||  t == "unsigned int" )
-					s << "SizeInBytes=\"4\" ";
+					s << "MemoryRegionSize=\"4\" ";
 				else if ( t == "short" ||  t == "signed short" ||  t == "unsigned short" )
-					s << "SizeInBytes=\"2\" ";
+					s << "MemoryRegionSize=\"2\" ";
 				else if ( t == "long" ||  t == "signed long" ||  t == "unsigned long" )
-					s << "SizeInBytes=\"8\" ";
+					s << "MemoryRegionSize=\"8\" ";
 				
-			} else s << "SizeInBytes=\"4\" ";
+			} else s << "MemoryRegionSize=\"4\" ";
 			s << "Pointer=\"";
 			if ( i->second->getp() ) s << "true\"";
 			else s << "false\"";

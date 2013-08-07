@@ -69,19 +69,27 @@ void MeshFunction( Function actualfunction )
 
 void MeshUnconditional( BasicBlock actualbb )
 {
-    /* First we insert an entry point. */
+    ///* First we insert an entry point. */
     
-    BasicBlock ep = InsertEntryPoint( actualbb );
+    //BasicBlock ep = InsertEntryPoint( actualbb );
     
-    /* Next, we insert the fake flow, with one fake block, and
-     * we create a copy of the successor of the actual basic block
-     * (if needed). */
+    ///* Next, we insert the fake flow, with one fake block, and
+    // * we create a copy of the successor of the actual basic block
+    // * (if needed). */
     
-    InsertFakeFlow( actualbb );
+    //InsertFakeFlow( actualbb );
     
-    /* Finally comes the dead flow, with 3 blocks. They are all dead. */
+    ///* Finally comes the dead flow, with 3 blocks. They are all dead. */
     
-    InsertDeadFlow( ep );
+    //InsertDeadFlow( ep );
+
+
+    
+    
+
+    return;
+    
+
 }
 
 /*
@@ -156,34 +164,16 @@ void InsertEntryPoint( BasicBlock bb )
 
 void InsertFakeFlow( BasicBlock bb )
 {
-    // succ will be the only successor of bb. It only has one, because there is 
-    // an unconditional jump at the end of it.
+    // Using:   AppendTo( BasicBlock, Instruction );
+    //          ChangeToConditional( BasicBlock, BasicBlock, Instruction, TrueEnum TrueOnly, ... );
 
-    BaisBlock succ = bb.Successors[0];
+    BasicBlock fake1 = AppendTo( actualbb );
+    BasicBlock fake2 = AppendTo( actualbb, fake1.Instructions[0] );
+    
+    ChangeToConditional( fake2, actualbb, fake1.Instructions[0], random );
 
-    // Creating a new basic block, that'll be our fake block.
-
-    BasicBlock fake = new BasicBlock();
-
-    // Adding it to the function.
-
-    bb.getParent.BasicBlocks.Add( fake );
-
-    // We fill it with fake code. Todo: Create this alg.
-
-    FillWithFakeCode( fake );
-
-    // Changing the conditional jump for unconditional. Todo: Create this also.
-
-    ChangeToCond( bb.Instructions[ bb.InstructionNumber() - 1 ] );
-
-    // And finally we set the edges -> successors and predecessors.
-
-    fake.Successors.Add( succ );
-    bb.Successors.Add( fake );
-    fake.Predecessors.Add( bb );
-    succ.Predecessors.Add( fake );
-   
+    FillWithFake( fake1 );
+    FllWithFake( fake2 );
 }
 
 /*
@@ -194,7 +184,7 @@ void InsertFakeFlow( BasicBlock bb )
  * We might generate a random reloperand, and choose two random
  * dead variables...
  */
-ChangeToCond( Instruction );
+ChangeToConditional( Instruction );
 
 /*
  * Now here comes the dead path generation.
@@ -222,45 +212,20 @@ ChangeToCond( Instruction );
  * 
  */
 
-void InsertDeadFlow( BasicBlock ep )
+void InsertDeadFlow( BasicBlock pre )
 {
-    
-    BasicBlock bb1 = new BasicBlock(); // 
-    BasicBlock bb2 = new BasicBlock(); // Creating the three dead basic blocks.
-    BasicBlock bb3 = new BasicBlock(); //
-    
-    ep.getParent.BasicBlocks.Add( bb1 ); //
-    ep.getParent.BasicBlocks.Add( bb2 ); // Adding the blocks to the function.
-    ep.getParent.BasicBlocks.Add( bb3 ); //
+    // Using    ChangeToConditional( BasicBlock, BasicBlock, Instruction, TrueEnum TrueOnly, ... );
+    //          AppendTo( BasicBlock, Instruction );
+    //          RandomJumperBlock( Function );    
 
-    InsertDeadCode( bb1 ); //
-    InsertDeadCode( bb2 ); // Inserting dead code into them.
-    InsertDeadCode( bb3 ); //
-    
-    // Creating the conditional jump.
-    Instruction conditional = CreateDeadCondJump( bb2.Instructions[0].getID );
-    
-    // And appending it to the bb1 block.
-    bb1.Inctructions.Append( conditional );
-    
-    // Setting the edges.
-    bb1.getPredecessors.Add( ep );
-    bb1.getSuccessors.Add( bb1 );
-    bb1.getSuccessors.Add( bb2 );
-    bb2.getPredecessors.Add( bb1 );
-    bb3.getPredecessors.Add( bb1 );
-    
-    // Setting the exit points to random basicblocks in the function.
-    BasicBlock rnd = ep.getParent.getRandomBasicBlock()
-    bb2.getSuccessors.Add( rnd );
-    Instruction unconditional = CreateDeadUncJump( rnd.Instructions[0].getID );
-    bb2.Instructions.Append( cunconditional );
+    BasicBlock dead1 = RandomJumperBlock( pre.parent );
+    BasicBlock dead2 = RandomJumperBlock( pre.parent );
 
-    rnd = ep.getParent.getRandomBasicBlock()
-    bb2.getSuccessors.Add( rnd );
-    unconditional = CreateDeadUncJump( rnd.Instructions[0].getID );
-    bb2.Instructions.Append( cunconditional );
+    ChangeToConditional( pre, dead1, dead1.Instructions[0], trueonly );
 
+    BasicBlock dead3 = AppendTo( dead1, dead1.Instructions[0] );
+    ChangeToConditional( dead3, dead1.Instructions[0], random );
+    
 }
 
 /*
@@ -293,6 +258,7 @@ void InsertDeadFlow( BasicBlock ep )
 enum Relop
 	{
 	    equ,
+        notequ,
         great,
         greatequ,
         less,
@@ -302,11 +268,11 @@ enum Relop
 struct K
     {
 		int i;
-        bool usable_relops[5];
+        bool usable_relops[6];
         bool used;
         K(int i) : i(i), used(false)
         {
-            for (int i=0; i<5; i++)
+            for (int i=0; i<6; i++)
                 usable_relops[i] = true;
         }
 	}
