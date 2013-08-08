@@ -42,16 +42,27 @@ namespace Obfuscator
     public static class MeshFunciton
     {
 
+        /// <summary>
+        /// The test version of the meshing algorithm, which will mesh the CFT-s
+        /// </summary>
+        /// <param name="funct">Thse function wich has the control flow transitions to be meshed up</param>
         public static void MeshingAlgorithm( Function funct )
         {
-
+            // Now it meshes up all of the unconditional jumps, and only them.
             List<BasicBlock> basicblocks = funct.GetUnconditionalJumps();
             foreach (BasicBlock bb in basicblocks)
             {
+                // Only the fake lane gets injected.
+                // Not to mention, that it is also in a test phase.
                 InsertFakeLane(bb);
             }
         }
 
+        /// <summary>
+        /// Inserts the fake lane int o the CFT
+        /// Still in test phase, now it only inserts one basicblock
+        /// </summary>
+        /// <param name="bb">The actual basic block with the unconditional jump</param>
         private static void InsertFakeLane(BasicBlock bb)
         {
             bb.InsertAfter(bb.getSuccessors[0]);

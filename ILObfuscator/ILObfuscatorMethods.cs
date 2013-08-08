@@ -80,20 +80,32 @@ namespace Obfuscator
         /// <returns>The created block</returns>
         public BasicBlock InsertAfter(BasicBlock bbTarget)
         {
+            // Creating the nop instruction, and the basic block with it
             Instruction nop = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation);
             BasicBlock newblock = new BasicBlock(parent, nop);
-            newblock.Successors.Add(bbTarget);
+
+            // Then setting the successors and predecessors
             bbTarget.Predecessors.Remove(this);
             bbTarget.Predecessors.Add(newblock);
+
             Successors.Remove(bbTarget);
             Successors.Add(newblock);
+
             newblock.Predecessors.Add(this);
+            newblock.Successors.Add(bbTarget);
+
+            // TODO: Here this.LastInstruction() must be overwritten, so that
+            //       The Goto ID_ would match with bbTarget.ID
+            this.LastInstruction().ReplaceGoto(bbTarget.ID);
 
             return newblock;
 
-            // TODO: Get this done. Creating a basic block is not this simple.
         }
 
+        /// <summary>
+        /// Returns the last isntruction of a basic block
+        /// </summary>
+        /// <returns>The last instruction</returns>
         public Instruction LastInstruction()
         {
             return Instructions[Instructions.Count() - 1];
@@ -150,6 +162,10 @@ namespace Obfuscator
             else return null;
         }
 
+        internal void ReplaceGoto(string newID)
+        {
+            // TODO
+        }
 
 
 #if !WORKING_IN_PROGRESS
