@@ -40,7 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataAnalysis_reserved.cs" />
-    <Compile Include="dead_var_state_check.cs" />
     <Compile Include="DataAnalysis.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="ILObfuscatorMethods.cs" />
