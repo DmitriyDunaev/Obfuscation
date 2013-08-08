@@ -36,6 +36,24 @@ namespace Obfuscator
             /* Then we search for the FREE and the NOT_INITIALIZED dead variables. */
             _DeadVarsAlgortihm(func, Variable.State.Free);
             _DeadVarsAlgortihm(func, Variable.State.Not_Initialized);
+
+            /*
+             * Now we have the list of the dead variables, we must separate the dead
+             * pointers from the other dead variables, for future use.
+             */
+            foreach (BasicBlock bb in func.BasicBlocks)
+            {
+                foreach (Instruction ins in bb.Instructions)
+                {
+                    foreach (Variable var in ins.DeadVariables.Keys)
+                    {
+                        if (var.pointer)
+                            ins.DeadPointers.Add(var, null);
+                    }
+                    foreach (Variable var in ins.DeadPointers.Keys)
+                        ins.DeadVariables.Remove(var);
+                }
+            }
         }
 
         private static void _DeadVarsAlgortihm(Function func, Variable.State state)

@@ -240,6 +240,7 @@ namespace Obfuscator
 
         public List<Variable> RefVariables = new List<Variable>();
         public Dictionary<Variable, Variable.State> DeadVariables = new Dictionary<Variable, Variable.State>();
+        public Dictionary<Variable, Variable> DeadPointers = new Dictionary<Variable, Variable>();
 
         //Constructors
         public Instruction(InstructionType instr, BasicBlock par)
