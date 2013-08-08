@@ -19,6 +19,9 @@ namespace Obfuscator
                 DataAnalysis.DeadVarsAlgortihm(func);
             routine.Validate();
             Instruction inst = new Instruction(StatementTypeType.EnumValues.eNoOperation);
+            MeshFunciton.MeshingAlgorithm(routine.Functions[1]);
+            routine.Validate();
+            Console.WriteLine("The final routine validation has passed successfully.\n\n");
         }
     }
 }

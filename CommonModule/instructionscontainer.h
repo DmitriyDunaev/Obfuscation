@@ -54,11 +54,6 @@ public:
 
     string getid();
 
-	UUID getuuid() 
-	{ 
-		return id; 
-	}
-
 	bool findcall( string s )
 	{
 		for ( list<CThreeAdressInstruction*>::iterator	i = InstructionList.begin(); i != InstructionList.end(); ++i)

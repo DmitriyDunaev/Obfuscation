@@ -1,4 +1,4 @@
-﻿#define PSEUDOCODE
+﻿//#define PSEUDOCODE
 
 #if !PSEUDOCODE
 
@@ -30,6 +30,39 @@
  * This is the main function, it meshes up the single conditional and
  * unconditional jumps.
  */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Obfuscator
+{
+    public static class MeshFunciton
+    {
+
+        public static void MeshingAlgorithm( Function funct )
+        {
+
+            List<BasicBlock> basicblocks = funct.GetUnconditionalJumps();
+            foreach (BasicBlock bb in basicblocks)
+            {
+                InsertFakeLane(bb);
+            }
+        }
+
+        private static void InsertFakeLane(BasicBlock bb)
+        {
+            bb.InsertAfter(bb.getSuccessors[0]);
+        }
+
+    }
+}
+
+
+#endif
+#if PSEUDOCODE 
 
 void MeshFunction( Function actualfunction )
 {

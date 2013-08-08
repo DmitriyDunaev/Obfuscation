@@ -39,6 +39,24 @@ namespace Obfuscator
              */
             return BasicBlocks[0];
         }
+
+        /// <summary>
+        /// This function returns all basicblocks from the function,
+        /// which has an unconditional jump at the end
+        /// </summary>
+        /// <returns>A list of basicblocks, fufilling the condition written above</returns>
+        public List<BasicBlock> GetUnconditionalJumps()
+        {
+            List<BasicBlock> list = new List<BasicBlock>();
+            foreach (BasicBlock bb in BasicBlocks)
+            {
+                if (bb.LastInstruction().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump )
+                {
+                    list.Add(bb);
+                }
+            }
+            return list;
+        }
     }
 
 
@@ -54,11 +72,34 @@ namespace Obfuscator
             instruction.parent = this;
         }
 
-    //    public BasicBlock InsertAfter(BasicBlock bbTarget)
-    //    {
-    //    }
-    }
+        /// <summary>
+        /// This is the dumb version of the InsertAfter, which iserts a BasicBlock
+        /// after an unconditional jump
+        /// </summary>
+        /// <param name="bbTarget">The target of the unconditional jump</param>
+        /// <returns>The created block</returns>
+        public BasicBlock InsertAfter(BasicBlock bbTarget)
+        {
+            BasicBlock newblock = new BasicBlock(parent);
+            
+            newblock.Successors.Add(bbTarget);
+            bbTarget.Predecessors.Remove(this);
+            bbTarget.Predecessors.Add(newblock);
+            Successors.Remove(bbTarget);
+            Successors.Add(newblock);
+            newblock.Predecessors.Add(this);
 
+            parent.BasicBlocks.Add(newblock);
+            return newblock;
+
+            // TODO: Get this done. Creating a basic block is not this simple.
+        }
+
+        public Instruction LastInstruction()
+        {
+            return Instructions[Instructions.Count() - 1];
+        }
+    }
 
     public partial class Instruction
     {
