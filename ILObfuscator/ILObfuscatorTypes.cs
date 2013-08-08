@@ -325,12 +325,12 @@ namespace Obfuscator
         //Overloaded methods
         public override bool Equals(object obj)
         {
-            return (obj as BasicBlock) == null ? base.Equals(obj) : ((BasicBlock)obj).ID == ID;
+            return (obj as Instruction) == null ? base.Equals(obj) : ((Instruction)obj).ID == ID;
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return ID.GetHashCode();
         }
     }
 

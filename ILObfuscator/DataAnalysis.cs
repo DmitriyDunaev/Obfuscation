@@ -158,7 +158,7 @@ namespace Obfuscator
              *      - if we are at the beginning of the first basic block (the one with no predecessors)
              *        then it is an empty list, meaning that we have nothing left to do here
              */
-            List<Instruction> inslist = (state == Variable.State.Free) ? ins.GetPrecedingInstructions() : ins.GetNextInstructions();
+            List<Instruction> inslist = (state == Variable.State.Free) ? ins.GetPrecedingInstructions() : ins.GetFollowingInstructions();
 
             /*
              * Now we have that list of instructions, we should do the same thing we have done

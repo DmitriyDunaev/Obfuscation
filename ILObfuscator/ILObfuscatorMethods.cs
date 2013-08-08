@@ -24,7 +24,7 @@ namespace Obfuscator
             foreach (BasicBlock bb in BasicBlocks)
                 if (bb.getSuccessors.Count.Equals(0))
                     return bb;
-            return null;
+            throw new ObfuscatorException("No 'fake end block' is found in function " + ID);
         }
 
         /// <summary>
@@ -33,28 +33,22 @@ namespace Obfuscator
         /// <returns>The first basic block in a function.</returns>
         public BasicBlock GetFirstBasicBlock()
         {
-            /* 
-             * The first block in the BasicBlocks list is always
-             * the first basic block of the function.
-             */
+            if (BasicBlocks.Count == 0)
+                throw new ObfuscatorException("A function must have at least one basic block");
+            // The first item in the BasicBlocks list is always the first basic block of the function.
             return BasicBlocks[0];
         }
 
         /// <summary>
-        /// This function returns all basicblocks from the function,
-        /// which has an unconditional jump at the end
+        /// This function returns all basicblocks of a function, which last instruction is UnconditionalJump
         /// </summary>
-        /// <returns>A list of basicblocks, fufilling the condition written above</returns>
+        /// <returns>A list of basicblocks, which last instruction is UnconditionalJump </returns>
         public List<BasicBlock> GetUnconditionalJumps()
         {
             List<BasicBlock> list = new List<BasicBlock>();
             foreach (BasicBlock bb in BasicBlocks)
-            {
-                if (bb.LastInstruction().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump )
-                {
+                if (bb.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
                     list.Add(bb);
-                }
-            }
             return list;
         }
     }
@@ -96,70 +90,65 @@ namespace Obfuscator
 
             // TODO: Here this.LastInstruction() must be overwritten, so that
             //       The Goto ID_ would match with bbTarget.ID
-            this.LastInstruction().ReplaceGoto(bbTarget.ID);
+            this.Instructions.Last().ReplaceGoto(bbTarget.ID);
 
             return newblock;
 
-        }
-
-        /// <summary>
-        /// Returns the last isntruction of a basic block
-        /// </summary>
-        /// <returns>The last instruction</returns>
-        public Instruction LastInstruction()
-        {
-            return Instructions[Instructions.Count() - 1];
         }
     }
 
     public partial class Instruction
     {
         /// <summary>
-        /// Gets a list of the instructions followed by this instruction
+        /// Gets a list of the instructions followed by the given instruction in a control flow (directly preceding in CFG)
         /// </summary>
-        /// <returns>A list of preceding instructions (or empty list if no such found)</returns>
+        /// <returns>A list of instructions (or an empty list if no such found)</returns>
         public List<Instruction> GetPrecedingInstructions()
         {
             List<Instruction> preceding = new List<Instruction>();
-            int number = parent.Instructions.BinarySearch(this);
-            if (number > 0)
+            if(parent == null)
+                throw new ObfuscatorException("Instruction is not contained in a basic block. Instruction's 'parent' propery is null.");
+            if (parent.Instructions.Contains(this))
             {
-                preceding.Add(parent.Instructions[number - 1]);
-                return preceding;
+                if (parent.Instructions.First().Equals(this))
+                    foreach (BasicBlock bb in parent.getPredecessors)
+                    {
+                        if (bb.Instructions.Count == 0)
+                            throw new ObfuscatorException("No instructions found in basic block" + bb.ID);
+                        preceding.Add(bb.Instructions.Last());
+                    }
+                else
+                    preceding.Add(parent.Instructions[parent.Instructions.BinarySearch(this) - 1]);
             }
-            else if (number == 0)
-            {
-                foreach (BasicBlock bb in parent.getPredecessors)
-                {
-                    preceding.Add(bb.Instructions[bb.Instructions.Count - 1]);
-                }
-                return preceding;
-            }
-            else return null;
+            else
+                throw new ObfuscatorException("The instruction is not properly linked to its parent. It is not contained in 'parent.Instructions' list.");
+            return preceding;
         }
 
         /// <summary>
-        /// Gets a list of the instructions following this instruction
+        /// Gets a list of the instructions following the given instruction in a control flow (directly following in CFG)
         /// </summary>
-        /// <returns>A list of following instructions (or empty list if no such found)</returns>
-        public List<Instruction> GetNextInstructions()
+        /// <returns>A list of instructions (or empty list if no such found)</returns>
+        public List<Instruction> GetFollowingInstructions()
         {
-            List<Instruction> next = new List<Instruction>();
-            int number = parent.Instructions.BinarySearch(this);
-            if (number < parent.Instructions.Count - 1)
+            List<Instruction> following = new List<Instruction>();
+            if (parent == null)
+                throw new ObfuscatorException("Instruction is not contained in a basic block. Instruction's 'parent' propery is null.");
+            if (parent.Instructions.Contains(this))
             {
-                next.Add(parent.Instructions[number + 1]);
-                return next;
+                if (parent.Instructions.Last().Equals(this))
+                    foreach (BasicBlock bb in parent.getSuccessors)
+                    {
+                        if (bb.Instructions.Count == 0)
+                            throw new ObfuscatorException("No instructions found in basic block" + bb.ID);
+                        following.Add(bb.Instructions.First());
+                    }
+                else
+                    following.Add(parent.Instructions[parent.Instructions.BinarySearch(this) + 1]);
             }
-            else if (number == parent.Instructions.Count - 1)
-            {
-                foreach (BasicBlock bb in parent.getSuccessors)
-                {
-                    next.Add(bb.Instructions[0]);
-                }
-                return next;
-            }
-            else return null;
+            else
+                throw new ObfuscatorException("The instruction is not properly linked to its parent. It is not contained in 'parent.Instructions' list.");
+            return following;
         }
 
         internal void ReplaceGoto(string newID)
