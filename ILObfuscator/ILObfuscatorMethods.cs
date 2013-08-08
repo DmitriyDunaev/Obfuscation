@@ -229,12 +229,21 @@ namespace Obfuscator
                  */
                 if (DeadVariables.ContainsKey(var))
                 {
-                    /* First we set the state of that used dead variable. */ 
+                    /* First we set the state of that used dead variable. */
                     DeadVariables[var] = setState(var);
 
                     /* Then we tell its (changed) state to the following instructions. */
-                    foreach (Instruction ins in GetNextInstructions())
+                    foreach (Instruction ins in GetFollowingInstructions())
                         ins.RefreshNext(var, DeadVariables[var]);
+                }
+                else if (DeadPointers.ContainsKey(var))
+                {
+                    /* We set the state of the dead variable pointed by the dead pointer. */ 
+                    DeadVariables[DeadPointers[var]] = setState(var);
+
+                    /* Then we tell its (changed) state to the following instructions. */
+                    foreach (Instruction ins in GetFollowingInstructions())
+                        ins.RefreshNext(DeadPointers[var], DeadVariables[DeadPointers[var]]);
                 }
             }
         }
@@ -251,14 +260,31 @@ namespace Obfuscator
             /*
              * We have to do anything only if the variable is in this instruction's
              * DeadVariables list, and it's state differs from the new state.
-             * But if this instruction uses this variable as well, then its state must
-             * not be changed, because it's perfect as it is right now.
-             * That makes this condition necessary.
+             * But if this instruction uses this variable as well, or this instruction
+             * uses a pointer that points to this variable then its state must not
+             * be changed, because it's perfect as it is right now.
              */
-            if (DeadVariables.ContainsKey(var) && DeadVariables[var] != state && !RefVariables.Contains(var))
+            if (DeadVariables.ContainsKey(var)      // This variable is dead.
+                && DeadVariables[var] != state      // The states differ.
+                && !RefVariables.Contains(var))     // The instruction does not use this variable.
             {
+                foreach (Variable v in RefVariables)
+                {
+                    if (DeadPointers.ContainsKey(v) && DeadPointers[v] == var)
+                    {
+                        /* The instruction uses a pointer that points to this variable. */
+                        return;
+
+                        /*
+                         * TODO:
+                         * This is not that easy. If we aren't using the pointer for dereferencing,
+                         * but for changing its value, then we are not changing the state of this variable.
+                         * Aaaaargh, complicated.
+                         */
+                    }
+                }
                 DeadVariables[var] = state;
-                foreach (Instruction ins in GetNextInstructions())
+                foreach (Instruction ins in GetFollowingInstructions())
                     ins.RefreshNext(var, state);
             }
         }
