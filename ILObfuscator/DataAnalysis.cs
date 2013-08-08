@@ -48,13 +48,15 @@ namespace Obfuscator
              */
              SetAllVariablesAsDead(func, state);
 
-            /*
-             * If we are going upwards, we start from the point called "fake exit block",
-             * the one and only ultimate endpoint of all functions ever created. Thank you Kohlmann!
-             * 
-             * If going downwards, we start from the very first basic block (func.BasicBlocks[0]).
-             */
-            BasicBlock block = (state == Variable.State.Free) ? func.GetLastBasicBlock() : func.GetFirstBasicBlock();
+             /*
+              * If we are going upwards (looking for FREE dead variables), we start from
+              * the point called "fake exit block", the one and only ultimate endpoint
+              * of all functions ever created. Thank you Kohlmann!
+              * 
+              * If going downwards (looking for NOT_INITIALIZED dead variables),
+              * we start from the very first basic block (func.BasicBlocks[0]).
+              */
+             BasicBlock block = (state == Variable.State.Free) ? func.GetLastBasicBlock() : func.GetFirstBasicBlock();
 
             /*
              * We go through all the instructions and deal with all their

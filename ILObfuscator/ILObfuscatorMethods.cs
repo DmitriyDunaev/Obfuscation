@@ -27,8 +27,16 @@ namespace Obfuscator
             return null;
         }
 
+        /// <summary>
+        /// Gets the first basic block.
+        /// </summary>
+        /// <returns>The first basic block in a function.</returns>
         public BasicBlock GetFirstBasicBlock()
         {
+            /* 
+             * The first block in the BasicBlocks list is always
+             * the first basic block of the function.
+             */
             return BasicBlocks[0];
         }
     }
@@ -106,6 +114,22 @@ namespace Obfuscator
 
 #if !WORKING_IN_PROGRESS
 
+        /// <summary>
+        /// Returns the state of the instruction's used dead variable.
+        /// </summary>
+        /// <param name="var">A dead variable used by the instruction.</param>
+        /// <returns>The state of the dead variable.</returns>
+        private Variable.State setState(Variable var)
+        {
+            /*
+             * TODO: Write this function.
+             * 
+             * As I see, it can return two values:
+             *  - FILLED: if the variable is a leftvalue in the instruction
+             *  - FREE: if the variable is not a leftvalue (so it is ONLY a rightvalue and not both)
+             */
+        }
+
         /*
          * When we modify a fake instruction, we change the states in it, so we
          * have to update the dead variables in the following instructions.
@@ -116,20 +140,27 @@ namespace Obfuscator
         public void RefreshNext()
         {
             /*
-             * We should be able to determine from the TAC instruction that which
-             * dead variables' ( <- RefVariables ) state changes to what.
-             */
-              setStates();
-
-            /*
-             * For every used dead variable in the instruction we should push it's
-             * (changed) state through all the following instructions, so it will get
-             * the appropriate state everywhere.
+             * For every used dead variable in the instruction we should first determine
+             * its new state, then we could push it's (changed) state through all the
+             * following instructions, so it will get the appropriate state everywhere.
              */
             foreach (Variable var in RefVariables)
             {
+                /*
+                 * We will only use this function on fake instructions, and these may
+                 * only use dead variables, which fact makes this condition unnecessary.
+                 * Despite this, I leave it here, because maybe we could use alive variables
+                 * in fake instructions, for example copying their values to dead variables.
+                 *
+                 * So QUESTION:
+                 * Are we going to use only dead variables in fake instructions?
+                 */
                 if (DeadVariables.ContainsKey(var))
                 {
+                    /* First we set the state of that used dead variable. */ 
+                    DeadVariables[var] = setState(var);
+
+                    /* Then we tell its (changed) state to the following instructions. */
                     foreach (Instruction ins in GetNextInstructions())
                         ins.RefreshNext(var, DeadVariables[var]);
                 }
@@ -139,14 +170,20 @@ namespace Obfuscator
         /*
          * This function is called when we encounter a change in a dead variable's state.
          * So we want to push this change through all the instructions, and deal with
-         * this variable only. That's why we don't need to check this instruction
-         * if it changes the state, because the change comes from above.
+         * this variable only.
          * 
-         * (the statements above may not be true. requires some more thinking...)
+         * However we can't just overwrite the statement without any check...
          */
         private void RefreshNext(Variable var, Variable.State state)
         {
-            if (DeadVariables[var] != state)
+            /*
+             * We have to do anything only if the variable is in this instruction's
+             * DeadVariables list, and it's state differs from the new state.
+             * But if this instruction uses this variable as well, then its state must
+             * not be changed, because it's perfect as it is right now.
+             * That makes this condition necessary.
+             */
+            if (DeadVariables.ContainsKey(var) && DeadVariables[var] != state && !RefVariables.Contains(var))
             {
                 DeadVariables[var] = state;
                 foreach (Instruction ins in GetNextInstructions())
