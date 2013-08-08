@@ -90,6 +90,26 @@ namespace Obfuscator
                 throw new ValidatorException("No instructions found for basic block " + ID);
             if (Successors.Count > 2)
                 throw new ValidatorException("More than two successors found in basic block " + ID);
+            if (Successors.Count == 2)
+            {
+                if (Instructions.Last().statementType != StatementTypeType.EnumValues.eConditionalJump)
+                    throw new ValidatorException("To have 2 successors, the last instruction of a basic block must be a ConditionalJump. Basic block: " + ID);
+                string resultString = null;
+                bool found = false;
+                resultString = Regex.Match(Instructions.Last().TACtext, @"\bID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b").Value;
+                foreach (BasicBlock bb in Successors)
+                {
+                    if (resultString.Equals(bb.ID))
+                        found = true;
+                }
+                if(!found)
+                    throw new ValidatorException("The successors' IDs do not match last GOTO instruction. Basic block: " + ID);
+            }
+            //if (Predecessors.Count == 1 && Predecessors[0].Instructions.Last().statementType == StatementTypeType.EnumValues.eUnconditionalJump)
+            //{
+            //    throw new ValidatorException("Basic block has one single predecessor with unconditional jump to it. The last GOTO instruction of predecessor can be deleted. Basic block: " + ID);
+            //}
+
             foreach (Instruction inst in this.Instructions)
             {
                 if (inst.parent != this)
