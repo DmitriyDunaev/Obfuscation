@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Obfuscator
@@ -67,34 +68,60 @@ namespace Obfuscator
         }
 
         /// <summary>
-        /// This is the dumb version of the InsertAfter, which iserts a BasicBlock
-        /// after an unconditional jump
+        /// This is the dumb version of the InsertAfter, which inserts a BasicBlock after an unconditional jump
         /// </summary>
         /// <param name="bbTarget">The target of the unconditional jump</param>
         /// <returns>The created block</returns>
-        public BasicBlock InsertAfter(BasicBlock bbTarget)
+        public BasicBlock InsertAfter(BasicBlock target)
         {
-            // Creating the nop instruction, and the basic block with it
-            Instruction nop = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation);
-            BasicBlock newblock = new BasicBlock(parent, nop);
+            if (Successors.Count > 1) // two successors
+                throw new ObfuscatorException("You cannot insert new basic block after the basic block with two successors.");
 
-            // Then setting the successors and predecessors
-            bbTarget.Predecessors.Remove(this);
-            bbTarget.Predecessors.Add(newblock);
+            BasicBlock newblock = new BasicBlock(parent, new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation));
 
-            Successors.Remove(bbTarget);
-            Successors.Add(newblock);
+            if (Successors.Count == 1)  // one successor
+            {
+                Successors.Clear();
+                Successors.Add(newblock);
+                target.Predecessors.Remove(this);
+                target.Predecessors.Add(newblock);
+                newblock.Predecessors.Add(this);
+                newblock.Successors.Add(target);
+            }
+            else // no successors
+            {
+                Successors.Add(newblock);
+                newblock.Predecessors.Add(this);
+            }
 
-            newblock.Predecessors.Add(this);
-            newblock.Successors.Add(bbTarget);
-
-            // TODO: Here this.LastInstruction() must be overwritten, so that
-            //       The Goto ID_ would match with bbTarget.ID
-            this.Instructions.Last().ReplaceGoto(bbTarget.ID);
+            // The last instruction is modified if it was an unconditional 'goto' to match new target.ID
+            this.RetargetLastUnconditionalGoto(newblock.ID);
+            //var t = new Tuple<Variable, Variable.State>(parent.LocalVariables[0], Variable.State.Free);
+            //var t = Tuple.Create(parent.LocalVariables[0], Variable.State.Free);
 
             return newblock;
 
         }
+
+
+        /// <summary>
+        /// Retargets (sets new ID_GUID) last 'goto' instruction of a basic block
+        /// </summary>
+        /// <param name="targetID">ID_'GUID' to be retargeted to</param>
+        /// <returns>True if 'goto' has been retargeted successfully; false if the last instruction is not 'goto'</returns>
+        public bool RetargetLastUnconditionalGoto(string targetID)
+        {
+            if (this.Instructions.Last().statementType != ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
+                return false;
+            else
+            {
+                string resultString = null;
+                resultString = Regex.Match(Instructions.Last().TACtext, @"\bID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b").Value;
+                Instructions.Last().TACtext = Instructions.Last().TACtext.Replace(resultString, targetID);
+                return true;
+            }
+        }
+
     }
 
     public partial class Instruction

@@ -43,7 +43,7 @@
     <Compile Include="DataAnalysis.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="ILObfuscatorMethods.cs" />
-    <Compile Include="meshing_algorithm.cs" />
+    <Compile Include="Meshing.cs" />
     <Compile Include="constant_calc_algortihm.cs" />
     <Compile Include="ILObfuscator.cs" />
     <Compile Include="ILObfuscatorTypes.cs" />

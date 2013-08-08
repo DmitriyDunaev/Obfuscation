@@ -39,7 +39,7 @@ using System.Threading.Tasks;
 
 namespace Obfuscator
 {
-    public static class MeshFunciton
+    public static class Meshing
     {
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Obfuscator
         }
 
         /// <summary>
-        /// Inserts the fake lane int o the CFT
+        /// Inserts the fake lane into the CFT
         /// Still in test phase, now it only inserts one basicblock
         /// </summary>
         /// <param name="bb">The actual basic block with the unconditional jump</param>

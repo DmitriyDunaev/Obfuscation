@@ -12,16 +12,17 @@ namespace Obfuscator
         public void Obfuscate(Exchange exch)
         {
             Routine routine = new Routine(exch);
-            Console.WriteLine("\nValidating data in Routine. . .");
+            Console.WriteLine("\nValidating data in Routine. . .\n");
             routine.Validate();
-            Console.WriteLine("Routine validation has passed successfully.\n\n");
+            Console.WriteLine("Loading initial data: routine validation has passed successfully.\n\n");
             foreach (Function func in routine.Functions)
                 DataAnalysis.DeadVarsAlgortihm(func);
             routine.Validate();
+            Console.WriteLine("Dead variables algorithm: routine validation has passed successfully.\n\n");
             Instruction inst = new Instruction(StatementTypeType.EnumValues.eNoOperation);
-            MeshFunciton.MeshingAlgorithm(routine.Functions[1]); // Testing the function in the second function of the routine.
+            Meshing.MeshingAlgorithm(routine.Functions[1]); // Testing the function in the second function of the routine.
             routine.Validate();
-            Console.WriteLine("The final routine validation has passed successfully.\n\n");
+            Console.WriteLine("Meshing algorithm: routine validation has passed successfully..\n\n");
         }
     }
 }

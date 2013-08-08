@@ -234,7 +234,7 @@ namespace Obfuscator
             get { return _ID.ToString(); }
         }
         public StatementTypeType.EnumValues statementType { get; private set; }
-        public string TACtext { get; private set; }
+        public string TACtext { get; set; }
         public bool polyRequired { get; private set; }
         public bool isFake { get; private set; }
 
