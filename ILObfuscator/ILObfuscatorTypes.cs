@@ -143,6 +143,25 @@ namespace Obfuscator
             this.Successors = new List<BasicBlock>();
         }
 
+        /// <summary>
+        /// Constructor for BasicBlock
+        /// </summary>
+        /// <param name="parent">The parent function, wich will contain the block</param>
+        /// <param name="instruction">The instruction which will be inserted into the block</param>
+        public BasicBlock(Function parent, Instruction instruction)
+        {
+            if (parent == null || parent.parent == null)
+            {
+                throw new ObfuscatorException("Basic block is created outside Function.");
+            }
+            _ID = new IDManager();
+            this.parent = parent;
+            InsertFirstInstruction(instruction);
+            this.Predecessors = new List<BasicBlock>();
+            this.Successors = new List<BasicBlock>();
+            parent.BasicBlocks.Add(this);
+        }
+
         // Overloaded methods
         public override bool Equals(object obj)
         {

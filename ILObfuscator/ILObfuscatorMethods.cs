@@ -80,8 +80,8 @@ namespace Obfuscator
         /// <returns>The created block</returns>
         public BasicBlock InsertAfter(BasicBlock bbTarget)
         {
-            BasicBlock newblock = new BasicBlock(parent);
-            
+            Instruction nop = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation);
+            BasicBlock newblock = new BasicBlock(parent, nop);
             newblock.Successors.Add(bbTarget);
             bbTarget.Predecessors.Remove(this);
             bbTarget.Predecessors.Add(newblock);
@@ -89,7 +89,6 @@ namespace Obfuscator
             Successors.Add(newblock);
             newblock.Predecessors.Add(this);
 
-            parent.BasicBlocks.Add(newblock);
             return newblock;
 
             // TODO: Get this done. Creating a basic block is not this simple.
