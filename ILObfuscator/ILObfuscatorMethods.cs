@@ -58,6 +58,17 @@ namespace Obfuscator
                     list.Add(bb);
             return list;
         }
+
+
+        public Variable GetLocalVariableByID(string id)
+        {
+            foreach (Variable var in LocalVariables)
+            {
+                if (var.ID == id)
+                    return var;
+            }
+            throw new ObfuscatorException("No local variable " + id + " found in function.");
+        }
     }
 
 
@@ -193,12 +204,14 @@ namespace Obfuscator
         public List<Variable> GetUnsafeVariables()
         {
             List<Variable> unsafeVar = new List<Variable>();
-            //if (statementType == ExchangeFormat.StatementTypeType.EnumValues.ePointerAssignment)
-            //{
-            //    string resultString = null;
-            //    bool found = false;
-            //    resultString = Regex.Match(TACtext, @"\bID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b").Value;
-            //}
+            if (statementType == ExchangeFormat.StatementTypeType.EnumValues.ePointerAssignment)
+            {
+                string resultString = Regex.Match(TACtext, @"& [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$").Value;
+                if (string.IsNullOrEmpty(resultString))
+                    return unsafeVar;
+                resultString = Regex.Match(TACtext, @"[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$").Value;
+                unsafeVar.Add(this.parent.parent.GetLocalVariableByID(resultString));
+            }
             return unsafeVar;
         }
 
@@ -338,5 +351,6 @@ namespace Obfuscator
 
     public partial class Variable
     {
+
     }
 }

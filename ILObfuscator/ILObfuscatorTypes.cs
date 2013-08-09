@@ -250,6 +250,18 @@ namespace Obfuscator
             fake = var.Fake.Exists() ? var.Fake.Value : false;
             kind = kind1;
         }
+
+
+        public override bool Equals(object obj)
+        {
+            return (obj as Variable) == null ? base.Equals(obj) : ((Variable)obj).ID == ID;
+        }
+
+
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
+        }
     }
 
 
