@@ -17,6 +17,8 @@ namespace Obfuscator
         /// </summary>
         private static List<string> done_ids = new List<string>();
 
+        private static List<Variable> unsafe_vars = new List<Variable>();
+
         /*
          * This is a wrapper function around the real algorithm.
          * We have to find the dead variables in two steps: the FREE ones in one,
@@ -30,6 +32,18 @@ namespace Obfuscator
         /// <param name="func">Actual Function</param>
         public static void DeadVarsAlgortihm(Function func)
         {
+            /* 
+             * We get all the unsafe variables in one list, so in the end we can
+             * remove them from the DeadVariables and DeadPointers lists.
+             */
+            foreach (BasicBlock bb in func.BasicBlocks)
+            {
+                foreach (Instruction ins in bb.Instructions)
+                    unsafe_vars.AddRange(ins.GetUnsafeVariables());
+            }
+            /* Remove duplications. */
+            unsafe_vars = unsafe_vars.Distinct().ToList();
+
             /* First we clear all the DeadVariables lists. */
             ClearDeadVarsLists(func);
 
@@ -45,6 +59,14 @@ namespace Obfuscator
             {
                 foreach (Instruction ins in bb.Instructions)
                 {
+                    /* First we remove the unsafe variables. */
+                    foreach (Variable var in unsafe_vars)
+                    {
+                        if (ins.DeadVariables.ContainsKey(var))
+                            ins.DeadVariables.Remove(var);
+                    }
+
+                    /* Then we separate pointers from non-pointers. */
                     foreach (Variable var in ins.DeadVariables.Keys)
                     {
                         if (var.pointer)
