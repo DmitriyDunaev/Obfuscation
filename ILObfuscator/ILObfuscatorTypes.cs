@@ -8,6 +8,35 @@ using System.Text.RegularExpressions;
 
 namespace Obfuscator
 {
+    /// <summary>
+    /// Class to store the state and the pointed variable of a pointer.
+    /// </summary>
+    public class OwnPair
+    {
+        // Attributes
+
+        /// <summary>
+        /// The pointed variable.
+        /// </summary>
+        public Variable PointsTo { get; set; }
+
+        /// <summary>
+        /// The state.
+        /// </summary>
+        public Variable.State State { get; set; }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="state">The state of the pointer.</param>
+        /// <param name="var">The variable it points to.</param>
+        public OwnPair(Variable.State state, Variable var)
+        {
+            State = state;
+            PointsTo = var;
+        }
+    }
+
     public partial class Routine: IValidate
     {
         // Attributes
@@ -240,7 +269,11 @@ namespace Obfuscator
 
         public List<Variable> RefVariables = new List<Variable>();
         public Dictionary<Variable, Variable.State> DeadVariables = new Dictionary<Variable, Variable.State>();
-        public Dictionary<Variable, Tuple<Variable.State, Variable>> DeadPointers = new Dictionary<Variable, Tuple<Variable.State, Variable>>();
+
+        /// <summary>
+        /// It stores the state, and the pointed variable of the pointer (key).
+        /// </summary>
+        public Dictionary<Variable, OwnPair> DeadPointers = new Dictionary<Variable, OwnPair>();
 
         //Constructors
         public Instruction(InstructionType instr, BasicBlock par)

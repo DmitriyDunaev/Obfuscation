@@ -1,5 +1,11 @@
 ﻿#define WORKING_IN_PROGRESS
 
+/*
+ * WARNING FOR FUTURE (1):
+ * We assume that a dead pointer can only point to a non-pointer dead variable.
+ * We are setting them like this, and using them like this, so be aware of this fact.
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -238,12 +244,23 @@ namespace Obfuscator
                 }
                 else if (DeadPointers.ContainsKey(var))
                 {
-                    /* We set the state of the dead variable pointed by the dead pointer. */ 
-                    DeadVariables[DeadPointers[var]] = setState(var);
+                    /* First we set the state of that used dead pointer. */
+                    DeadPointers[var].State = setState(var);
 
                     /* Then we tell its (changed) state to the following instructions. */
                     foreach (Instruction ins in GetFollowingInstructions())
-                        ins.RefreshNext(DeadPointers[var], DeadVariables[DeadPointers[var]]);
+                        ins.RefreshNext(var, DeadPointers[var].State);
+
+                    /* 
+                     * We set the state of the dead variable pointed by the dead pointer.
+                     * 
+                     * WARNING FOR FUTURE: (1)
+                     */ 
+                    DeadVariables[DeadPointers[var].PointsTo] = setState(var);
+
+                    /* Then we tell its (changed) state to the following instructions. */
+                    foreach (Instruction ins in GetFollowingInstructions())
+                        ins.RefreshNext(DeadPointers[var].PointsTo, DeadVariables[DeadPointers[var].PointsTo]);
                 }
             }
         }
@@ -258,32 +275,46 @@ namespace Obfuscator
         private void RefreshNext(Variable var, Variable.State state)
         {
             /*
-             * We have to do anything only if the variable is in this instruction's
-             * DeadVariables list, and it's state differs from the new state.
-             * But if this instruction uses this variable as well, or this instruction
+             * If this instruction uses this variable as well, or this instruction
              * uses a pointer that points to this variable then its state must not
              * be changed, because it's perfect as it is right now.
              */
+            if (RefVariables.Contains(var))
+            {
+                /* This instruction uses this variable. */
+                return;
+            }
+
+            /*
+             * We have to do anything only if the variable is in this instruction's
+             * DeadVariables list, and it's state differs from the new state.
+             */
             if (DeadVariables.ContainsKey(var)      // This variable is dead.
-                && DeadVariables[var] != state      // The states differ.
-                && !RefVariables.Contains(var))     // The instruction does not use this variable.
+                && DeadVariables[var] != state)     // The states differ.
             {
                 foreach (Variable v in RefVariables)
                 {
-                    if (DeadPointers.ContainsKey(v) && DeadPointers[v] == var)
+                    if (DeadPointers.ContainsKey(v) && DeadPointers[v].PointsTo.Equals(var))
                     {
                         /* The instruction uses a pointer that points to this variable. */
                         return;
-
-                        /*
-                         * TODO:
-                         * This is not that easy. If we aren't using the pointer for dereferencing,
-                         * but for changing its value, then we are not changing the state of this variable.
-                         * Aaaaargh, complicated.
-                         */
                     }
                 }
                 DeadVariables[var] = state;
+                foreach (Instruction ins in GetFollowingInstructions())
+                    ins.RefreshNext(var, state);
+            }
+
+            /*
+             * Another case for doing something when we pass a dead pointer with changed state.
+             * In this case we do not have to look for variables pointing to that one.
+             * 
+             * WARNING FOR FUTURE: (1)
+             */
+            if (DeadPointers.ContainsKey(var)           // This is a dead pointer.
+                && DeadPointers[var].State != state)    // The states differ.
+            {
+                DeadPointers[var].State = state;
                 foreach (Instruction ins in GetFollowingInstructions())
                     ins.RefreshNext(var, state);
             }
