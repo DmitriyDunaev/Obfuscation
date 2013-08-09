@@ -48,7 +48,7 @@ namespace Obfuscator
                     foreach (Variable var in ins.DeadVariables.Keys)
                     {
                         if (var.pointer)
-                            ins.DeadPointers.Add(var, null);
+                            ins.DeadPointers.Add(var, new Tuple<Variable.State, Variable>(ins.DeadVariables[var], null));
                     }
                     foreach (Variable var in ins.DeadPointers.Keys)
                         ins.DeadVariables.Remove(var);
