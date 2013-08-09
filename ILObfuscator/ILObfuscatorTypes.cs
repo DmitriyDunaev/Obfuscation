@@ -11,7 +11,7 @@ namespace Obfuscator
     /// <summary>
     /// Class to store the state and the pointed variable of a pointer.
     /// </summary>
-    public class OwnPair
+    public class PointerData
     {
         // Attributes
 
@@ -30,7 +30,7 @@ namespace Obfuscator
         /// </summary>
         /// <param name="state">The state of the pointer.</param>
         /// <param name="var">The variable it points to.</param>
-        public OwnPair(Variable.State state, Variable var)
+        public PointerData(Variable.State state, Variable var)
         {
             State = state;
             PointsTo = var;
@@ -273,7 +273,7 @@ namespace Obfuscator
         /// <summary>
         /// It stores the state, and the pointed variable of the pointer (key).
         /// </summary>
-        public Dictionary<Variable, OwnPair> DeadPointers = new Dictionary<Variable, OwnPair>();
+        public Dictionary<Variable, PointerData> DeadPointers = new Dictionary<Variable, PointerData>();
 
         //Constructors
         public Instruction(InstructionType instr, BasicBlock par)
