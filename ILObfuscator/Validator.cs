@@ -131,11 +131,16 @@ namespace Obfuscator
                         throw new ValidatorException("Number of referenced variables does not match statement type in instruction " + ID);
                     break;
                 case StatementTypeType.EnumValues.eUnaryAssignment:
-                case StatementTypeType.EnumValues.eCopy:
                 case StatementTypeType.EnumValues.ePointerAssignment:
                 case StatementTypeType.EnumValues.eConditionalJump:
                     if (RefVariables.Count < 1 || RefVariables.Count > 2)
                         throw new ValidatorException("Number of referenced variables does not match statement type in instruction " + ID);
+                    break;
+                case StatementTypeType.EnumValues.eCopy:
+                    if (RefVariables.Count < 1 || RefVariables.Count > 2)
+                        throw new ValidatorException("Number of referenced variables does not match statement type in instruction " + ID);
+                    if(RefVariables.First().pointer!=RefVariables.Last().pointer)
+                        throw new ValidatorException("You are trying to copy a pointer to a non-pointer in COPY instruction " + ID);
                     break;
                 case StatementTypeType.EnumValues.eUnconditionalJump:
                 case StatementTypeType.EnumValues.eNoOperation:
