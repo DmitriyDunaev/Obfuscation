@@ -130,6 +130,7 @@ namespace Obfuscator
 
     }
 
+
     public partial class Instruction
     {
         /// <summary>
@@ -189,6 +190,17 @@ namespace Obfuscator
             // TODO
         }
 
+        public List<Variable> GetUnsafeVariables()
+        {
+            List<Variable> unsafeVar = new List<Variable>();
+            //if (statementType == ExchangeFormat.StatementTypeType.EnumValues.ePointerAssignment)
+            //{
+            //    string resultString = null;
+            //    bool found = false;
+            //    resultString = Regex.Match(TACtext, @"\bID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b").Value;
+            //}
+            return unsafeVar;
+        }
 
 #if !WORKING_IN_PROGRESS
 
