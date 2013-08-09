@@ -62,7 +62,7 @@ namespace Obfuscator
                     /* First we remove the unsafe variables. */
                     foreach (Variable var in unsafe_vars)
                     {
-                        if (ins.DeadVariables.ContainsKey(var))
+                        if (ins.DeadVariables.ContainsKey(var) && ins.DeadVariables[var] != Variable.State.Not_Initialized)
                             ins.DeadVariables.Remove(var);
                     }
 

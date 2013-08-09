@@ -261,7 +261,7 @@ namespace Obfuscator
                 if (DeadVariables.ContainsKey(var))
                 {
                     /* First we set the state of that used dead variable. */
-                    DeadVariables[var] = setState(var);
+                    DeadVariables[var] = setState(var).First();
 
                     /* Then we tell its (changed) state to the following instructions. */
                     foreach (Instruction ins in GetFollowingInstructions())
@@ -269,8 +269,10 @@ namespace Obfuscator
                 }
                 else if (DeadPointers.ContainsKey(var))
                 {
+                    List<Variable.State> states = setState(var);
+
                     /* First we set the state of that used dead pointer. */
-                    DeadPointers[var].State = setState(var);
+                    DeadPointers[var].State = states.First();
 
                     /* Then we tell its (changed) state to the following instructions. */
                     foreach (Instruction ins in GetFollowingInstructions())
@@ -281,7 +283,8 @@ namespace Obfuscator
                      * 
                      * WARNING FOR FUTURE: (1)
                      */ 
-                    DeadVariables[DeadPointers[var].PointsTo] = setState(var);
+                    if (states.Last() != Variable.State.Unchanged)
+                        DeadVariables[DeadPointers[var].PointsTo] = states.Last();
 
                     /* Then we tell its (changed) state to the following instructions. */
                     foreach (Instruction ins in GetFollowingInstructions())
