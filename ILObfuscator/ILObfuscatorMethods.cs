@@ -47,7 +47,7 @@ namespace Obfuscator
         }
 
         /// <summary>
-        /// This function returns all basicblocks of a function, which last instruction is UnconditionalJump
+        /// This function returns a reference to all basic blocks of a function, which last instruction is UnconditionalJump
         /// </summary>
         /// <returns>A list of basicblocks, which last instruction is UnconditionalJump </returns>
         public List<BasicBlock> GetUnconditionalJumps()
@@ -59,7 +59,11 @@ namespace Obfuscator
             return list;
         }
 
-
+        /// <summary>
+        /// Gets local variable of a function by its unique identifier
+        /// </summary>
+        /// <param name="id">GUID of a variable</param>
+        /// <returns>Local variable</returns>
         public Variable GetLocalVariableByID(string id)
         {
             foreach (Variable var in LocalVariables)
@@ -112,9 +116,7 @@ namespace Obfuscator
             }
 
             // The last instruction is modified if it was an unconditional 'goto' to match new target.ID
-            this.RetargetLastUnconditionalGoto(newblock.ID);
-            //var t = new Tuple<Variable, Variable.State>(parent.LocalVariables[0], Variable.State.Free);
-            //var t = Tuple.Create(parent.LocalVariables[0], Variable.State.Free);
+            RetargetLastUnconditionalGoto(newblock.ID);
 
             return newblock;
 
@@ -122,13 +124,13 @@ namespace Obfuscator
 
 
         /// <summary>
-        /// Retargets (sets new ID_GUID) last 'goto' instruction of a basic block
+        /// Retargets last unconditional jump (its 'goto' instruction) of a basic block to a new ID_'GUID'
         /// </summary>
         /// <param name="targetID">ID_'GUID' to be retargeted to</param>
         /// <returns>True if 'goto' has been retargeted successfully; false if the last instruction is not 'goto'</returns>
         public bool RetargetLastUnconditionalGoto(string targetID)
         {
-            if (this.Instructions.Last().statementType != ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
+            if (Instructions.Last().statementType != ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
                 return false;
             else
             {
@@ -138,7 +140,6 @@ namespace Obfuscator
                 return true;
             }
         }
-
     }
 
 
@@ -201,6 +202,10 @@ namespace Obfuscator
             // TODO
         }
 
+        /// <summary>
+        /// Gets a list of unsafe variables, that contains variables which never become 'dead'
+        /// </summary>
+        /// <returns>A list of variables</returns>
         public List<Variable> GetUnsafeVariables()
         {
             List<Variable> unsafeVar = new List<Variable>();
@@ -214,6 +219,57 @@ namespace Obfuscator
             }
             return unsafeVar;
         }
+
+
+        public Dictionary<Variable, Variable.State> GetChangedStates()
+        {
+            if (string.IsNullOrWhiteSpace(TACtext))
+                throw new ObfuscatorException("TAC text is empty. Instruction: " + ID);
+            if(RefVariables.Count==0)
+                throw new ObfuscatorException("No referenced variables found in instruction " + ID);
+            Dictionary<Variable, Variable.State> var_states = new Dictionary<Variable, Variable.State>();
+            string right=string.Empty, left=string.Empty;
+            if (TACtext.Split('=').Length == 2)
+            {
+                right = TACtext.Split('=')[0];
+                left = TACtext.Split('=')[0];
+            }
+            switch (statementType)
+            {
+                case ExchangeFormat.StatementTypeType.EnumValues.eFullAssignment:
+                case ExchangeFormat.StatementTypeType.EnumValues.eUnaryAssignment:
+                case ExchangeFormat.StatementTypeType.EnumValues.eCopy:
+                    foreach (Variable var in RefVariables)
+                    {
+                        if (Regex.IsMatch(right, var.ID, RegexOptions.None)&&!Regex.IsMatch(left, var.ID, RegexOptions.None))
+                            var_states.Add(var, Variable.State.Free);
+                        if (Regex.IsMatch(left, var.ID, RegexOptions.None))
+                            var_states.Add(var, Variable.State.Filled);
+                    }
+                    break;
+                case ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump:
+                    foreach (Variable var in RefVariables)
+                        var_states.Add(var, Variable.State.Free);
+                    break;
+                case ExchangeFormat.StatementTypeType.EnumValues.ePointerAssignment:
+                case ExchangeFormat.StatementTypeType.EnumValues.eIndexedAssignment:
+                    throw new ObfuscatorException("NOT IMLPEMENTED YET");
+                    break;
+                case ExchangeFormat.StatementTypeType.EnumValues.eProcedural:
+                    if ((Regex.IsMatch(TACtext, "param", RegexOptions.None) || Regex.IsMatch(TACtext, "return", RegexOptions.None)) && Regex.IsMatch(TACtext, RefVariables[0].ID, RegexOptions.None))
+                        var_states.Add(RefVariables[0], Variable.State.Free);
+                    if (Regex.IsMatch(TACtext, "retrieve", RegexOptions.None) && Regex.IsMatch(TACtext, RefVariables[0].ID, RegexOptions.None))
+                        var_states.Add(RefVariables[0], Variable.State.Filled);
+                    break;
+                case ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump:
+                case ExchangeFormat.StatementTypeType.EnumValues.eNoOperation:
+                case ExchangeFormat.StatementTypeType.EnumValues.Invalid:
+                default:
+                    throw new ObfuscatorException("This statement type cannot change states of 'dead' variables.");
+            }
+            return var_states;
+        }
+
 
 #if !WORKING_IN_PROGRESS
 
