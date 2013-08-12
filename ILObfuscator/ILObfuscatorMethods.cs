@@ -1,4 +1,4 @@
-﻿#define WORKING_IN_PROGRESS
+﻿//#define WORKING_IN_PROGRESS
 
 /*
  * WARNING FOR FUTURE (1):
@@ -375,22 +375,6 @@ namespace Internal
 
 #if !WORKING_IN_PROGRESS
 
-        /// <summary>
-        /// Returns the state of the instruction's used dead variable.
-        /// </summary>
-        /// <param name="var">A dead variable used by the instruction.</param>
-        /// <returns>The state of the dead variable.</returns>
-        private Variable.State setState(Variable var)
-        {
-            /*
-             * TODO: Write this function.
-             * 
-             * As I see, it can return two values:
-             *  - FILLED: if the variable is a leftvalue in the instruction
-             *  - FREE: if the variable is not a leftvalue (so it is ONLY a rightvalue and not both)
-             */
-        }
-
         /*
          * When we modify a fake instruction, we change the states in it, so we
          * have to update the dead variables in the following instructions.
@@ -407,19 +391,18 @@ namespace Internal
              */
             foreach (Variable var in RefVariables)
             {
-                /*
-                 * We will only use this function on fake instructions, and these may
-                 * only use dead variables, which fact makes this condition unnecessary.
-                 * Despite this, I leave it here, because maybe we could use alive variables
-                 * in fake instructions, for example copying their values to dead variables.
-                 *
-                 * So QUESTION:
-                 * Are we going to use only dead variables in fake instructions?
-                 */
                 if (DeadVariables.ContainsKey(var))
                 {
+                    List<Variable.State> states = GetChangedStates(var);
+
+                    if (states.Count() == 0)
+                    {
+                        /* Nothing has changed. */
+                        return;
+                    }
+
                     /* First we set the state of that used dead variable. */
-                    DeadVariables[var] = setState(var).First();
+                    DeadVariables[var] = states.First();
 
                     /* Then we tell its (changed) state to the following instructions. */
                     foreach (Instruction ins in GetFollowingInstructions())
@@ -427,7 +410,7 @@ namespace Internal
                 }
                 else if (DeadPointers.ContainsKey(var))
                 {
-                    List<Variable.State> states = setState(var);
+                    List<Variable.State> states = GetChangedStates(var);
 
                     /* First we set the state of that used dead pointer. */
                     DeadPointers[var].State = states.First();
@@ -441,8 +424,8 @@ namespace Internal
                      * 
                      * WARNING FOR FUTURE: (1)
                      */ 
-                    if (states.Last() != Variable.State.Unchanged)
-                        DeadVariables[DeadPointers[var].PointsTo] = states.Last();
+                    if (states.Count() > 1)
+                        DeadVariables[DeadPointers[var].PointsTo] = states[1];
 
                     /* Then we tell its (changed) state to the following instructions. */
                     foreach (Instruction ins in GetFollowingInstructions())
@@ -486,6 +469,17 @@ namespace Internal
                         return;
                     }
                 }
+                
+                /*
+                 * Now we are at the point, that maybe we have to change the state.
+                 * Although it's not sure, because if the instruction has more than one predecessors,
+                 * then the actual state might not change anything.
+                 * For example: NOT_INITIALIZED meets FREE, or FREE meets FILLED.
+                 * 
+                 * NOTE: we don't know right now what to do if NOT_INIT meets FILLED...
+                 */
+                state = check_preceding_states(var, state);
+                
                 DeadVariables[var] = state;
                 foreach (Instruction ins in GetFollowingInstructions())
                     ins.RefreshNext(var, state);
@@ -500,10 +494,59 @@ namespace Internal
             if (DeadPointers.ContainsKey(var)           // This is a dead pointer.
                 && DeadPointers[var].State != state)    // The states differ.
             {
+                /* Just like in the previous case, we have to check all the preceding states for collisions. */
+                state = check_preceding_states(var, state);
+
                 DeadPointers[var].State = state;
                 foreach (Instruction ins in GetFollowingInstructions())
                     ins.RefreshNext(var, state);
             }
+        }
+
+        private Variable.State check_preceding_states(Variable var, Variable.State state)
+        {
+            /* So we get all states from the preceding instructions. */
+            List<Variable.State> preceding_states = new List<Variable.State>();
+            foreach (Instruction ins in GetPrecedingInstructions())
+            {
+                if (ins.DeadVariables.ContainsKey(var) && !preceding_states.Contains(ins.DeadVariables[var]))
+                    preceding_states.Add(ins.DeadVariables[var]);
+                else if (ins.DeadPointers.ContainsKey(var) && !preceding_states.Contains(ins.DeadPointers[var].State))
+                    preceding_states.Add(ins.DeadPointers[var].State);
+            }
+
+            /* We only have to do anything if there are more than one of those. */
+            if (preceding_states.Count() > 1)
+            {
+                switch (state)
+                {
+                    case Variable.State.Free:
+                        if (preceding_states.Contains(Variable.State.Not_Initialized))
+                        {
+                            /* FREE meets NOT_INITIALIZED */
+                            state = Variable.State.Not_Initialized;
+                        }
+                        else if (preceding_states.Contains(Variable.State.Filled))
+                        {
+                            /* FREE meets FILLED */
+                            state = Variable.State.Filled;
+                        }
+                        break;
+
+                    case Variable.State.Filled:
+                        if (preceding_states.Contains(Variable.State.Not_Initialized))
+                        {
+                            /* 
+                             * FILLED meets NOT_INITIALIZED
+                             * 
+                             * TODO: What should we do in these cases?
+                             */
+                            throw new ObfuscatorException("Unhandled state collision, do something!");
+                        }
+                        break;
+                }
+            }
+            return state;
         }
 #endif
 
