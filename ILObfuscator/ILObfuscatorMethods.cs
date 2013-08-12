@@ -221,13 +221,13 @@ namespace Obfuscator
         }
 
 
-        public Dictionary<Variable, Variable.State> GetChangedStates()
+        public List<Variable.State> GetChangedStates(Variable variable)
         {
             if (string.IsNullOrWhiteSpace(TACtext))
                 throw new ObfuscatorException("TAC text is empty. Instruction: " + ID);
-            if(RefVariables.Count==0)
+            if(RefVariables.Count==0 || !RefVariables.Contains(variable))
                 throw new ObfuscatorException("No referenced variables found in instruction " + ID);
-            Dictionary<Variable, Variable.State> var_states = new Dictionary<Variable, Variable.State>();
+            List<Variable.State> var_states = new List<Variable.State>();
             string right=string.Empty, left=string.Empty;
             if (TACtext.Split('=').Length == 2)
             {
@@ -239,27 +239,73 @@ namespace Obfuscator
                 case ExchangeFormat.StatementTypeType.EnumValues.eFullAssignment:
                 case ExchangeFormat.StatementTypeType.EnumValues.eUnaryAssignment:
                 case ExchangeFormat.StatementTypeType.EnumValues.eCopy:
-                    foreach (Variable var in RefVariables)
-                    {
-                        if (Regex.IsMatch(right, var.ID, RegexOptions.None)&&!Regex.IsMatch(left, var.ID, RegexOptions.None))
-                            var_states.Add(var, Variable.State.Free);
-                        if (Regex.IsMatch(left, var.ID, RegexOptions.None))
-                            var_states.Add(var, Variable.State.Filled);
-                    }
+                        if (Regex.IsMatch(right, variable.ID, RegexOptions.None)&&!Regex.IsMatch(left, variable.ID, RegexOptions.None))
+                            var_states.Add(Variable.State.Free);
+                        else if (Regex.IsMatch(left, variable.ID, RegexOptions.None))
+                            var_states.Add(Variable.State.Filled);
                     break;
                 case ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump:
-                    foreach (Variable var in RefVariables)
-                        var_states.Add(var, Variable.State.Free);
+                        var_states.Add(Variable.State.Free);
                     break;
                 case ExchangeFormat.StatementTypeType.EnumValues.ePointerAssignment:
+                    if (left.Contains("&"))
+                        throw new ObfuscatorException("Instruction type '&a=p' is not supported. Please use 'p=&a' instead.");
+                    else if (right.Contains("&"))
+                    {
+                        // Nothing changed
+                        if (Regex.IsMatch(right, variable.ID, RegexOptions.None) && !variable.pointer)
+                            break;
+                        // Pointer is filled
+                        else if (Regex.IsMatch(left, variable.ID, RegexOptions.None) && variable.pointer)
+                        {
+                            var_states.Add(Variable.State.Filled);
+                        }
+                        else
+                            throw new ObfuscatorException("GetChangedStates could not parse 'p=&a' instruction type. Possible errors: 'a' is a poiner; 'p' is not a pointer; incorrect TAC text.");
+                    }
+                    else if (left.Contains("*"))
+                    {
+                        // Variable state is free
+                        if (Regex.IsMatch(right, variable.ID, RegexOptions.None) && !variable.pointer)
+                            var_states.Add(Variable.State.Free);
+                        // Pointer is free, variable is filled
+                        else if (Regex.IsMatch(left, variable.ID, RegexOptions.None) && variable.pointer)
+                        {
+                            var_states.Add(Variable.State.Free);
+                            var_states.Add(Variable.State.Filled);
+                        }
+                        else
+                            throw new ObfuscatorException("GetChangedStates could not parse '*p=a' instruction type. Possible error: 'a' is a poiner or 'p' is not a pointer; incorrect TAC text.");
+                    }
+                    else if (right.Contains("*"))
+                    {
+                        // Pointer is free, variable is free
+                        if (Regex.IsMatch(right, variable.ID, RegexOptions.None) && variable.pointer)
+                        {
+                            var_states.Add(Variable.State.Free);
+                            var_states.Add(Variable.State.Free);
+                        }
+                        // Variable is filled
+                        else if (Regex.IsMatch(left, variable.ID, RegexOptions.None) && !variable.pointer)
+                        {
+                            var_states.Add(Variable.State.Filled);
+                        }
+                        else
+                            throw new ObfuscatorException("GetChangedStates could not parse 'a=*p' instruction type. Possible error: 'a' is a poiner or 'p' is not a pointer; incorrect TAC text.");
+                    }
+                    else
+                        throw new ObfuscatorException("GetChangedStates: problem in parsing TAC text of PointerAssignment instruction type. Instruction: " + ID);
+                    break;
                 case ExchangeFormat.StatementTypeType.EnumValues.eIndexedAssignment:
                     throw new ObfuscatorException("NOT IMLPEMENTED YET");
                     break;
                 case ExchangeFormat.StatementTypeType.EnumValues.eProcedural:
-                    if ((Regex.IsMatch(TACtext, "param", RegexOptions.None) || Regex.IsMatch(TACtext, "return", RegexOptions.None)) && Regex.IsMatch(TACtext, RefVariables[0].ID, RegexOptions.None))
-                        var_states.Add(RefVariables[0], Variable.State.Free);
-                    if (Regex.IsMatch(TACtext, "retrieve", RegexOptions.None) && Regex.IsMatch(TACtext, RefVariables[0].ID, RegexOptions.None))
-                        var_states.Add(RefVariables[0], Variable.State.Filled);
+                    if(variable.pointer)
+                        throw new ObfuscatorException("GetChangedStates: pointers are not supported in Procedural instruction type.");
+                    else if((Regex.IsMatch(TACtext, "param", RegexOptions.None) || Regex.IsMatch(TACtext, "return", RegexOptions.None)) && Regex.IsMatch(TACtext, RefVariables[0].ID, RegexOptions.None))
+                        var_states.Add(Variable.State.Free);
+                    else if (Regex.IsMatch(TACtext, "retrieve", RegexOptions.None) && Regex.IsMatch(TACtext, RefVariables[0].ID, RegexOptions.None))
+                        var_states.Add(Variable.State.Filled);
                     break;
                 case ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump:
                 case ExchangeFormat.StatementTypeType.EnumValues.eNoOperation:
