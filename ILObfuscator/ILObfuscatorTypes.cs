@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using ExchangeFormat;
 using System.Text.RegularExpressions;
+using Obfuscator;
 
-namespace Obfuscator
+namespace Internal
 {
     /// <summary>
     /// Class to store the state and the pointed variable of a pointer.
@@ -221,6 +222,14 @@ namespace Obfuscator
             Used = 2,
             Not_Initialized = 3
         }
+        public enum Purpose
+        {
+            Original = 1,
+            Temporary = 2,
+            Fake = 3,
+            ConstRecalculation = 4
+        }
+
         // Attributes
         private IDManager _ID;
         public string ID
@@ -251,6 +260,35 @@ namespace Obfuscator
             kind = kind1;
         }
 
+        public Variable(int memory_region_size, Kind kind, Purpose purpose)
+        {
+            _ID = new IDManager();
+            switch (purpose)
+            {
+                case Purpose.Original:
+                    name = string.Concat("v_", ID);
+                    break;
+                case Purpose.Temporary:
+                    name = string.Concat("t_", ID);
+                    break;
+                case Purpose.Fake:
+                    name = string.Concat("f_", ID);
+                    break;
+                case Purpose.ConstRecalculation:
+                    name = string.Concat("c_", ID);
+                    break;
+                default:
+                    throw new ObfuscatorException("Unsupported Variable.Purpose value.");
+            }
+            memoryRegionSize = memory_region_size;
+            pointer = false;
+            fake = true;
+            this.kind = kind;
+        }
+
+        protected internal Variable()
+        {
+        }
 
         public override bool Equals(object obj)
         {
@@ -267,6 +305,24 @@ namespace Obfuscator
 
     public partial class Instruction : IComparable, IValidate
     {
+        public enum ArithmeticOperationType
+        {
+            Addition = 0,
+            Subtraction = 1,
+            Multiplication = 2,
+            Division = 3
+        }
+
+        public enum RelationalOperationType
+        {
+            Equals = 0,
+            NotEquals = 1,
+            Greater = 2,
+            GreaterOrEquals = 3,
+            Less = 4,
+            LessOrEquals = 5
+        }
+
         //Attributes
         public BasicBlock parent { get; set; }
         private IDManager _ID;
@@ -336,19 +392,11 @@ namespace Obfuscator
                 case StatementTypeType.EnumValues.eNoOperation:
                     setInstructionValues(null, statementType, "nop", null);
                     break;
-                case StatementTypeType.EnumValues.eFullAssignment:
-                case StatementTypeType.EnumValues.eUnaryAssignment:
-                case StatementTypeType.EnumValues.eCopy:
-                case StatementTypeType.EnumValues.eUnconditionalJump:
-                case StatementTypeType.EnumValues.eConditionalJump:
-                case StatementTypeType.EnumValues.eProcedural:
-                case StatementTypeType.EnumValues.eIndexedAssignment:
-                case StatementTypeType.EnumValues.ePointerAssignment:
-                case StatementTypeType.EnumValues.Invalid:
                 default:
-                    throw new ObfuscatorException("Not implemented yet!\n");
+                    throw new ObfuscatorException("Only the 'NoOperation' type instruction can be created.\n");
             }
         }
+
 
         //Interface methods
         public int CompareTo(object obj)

@@ -12,8 +12,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Obfuscator;
 
-namespace Obfuscator
+namespace Internal
 {
     public partial class Routine
     {
@@ -73,6 +74,15 @@ namespace Obfuscator
             }
             throw new ObfuscatorException("No local variable " + id + " found in function.");
         }
+
+
+        public Variable NewLocalVariable(int MemoryRegionSize, Variable.Purpose purpose)
+        {
+            Variable var = new Variable(MemoryRegionSize, Variable.Kind.Local, purpose);
+            LocalVariables.Add(var);
+            return var;
+        }
+
     }
 
 
@@ -197,11 +207,6 @@ namespace Obfuscator
             return following;
         }
 
-        internal void ReplaceGoto(string newID)
-        {
-            // TODO
-        }
-
         /// <summary>
         /// Gets a list of unsafe variables, that contains variables which never become 'dead'
         /// </summary>
@@ -220,7 +225,11 @@ namespace Obfuscator
             return unsafeVar;
         }
 
-
+        /// <summary>
+        /// Determines the new state of a dead variable (a pointer) as a result of the instruction
+        /// </summary>
+        /// <param name="variable">A variable or a pointer</param>
+        /// <returns>A list of states. For variable: 1 - variable, 2 - empty. For pointer: 1-pointer, 2 - variable. Empty list if nothing has changed.</returns>
         public List<Variable.State> GetChangedStates(Variable variable)
         {
             if (string.IsNullOrWhiteSpace(TACtext))
@@ -297,8 +306,7 @@ namespace Obfuscator
                         throw new ObfuscatorException("GetChangedStates: problem in parsing TAC text of PointerAssignment instruction type. Instruction: " + ID);
                     break;
                 case ExchangeFormat.StatementTypeType.EnumValues.eIndexedAssignment:
-                    throw new ObfuscatorException("NOT IMLPEMENTED YET");
-                    break;
+                    throw new ObfuscatorException("This statement type is not supported.");
                 case ExchangeFormat.StatementTypeType.EnumValues.eProcedural:
                     if(variable.pointer)
                         throw new ObfuscatorException("GetChangedStates: pointers are not supported in Procedural instruction type.");
@@ -314,6 +322,54 @@ namespace Obfuscator
                     throw new ObfuscatorException("This statement type cannot change states of 'dead' variables.");
             }
             return var_states;
+        }
+
+
+        public void MakeFullAssignment(Variable left_value, Variable right_value1, Variable right_value2, int right_value_int, Instruction.ArithmeticOperationType operation)
+        {
+            if ((right_value2 == null && right_value_int == null) || (right_value2 != null && right_value_int != null) || left_value == null || right_value1 == null || operation == 0)
+                throw new ObfuscatorException("MakeFullAssignment: wrong parameter passing.");
+            string left1 = left_value.name;
+            string right1 = right_value1.name;
+            string right2 = right_value_int == null ? right_value2.name : right_value_int.ToString();
+            string op;
+            switch (operation)
+            {
+                case ArithmeticOperationType.Addition:
+                    op = "+";
+                    break;
+                case ArithmeticOperationType.Subtraction:
+                    op = "-";
+                    break;
+                case ArithmeticOperationType.Multiplication:
+                    op = "*";
+                    break;
+                case ArithmeticOperationType.Division:
+                    op = @"/";
+                    break;
+                default:
+                    throw new ObfuscatorException("MakeFullAssignment: unsupported operation type.");
+            }
+            RefVariables.Clear();
+            RefVariables.Add(left_value);
+            RefVariables.Add(right_value1);
+            if (right_value_int == null)
+                RefVariables.Add(right_value2);
+            statementType = ExchangeFormat.StatementTypeType.EnumValues.eFullAssignment;
+            TACtext = string.Join(" ", left1, ":=", right1, op, right2);
+        }
+
+
+        public void MakeCopy(Variable left_value, Variable right_value, int right_value_int)
+        {
+            if (left_value == null || (right_value == null && right_value_int == null) || (right_value != null && right_value_int != null))
+                throw new ObfuscatorException("MakeCopy: wrong parameter passing.");
+            RefVariables.Clear();
+            RefVariables.Add(left_value);
+            if (right_value_int == null)
+                RefVariables.Add(right_value);
+            statementType = ExchangeFormat.StatementTypeType.EnumValues.eCopy;
+            TACtext = right_value_int == null ? string.Join(" ", left_value.name, ":=", right_value.name) : string.Join(" ", left_value.name, ":=", right_value_int);
         }
 
 

@@ -19,7 +19,7 @@ namespace ObfuscationManager
             try
             {
                 Console.WriteLine("\nValidating XML . . .");
-                Obfuscator.Validator.ValidateXML(doc);
+                Internal.Validator.ValidateXML(doc);
             }
             catch (Obfuscator.ValidatorException exc)
             {

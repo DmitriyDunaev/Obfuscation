@@ -1,5 +1,79 @@
 #define PSEUDOCODE
 
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Internal;
+
+namespace Obfuscator
+{
+    public static class ConstCoverage
+    {
+        /// <summary>
+        /// Searches for instructions within a function, which contain a constant value
+        /// </summary>
+        /// <param name="basicblock">A basic block with instructions</param>
+        /// <returns>A dictionary with the instruction and the contained constant value</returns>
+        private static Dictionary<Instruction, int> GetInstructionsWithConstants(BasicBlock basicblock)
+        {
+            Dictionary<Instruction, int> consts = new Dictionary<Instruction, int>();
+            foreach (Instruction inst in basicblock.Instructions)
+            {
+                if (inst.statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump)
+                    continue;
+                string resultString = null;
+                resultString = Regex.Match(inst.TACtext, @"(^\d+)|(\s\d+)").Value.Trim();
+                if (!string.IsNullOrEmpty(resultString))
+                    consts.Add(inst, Convert.ToInt32(resultString));
+            }
+            return consts;
+        }
+
+        /// <summary>
+        /// Inserts two additional instructions for constant coverage
+        /// </summary>
+        /// <param name="const_inst">The instruction with a constant value</param>
+        /// <param name="const_value">Numerical constant value to be covered</param>
+        private static void PreprocessConstant(Instruction const_inst, int const_value)
+        {
+            Random rnd = new Random(Convert.ToInt32(DateTime.Now.Ticks));
+            int first, second;
+            do
+            {
+                first = rnd.Next(const_inst.parent.Instructions.BinarySearch(const_inst));
+                second = rnd.Next(const_inst.parent.Instructions.BinarySearch(const_inst));
+            }
+            while (first > second && const_inst.parent.Instructions.BinarySearch(const_inst)!=0);
+            Instruction nop1 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation);
+            Instruction nop2 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation);
+            Variable t1 = const_inst.parent.parent.NewLocalVariable(4, Variable.Purpose.ConstRecalculation);
+            Variable t2 = const_inst.parent.parent.NewLocalVariable(4, Variable.Purpose.ConstRecalculation);
+            nop1.MakeCopy(t2, null, 100);
+            nop2.MakeFullAssignment(t1, t2, null, 100 - const_value, Instruction.ArithmeticOperationType.Subtraction);
+            const_inst.parent.Instructions.Insert(second, nop2);
+            const_inst.parent.Instructions.Insert(first, nop1);
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
  * TODO:
  * 
