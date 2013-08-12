@@ -64,7 +64,7 @@ namespace Obfuscator
         /// <param name="const_value">Numerical constant value to be covered</param>
         private static void PreprocessConstant(Instruction const_inst, int const_value)
         {
-            Random rnd = new Random(Convert.ToInt32(DateTime.Now.Ticks));
+            Random rnd = new Random(Convert.ToInt32(DateTime.Now.Millisecond));
             int first, second;
             do
             {
@@ -72,8 +72,8 @@ namespace Obfuscator
                 second = rnd.Next(const_inst.parent.Instructions.BinarySearch(const_inst));
             }
             while (first > second && const_inst.parent.Instructions.BinarySearch(const_inst)!=0);
-            Instruction nop1 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation);
-            Instruction nop2 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation);
+            Instruction nop1 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, const_inst.parent);
+            Instruction nop2 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, const_inst.parent);
             Variable t1 = const_inst.parent.parent.NewLocalVariable(4, Variable.Purpose.ConstRecalculation);
             Variable t2 = const_inst.parent.parent.NewLocalVariable(4, Variable.Purpose.ConstRecalculation);
             nop1.MakeCopy(t2, null, 100);

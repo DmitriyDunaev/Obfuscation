@@ -385,12 +385,12 @@ namespace Internal
             this.polyRequired = polyRequired;
         }
 
-        public Instruction(StatementTypeType.EnumValues statementType)
+        public Instruction(StatementTypeType.EnumValues statementType, BasicBlock parent = null)
         {
             switch (statementType)
             {
                 case StatementTypeType.EnumValues.eNoOperation:
-                    setInstructionValues(null, statementType, "nop", null);
+                    setInstructionValues(parent, statementType, "nop", null);
                     break;
                 default:
                     throw new ObfuscatorException("Only the 'NoOperation' type instruction can be created.\n");
