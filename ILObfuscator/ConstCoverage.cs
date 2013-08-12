@@ -18,23 +18,21 @@ namespace Obfuscator
              * We have to replace all the occurrences of the constant values,
              * so we should have a list of all the instructions using them.
              */
-            Dictionary<Instruction, int> instr = new Dictionary<Instruction, int>();
             foreach (Function func in routine.Functions)
             {
                 foreach (BasicBlock bb in func.BasicBlocks)
                 {
                     Dictionary<Instruction, int> tmp = GetInstructionsWithConstants(bb);
                     foreach (Instruction ins in tmp.Keys)
-                        instr.Add(ins, tmp[ins]);
+                        /* 
+                         * Now that we have the list, we have to do the necessary
+                         * insertions for all the instructions in the list.
+                         */  
+                        PreprocessConstant(ins, tmp[ins]);
                 }
             }
 
-            /* 
-             * Now that we have the list, we have to do the necessary
-             * insertions for all the instructions in the list.
-             */
-            foreach (Instruction ins in instr.Keys)
-                PreprocessConstant(ins, instr[ins]);
+            
         }
 
         /// <summary>
