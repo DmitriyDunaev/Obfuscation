@@ -47,6 +47,8 @@ namespace Obfuscator
             {
                 if (inst.statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump)
                     continue;
+                if(inst.statementType == ExchangeFormat.StatementTypeType.EnumValues.eProcedural && Regex.IsMatch(inst.TACtext, @"^call "))
+                    continue;
                 string resultString = null;
                 resultString = Regex.Match(inst.TACtext, @"(^\d+)|(\s\d+)").Value.Trim();
                 if (!string.IsNullOrEmpty(resultString))
@@ -62,7 +64,7 @@ namespace Obfuscator
         /// <param name="const_value">Numerical constant value to be covered</param>
         private static void PreprocessConstant(Instruction const_inst, int const_value)
         {
-            Random rnd = new Random(Convert.ToInt32(DateTime.Now.Millisecond));
+            Random rnd = new Random(DateTime.Now.Millisecond);
             int first, second;
             do
             {
@@ -72,12 +74,18 @@ namespace Obfuscator
             while (first > second && const_inst.parent.Instructions.BinarySearch(const_inst)!=0);
             Instruction nop1 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, const_inst.parent);
             Instruction nop2 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, const_inst.parent);
+            // We assume that we need 4 bytes for each constant.
             Variable t1 = const_inst.parent.parent.NewLocalVariable(4, Variable.Purpose.ConstRecalculation);
             Variable t2 = const_inst.parent.parent.NewLocalVariable(4, Variable.Purpose.ConstRecalculation);
-            nop1.MakeCopy(t2, null, 100);
-            nop2.MakeFullAssignment(t1, t2, null, 100 - const_value, Instruction.ArithmeticOperationType.Subtraction);
+            int first_number = rnd.Next(0, 100);
+            Instruction.ArithmeticOperationType op = first_number < const_value ? Instruction.ArithmeticOperationType.Addition : Instruction.ArithmeticOperationType.Subtraction;
+            int second_number = Math.Abs(first_number - const_value);
+            nop1.MakeCopy(t2, null, first_number);
+            nop2.MakeFullAssignment(t1, t2, null, second_number, op);
             const_inst.parent.Instructions.Insert(second, nop2);
             const_inst.parent.Instructions.Insert(first, nop1);
+            const_inst.ModifyConstInstruction(t1, const_value);
+
         }
     }
 }

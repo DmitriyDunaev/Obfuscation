@@ -325,9 +325,9 @@ namespace Internal
         }
 
 
-        public void MakeFullAssignment(Variable left_value, Variable right_value1, Variable right_value2, int right_value_int, Instruction.ArithmeticOperationType operation)
+        public void MakeFullAssignment(Variable left_value, Variable right_value1, Variable right_value2, int? right_value_int, Instruction.ArithmeticOperationType operation)
         {
-            if ((right_value2 == null && right_value_int == null) || (right_value2 != null && right_value_int != null) || left_value == null || right_value1 == null || operation == 0)
+            if ((right_value2 == null && right_value_int == null) || (right_value2 != null && right_value_int != null) || left_value == null || right_value1 == null || operation == null)
                 throw new ObfuscatorException("MakeFullAssignment: wrong parameter passing.");
             string left1 = left_value.name;
             string right1 = right_value1.name;
@@ -360,7 +360,7 @@ namespace Internal
         }
 
 
-        public void MakeCopy(Variable left_value, Variable right_value, int right_value_int)
+        public void MakeCopy(Variable left_value, Variable right_value, int? right_value_int)
         {
             if (left_value == null || (right_value == null && right_value_int == null) || (right_value != null && right_value_int != null))
                 throw new ObfuscatorException("MakeCopy: wrong parameter passing.");
@@ -372,6 +372,22 @@ namespace Internal
             TACtext = right_value_int == null ? string.Join(" ", left_value.name, ":=", right_value.name) : string.Join(" ", left_value.name, ":=", right_value_int);
         }
 
+
+        public void ModifyConstInstruction(Variable variable, int? value)
+        {
+            if (variable == null || value == null)
+                throw new ObfuscatorException("ModifyConstInstruction: wrong parameter passing.");
+            RefVariables.Add(variable);
+            string TACtext_new = string.Empty;
+            for (int i = 0; i < TACtext.Split(' ').Length; i++)
+            {
+                if (TACtext.Split(' ')[i] != value.ToString())
+                    TACtext_new = string.Join(" ", TACtext_new, TACtext.Split(' ')[i]);
+                else
+                    TACtext_new = string.Join(" ", TACtext_new, variable.name);
+            }
+            TACtext = TACtext_new.Trim();
+        }
 
 #if !WORKING_IN_PROGRESS
 
