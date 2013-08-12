@@ -16,14 +16,20 @@ namespace Obfuscator
             Console.WriteLine("\nValidating data in Routine. . .\n");
             routine.Validate();
             Console.WriteLine("Loading initial data: routine validation has passed successfully.\n\n");
-            foreach (Function func in routine.Functions)
-                DataAnalysis.DeadVarsAlgortihm(func);
+
+            ConstCoverage.CoverConsts(routine);
             routine.Validate();
-            Console.WriteLine("Dead variables algorithm: routine validation has passed successfully.\n\n");
+            Console.WriteLine("Const covering algorithm: routine validation has passed successfully.\n\n");
+
             Instruction inst = new Instruction(StatementTypeType.EnumValues.eNoOperation);
             Meshing.MeshingAlgorithm(routine.Functions[1]); // Testing the function in the second function of the routine.
             routine.Validate();
             Console.WriteLine("Meshing algorithm: routine validation has passed successfully..\n\n");
+
+            foreach (Function func in routine.Functions)
+                DataAnalysis.DeadVarsAlgortihm(func);
+            routine.Validate();
+            Console.WriteLine("Dead variables algorithm: routine validation has passed successfully.\n\n");
         }
     }
 }
