@@ -226,13 +226,7 @@ namespace Obfuscator
                 }
         }
 
-        /* -------------- isLoopBody algorithm starts ---------------- */
-
-        /*
-         * We decided that this function should be not in the BasicBlock, rather
-         * outside it. In the future it can be placed to a more proper place,
-         * now it's here just to make debugging possible...
-         */
+        /* ---------- isLoopBody, isMainRoute algorithms start ----------- */
 
         /// <summary>
         /// List to hold the id's of the basic blocks we already reached.
@@ -241,11 +235,31 @@ namespace Obfuscator
         private static List<string> found_ids = new List<string>();
 
         /// <summary>
+        /// Used in the
+        /// </summary>
+        private static string id = string.Empty;
+
+        /// <summary>
         /// Function to find out whether a basic block is in a loop body, or not.
         /// </summary>
         /// <param name="actual">The questioned basic block.</param>
         /// <returns>True if the basic block is in a loop, False if not.</returns>
-        public static bool isLoopBody (BasicBlock bb)
+        public static bool isLoopBody(BasicBlock bb)
+        {
+            return StartFromBB(bb, true);
+        }
+
+        /// <summary>
+        /// Function to find out whether a basic block is in the main Control Flow, or not.
+        /// </summary>
+        /// <param name="bb">The questioned basic block.</param>
+        /// <returns>True if the basic block is in the main Control Flow, False if not.</returns>
+        public static bool isMainRoute(BasicBlock bb)
+        {
+            return !StartFromBB(bb, false);
+        }
+
+        private static bool StartFromBB(BasicBlock bb, bool directed)
         {
             /*
              * We clear the former found_ids list, because we don't want the previous run of
@@ -253,8 +267,11 @@ namespace Obfuscator
              */
             found_ids.Clear();
 
+            if (!directed)
+                id = bb.ID;
+
             foreach (BasicBlock item in bb.getSuccessors)
-                reachable_from(item);
+                reachable_from(item, directed);
 
             /*
              * If and only if we have got to this basic block during the algorithm,
@@ -270,7 +287,7 @@ namespace Obfuscator
         /// Adds this basic block to the found_ids list, and calls itself for all the BB's successors.
         /// </summary>
         /// <param name="actual">Actual BasicBlock</param>
-        private static void reachable_from(BasicBlock actual)
+        private static void reachable_from(BasicBlock actual, bool directed)
         {
             /*
              * First we check whether the actual basic block has been already
@@ -281,12 +298,23 @@ namespace Obfuscator
                 /* We add the actual basic block's ID to the found_ids list. */
                 found_ids.Add(actual.ID);
 
-                /* Then we continue with all its successors. */
+                /* Then we continue with all the basic blocks reachable from here. */
+                List<BasicBlock> reachable = new List<BasicBlock>();
                 foreach (BasicBlock item in actual.getSuccessors)
-                    reachable_from(item);
-            }      
+                    reachable.Add(item);
+                if (!directed)
+                {
+                    foreach (BasicBlock item in actual.getPredecessors)
+                    {
+                        if (item.ID != id)
+                            reachable.Add(item);
+                    }
+                }
+                foreach (BasicBlock item in reachable)
+                    reachable_from(item, directed);
+            }
         }
 
-        /* ---------------- isLoopBody algorithm ends ------------------ */
+        /* ----------- isLoopBody, isMainRoute algorithms end ------------ */
     }
 }
