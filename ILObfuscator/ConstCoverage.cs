@@ -72,6 +72,10 @@ namespace Obfuscator
                 second = rnd.Next(const_inst.parent.Instructions.BinarySearch(const_inst));
             }
             while (first > second && const_inst.parent.Instructions.BinarySearch(const_inst)!=0);
+
+            List<int> two_places = Randomizer.GetRandomNumbers(2, 0, const_inst.parent.Instructions.BinarySearch(const_inst), true, true);
+
+
             Instruction nop1 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, const_inst.parent);
             Instruction nop2 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, const_inst.parent);
             // We assume that we need 4 bytes for each constant.

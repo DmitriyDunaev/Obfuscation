@@ -29,4 +29,17 @@ namespace Obfuscator
           System.Runtime.Serialization.StreamingContext context)
             : base(info, context) { }
     }
+
+
+    [Serializable]
+    public class RandomizerException : Exception
+    {
+        public RandomizerException() { }
+        public RandomizerException(string message) : base(message) { }
+        public RandomizerException(string message, Exception inner) : base(message, inner) { }
+        protected RandomizerException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context)
+            : base(info, context) { }
+    }
 }
