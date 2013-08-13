@@ -471,8 +471,8 @@ namespace Internal
             }
 
             /*
-             * We have to do anything only if the variable is in this instruction's
-             * DeadVariables list, and it's state differs from the new state.
+             * We have to do anything only if the variable is in this instruction is
+             * dead, and it's state differs from the new state.
              */
             if (DeadVariables.ContainsKey(var)      // This variable is dead.
                 && DeadVariables[var] != state)     // The states differ.
