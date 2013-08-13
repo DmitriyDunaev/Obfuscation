@@ -88,68 +88,87 @@ namespace Internal
 
     public partial class BasicBlock
     {
-        /// <summary>
-        /// Inserts an instruction to the beginning of a basic block
-        /// </summary>
-        /// <param name="instruction">Instruction to be inserted</param>
-        public void InsertFirstInstruction(Instruction instruction)
-        {
-            Instructions.Insert(0, instruction);
-            instruction.parent = this;
-        }
+
 
         /// <summary>
         /// This is the dumb version of the InsertAfter, which inserts a BasicBlock after an unconditional jump
         /// </summary>
         /// <param name="bbTarget">The target of the unconditional jump</param>
         /// <returns>The created block</returns>
-        public BasicBlock InsertAfter(BasicBlock target)
+        //public BasicBlock InsertAfter(BasicBlock target)
+        //{
+        //    if (Successors.Count > 1) // two successors
+        //        throw new ObfuscatorException("You cannot insert new basic block after the basic block with two successors.");
+
+        //    BasicBlock newblock = new BasicBlock(parent, new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation));
+
+        //    if (Successors.Count == 1)  // one successor
+        //    {
+        //        Successors.Clear();
+        //        Successors.Add(newblock);
+        //        target.Predecessors.Remove(this);
+        //        target.Predecessors.Add(newblock);
+        //        newblock.Predecessors.Add(this);
+        //        newblock.Successors.Add(target);
+        //    }
+        //    else // no successors
+        //    {
+        //        Successors.Add(newblock);
+        //        newblock.Predecessors.Add(this);
+        //    }
+
+        //    // The last instruction is modified if it was an unconditional 'goto' to match new target.ID
+        //    RetargetLastUnconditionalGoto(newblock.ID);
+        //    return newblock;
+        //}
+
+
+        public BasicBlock SplitAfterInstruction(Instruction inst)
         {
-            if (Successors.Count > 1) // two successors
-                throw new ObfuscatorException("You cannot insert new basic block after the basic block with two successors.");
-
-            BasicBlock newblock = new BasicBlock(parent, new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation));
-
-            if (Successors.Count == 1)  // one successor
-            {
-                Successors.Clear();
-                Successors.Add(newblock);
-                target.Predecessors.Remove(this);
-                target.Predecessors.Add(newblock);
-                newblock.Predecessors.Add(this);
-                newblock.Successors.Add(target);
-            }
-            else // no successors
-            {
-                Successors.Add(newblock);
-                newblock.Predecessors.Add(this);
-            }
-
-            // The last instruction is modified if it was an unconditional 'goto' to match new target.ID
-            RetargetLastUnconditionalGoto(newblock.ID);
-
-            return newblock;
-
+            if (!inst.parent.Equals(this) || !this.Instructions.Contains(inst))
+                throw new ObfuscatorException("The instruction does not belong to the given basic block.");
+            if(inst.statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump)
+                throw new ObfuscatorException("You cannot split a basic block after the conditional jump.");
+            BasicBlock newBB = new BasicBlock(parent);
+            newBB.Successors.AddRange(Successors);
+            Successors.Clear();
+            Successors.Add(newBB);
+            newBB.Predecessors.Add(this);
+            List<Instruction> move = Instructions.GetRange(Instructions.BinarySearch(inst) + 1, Instructions.Count - Instructions.BinarySearch(inst) - 1);
+            // If something is moved, then clear NoOperation default instruction in the new basic block
+            if (move.Count > 0)
+                newBB.Instructions.Clear();
+            newBB.Instructions.AddRange(move);
+            Instructions.RemoveRange(Instructions.BinarySearch(inst) + 1, Instructions.Count - Instructions.BinarySearch(inst) - 1);
+            foreach (Instruction ins in newBB.Instructions)
+                ins.parent = newBB;
+            if (inst.statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
+                RetargetLastUnconditionalGoto(newBB.ID);
+            return newBB;
         }
-
 
         /// <summary>
         /// Retargets last unconditional jump (its 'goto' instruction) of a basic block to a new ID_'GUID'
         /// </summary>
         /// <param name="targetID">ID_'GUID' to be retargeted to</param>
         /// <returns>True if 'goto' has been retargeted successfully; false if the last instruction is not 'goto'</returns>
-        public bool RetargetLastUnconditionalGoto(string targetID)
+        private bool RetargetLastUnconditionalGoto(string targetID)
         {
-            if (Instructions.Last().statementType != ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
-                return false;
-            else
-            {
-                string resultString = null;
-                resultString = Regex.Match(Instructions.Last().TACtext, @"\bID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b").Value;
-                Instructions.Last().TACtext = Instructions.Last().TACtext.Replace(resultString, targetID);
-                return true;
-            }
+            string resultString = null;
+            resultString = Regex.Match(Instructions.Last().TACtext, @"\bID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b").Value;
+            Instructions.Last().TACtext = Instructions.Last().TACtext.Replace(resultString, targetID);
+            return true;
         }
+
+
+        public void LinkSuccessor(BasicBlock successor)
+        {
+            if (Successors.Count > 2)
+                throw new ObfuscatorException("Basic block cannot have more than 2 successors.");
+            Successors.Add(successor);
+            successor.Predecessors.Add(this);
+        }
+
     }
 
 
@@ -324,55 +343,13 @@ namespace Internal
             return var_states;
         }
 
+        
 
-        public void MakeFullAssignment(Variable left_value, Variable right_value1, Variable right_value2, int? right_value_int, Instruction.ArithmeticOperationType operation)
-        {
-            if ((right_value2 == null && right_value_int == null) || (right_value2 != null && right_value_int != null) || left_value == null || right_value1 == null || operation == null)
-                throw new ObfuscatorException("MakeFullAssignment: wrong parameter passing.");
-            string left1 = left_value.name;
-            string right1 = right_value1.name;
-            string right2 = right_value_int == null ? right_value2.name : right_value_int.ToString();
-            string op;
-            switch (operation)
-            {
-                case ArithmeticOperationType.Addition:
-                    op = "+";
-                    break;
-                case ArithmeticOperationType.Subtraction:
-                    op = "-";
-                    break;
-                case ArithmeticOperationType.Multiplication:
-                    op = "*";
-                    break;
-                case ArithmeticOperationType.Division:
-                    op = @"/";
-                    break;
-                default:
-                    throw new ObfuscatorException("MakeFullAssignment: unsupported operation type.");
-            }
-            RefVariables.Clear();
-            RefVariables.Add(left_value);
-            RefVariables.Add(right_value1);
-            if (right_value_int == null)
-                RefVariables.Add(right_value2);
-            statementType = ExchangeFormat.StatementTypeType.EnumValues.eFullAssignment;
-            TACtext = string.Join(" ", left1, ":=", right1, op, right2);
-        }
-
-
-        public void MakeCopy(Variable left_value, Variable right_value, int? right_value_int)
-        {
-            if (left_value == null || (right_value == null && right_value_int == null) || (right_value != null && right_value_int != null))
-                throw new ObfuscatorException("MakeCopy: wrong parameter passing.");
-            RefVariables.Clear();
-            RefVariables.Add(left_value);
-            if (right_value_int == null)
-                RefVariables.Add(right_value);
-            statementType = ExchangeFormat.StatementTypeType.EnumValues.eCopy;
-            TACtext = right_value_int == null ? string.Join(" ", left_value.name, ":=", right_value.name) : string.Join(" ", left_value.name, ":=", right_value_int);
-        }
-
-
+        /// <summary>
+        /// Modifies the TAC text of instruction: replaces numerical constant to variable name
+        /// </summary>
+        /// <param name="variable">Variable containing constant</param>
+        /// <param name="value">Constant number to be replaced</param>
         public void ModifyConstInstruction(Variable variable, int? value)
         {
             if (variable == null || value == null)

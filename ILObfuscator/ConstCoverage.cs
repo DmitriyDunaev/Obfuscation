@@ -65,7 +65,6 @@ namespace Obfuscator
         private static void PreprocessConstant(Instruction const_inst, int const_value)
         {
             List<int> two_places = Randomizer.GetMultipleNumbers(2, 0, const_inst.parent.Instructions.BinarySearch(const_inst), true, true);
-            two_places = Randomizer.GetMultipleNumbers(1, 0, 0, false, true);
             Instruction nop1 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, const_inst.parent);
             Instruction nop2 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, const_inst.parent);
             // We assume that we need 4 bytes for each constant.

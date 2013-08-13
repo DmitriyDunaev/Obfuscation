@@ -66,7 +66,8 @@ namespace Obfuscator
         /// <param name="bb">The actual basic block with the unconditional jump</param>
         private static void InsertFakeLane(BasicBlock bb)
         {
-            bb.InsertAfter(bb.getSuccessors[0]);
+            //bb.InsertAfter(bb.getSuccessors[0]);
+            bb.SplitAfterInstruction(bb.Instructions.Last());
         }
 
     }

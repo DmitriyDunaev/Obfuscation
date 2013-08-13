@@ -21,7 +21,11 @@ namespace Obfuscator
             routine.Validate();
             Console.WriteLine("Const covering algorithm: routine validation has passed successfully.\n\n");
 
-            Instruction inst = new Instruction(StatementTypeType.EnumValues.eNoOperation);
+            Instruction inst = new Instruction(StatementTypeType.EnumValues.eNoOperation, routine.Functions[1].BasicBlocks[0]);
+
+            routine.Functions[1].BasicBlocks[0].Instructions.Add(inst);
+            routine.Functions[1].BasicBlocks[0].Instructions.Last().MakeConditionalJump(routine.Functions[1].LocalVariables[1], 55, Instruction.RelationalOperationType.Less, routine.Functions[1].BasicBlocks[3]);
+
             Meshing.MeshingAlgorithm(routine.Functions[1]); // Testing the function in the second function of the routine.
             routine.Validate();
             Console.WriteLine("Meshing algorithm: routine validation has passed successfully..\n\n");

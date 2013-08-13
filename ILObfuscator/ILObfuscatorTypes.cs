@@ -162,33 +162,24 @@ namespace Internal
             }
         }
 
-        public BasicBlock(Function parent)
-        {
-            if (parent == null || parent.parent == null)
-            {
-                throw new ObfuscatorException("Basic block is created outside Function.");
-            }
-            this.parent = parent;
-            this.Predecessors = new List<BasicBlock>();
-            this.Successors = new List<BasicBlock>();
-        }
+
 
         /// <summary>
-        /// Constructor for BasicBlock
+        /// Constructor for BasicBlock with a given instruction
         /// </summary>
-        /// <param name="parent">The parent function, wich will contain the block</param>
-        /// <param name="instruction">The instruction which will be inserted into the block</param>
-        public BasicBlock(Function parent, Instruction instruction)
+        /// <param name="parent">The parent function, which will contain the block</param>
+        /// <param name="instruction">The instruction which will be inserted into the basic block</param>
+        public BasicBlock(Function parent, Instruction instruction = null)
         {
             if (parent == null || parent.parent == null)
-            {
                 throw new ObfuscatorException("Basic block is created outside Function.");
-            }
+            if (instruction == null)
+                instruction = new Instruction(StatementTypeType.EnumValues.eNoOperation, this);
+            else
+                instruction.parent = this;
+            Instructions.Add(instruction);
             _ID = new IDManager();
             this.parent = parent;
-            InsertFirstInstruction(instruction);
-            this.Predecessors = new List<BasicBlock>();
-            this.Successors = new List<BasicBlock>();
             parent.BasicBlocks.Add(this);
         }
 

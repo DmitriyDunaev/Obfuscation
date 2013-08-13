@@ -43,6 +43,7 @@
     <Compile Include="DataAnalysis.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="FakeCode.cs" />
+    <Compile Include="MakeFakeInstructions.cs" />
     <Compile Include="ILObfuscatorMethods.cs" />
     <Compile Include="Meshing.cs" />
     <Compile Include="ConstCoverage.cs" />
