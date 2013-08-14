@@ -300,6 +300,12 @@ namespace Internal
             Division = 3
         }
 
+        public enum UnaryOperationType
+        {
+            ArithmeticNegation = 0,
+            LogicalNegation = 1
+        }
+
         public enum RelationalOperationType
         {
             Equals = 0,

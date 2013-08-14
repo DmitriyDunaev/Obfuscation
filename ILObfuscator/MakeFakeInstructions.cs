@@ -58,6 +58,42 @@ namespace Internal
 
 
         /// <summary>
+        /// Makes UnaryAssignment instruction type from NoOperation
+        /// </summary>
+        /// <param name="left_value">Left value (variable only)</param>
+        /// <param name="right_value">Right value (variable only, can be the same as a left value)</param>
+        /// <param name="operation">Unary operation</param>
+        public void MakeUnaryAssignment(Variable left_value, Variable right_value, UnaryOperationType operation)
+        {
+            if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
+                throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");
+
+            if (left_value == null || right_value == null || operation == null)
+                throw new ObfuscatorException("Wrong parameter passing.");
+
+            string op = string.Empty;
+            switch (operation)
+            {
+                case UnaryOperationType.ArithmeticNegation:
+                    op = "-";
+                    break;
+                case UnaryOperationType.LogicalNegation:
+                    op = "!";
+                    break;
+                default:
+                    throw new ObfuscatorException("Unsupported unary operation type.");
+            }
+            RefVariables.Clear();
+            RefVariables.Add(left_value);
+            if (!left_value.Equals(right_value))
+                RefVariables.Add(right_value);
+            statementType = ExchangeFormat.StatementTypeType.EnumValues.eUnaryAssignment;
+            TACtext = string.Join(" ", left_value.name, ":=", op, right_value.name);
+        }
+
+
+
+        /// <summary>
         /// Makes Copy instruction type from NoOperation
         /// </summary>
         /// <param name="left_value">Left value (variable only)</param>
