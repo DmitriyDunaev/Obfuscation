@@ -56,6 +56,8 @@ namespace Obfuscator
                 // Only the fake lane gets injected.
                 // Not to mention, that it is also in a test phase.
                 InsertFakeLane(bb);
+                //InsertDeadLane...
+                //TODO: Upgrading Fake lane inserting, adding dead lane inserting
             }
         }
 

@@ -232,7 +232,7 @@ namespace Internal
                     throw new ValidatorException("The 'IndexedAssignment' statement type is not supported. Please use 'PointerAssignment' instead. Instruction: " + ID);
                 case StatementTypeType.EnumValues.ePointerAssignment:
                     // var := & var
-                    if (Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := &amp; [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
+                    if (Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := & [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
                     // var := * var
                         Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := \* [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
                     // * var := var 
