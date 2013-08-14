@@ -160,11 +160,22 @@ namespace Internal
             return true;
         }
 
-
-        public void LinkSuccessor(BasicBlock successor)
+        
+        /// <summary>
+        /// Links the basic block to a new successor (sets Predecessor and Successor properties)
+        /// </summary>
+        /// <param name="successor">A new successor basic block</param>
+        /// <param name="clear">If true - clears all other successor-predecessor links before linking to a new successor</param>
+        public void LinkTo(BasicBlock successor, bool clear=false)
         {
             if (Successors.Count > 2)
                 throw new ObfuscatorException("Basic block cannot have more than 2 successors.");
+            if (clear)
+            {
+                foreach (BasicBlock next in Successors)
+                    next.Predecessors.Remove(this);
+                Successors.Clear();
+            }
             Successors.Add(successor);
             successor.Predecessors.Add(this);
         }

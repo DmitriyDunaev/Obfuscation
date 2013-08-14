@@ -81,7 +81,7 @@ namespace Internal
 
 
         /// <summary>
-        /// Makes ConditionalJump instruction type from NoOperation
+        /// Makes ConditionalJump instruction type from NoOperation (+ links Successors and Predecessors)
         /// </summary>
         /// <param name="left_value">Left value in relation (only variable)</param>
         /// <param name="right_value">Left value in relation (only numerical value)</param>
@@ -129,7 +129,28 @@ namespace Internal
                     throw new ObfuscatorException("Unsupported relational operation type.");
             }
             TACtext = string.Join(" ", "if", left_value.name, strRelop, right_value, "goto", target.ID);
-            parent.LinkSuccessor(target);
+            parent.LinkTo(target);
         }
+
+
+        /// <summary>
+        /// Makes UnconditionalJump instruction type from NoOperation (+ links Successors and Predecessors)
+        /// </summary>
+        /// <param name="target">Target basic block the control flow is transfered to after 'goto'</param>
+        public void MakeUnconditionalJump(BasicBlock target)
+        {
+            if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
+                throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");
+
+            if (target == null || this.parent == null || this.parent.parent != target.parent)
+                throw new ObfuscatorException("Wrong parameter passing.");
+
+            if (!parent.Instructions.Last().Equals(this))
+                throw new ObfuscatorException("Only the last NoOperation instruction of a basic block can be UnconditionalJump");
+            
+            statementType = ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump;
+            TACtext = string.Join(" ", "goto", target.ID);
+            parent.LinkTo(target, true);
+         }
     }
 }
