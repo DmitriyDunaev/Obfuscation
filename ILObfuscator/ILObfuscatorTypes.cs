@@ -120,6 +120,8 @@ namespace Internal
             get { return _ID.ToString(); }
         } 
         public Function parent { get; private set; }
+        public bool dead = false;
+
 
         private List<string> RefPredecessors = new List<string>();
         private List<string> RefSuccessors = new List<string>();
@@ -157,26 +159,20 @@ namespace Internal
                     RefSuccessors.Add(sid);
             // Adding instructions to basic block
             foreach (InstructionType instr in bb.Instruction)
-            {
                 Instructions.Add(new Instruction(instr, this));
-            }
         }
 
 
 
         /// <summary>
-        /// Constructor for BasicBlock with a given instruction
+        /// Constructor for BasicBlock that contains one NoOperation instruction
         /// </summary>
         /// <param name="parent">The parent function, which will contain the block</param>
-        /// <param name="instruction">The instruction which will be inserted into the basic block</param>
-        public BasicBlock(Function parent, Instruction instruction = null)
+        public BasicBlock(Function parent)
         {
             if (parent == null || parent.parent == null)
                 throw new ObfuscatorException("Basic block is created outside Function.");
-            if (instruction == null)
-                instruction = new Instruction(StatementTypeType.EnumValues.eNoOperation, this);
-            else
-                instruction.parent = this;
+            Instruction instruction = new Instruction(StatementTypeType.EnumValues.eNoOperation, this);
             Instructions.Add(instruction);
             _ID = new IDManager();
             this.parent = parent;
