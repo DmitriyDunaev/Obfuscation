@@ -56,7 +56,7 @@ namespace Obfuscator
                 // Only the fake lane gets injected.
                 // Not to mention, that it is also in a test phase.
                 InsertFakeLane(bb);
-                //InsertDeadLane...
+                //InsertDeadLane... dead = true;
                 //TODO: Upgrading Fake lane inserting, adding dead lane inserting
             }
         }
@@ -69,7 +69,23 @@ namespace Obfuscator
         private static void InsertFakeLane(BasicBlock bb)
         {
             //bb.InsertAfter(bb.getSuccessors[0]);
-            bb.SplitAfterInstruction(bb.Instructions.Last());
+
+            // Saving the original target of the jump
+            BasicBlock originaltarget = bb.getSuccessors[0];
+
+            // Creating a new basic block after "bb"
+            BasicBlock newBB = bb.SplitAfterInstruction(bb.Instructions.Last());
+
+            // Inserting a new "nop" Instruction
+            newBB.Instructions.Add(new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, newBB));
+
+            // And then converting it to a ConditionalJump
+            newBB.Instructions[0].MakeConditionalJump(newBB.parent.LocalVariables[0], 10, Instruction.RelationalOperationType.Greater, originaltarget);
+
+            // It creates the fake lane, but the condition is not a smart one yet.
+            // TODO: Creating smart conditions
+            //       Create a PolyRequied copy of the originaltarget, and link the conditional jump to it instead of the originaltarget itself
+            
         }
 
     }
