@@ -137,6 +137,9 @@ namespace Internal
             if(left_value==null || right_value==null || relop==null)
                 throw new ObfuscatorException("Wrong parameter passing.");
 
+            if(!parent.Instructions.Last().Equals(this))
+                throw new ObfuscatorException("Only the last NoOperation instruction of a basic block can be modified to ConditionalJump.");
+
             parent.SplitAfterInstruction(this);
             RefVariables.Add(left_value);
             statementType = ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump;
@@ -182,7 +185,7 @@ namespace Internal
                 throw new ObfuscatorException("Wrong parameter passing.");
 
             if (!parent.Instructions.Last().Equals(this))
-                throw new ObfuscatorException("Only the last NoOperation instruction of a basic block can be UnconditionalJump");
+                throw new ObfuscatorException("Only the last NoOperation instruction of a basic block can be modified to UnconditionalJump.");
             
             statementType = ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump;
             TACtext = string.Join(" ", "goto", target.ID);
