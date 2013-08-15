@@ -71,18 +71,21 @@ namespace Obfuscator
             //bb.InsertAfter(bb.getSuccessors[0]);
 
             // Saving the original target of the jump
-            BasicBlock originaltarget = bb.getSuccessors[0];
+            BasicBlock originaltarget = bb.getSuccessors.First();
 
             // Creating a new basic block after "bb"
-            BasicBlock newBB = bb.SplitAfterInstruction(bb.Instructions.Last());
+            BasicBlock fake1 = bb.SplitAfterInstruction(bb.Instructions.Last());
 
-            // Inserting a new "nop" Instruction
-            newBB.Instructions.Add(new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, newBB));
+            // Creating the second fake block, after fake1
+            BasicBlock fake2 = fake1.SplitAfterInstruction(fake1.Instructions.Last());
 
-            // And then converting it to a ConditionalJump
-            newBB.Instructions[0].MakeConditionalJump(newBB.parent.LocalVariables[0], 10, Instruction.RelationalOperationType.Greater, originaltarget);
+            // And now setting the edges
+            fake1.LinkTo(originaltarget, true);
 
-            // It creates the fake lane, but the condition is not a smart one yet.
+            // And then converting its nop instruction into a ConditionalJump, and by that we create a new block
+            fake1.Instructions.First().MakeConditionalJump(fake1.parent.LocalVariables[ Randomizer.GetSingleNumber( 0, fake1.parent.LocalVariables.Count-1)], Randomizer.GetSingleNumber(0, 100), (Instruction.RelationalOperationType) Randomizer.GetSingleNumber(0,5), fake2);
+
+            // It creates the fake lane, but the condition is not a smart one yet, it is a ~random~ condition.
             // TODO: Creating smart conditions
             //       Create a PolyRequied copy of the originaltarget, and link the conditional jump to it instead of the originaltarget itself
             
@@ -96,31 +99,33 @@ namespace Obfuscator
         private static void InsertDeadLane(BasicBlock bb)
         {
 
-            // First, creating a basic block
+            // First, creating a basic block pointing to a random block of the function
             BasicBlock dead1 = new BasicBlock(bb.parent);
+            dead1.LinkTo(bb.parent.BasicBlocks[Randomizer.GetSingleNumber(0, bb.parent.BasicBlocks.Count - 1)], true);
 
             // And making it dead
             dead1.dead = true;
 
             // Now including another one, with the basicblock splitter
-            BasicBlock dead2 = dead1.SplitAfterInstruction(dead1.Instructions[0]);
+            BasicBlock dead2 = dead1.SplitAfterInstruction(dead1.Instructions.First());
 
             // And making it dead too
             dead2.dead = true;
 
-            // Now creating the third dead block, with the conditional jump creator
-            dead1.Instructions.Add(new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, dead1));
-            dead1.Instructions[0].MakeConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead2);
+            // Now including another one, with the basicblock splitter
+            BasicBlock dead3 = dead1.SplitAfterInstruction(dead1.Instructions.First());
 
-            // And it also must be dead
-            dead1.getSuccessors[1].dead = true;
+            // And making it dead too
+            dead3.dead = true;
+
+            // Now creating the conditional jump
+            dead1.Instructions.First().MakeConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead3);
 
             // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always true
             bb.Instructions.Last().ConvertToConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead1);
 
-            // And finally we link the blocks
+            // And finally we link the remaining block
             dead2.LinkTo(bb.parent.BasicBlocks[Randomizer.GetSingleNumber(0, bb.parent.BasicBlocks.Count - 1)], true);
-            dead1.getSuccessors[1].LinkTo(bb.parent.BasicBlocks[Randomizer.GetSingleNumber(0, bb.parent.BasicBlocks.Count - 1)], true);
 
         }
 
