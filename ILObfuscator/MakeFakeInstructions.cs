@@ -173,6 +173,39 @@ namespace Internal
 
 
         /// <summary>
+        /// Makes ConditionalJump instruction type from UnonditionalJump (+ links Successors and Predecessors and changes the TAC text)
+        /// </summary>
+        /// <param name="left_value">Left value in relation (only variable)</param>
+        /// <param name="right_value">Left value in relation (only numerical value)</param>
+        /// <param name="relop">Relational operation</param>
+        /// <param name="secondtarget">The second block which will be the other successor of the basic block</param>
+        public void ConvertToConditionalJump(Variable left_value, int? right_value, RelationalOperationType? relop, BasicBlock target)
+        {
+            if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
+                throw new ObfuscatorException("Only UnconditionalJump instruction can be converted to ConditionalJump type!");
+
+            if (target.parent != parent.parent)
+                throw new ObfuscatorException("Target basic block and original are in different functions.");
+
+            if (parent.getSuccessors.Count != 1)
+                throw new ObfuscatorException("The basic block should have exactly one successor.");
+
+            if (left_value == null || right_value == null || relop == null)
+                throw new ObfuscatorException("Wrong parameter passing.");
+
+            // Change it to nop
+            statementType = ExchangeFormat.StatementTypeType.EnumValues.eNoOperation;
+            TACtext = "nop";
+
+            // Make a ConditionalJump
+            BasicBlock originaltarget = parent.getSuccessors[0];
+            this.MakeConditionalJump(left_value, right_value, relop, originaltarget);
+            parent.LinkTo(originaltarget, true);
+            parent.LinkTo(target);
+
+        }
+
+        /// <summary>
         /// Makes UnconditionalJump instruction type from NoOperation (+ links Successors and Predecessors)
         /// </summary>
         /// <param name="target">Target basic block the control flow is transfered to after 'goto'</param>

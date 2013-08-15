@@ -46,7 +46,7 @@ namespace Obfuscator
         /// <summary>
         /// The test version of the meshing algorithm, which will mesh the CFT-s
         /// </summary>
-        /// <param name="funct">Thse function wich has the control flow transitions to be meshed up</param>
+        /// <param name="funct">Thse function which has the control flow transitions to be meshed up</param>
         public static void MeshingAlgorithm( Function funct )
         {
             // Now it meshes up all of the unconditional jumps, and only them.
@@ -56,14 +56,14 @@ namespace Obfuscator
                 // Only the fake lane gets injected.
                 // Not to mention, that it is also in a test phase.
                 InsertFakeLane(bb);
-                //InsertDeadLane... dead = true;
-                //TODO: Upgrading Fake lane inserting, adding dead lane inserting
+                InsertDeadLane(bb);
+                //TODO: Upgrading Fake lane inserting more (polyrequ copy...), adding dead lane inserting
             }
         }
 
         /// <summary>
         /// Inserts the fake lane into the CFT
-        /// Still in test phase, now it only inserts one basicblock
+        /// Still in test phase, now it only has a not so smart condition in the conditional jump
         /// </summary>
         /// <param name="bb">The actual basic block with the unconditional jump</param>
         private static void InsertFakeLane(BasicBlock bb)
@@ -88,6 +88,42 @@ namespace Obfuscator
             
         }
 
+        /// <summary>
+        /// Inserts the dead lane into the CFT and also changing the original unconditional jump into a conditional
+        /// In thest phase -> condition not always true
+        /// </summary>
+        /// <param name="bb">The actual basic block with the unconditional jump</param>
+        private static void InsertDeadLane(BasicBlock bb)
+        {
+
+            // First, creating a basic block
+            BasicBlock dead1 = new BasicBlock(bb.parent);
+
+            // And making it dead
+            dead1.dead = true;
+
+            // Now including another one, with the basicblock splitter
+            BasicBlock dead2 = dead1.SplitAfterInstruction(dead1.Instructions[0]);
+
+            // And making it dead too
+            dead2.dead = true;
+
+            // Now creating the third dead block, with the conditional jump creator
+            dead1.Instructions.Add(new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, dead1));
+            dead1.Instructions[0].MakeConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead2);
+
+            // And it also must be dead
+            dead1.getSuccessors[1].dead = true;
+
+            // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always true
+            bb.Instructions.Last().ConvertToConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead1);
+
+            // And finally we link the blocks
+            dead2.LinkTo(bb.parent.BasicBlocks[Randomizer.GetSingleNumber(0, bb.parent.BasicBlocks.Count - 1)], true);
+            dead1.getSuccessors[1].LinkTo(bb.parent.BasicBlocks[Randomizer.GetSingleNumber(0, bb.parent.BasicBlocks.Count - 1)], true);
+
+        }
+
     }
 }
 
@@ -99,7 +135,7 @@ void MeshFunction( Function actualfunction )
 {
     /*
      * The getBBCunJumps returns a list of the basic blocks that has one
-     * successor, wich also has a sucessor. Not all of them, but some,
+     * successor, which also has a sucessor. Not all of them, but some,
      * depending on the CFTRatio.
      */
     
