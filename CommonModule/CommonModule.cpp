@@ -1,5 +1,7 @@
 // This is the main DLL file.
 
+//#define TEST
+
 using namespace std;
 
 #include <fstream>
@@ -59,35 +61,29 @@ string CommonModule::Reader::DoStuff()
     ss << " += 4;\n}\nreturn *(_DWORD *)v3;";*/
 //
 
-ss << "int __cdecl sub_401334()\n{\n  sub_401980();\n  return sub_401368(777, 1);\n}\n";
-ss << "int __cdecl sub_401368(int a1, int a2)\n{\n  char v3; // [sp+8h] [bp-38h]@1\n";
-ss << "  int v4; // [sp+1Ch] [bp-24h]@1\n  char *v5; // [sp+30h] [bp-10h]@1\n";
-ss << "  int i; // [sp+34h] [bp-Ch]@1\n  int *v7; // [sp+38h] [bp-8h]@1\n";
-ss << "  char *v8; // [sp+3Ch] [bp-4h]@1\n  int v9; // [sp+48h] [bp+8h]@1\n\n";
-ss << "  v9 = 3 * a2 + a1;\n  v8 = &v3;\n  v5 = &v3;\n  v7 = &v4;\n";
-ss << "  for ( i = 1; i <= 4; ++i )\n  {\n    a2 += i;\n    *(_DWORD *)v8 = v9;\n";
-ss << "    *(_DWORD *)v7 = a2;\n    v8 += 4;\n    ++v7;\n  }\n  return *(_DWORD *)v5;\n}\n";
 
+#ifndef TEST
+	ss << "int __cdecl sub_401334()\n{\n  sub_401980();\n  return sub_401368(777, 1);\n}\n";
+	ss << "int __cdecl sub_401368(int a1, int a2)\n{\n  char v3; // [sp+8h] [bp-38h]@1\n";
+	ss << "  int v4; // [sp+1Ch] [bp-24h]@1\n  char *v5; // [sp+30h] [bp-10h]@1\n";
+	ss << "  int i; // [sp+34h] [bp-Ch]@1\n  int *v7; // [sp+38h] [bp-8h]@1\n";
+	ss << "  char *v8; // [sp+3Ch] [bp-4h]@1\n  int v9; // [sp+48h] [bp+8h]@1\n\n";
+	ss << "  v9 = 3 * a2 + a1;\n  v8 = &v3;\n  v5 = &v3;\n  v7 = &v4;\n";
+	ss << "  for ( i = 1; i <= 4; ++i )\n  {\n    a2 += i;\n    *(_DWORD *)v8 = v9;\n";
+	ss << "    *(_DWORD *)v7 = a2;\n    v8 += 4;\n    ++v7;\n  }\n  return *(_DWORD *)v5;\n}\n";
+#else
 
-	//ss << " int sub_fnct(a, b)\n";
-	//ss << " {\n";
-	//ss << " int *hades;\n";
-	//ss << " signed int poseidon;\n";
-	//ss << " unsigned long *mars;\n";
-	//ss << " char zeus;\n";
-	//ss << " if ( x > y );\n";
-	//ss << " return x;\n";
-	//ss << " c = y + z;\n";
-	//ss << " return y;\n";
-	//ss << " }\n";
-	//ss << " int sub_masik(ca, b)\n";
-	//ss << " {\n";
-	//ss << " xa = ya;\n";
-	//ss << " return xa;\n";
-	//ss << " ca = ya + az;\n";
-	//ss << " return ya;\n";
-	//ss << " }";
-
+	ss << " int sub_fnct(a, b)\n";
+	ss << " {\n";
+	ss << " if ( a > b )\n";
+	ss << " a = 5;\n";
+	ss << " else\n";
+	ss << " {\n";
+	ss << " a = 9;\n";
+	ss << " }\n";
+	ss << " return ya;\n";
+	ss << " }\n";
+#endif
 
 #ifdef CIN
     while (!cin.eof())

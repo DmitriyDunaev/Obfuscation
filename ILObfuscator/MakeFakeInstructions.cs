@@ -140,7 +140,7 @@ namespace Internal
             if(!parent.Instructions.Last().Equals(this))
                 throw new ObfuscatorException("Only the last NoOperation instruction of a basic block can be modified to ConditionalJump.");
 
-            parent.SplitAfterInstruction(this);
+            //parent.SplitAfterInstruction(this);
             RefVariables.Add(left_value);
             statementType = ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump;
             string strRelop = string.Empty;
@@ -198,10 +198,7 @@ namespace Internal
             TACtext = "nop";
 
             // Make a ConditionalJump
-            BasicBlock originaltarget = parent.getSuccessors[0];
-            this.MakeConditionalJump(left_value, right_value, relop, originaltarget);
-            parent.LinkTo(originaltarget, true);
-            parent.LinkTo(target);
+            this.MakeConditionalJump(left_value, right_value, relop, target);
 
         }
 

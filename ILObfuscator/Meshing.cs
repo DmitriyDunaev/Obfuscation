@@ -79,12 +79,15 @@ namespace Obfuscator
             // Creating the second fake block, after fake1
             BasicBlock fake2 = fake1.SplitAfterInstruction(fake1.Instructions.Last());
 
+            //Creating the third one, after fake2
+            BasicBlock fake3 = fake2.SplitAfterInstruction(fake2.Instructions.Last());
+
             // And now setting the edges
-            fake1.LinkTo(originaltarget, true);
+            fake2.LinkTo(originaltarget, true);
 
             // And then converting its nop instruction into a ConditionalJump, and by that we create a new block
-            fake1.Instructions.First().MakeConditionalJump(fake1.parent.LocalVariables[ Randomizer.GetSingleNumber( 0, fake1.parent.LocalVariables.Count-1)], Randomizer.GetSingleNumber(0, 100), (Instruction.RelationalOperationType) Randomizer.GetSingleNumber(0,5), fake2);
-
+            fake1.Instructions.First().MakeConditionalJump(fake1.parent.LocalVariables[ Randomizer.GetSingleNumber( 0, fake1.parent.LocalVariables.Count-1)], Randomizer.GetSingleNumber(0, 100), (Instruction.RelationalOperationType) Randomizer.GetSingleNumber(0,5), fake3);
+            
             // It creates the fake lane, but the condition is not a smart one yet, it is a ~random~ condition.
             // TODO: Creating smart conditions
             //       Create a PolyRequied copy of the originaltarget, and link the conditional jump to it instead of the originaltarget itself
@@ -93,7 +96,7 @@ namespace Obfuscator
 
         /// <summary>
         /// Inserts the dead lane into the CFT and also changing the original unconditional jump into a conditional
-        /// In thest phase -> condition not always true
+        /// In thest phase -> condition not always false
         /// </summary>
         /// <param name="bb">The actual basic block with the unconditional jump</param>
         private static void InsertDeadLane(BasicBlock bb)
@@ -107,21 +110,21 @@ namespace Obfuscator
             dead1.dead = true;
 
             // Now including another one, with the basicblock splitter
-            BasicBlock dead2 = dead1.SplitAfterInstruction(dead1.Instructions.First());
+            BasicBlock dead2 = dead1.SplitAfterInstruction(dead1.Instructions.Last());
 
             // And making it dead too
             dead2.dead = true;
 
             // Now including another one, with the basicblock splitter
-            BasicBlock dead3 = dead1.SplitAfterInstruction(dead1.Instructions.First());
+            BasicBlock dead3 = dead2.SplitAfterInstruction(dead2.Instructions.Last());
 
             // And making it dead too
             dead3.dead = true;
 
             // Now creating the conditional jump
-            dead1.Instructions.First().MakeConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead3);
+            dead1.Instructions.Last().MakeConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead3);
 
-            // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always true
+            // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always false
             bb.Instructions.Last().ConvertToConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead1);
 
             // And finally we link the remaining block
