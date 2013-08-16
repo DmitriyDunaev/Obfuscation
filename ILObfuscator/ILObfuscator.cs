@@ -39,9 +39,6 @@ namespace Obfuscator
                 FakeCode.GenerateNoOperations(func);
             routine.Validate();
             Console.WriteLine("Generation of NoOperations: routine validation has passed successfully.\n\n");
-
         }
-
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace Obfuscator
     public static class Randomizer
     {
         private static Random rnd = new Random(DateTime.Now.Millisecond);
+
 
         /// <summary>
         /// Provides a list of random numbers within specified boundaries
@@ -39,6 +41,7 @@ namespace Obfuscator
             return randoms;
         }
 
+
         /// <summary>
         /// Generates a random number within specified boundaries
         /// </summary>
@@ -50,6 +53,24 @@ namespace Obfuscator
             if (max < min || max < 0 || min < 0)
                 throw new RandomizerException("Random numbers cannot be generated. Wrong conditions passed.");
             return rnd.Next(min, max + 1);
+        }
+
+
+        /// <summary>
+        /// Gets random basic block within a function that we can jump to. It can be any basic block, but not a "fake exit block".
+        /// </summary>
+        /// <param name="func">A parent function</param>
+        /// <returns>Random basic block</returns>
+        public static BasicBlock GetJumpableBasicBlock(Function func)
+        {
+            if (func.BasicBlocks.Count < 2)
+                throw new RandomizerException("Function has no jumpable basic blocks.");
+            int block_num=0;
+            do
+            {
+                block_num = GetSingleNumber(0, func.BasicBlocks.Count - 1);
+            } while (func.BasicBlocks[block_num].getSuccessors.Count == 0);
+            return func.BasicBlocks[block_num];
         }
 
     }
