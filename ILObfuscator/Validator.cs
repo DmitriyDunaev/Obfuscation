@@ -74,6 +74,9 @@ namespace Internal
                     throw new ValidatorException("Referenced basic block was not found. Referenced block:" + RefSuccessors[0]);
                 RefSuccessors.Clear();
             }
+
+            if (Instructions.Last().statementType == StatementTypeType.EnumValues.eConditionalJump && Successors.Count != 2)
+                throw new ValidatorException("Basic block with ConditionalJump statement type must have exactly 2 successors.");
             if (RefPredecessors.Count() > 0 && Predecessors.Count() == 0)
             {
                 foreach (string id in RefPredecessors)
