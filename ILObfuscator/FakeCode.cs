@@ -13,7 +13,10 @@ namespace Obfuscator
         /// <summary>
         /// Describes the probability of generating a conditional jump in percents.
         /// </summary>
-        private static int prob_of_cond_jump = 10;
+        private static int prob_of_cond_jump = 30;
+        private static int FPO = 10;
+        private static int fake_padding = 20;
+        private static int fake_padding_variability = 5;
 
         /// <summary>
         /// Function to change the nop's in the function to actual fake code.
@@ -119,6 +122,40 @@ namespace Obfuscator
         /// <param name="ins">The nop we want to work on.</param>
         private static void GenFakeIns(Instruction ins)
         {
+        }
+
+
+        public static void GenerateNoOperations(Function func_orig)
+        {
+            foreach (BasicBlock bb in func_orig.BasicBlocks)
+            {
+                List<Instruction> insts = Common.DeepClone(bb.Instructions) as List<Instruction>;
+                foreach (Instruction inst in insts)
+                {
+                    if (!inst.isFake)
+                    {
+                        int fakes_orig = FPO + 1;
+                        int original_place = Randomizer.GetSingleNumber(0, fakes_orig);
+                        if (inst.statementType == StatementTypeType.EnumValues.eConditionalJump || inst.statementType == StatementTypeType.EnumValues.eUnconditionalJump)
+                            original_place = fakes_orig;
+                        for (int i = 0; i < fakes_orig; i++)
+                        {
+                            if (i < original_place)
+                                bb.Instructions.Insert(bb.Instructions.BinarySearch(inst), new Instruction(StatementTypeType.EnumValues.eNoOperation, bb));
+                            else if (i > original_place)
+                                bb.Instructions.Insert(bb.Instructions.BinarySearch(inst) + 1, new Instruction(StatementTypeType.EnumValues.eNoOperation, bb));
+                        }
+                    }
+                }
+                if (bb.Instructions.Count < fake_padding)
+                {
+                    int fakes = Math.Abs(Randomizer.GetSingleNumber(fake_padding - fake_padding_variability, fake_padding + fake_padding_variability) - bb.Instructions.Count);
+                    for (int i = 0; i < fakes; i++)
+                    {
+                        bb.Instructions.Insert(0, new Instruction(StatementTypeType.EnumValues.eNoOperation, bb));
+                    }
+                }
+            }
         }
     }
 }

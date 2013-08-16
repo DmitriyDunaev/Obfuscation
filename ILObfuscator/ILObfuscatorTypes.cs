@@ -12,6 +12,7 @@ namespace Internal
     /// <summary>
     /// Class to store the state and the pointed variable of a pointer.
     /// </summary>
+    [Serializable]
     public class PointerData
     {
         // Attributes
@@ -38,6 +39,8 @@ namespace Internal
         }
     }
 
+
+    [Serializable]
     public partial class Routine: IValidate
     {
         // Attributes
@@ -58,6 +61,7 @@ namespace Internal
     }
 
 
+    [Serializable]
     public partial class Function: IValidate
     {
         // Attributes
@@ -110,7 +114,8 @@ namespace Internal
         }
     }
 
-    
+
+    [Serializable]
     public partial class BasicBlock: IValidate
     {
         //Attributes
@@ -190,8 +195,9 @@ namespace Internal
             return ID.GetHashCode();
         }
     }
-    
 
+
+    [Serializable]
     public partial class Variable : IValidate
     {
         // Enumerations
@@ -290,6 +296,7 @@ namespace Internal
     }
 
 
+    [Serializable]
     public partial class Instruction : IComparable, IValidate
     {
         public enum ArithmeticOperationType
@@ -421,6 +428,7 @@ namespace Internal
     }
 
 
+    [Serializable]
     public class IDManager
     {
         private string ID;

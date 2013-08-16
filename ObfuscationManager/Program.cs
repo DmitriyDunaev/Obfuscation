@@ -37,8 +37,7 @@ namespace ObfuscationManager
             exch.SaveToFile("Exchange1.xml", true);
 
             // Sending Exchange format to obfuscator
-            Obfuscator.ILObfuscator obfuscator = new Obfuscator.ILObfuscator();
-            obfuscator.Obfuscate(exch);
+            Obfuscator.ILObfuscator.Obfuscate(exch);
 
 
             
@@ -64,19 +63,7 @@ namespace ObfuscationManager
             return param;
         }
 
-        public static object DeepClone(object obj)
-        {
-            object objResult = null;
-            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-            {
-                System.Runtime.Serialization.Formatters.Binary.BinaryFormatter bf = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                bf.Serialize(ms, obj);
 
-                ms.Position = 0;
-                objResult = bf.Deserialize(ms);
-            }
-            return objResult;
-        }
 
 
         [STAThread]

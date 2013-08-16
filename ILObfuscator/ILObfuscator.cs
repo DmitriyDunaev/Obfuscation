@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Obfuscator
 {
-    public class ILObfuscator
+    public static class ILObfuscator
     {
-        public void Obfuscate(Exchange exch)
+        public static void Obfuscate(Exchange exch)
         {
             Routine routine = new Routine(exch);
             Console.WriteLine("\nValidating data in Routine. . .\n");
@@ -34,6 +34,14 @@ namespace Obfuscator
                 DataAnalysis.DeadVarsAlgortihm(func);
             routine.Validate();
             Console.WriteLine("Dead variables algorithm: routine validation has passed successfully.\n\n");
+
+            foreach (Function func in routine.Functions)
+                FakeCode.GenerateNoOperations(func);
+            routine.Validate();
+            Console.WriteLine("Generation of NoOperations: routine validation has passed successfully.\n\n");
+
         }
+
+
     }
 }

@@ -196,9 +196,10 @@ namespace Internal
             // Change it to nop
             statementType = ExchangeFormat.StatementTypeType.EnumValues.eNoOperation;
             TACtext = "nop";
+            RefVariables.Clear();
 
             // Make a ConditionalJump
-            this.MakeConditionalJump(left_value, right_value, relop, target);
+            MakeConditionalJump(left_value, right_value, relop, target);
 
         }
 
