@@ -332,7 +332,7 @@ namespace Internal
         }
         public StatementTypeType.EnumValues statementType { get; private set; }
         public string TACtext { get; set; }
-        public bool polyRequired { get; private set; }
+        public bool polyRequired { get; internal set; }
         public bool isFake { get; private set; }
 
         public List<Variable> RefVariables = new List<Variable>();
@@ -372,6 +372,25 @@ namespace Internal
                 if (!instr.RefVars.Value.Split(' ').Length.Equals(RefVariables.Count))
                     throw new ValidatorException("Referenced variable was not found. Instruction: " + instr.ID.Value);
             }
+        }
+
+        /// <summary>
+        /// Copy constructor with adjustable parent
+        /// </summary>
+        /// <param name="ins">The instruction to copy</param>
+        /// <param name="par">The new parent of the instuction. By default, it is the parent of the instruction</param>
+        public Instruction(Instruction ins, BasicBlock par = null)
+        {
+            if (par == null) parent = ins.parent;
+            else parent = par;
+            _ID = new IDManager();
+            statementType = ins.statementType;
+            TACtext = ins.TACtext;
+            isFake = false;
+            polyRequired = false;
+            RefVariables = ins.RefVariables;
+            DeadPointers = ins.DeadPointers;
+            DeadVariables = ins.DeadVariables;
         }
 
         private void setInstructionValues(BasicBlock parent, StatementTypeType.EnumValues statementType, string TACtext, List<Variable> refVariables, bool polyRequired=false)

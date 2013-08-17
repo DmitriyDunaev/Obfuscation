@@ -44,10 +44,10 @@ namespace Obfuscator
     {
 
         /// <summary>
-        /// The test version of the meshing algorithm, which will mesh the CFT-s
+        /// The meshing algorithm, which will mesh the CFT-s in a fuction
         /// </summary>
         /// <param name="funct">Thse function which has the control flow transitions to be meshed up</param>
-        public static void MeshingAlgorithm( Function funct )
+        public static void MeshFunction( Function funct )
         {
             // Now it meshes up all of the unconditional jumps, and only them.
             List<BasicBlock> basicblocks = funct.GetUnconditionalJumps();
@@ -56,7 +56,7 @@ namespace Obfuscator
                 InsertFakeLane(bb);
 
                 InsertDeadLane(bb);
-                //TODO: Upgrading Fake lane inserting more (polyrequ copy...)
+                //TODO: Debug the upgraded fake lane injector
             }
         }
 
@@ -81,15 +81,18 @@ namespace Obfuscator
             //Creating the third one, after fake2
             BasicBlock fake3 = fake2.SplitAfterInstruction(fake2.Instructions.Last());
 
+            // Creating a clone of the original target in order to make the CFT more obfuscated
+            BasicBlock polyrequtarget = originaltarget.Clone(true);
+
             // And now setting the edges
-            fake2.LinkTo(originaltarget, true);
+            fake2.LinkTo(polyrequtarget, true);
 
             // And then converting its nop instruction into a ConditionalJump, and by that we create a new block
             fake1.Instructions.First().MakeConditionalJump(fake1.parent.LocalVariables[ Randomizer.GetSingleNumber( 0, fake1.parent.LocalVariables.Count-1)], Randomizer.GetSingleNumber(0, 100), (Instruction.RelationalOperationType) Randomizer.GetSingleNumber(0,5), fake3);
 
             // It creates the fake lane, but the condition is not a smart one yet, it is a ~random~ condition.
             // TODO: Creating smart conditions
-            //       Create a PolyRequied copy of the originaltarget, and link the conditional jump to it instead of the originaltarget itself
+            //       Test for mistakes in polyrequied cloning and linking
             
         }
 
@@ -132,6 +135,17 @@ namespace Obfuscator
 
         }
 
+        /// <summary>
+        /// The interface function, that meshes up the functions of a routine
+        /// </summary>
+        /// <param name="rtn">The routine to be meshed up</param>
+        public static void MeshingAlgorithm(Routine rtn)
+        {
+            foreach (Function func in rtn.Functions)
+            {
+                MeshFunction(func);
+            }
+        }
     }
 }
 

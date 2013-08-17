@@ -26,7 +26,7 @@ namespace Obfuscator
             routine.Functions[1].BasicBlocks[0].Instructions.Add(inst);
             routine.Functions[1].BasicBlocks[0].Instructions.Last().MakeConditionalJump(routine.Functions[1].LocalVariables[1], 55, Instruction.RelationalOperationType.Less, routine.Functions[1].BasicBlocks[3]);
 
-            Meshing.MeshingAlgorithm(routine.Functions[1]); // Testing the function in the second function of the routine.
+            Meshing.MeshingAlgorithm(routine);
             routine.Validate();
             Console.WriteLine("Meshing algorithm: routine validation has passed successfully..\n\n");
 

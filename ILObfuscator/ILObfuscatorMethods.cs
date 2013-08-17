@@ -180,6 +180,39 @@ namespace Internal
             successor.Predecessors.Add(this);
         }
 
+        /// <summary>
+        /// Clones a BasicBlock with its Instructions and successors
+        /// </summary>
+        /// <param name="polyrequired">If true, the Instructions will be polyrequired</param>
+        /// <returns>The created BasicBlock</returns>
+        public BasicBlock Clone(bool polyrequired)
+        {
+            /// Creating the clone
+            BasicBlock clone = new BasicBlock(parent);
+
+            clone.Instructions.Clear();
+
+            /// Cloning the instructions
+            foreach (Instruction ins in Instructions)
+            {
+                Instruction i = new Instruction(ins, clone);
+                clone.Instructions.Add(i);
+
+            }
+            foreach (Instruction ins in clone.Instructions)
+                ins.parent = clone;
+
+            /// Setting the instructions to polyrequired, if needed
+            if (polyrequired)
+                foreach (Instruction ins in clone.Instructions)
+                    ins.polyRequired = true;
+
+            /// Setting the successors
+            foreach (BasicBlock bb in Successors)
+                clone.LinkTo(bb);
+
+            return clone;
+        }
     }
 
 
