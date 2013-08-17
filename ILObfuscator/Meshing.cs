@@ -104,7 +104,7 @@ namespace Obfuscator
 
             // First, creating a basic block pointing to a random block of the function
             BasicBlock dead1 = new BasicBlock(bb.parent);
-            dead1.LinkTo(bb.parent.BasicBlocks[Randomizer.GetSingleNumber(0, bb.parent.BasicBlocks.Count - 1)], true);
+            dead1.LinkTo(Randomizer.GetJumpableBasicBlock(bb.parent), true);
 
             // And making it dead
             dead1.dead = true;
@@ -128,7 +128,7 @@ namespace Obfuscator
             bb.Instructions.Last().ConvertToConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead1);
 
             // And finally we link the remaining block
-            dead2.LinkTo(bb.parent.BasicBlocks[Randomizer.GetSingleNumber(0, bb.parent.BasicBlocks.Count - 1)], true);
+            dead2.LinkTo(Randomizer.GetJumpableBasicBlock(bb.parent), true);
 
         }
 
