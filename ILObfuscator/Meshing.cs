@@ -53,11 +53,10 @@ namespace Obfuscator
             List<BasicBlock> basicblocks = funct.GetUnconditionalJumps();
             foreach (BasicBlock bb in basicblocks)
             {
-                // Only the fake lane gets injected.
-                // Not to mention, that it is also in a test phase.
                 InsertFakeLane(bb);
+
                 InsertDeadLane(bb);
-                //TODO: Upgrading Fake lane inserting more (polyrequ copy...), adding dead lane inserting
+                //TODO: Upgrading Fake lane inserting more (polyrequ copy...)
             }
         }
 
@@ -87,7 +86,7 @@ namespace Obfuscator
 
             // And then converting its nop instruction into a ConditionalJump, and by that we create a new block
             fake1.Instructions.First().MakeConditionalJump(fake1.parent.LocalVariables[ Randomizer.GetSingleNumber( 0, fake1.parent.LocalVariables.Count-1)], Randomizer.GetSingleNumber(0, 100), (Instruction.RelationalOperationType) Randomizer.GetSingleNumber(0,5), fake3);
-            
+
             // It creates the fake lane, but the condition is not a smart one yet, it is a ~random~ condition.
             // TODO: Creating smart conditions
             //       Create a PolyRequied copy of the originaltarget, and link the conditional jump to it instead of the originaltarget itself
@@ -104,7 +103,7 @@ namespace Obfuscator
 
             // First, creating a basic block pointing to a random block of the function
             BasicBlock dead1 = new BasicBlock(bb.parent);
-            dead1.LinkTo(Randomizer.GetJumpableBasicBlock(bb.parent), true);
+            //dead1.LinkTo(Randomizer.GetJumpableBasicBlock(bb.parent), true);
 
             // And making it dead
             dead1.dead = true;
@@ -127,8 +126,9 @@ namespace Obfuscator
             // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always false
             bb.Instructions.Last().ConvertToConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead1);
 
-            // And finally we link the remaining block
+            // And finally we link the remaining blocks
             dead2.LinkTo(Randomizer.GetJumpableBasicBlock(bb.parent), true);
+            dead3.LinkTo(Randomizer.GetJumpableBasicBlock(bb.parent), true);
 
         }
 

@@ -34,13 +34,15 @@ public:
     void preproc();
     void work(list<Line>::iterator beg , list<Line>::iterator en );
     void setconnentions() { rtn->setconnections(&l); rtn->setjumps(); }
+
+	void addinput(string str, string type, bool in);
 	bool checkdecls(string str, bool in);
 
 	void setfunctions();
 
+	void parse(string* s);
     void getfor(string from, string *s1, string *s2, string *s3);
-    void getwhile(string from, string *s1);
-    void getif(string from, string *s1);
+    void getcond(string from, string *s1);
 
     void setiters(list<Line>::iterator* a, list<Line>::iterator* b, list<Line>::iterator* i, bool inc = true);
     void newblock();
