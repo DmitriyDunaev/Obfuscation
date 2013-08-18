@@ -18,7 +18,7 @@ namespace ObfuscationManager
             // Validating XML by Schema
             try
             {
-                Console.WriteLine("\nValidating XML . . .");
+                Console.Write("\nLoading XML, checking complience with Exchange.xsd");
                 Internal.Validator.ValidateXML(doc);
             }
             catch (Obfuscator.ValidatorException exc)
@@ -28,7 +28,7 @@ namespace ObfuscationManager
                     throw exc.InnerException;
                 else throw exc;
             }
-            Console.WriteLine("XML document is well-formed and complies with XSD.");
+            Obfuscator.ILObfuscator.PrintSuccess();
             
             // Converting XML to Exchange
             Exchange exch = Exchange.LoadFromString(doc.InnerXml);

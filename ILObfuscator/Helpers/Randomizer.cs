@@ -65,7 +65,7 @@ namespace Obfuscator
         {
             if (func.BasicBlocks.Count < 2)
                 throw new RandomizerException("Function has no jumpable basic blocks.");
-            int block_num=0;
+            int block_num = 0;
             do
             {
                 block_num = GetSingleNumber(0, func.BasicBlocks.Count - 1);

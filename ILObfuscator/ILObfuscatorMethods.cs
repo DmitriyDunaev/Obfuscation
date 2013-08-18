@@ -127,7 +127,7 @@ namespace Internal
         {
             if (!inst.parent.Equals(this) || !this.Instructions.Contains(inst))
                 throw new ObfuscatorException("The instruction does not belong to the given basic block.");
-            if(inst.statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump)
+            if (inst.statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump)
                 throw new ObfuscatorException("You cannot split a basic block after the conditional jump.");
             BasicBlock newBB = new BasicBlock(parent);
             newBB.Successors.AddRange(Successors);
@@ -160,13 +160,13 @@ namespace Internal
             return true;
         }
 
-        
+
         /// <summary>
         /// Links the basic block to a new successor (sets Predecessor and Successor properties)
         /// </summary>
         /// <param name="successor">A new successor basic block</param>
         /// <param name="clear">If true - clears all other successor-predecessor links before linking to a new successor</param>
-        public void LinkTo(BasicBlock successor, bool clear=false)
+        public void LinkTo(BasicBlock successor, bool clear = false)
         {
             if (Successors.Count > 2)
                 throw new ObfuscatorException("Basic block cannot have more than 2 successors.");
@@ -225,7 +225,7 @@ namespace Internal
         public List<Instruction> GetPrecedingInstructions()
         {
             List<Instruction> preceding = new List<Instruction>();
-            if(parent == null)
+            if (parent == null)
                 throw new ObfuscatorException("Instruction is not contained in a basic block. Instruction's 'parent' propery is null.");
             if (parent.Instructions.Contains(this))
             {
@@ -297,10 +297,10 @@ namespace Internal
         {
             if (string.IsNullOrWhiteSpace(TACtext))
                 throw new ObfuscatorException("TAC text is empty. Instruction: " + ID);
-            if(RefVariables.Count==0 || !RefVariables.Contains(variable))
+            if (RefVariables.Count == 0 || !RefVariables.Contains(variable))
                 throw new ObfuscatorException("No referenced variables found in instruction " + ID);
             List<Variable.State> var_states = new List<Variable.State>();
-            string right=string.Empty, left=string.Empty;
+            string right = string.Empty, left = string.Empty;
             if (TACtext.Split('=').Length == 2)
             {
                 right = TACtext.Split('=')[0];
@@ -311,13 +311,13 @@ namespace Internal
                 case ExchangeFormat.StatementTypeType.EnumValues.eFullAssignment:
                 case ExchangeFormat.StatementTypeType.EnumValues.eUnaryAssignment:
                 case ExchangeFormat.StatementTypeType.EnumValues.eCopy:
-                        if (Regex.IsMatch(right, variable.ID, RegexOptions.None)&&!Regex.IsMatch(left, variable.ID, RegexOptions.None))
-                            var_states.Add(Variable.State.Free);
-                        else if (Regex.IsMatch(left, variable.ID, RegexOptions.None))
-                            var_states.Add(Variable.State.Filled);
+                    if (Regex.IsMatch(right, variable.ID, RegexOptions.None) && !Regex.IsMatch(left, variable.ID, RegexOptions.None))
+                        var_states.Add(Variable.State.Free);
+                    else if (Regex.IsMatch(left, variable.ID, RegexOptions.None))
+                        var_states.Add(Variable.State.Filled);
                     break;
                 case ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump:
-                        var_states.Add(Variable.State.Free);
+                    var_states.Add(Variable.State.Free);
                     break;
                 case ExchangeFormat.StatementTypeType.EnumValues.ePointerAssignment:
                     if (left.Contains("&"))
@@ -371,9 +371,9 @@ namespace Internal
                 case ExchangeFormat.StatementTypeType.EnumValues.eIndexedAssignment:
                     throw new ObfuscatorException("This statement type is not supported.");
                 case ExchangeFormat.StatementTypeType.EnumValues.eProcedural:
-                    if(variable.pointer)
+                    if (variable.pointer)
                         throw new ObfuscatorException("GetChangedStates: pointers are not supported in Procedural instruction type.");
-                    else if((Regex.IsMatch(TACtext, "param", RegexOptions.None) || Regex.IsMatch(TACtext, "return", RegexOptions.None)) && Regex.IsMatch(TACtext, RefVariables[0].ID, RegexOptions.None))
+                    else if ((Regex.IsMatch(TACtext, "param", RegexOptions.None) || Regex.IsMatch(TACtext, "return", RegexOptions.None)) && Regex.IsMatch(TACtext, RefVariables[0].ID, RegexOptions.None))
                         var_states.Add(Variable.State.Free);
                     else if (Regex.IsMatch(TACtext, "retrieve", RegexOptions.None) && Regex.IsMatch(TACtext, RefVariables[0].ID, RegexOptions.None))
                         var_states.Add(Variable.State.Filled);
@@ -387,7 +387,7 @@ namespace Internal
             return var_states;
         }
 
-        
+
 
         /// <summary>
         /// Modifies the TAC text of instruction: replaces numerical constant to variable name
@@ -460,7 +460,7 @@ namespace Internal
                      * We set the state of the dead variable pointed by the dead pointer.
                      * 
                      * WARNING FOR FUTURE: (1)
-                     */ 
+                     */
                     if (states.Count() > 1)
                         DeadVariables[DeadPointers[var].PointsTo] = states[1];
 
@@ -506,7 +506,7 @@ namespace Internal
                         return;
                     }
                 }
-                
+
                 /*
                  * Now we are at the point, that maybe we have to change the state.
                  * Although it's not sure, because if the instruction has more than one predecessors,
@@ -516,7 +516,7 @@ namespace Internal
                  * NOTE: we don't know right now what to do if NOT_INIT meets FILLED...
                  */
                 state = check_preceding_states(var, state);
-                
+
                 DeadVariables[var] = state;
                 foreach (Instruction ins in GetFollowingInstructions())
                     ins.RefreshNext(var, state);

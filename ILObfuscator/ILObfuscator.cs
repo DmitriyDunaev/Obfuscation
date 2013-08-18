@@ -12,33 +12,45 @@ namespace Obfuscator
     {
         public static void Obfuscate(Exchange exch)
         {
+            Console.Write("Parsing XML data to Routine class");
             Routine routine = new Routine(exch);
-            Console.WriteLine("\nValidating data in Routine. . .\n");
+            PrintSuccess();
+            
+            Console.Write("First validation of the routine");
             routine.Validate();
-            Console.WriteLine("Loading initial data: routine validation has passed successfully.\n\n");
+            PrintSuccess();
 
+            Console.Write("Constants covering algorithm");
             ConstCoverage.CoverConsts(routine);
             routine.Validate();
-            Console.WriteLine("Const covering algorithm: routine validation has passed successfully.\n\n");
+            PrintSuccess();
 
-            Instruction inst = new Instruction(StatementTypeType.EnumValues.eNoOperation, routine.Functions[1].BasicBlocks[0]);
-
-            routine.Functions[1].BasicBlocks[0].Instructions.Add(inst);
-            routine.Functions[1].BasicBlocks[0].Instructions.Last().MakeConditionalJump(routine.Functions[1].LocalVariables[1], 55, Instruction.RelationalOperationType.Less, routine.Functions[1].BasicBlocks[3]);
-
+            Console.Write("Meshing algorithm");
             Meshing.MeshingAlgorithm(routine);
             routine.Validate();
-            Console.WriteLine("Meshing algorithm: routine validation has passed successfully..\n\n");
+            PrintSuccess();
 
+            Console.Write("Dead variables algorithm");
             foreach (Function func in routine.Functions)
                 DataAnalysis.DeadVarsAlgortihm(func);
             routine.Validate();
-            Console.WriteLine("Dead variables algorithm: routine validation has passed successfully.\n\n");
+            PrintSuccess();
 
+            Console.Write("Generation of fake NoOperation instructions");
             foreach (Function func in routine.Functions)
                 FakeCode.GenerateNoOperations(func);
             routine.Validate();
-            Console.WriteLine("Generation of NoOperations: routine validation has passed successfully.\n\n");
+            PrintSuccess();
+        }
+
+
+        public static void PrintSuccess()
+        {
+            if (Console.CursorLeft % 2 != 0)
+                Console.Write(" ");
+            for (int i = Console.CursorLeft; i < 56; i += 2)
+                Console.Write(". ");
+            Console.WriteLine("COMPLETED\n");
         }
     }
 }

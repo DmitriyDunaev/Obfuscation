@@ -41,7 +41,7 @@ namespace Internal
 
 
     [Serializable]
-    public partial class Routine: IValidate
+    public partial class Routine : IValidate
     {
         // Attributes
         private string description;
@@ -62,7 +62,7 @@ namespace Internal
 
 
     [Serializable]
-    public partial class Function: IValidate
+    public partial class Function : IValidate
     {
         // Attributes
         public Routine parent { get; private set; }
@@ -74,7 +74,7 @@ namespace Internal
         public string globalID { get; private set; }
 
         public CalledFromType.EnumValues calledFrom { get; private set; }
-        
+
         public List<Variable> LocalVariables = new List<Variable>();
         public List<BasicBlock> BasicBlocks = new List<BasicBlock>();
 
@@ -116,14 +116,14 @@ namespace Internal
 
 
     [Serializable]
-    public partial class BasicBlock: IValidate
+    public partial class BasicBlock : IValidate
     {
         //Attributes
         private IDManager _ID;
         public string ID
         {
             get { return _ID.ToString(); }
-        } 
+        }
         public Function parent { get; private set; }
         public bool dead = false;
 
@@ -393,7 +393,7 @@ namespace Internal
             DeadVariables = ins.DeadVariables;
         }
 
-        private void setInstructionValues(BasicBlock parent, StatementTypeType.EnumValues statementType, string TACtext, List<Variable> refVariables, bool polyRequired=false)
+        private void setInstructionValues(BasicBlock parent, StatementTypeType.EnumValues statementType, string TACtext, List<Variable> refVariables, bool polyRequired = false)
         {
             this._ID = new IDManager();
             this.isFake = true;

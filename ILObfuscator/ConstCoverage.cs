@@ -31,8 +31,6 @@ namespace Obfuscator
                         PreprocessConstant(ins, tmp[ins]);
                 }
             }
-
-            
         }
 
         /// <summary>

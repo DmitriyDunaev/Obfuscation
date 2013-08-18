@@ -17,6 +17,7 @@ namespace Internal
         void Validate();
     }
 
+
     public partial class Routine
     {
         public void Validate()
@@ -38,6 +39,7 @@ namespace Internal
         }
     }
 
+
     public partial class Function
     {
         public void Validate()
@@ -49,7 +51,7 @@ namespace Internal
             //if (!Regex.IsMatch(BasicBlocks[0].Instructions[0].text, @"^enter ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) ||
             //    !Regex.IsMatch(BasicBlocks[BasicBlocks.Count-1].Instructions[0].text, @"^leave ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
             //    throw new ValidatorException("No 'enter' and/or 'leave' instructions found in function " + ID);
-            
+
             foreach (BasicBlock bb in this.BasicBlocks)
             {
                 if (bb.parent != this)
@@ -58,6 +60,7 @@ namespace Internal
             }
         }
     }
+
 
     public partial class BasicBlock
     {
@@ -106,7 +109,7 @@ namespace Internal
                     if (resultString.Equals(bb.ID))
                         found = true;
                 }
-                if(!found)
+                if (!found)
                     throw new ValidatorException("The successors' IDs do not match last GOTO instruction. Basic block: " + ID);
             }
             //if (Predecessors.Count == 1 && Predecessors[0].Instructions.Last().statementType == StatementTypeType.EnumValues.eUnconditionalJump)
@@ -122,6 +125,7 @@ namespace Internal
             }
         }
     }
+
 
     public partial class Instruction
     {
@@ -143,7 +147,7 @@ namespace Internal
                 case StatementTypeType.EnumValues.eCopy:
                     if (RefVariables.Count < 1 || RefVariables.Count > 2)
                         throw new ValidatorException("Number of referenced variables does not match statement type in instruction " + ID);
-                    if(RefVariables.First().pointer!=RefVariables.Last().pointer)
+                    if (RefVariables.First().pointer != RefVariables.Last().pointer)
                         throw new ValidatorException("You are trying to copy a pointer value to a non-pointer variable (or vice-versa) in COPY instruction " + ID);
                     break;
                 case StatementTypeType.EnumValues.eUnconditionalJump:
@@ -204,22 +208,22 @@ namespace Internal
                     // param var OR param number
                     if (Regex.IsMatch(TACtext, @"^param [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
                         Regex.IsMatch(TACtext, @"^param ([-+]?\d+)$", RegexOptions.None) |
-                    // call some_string decimal
+                        // call some_string decimal
                         Regex.IsMatch(TACtext, @"^call \w+ \d+$", RegexOptions.None) |
-                    // call ID_GUID decimal
+                        // call ID_GUID decimal
                         Regex.IsMatch(TACtext, @"^call ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \d+$", RegexOptions.None) |
-                    // return 
+                        // return 
                         Regex.IsMatch(TACtext, @"^return$", RegexOptions.None) |
-                    // return number
+                        // return number
                         Regex.IsMatch(TACtext, @"^return ([-+]?\d+)$", RegexOptions.None) |
-                    // return var
+                        // return var
                         Regex.IsMatch(TACtext, @"^return [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
-                    // retrieve var
+                        // retrieve var
                         Regex.IsMatch(TACtext, @"^retrieve [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
-                    // enter ID_GUID
+                        // enter ID_GUID
                         Regex.IsMatch(TACtext, @"^enter ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
-                    // leave ID_GUID
-                        Regex.IsMatch(TACtext, @"^leave ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) 
+                        // leave ID_GUID
+                        Regex.IsMatch(TACtext, @"^leave ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None)
                         )
                         break;
                     else
@@ -236,11 +240,11 @@ namespace Internal
                 case StatementTypeType.EnumValues.ePointerAssignment:
                     // var := & var
                     if (Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := & [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
-                    // var := * var
+                        // var := * var
                         Regex.IsMatch(TACtext, @"^[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := \* [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
-                    // * var := var 
+                        // * var := var 
                         Regex.IsMatch(TACtext, @"^\* [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None) |
-                    // * var = number
+                        // * var = number
                         Regex.IsMatch(TACtext, @"^\* [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := ([-+]?\d+)$", RegexOptions.None))
                         break;
                     else
@@ -269,6 +273,11 @@ namespace Internal
 
     public static class Validator
     {
+
+        /// <summary>
+        /// Validates an XML document against the Exchange.xsd schema
+        /// </summary>
+        /// <param name="doc2validate">XML document to be validated</param>
         public static void ValidateXML(XmlDocument doc2validate)
         {
             System.Xml.Schema.XmlSchemaSet schemas = new System.Xml.Schema.XmlSchemaSet();
@@ -286,5 +295,5 @@ namespace Internal
                 throw new ValidatorException("XML could not be validated! It is not well-formed or does not comply with XSD.", ex);
             }
         }
-    }      
+    }
 }

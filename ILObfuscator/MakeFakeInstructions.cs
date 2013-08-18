@@ -23,7 +23,7 @@ namespace Internal
             if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
                 throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");
 
-            if ((right_value2 == null && right_value_int == null) || (right_value2 != null && right_value_int != null) || left_value == null || right_value1 == null || operation == null)
+            if ((right_value2 == null && right_value_int == null) || (right_value2 != null && right_value_int != null) || left_value == null || right_value1 == null)
                 throw new ObfuscatorException("Wrong parameter passing.");
 
             string left1 = left_value.name;
@@ -68,7 +68,7 @@ namespace Internal
             if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
                 throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");
 
-            if (left_value == null || right_value == null || operation == null)
+            if (left_value == null || right_value == null)
                 throw new ObfuscatorException("Wrong parameter passing.");
 
             string op = string.Empty;
@@ -123,21 +123,21 @@ namespace Internal
         /// <param name="right_value">Left value in relation (only numerical value)</param>
         /// <param name="relop">Relational operation</param>
         /// <param name="target">Target basic block the control flow is transfered to, if the relation holds true.</param>
-        public void MakeConditionalJump(Variable left_value, int? right_value, RelationalOperationType? relop, BasicBlock target)
+        public void MakeConditionalJump(Variable left_value, int right_value, RelationalOperationType relop, BasicBlock target)
         {
             if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
                 throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");
 
-            if(target.parent != parent.parent)
+            if (target.parent != parent.parent)
                 throw new ObfuscatorException("Target basic block and original are in different functions.");
 
-            if(parent.getSuccessors.Count != 1)
+            if (parent.getSuccessors.Count != 1)
                 throw new ObfuscatorException("The basic block should have exactly one successor.");
 
-            if(left_value==null || right_value==null || relop==null)
+            if (left_value == null)
                 throw new ObfuscatorException("Wrong parameter passing.");
 
-            if(!parent.Instructions.Last().Equals(this))
+            if (!parent.Instructions.Last().Equals(this))
                 throw new ObfuscatorException("Only the last NoOperation instruction of a basic block can be modified to ConditionalJump.");
 
             //parent.SplitAfterInstruction(this);
@@ -173,13 +173,13 @@ namespace Internal
 
 
         /// <summary>
-        /// Makes ConditionalJump instruction type from UnonditionalJump (+ links Successors and Predecessors and changes the TAC text)
+        /// Converts UnconditionalJump instruction type to ConditionalJump (+ links Successors and Predecessors and changes the TAC text)
         /// </summary>
         /// <param name="left_value">Left value in relation (only variable)</param>
         /// <param name="right_value">Left value in relation (only numerical value)</param>
         /// <param name="relop">Relational operation</param>
         /// <param name="secondtarget">The second block which will be the other successor of the basic block</param>
-        public void ConvertToConditionalJump(Variable left_value, int? right_value, RelationalOperationType? relop, BasicBlock target)
+        public void ConvertUncondToCondJump(Variable left_value, int right_value, RelationalOperationType relop, BasicBlock target)
         {
             if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
                 throw new ObfuscatorException("Only UnconditionalJump instruction can be converted to ConditionalJump type!");
@@ -190,7 +190,7 @@ namespace Internal
             if (parent.getSuccessors.Count != 1)
                 throw new ObfuscatorException("The basic block should have exactly one successor.");
 
-            if (left_value == null || right_value == null || relop == null)
+            if (left_value == null || target == null)
                 throw new ObfuscatorException("Wrong parameter passing.");
 
             // Change it to nop
@@ -202,6 +202,7 @@ namespace Internal
             MakeConditionalJump(left_value, right_value, relop, target);
 
         }
+
 
         /// <summary>
         /// Makes UnconditionalJump instruction type from NoOperation (+ links Successors and Predecessors)
@@ -217,10 +218,10 @@ namespace Internal
 
             if (!parent.Instructions.Last().Equals(this))
                 throw new ObfuscatorException("Only the last NoOperation instruction of a basic block can be modified to UnconditionalJump.");
-            
+
             statementType = ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump;
             TACtext = string.Join(" ", "goto", target.ID);
             parent.LinkTo(target, true);
-         }
+        }
     }
 }

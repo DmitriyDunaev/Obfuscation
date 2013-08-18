@@ -127,7 +127,7 @@ namespace Obfuscator
             dead1.Instructions.Last().MakeConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead3);
 
             // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always false
-            bb.Instructions.Last().ConvertToConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead1);
+            bb.Instructions.Last().ConvertUncondToCondJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead1);
 
             // And finally we link the remaining blocks
             dead2.LinkTo(Randomizer.GetJumpableBasicBlock(bb.parent), true);
