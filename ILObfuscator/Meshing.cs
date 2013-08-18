@@ -67,8 +67,6 @@ namespace Obfuscator
         /// <param name="bb">The actual basic block with the unconditional jump</param>
         private static void InsertFakeLane(BasicBlock bb)
         {
-            //bb.InsertAfter(bb.getSuccessors[0]);
-
             // Saving the original target of the jump
             BasicBlock originaltarget = bb.getSuccessors.First();
 
@@ -106,7 +104,6 @@ namespace Obfuscator
 
             // First, creating a basic block pointing to a random block of the function
             BasicBlock dead1 = new BasicBlock(bb.parent);
-            //dead1.LinkTo(Randomizer.GetJumpableBasicBlock(bb.parent), true);
 
             // And making it dead
             dead1.dead = true;
@@ -117,7 +114,7 @@ namespace Obfuscator
             // And making it dead too
             dead2.dead = true;
 
-            // Now including another one, with the basicblock splitter
+            // Now including the third one, with the basicblock splitter
             BasicBlock dead3 = dead2.SplitAfterInstruction(dead2.Instructions.Last());
 
             // And making it dead too

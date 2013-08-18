@@ -130,10 +130,12 @@ namespace Internal
             if (inst.statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump)
                 throw new ObfuscatorException("You cannot split a basic block after the conditional jump.");
             BasicBlock newBB = new BasicBlock(parent);
-            newBB.Successors.AddRange(Successors);
-            Successors.Clear();
-            Successors.Add(newBB);
-            newBB.Predecessors.Add(this);
+            // Relinking the blocks
+            foreach (BasicBlock bb in Successors)
+            {
+                newBB.LinkTo(bb);
+            }
+            this.LinkTo(newBB, true);
             List<Instruction> move = Instructions.GetRange(Instructions.BinarySearch(inst) + 1, Instructions.Count - Instructions.BinarySearch(inst) - 1);
             // If something is moved, then clear NoOperation default instruction in the new basic block
             if (move.Count > 0)
