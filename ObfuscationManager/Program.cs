@@ -87,7 +87,7 @@ namespace ObfuscationManager
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception data:");
+                Console.WriteLine("\n\nException data:");
                 Console.WriteLine(e);
                 return 1;
             }

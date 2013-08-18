@@ -90,6 +90,7 @@ namespace Internal
                     throw new ValidatorException("Referenced basic block was not found. Referenced block:" + RefPredecessors[0]);
                 RefPredecessors.Clear();
             }
+
             // Actual validation
             if (Predecessors.Count == 0 && Successors.Count == 0)
                 throw new ValidatorException("No predecessors and no successors found for basic block " + ID);
@@ -116,6 +117,14 @@ namespace Internal
             //{
             //    throw new ValidatorException("Basic block has one single predecessor with unconditional jump to it. The last GOTO instruction of predecessor can be deleted. Basic block: " + ID);
             //}
+
+            // Checking Successor-Predecessor links
+            foreach (BasicBlock succ in Successors)
+                if (!succ.Predecessors.Contains(this) && succ.RefPredecessors.Count == 0)
+                    throw new ValidatorException("Broken successor-predecessor link in basic block " + ID);
+            foreach (BasicBlock pred in Predecessors)
+                if (!pred.Successors.Contains(this) && pred.RefSuccessors.Count == 0)
+                    throw new ValidatorException("Broken predecessor-successor link in basic block " + ID);
 
             foreach (Instruction inst in this.Instructions)
             {
