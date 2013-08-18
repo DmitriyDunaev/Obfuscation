@@ -18,7 +18,10 @@ namespace ObfuscationManager
             // Validating XML by Schema
             try
             {
-                Console.Write("\nLoading XML, checking complience with Exchange.xsd");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("\n\tIMPORTING DATA\n");
+                Console.ResetColor();
+                Console.Write("Loading XML, checking complience with Exchange.xsd");
                 Internal.Validator.ValidateXML(doc);
             }
             catch (Obfuscator.ValidatorException exc)
@@ -55,40 +58,25 @@ namespace ObfuscationManager
             
         }
 
-
-
-        public static System.Collections.Generic.List<int> TestFunc(System.Collections.Generic.List<int> param)
-        {
-            int zz = param[1];
-            return param;
-        }
-
-
-
-
         [STAThread]
         static int Main(string[] args)
         {
-            //System.Collections.Generic.List<int> a = new System.Collections.Generic.List<int>();
-            //System.Collections.Generic.List<int> b = new System.Collections.Generic.List<int>();
-            //a.Add(1); a.Add(2); a.Add(3);
-
-            //b = TestFunc(DeepClone(a) as System.Collections.Generic.List<int>);
-            //b = TestFunc(a);
-            
-            //b.Add(88);
-            //a.Add(101);
-            
             try
             {
                 Example();
-                Console.WriteLine("Program has finished successfully.");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Program has finished successfully.\n");
+                Console.ResetColor();
                 return 0;
             }
             catch (Exception e)
             {
-                Console.WriteLine("\n\nException data:");
-                Console.WriteLine(e);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\n\nException:");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(e.Message);
+                Console.ResetColor();
+                Console.WriteLine(e.StackTrace);
                 return 1;
             }
 

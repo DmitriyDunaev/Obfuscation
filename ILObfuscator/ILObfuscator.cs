@@ -12,6 +12,10 @@ namespace Obfuscator
     {
         public static void Obfuscate(Exchange exch)
         {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("\tINTERMEDIATE LEVEL OBFUSCATION\n");
+            Console.ResetColor();
+
             Console.Write("Parsing XML data to Routine class");
             Routine routine = new Routine(exch);
             PrintSuccess();
@@ -46,11 +50,14 @@ namespace Obfuscator
 
         public static void PrintSuccess()
         {
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
             if (Console.CursorLeft % 2 != 0)
                 Console.Write(" ");
             for (int i = Console.CursorLeft; i < 56; i += 2)
                 Console.Write(". ");
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("COMPLETED\n");
+            Console.ResetColor();
         }
     }
 }
