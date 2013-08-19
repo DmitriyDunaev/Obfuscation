@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define PSEUDOCODE
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,21 +36,22 @@ namespace Obfuscator
                         /*
                          * Now we found a nop, so we have to decide what to do with it.
                          * 
-                         * At a 10% probability we generate a Conditional Jump, which condition
+                         * At a certain probability we generate a Conditional Jump, which condition
                          * depends on a parameter value, and happens to be always false.
                          * We use these jumps to make the control flow irreducible.
-                         * However we must not choose this if we have only ona basic block.
+                         * However we must not choose this if we have only one basic block
+                         * apart from the "fake exit block". So we must have at least 3 BBs.
                          * 
-                         * At the remaining 90% probability we generate instructions that are
+                         * At the remaining probability we generate instructions that are
                          * using the dead variables present at the point of the actual nop.
                          * However we must not choose this if we have no dead variables present.
                          */
-                        if (func.BasicBlocks.Count < 2 && ins.DeadVariables.Count < 1)
+                        if (func.BasicBlocks.Count < 3 && ins.DeadVariables.Count < 1)
                             throw new ObfuscatorException("We cannot really do anything with this instruction right now, sorry.");
 
                         if (Randomizer.GetSingleNumber(0, 99) < prob_of_cond_jump)
                         {
-                            if (func.BasicBlocks.Count < 2)
+                            if (func.BasicBlocks.Count < 3)
                             {
                                 /* Though randomizer said we should do this, we unfortunately cannot. */
                                 GenFakeIns(ins);
@@ -77,6 +80,14 @@ namespace Obfuscator
         /// <param name="ins">The nop we want to work on.</param>
         private static void GenCondJump(Instruction ins)
         {
+            /* 
+             * Before doing anything, we have to split the basic block holding this
+             * instruction, so we can make a conditional jump at the and of the
+             * new basic block.
+             */
+            ins.parent.SplitAfterInstruction(ins);
+
+            BasicBlock jumptarget;
             /*
              * First we want to find a basic block that is inside a loop,
              * so that we can make a jump on it, making the control flow
@@ -93,7 +104,7 @@ namespace Obfuscator
             if (bodies.Count() != 0)
             {
                 int num = Randomizer.GetSingleNumber(0, bodies.Count() - 1);
-                BasicBlock jumptarget = bodies[num];
+                jumptarget = bodies[num];
             }
 
             /* If not: we choose a random one from all the basic blocks. */
@@ -102,18 +113,89 @@ namespace Obfuscator
                 List<BasicBlock> all_bbs = new List<BasicBlock>();
                 foreach (BasicBlock bb in ins.parent.parent.BasicBlocks)
                 {
-                    if (!bb.Equals(ins.parent))
+                    /* 
+                     * It shouldn't be neither the same basic block we start from,
+                     * nor the one called "fake exit block".
+                     */
+                    if (!bb.Equals(ins.parent) && bb.getSuccessors.Count != 0)
                         all_bbs.Add(bb);
                 }
 
                 int num = Randomizer.GetSingleNumber(0, all_bbs.Count() - 1);
-                BasicBlock jumptarget = all_bbs[num];
+                jumptarget = all_bbs[num];
             }
 
             /* 
              * At this point we have a perfectly chosen jumptarget,
              * so we can finally make the conditional jump.
              */
+
+            /*
+             * When we make a coditional jump here, we use a (fake) parameter with
+             * a fixed value (min, max), and we must assure that the condition
+             * will always end up as false.
+             * 
+             * These are the coditions that can satisfy this need:
+             * (a, b: const, a < min, b > max)
+             *  - p < <= == a    (1)
+             *  - p > >= == b    (2)
+             *  (These cannot be more complex because of TAC.)
+             *  
+             * So we get a random parameter with a fixed value, we get a random
+             * constant, and we generate the condition according to these.
+             */
+
+#if !PSEUDOCODE
+
+            Variable param = ins.parent.parent.GetFixedParam();
+            int constant;
+            Instruction.RelationalOperationType type;
+            
+            /* We decide whether we want the (1) or (2) type. */
+            switch (Randomizer.GetSingleNumber(1, 2))
+            {
+                case 1:
+                    /* We generate an a, where a < min. */
+                    constant = Randomizer.GetSingleNumber(0, param.FixedMin - 1);
+
+                    /* We decide the operator type. */
+                    switch (Randomizer.GetSingleNumber(0, 2))
+                    {
+                        case 0:
+                            type = Instruction.RelationalOperationType.Equals;
+                            break;
+                        case 1:
+                            type = Instruction.RelationalOperationType.Less;
+                            break;
+                        case 2:
+                            type = Instruction.RelationalOperationType.LessOrEquals;
+                    }
+                    break;
+
+                case 2:
+                    /* We generate a b, where b > max. */
+                    /* TODO: a more reasonable upper bound. */
+                    constant = Randomizer.GetSingleNumber(param.FixedMax + 1, param.FixedMax + 1000);
+
+                    /* We decide the operator type. */
+                    switch (Randomizer.GetSingleNumber(0, 2))
+                    {
+                        case 0:
+                            type = Instruction.RelationalOperationType.Equals;
+                            break;
+                        case 1:
+                            type = Instruction.RelationalOperationType.Greater;
+                            break;
+                        case 2:
+                            type = Instruction.RelationalOperationType.GreaterOrEquals;
+                    }
+                    break;
+            }
+
+            /* Now we have everything set properly, now we can make the Conditional jump. */
+            ins.MakeConditionalJump(param, constant, type, jumptarget);
+
+#endif
         }
 
         /// <summary>
