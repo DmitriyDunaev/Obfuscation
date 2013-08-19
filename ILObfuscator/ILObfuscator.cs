@@ -19,7 +19,7 @@ namespace Obfuscator
             Console.Write("Parsing XML data to Routine class");
             Routine routine = new Routine(exch);
             PrintSuccess();
-            
+
             Console.Write("First validation of the routine");
             routine.Validate();
             PrintSuccess();
@@ -40,6 +40,7 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
 
+            Logging.WriteRoutine(routine, "DeadVars");
             Console.Write("Generation of fake NoOperation instructions");
             foreach (Function func in routine.Functions)
                 FakeCode.GenerateNoOperations(func);
