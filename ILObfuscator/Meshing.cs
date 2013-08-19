@@ -140,7 +140,7 @@ namespace Obfuscator
         /// <summary>
         /// Class of constants with the relational operations available list
         /// </summary>
-        private class CondConstants
+        internal class CondConstants
         {
             public enum RelopAvailability
             {
@@ -149,9 +149,19 @@ namespace Obfuscator
                 Ambigious
             }
 
-            int value;
-            Dictionary< Instruction.RelationalOperationType, RelopAvailability > RelopAvailabilityList;
+            public int value;
 
+            internal Dictionary< Instruction.RelationalOperationType, RelopAvailability > RelopAvailabilityList;
+
+            public CondConstants(int v)
+            {
+                value = v;
+                RelopAvailabilityList = new Dictionary<Instruction.RelationalOperationType, RelopAvailability>();
+                for (Instruction.RelationalOperationType i = Instruction.RelationalOperationType.Equals; i <= Instruction.RelationalOperationType.LessOrEquals; i++)
+                {
+                    RelopAvailabilityList.Add(i, RelopAvailability.NonUsable);
+                }
+            }
         }
 
         /// <summary>
@@ -160,13 +170,31 @@ namespace Obfuscator
         /// <param name="bb">The block containing the conditional jump to mesh up</param>
         private static void MeshConditionals(BasicBlock bb)
         {
-            Variable var = null;
-            Instruction.RelationalOperationType relop = 0;
-            int C = 0;
+            Variable var = bb.Instructions.Last().GetVarFromCondition();
+            Instruction.RelationalOperationType relop = bb.Instructions.Last().GetRelopFromCondition();
+            int C = bb.Instructions.Last().GetConstFromCondition();
 
-            bb.Instructions.Last().GetValuesFromCondition(var, relop, C);
+            List<CondConstants> constlist = GenetateConstList(C);
 
-            //list<CondConstants> constlist = GenetateConstList(C);
+            /// TODO:   Generate the IFs -> further thinking needed, but the main method is ready
+            ///         Get them in the right order
+            ///         Generate the blocks
+            ///         Generate the jumps between them, and the True-False lanes (polyrequ blocks also)
+            ///         Insert the meshed control flow trnasition to the original place
+        }
+
+        /// <summary>
+        /// Generates the surrounding CondConstants around a specific constant
+        /// </summary>
+        /// <param name="c">The actual constant which is the base of the generation</param>
+        /// <param name="num">The number of constants to generate (by default, it equals to 6)</param>
+        /// <returns>The litst of the generated CondConstants</returns>
+        private static List<CondConstants> GenetateConstList(int c, int num = 6)
+        {
+            List<CondConstants> returnlist = new List<CondConstants>();
+            for (int i = c - num + 1; i <= c + num - 1; i += 2)
+                returnlist.Add(new CondConstants(i));
+            return returnlist;
         }
 
         /// <summary>

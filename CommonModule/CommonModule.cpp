@@ -75,7 +75,7 @@ string CommonModule::Reader::DoStuff()
 
 	ss << " int sub_fnct(a, b)\n";
 	ss << " {\n";
-	ss << " if ( a > b )\n";
+	ss << " if ( a > 70 )\n";
 	ss << " a = 5;\n";
 	ss << " else\n";
 	ss << " {\n";

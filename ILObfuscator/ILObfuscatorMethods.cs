@@ -427,14 +427,36 @@ namespace Internal
 
 
         /// <summary>
-        /// Extracts the parts of a condition into the parameters
+        /// Extracts the variable from a condition
         /// </summary>
-        /// <param name="var">The referenced variable</param>
-        /// <param name="relop">The relational operator</param>
-        /// <param name="C">The constant</param>
-        internal void GetValuesFromCondition(Variable var, RelationalOperationType relop, int C)
+        /// <returns>The extracted variable</returns>
+        internal Variable GetVarFromCondition()
         {
             // TODO;
+
+            return RefVariables.First();
+        }
+
+        /// <summary>
+        /// Extracts the relop from a condition
+        /// </summary>
+        /// <returns>The extracted variable</returns>
+        internal Instruction.RelationalOperationType GetRelopFromCondition()
+        {
+            // TODO;
+
+            return Instruction.RelationalOperationType.Greater;
+        }
+
+        /// <summary>
+        /// Extracts the constant from a condition
+        /// </summary>
+        /// <returns>The extracted variable</returns>
+        internal int GetConstFromCondition()
+        {
+            // TODO;
+
+            return 55;
         }
 
 #if !WORKING_IN_PROGRESS
