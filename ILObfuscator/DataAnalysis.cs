@@ -220,7 +220,11 @@ namespace Obfuscator
                 {
                     foreach (Variable var in func.LocalVariables)
                     {
-                        if ( !inst.DeadVariables.ContainsKey(var) )
+                        /* 
+                         * QUESTION: do we want the variables used for constant recalculation
+                         * to be used as dead variables as the original ones?
+                         */
+                        if (/*!var.fake && */!inst.DeadVariables.ContainsKey(var))
                             inst.DeadVariables.Add(var, state);
                     }
                 }

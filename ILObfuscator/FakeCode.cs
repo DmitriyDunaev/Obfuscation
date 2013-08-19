@@ -206,6 +206,8 @@ namespace Obfuscator
 #endif
         }
 
+        /* TODO: more reasonable random numbers... */
+
         /// <summary>
         /// Function to make an actual fake instruction out of a Nop.
         /// </summary>
@@ -214,22 +216,113 @@ namespace Obfuscator
         {
             /* First we get a left value. */
             Variable leftvalue = GetRandomLeftValue(ins);
-            
-            /* 
-             * Now we decide which type of instruction do we want to generate:
-             * - Copy                   (1)
-             * - Unary Assignment       (2)
-             * - Full Assignment        (3)
+
+            /* Then we check how many variables can we use as right value. */
+            List<Variable> rightvalues = GetRandomRightValues(ins, 2);
+
+            /*
+             * The number of the available right values determines which kind of instructions
+             * can we generate.
+             * 
+             *  - If we don't have any, then we must make a Copy with a constant.
+             * 
+             *  - If we have one, and it's the same as the left value, then we have to make
+             *    a Unary Assignment.
+             *    
+             *  - If we have one, but it's different from the left value, then we can make
+             *    a Copy (1), a Unary Assignment (2) and a Full Assignment with a constant (3).
+             *    
+             *  - If we have two, we can make all these and a Full Assignment with two
+             *    variables.
              */
-            switch (Randomizer.GetSingleNumber(1, 3))
+            switch (rightvalues.Count)
             {
+                case 0:
+                    /* We don't have any right values, so we have to copy a constant value. */
+                    ins.MakeCopy(leftvalue, null, Randomizer.GetSingleNumber(0, 1000));
+                    break;
+
                 case 1:
+                    int rnd = Randomizer.GetSingleNumber(1, 3);
+
+                    /* If rightvalue is the same as the leftvalue, or we choose Unary Assignment. */
+                    if (leftvalue.Equals(rightvalues.First()) || rnd == 2)
+                        ins.MakeUnaryAssignment(leftvalue, rightvalues.First(), Instruction.UnaryOperationType.ArithmeticNegation);
+
+                    /* If we choose Copy. */
+                    else if (rnd == 1)
+                        ins.MakeCopy(leftvalue, rightvalues.First(), null);
+
+                    /* If we choose Full Assignment. */
+                    else
+                    {
+                        /* Here we random generate an operator. */
+                        Instruction.ArithmeticOperationType op;
+                        switch (Randomizer.GetSingleNumber(0, 3))
+                        {
+                            case 0:
+                                op = Instruction.ArithmeticOperationType.Addition;
+                                break;
+                            case 1:
+                                op = Instruction.ArithmeticOperationType.Subtraction;
+                                break;
+                            case 2:
+                                op = Instruction.ArithmeticOperationType.Multiplication;
+                                break;
+                            case 3:
+                                op = Instruction.ArithmeticOperationType.Division;
+                                break;
+                            default:
+                                /* Just to aviod the error... */
+                                op = Instruction.ArithmeticOperationType.Addition;
+                                break;
+                        }
+                        if (op == Instruction.ArithmeticOperationType.Addition || op == Instruction.ArithmeticOperationType.Division)
+                            ins.MakeFullAssignment(leftvalue, rightvalues.First(), null, Randomizer.GetSingleNumber(0, 1000), op);
+                        else
+                        {
+                            int num = (int)Math.Pow(2, Randomizer.GetSingleNumber(1, 5));
+                            ins.MakeFullAssignment(leftvalue, rightvalues.First(), null, num, op);
+                        }
+                    }
+
                     break;
 
                 case 2:
-                    break;
-
-                case 3:
+                    switch (Randomizer.GetSingleNumber(1, 3))
+                    {
+                        case 1:
+                            ins.MakeCopy(leftvalue, rightvalues.First(), null);
+                            break;
+                        case 2:
+                            ins.MakeUnaryAssignment(leftvalue, rightvalues.First(), Instruction.UnaryOperationType.ArithmeticNegation);
+                            break;
+                        case 3:
+                            /* Here we random generate an operator: + or - */
+                            /* QUESTION: do we want * and / here? */
+                            Instruction.ArithmeticOperationType op;
+                            switch (Randomizer.GetSingleNumber(0, 3))
+                            {
+                                case 0:
+                                    op = Instruction.ArithmeticOperationType.Addition;
+                                    break;
+                                case 1:
+                                    op = Instruction.ArithmeticOperationType.Subtraction;
+                                    break;
+                                //case 2:
+                                //    op = Instruction.ArithmeticOperationType.Multiplication;
+                                //    break;
+                                //case 3:
+                                //    op = Instruction.ArithmeticOperationType.Division;
+                                //    break;
+                                default:
+                                    /* Just to aviod the error... */
+                                    op = Instruction.ArithmeticOperationType.Addition;
+                                    break;
+                            }
+                            ins.MakeFullAssignment(leftvalue, rightvalues[0], rightvalues[1], null, op);
+                            break;
+                    }
                     break;
             }
         }
@@ -241,29 +334,11 @@ namespace Obfuscator
         /// <returns>A proper variable, or null, if no such exists.</returns>
         private static Variable GetRandomLeftValue(Instruction ins)
         {
-            return GetVariableByStates(ins, Variable.State.Free, Variable.State.Not_Initialized);
-        }
-
-        /// <summary>
-        /// Returns a variable from the instruction's DeadVariables list with FREE or FILLED state.
-        /// </summary>
-        /// <param name="ins">The actual instruction.</param>
-        /// <returns>A proper variable, or null, if no such exists.</returns>
-        private static Variable GetRandomRightValue(Instruction ins)
-        {
-            return GetVariableByStates(ins, Variable.State.Free, Variable.State.Filled);
-        }
-
-        /// <summary>
-        /// Function used only by the GetRandomRightValue and GetRandomLeftValue functions.
-        /// </summary>
-        private static Variable GetVariableByStates(Instruction ins, Variable.State state1, Variable.State state2)
-        {
             /* First we gather the variables with the proper state. */
             List<Variable> proper_vars = new List<Variable>();
             foreach (Variable var in ins.DeadVariables.Keys)
             {
-                if (ins.DeadVariables[var] == state1 || ins.DeadVariables[var] == state2)
+                if (ins.DeadVariables[var] == Variable.State.Free || ins.DeadVariables[var] == Variable.State.Not_Initialized)
                     proper_vars.Add(var);
             }
 
@@ -274,6 +349,37 @@ namespace Obfuscator
             /* If there are ones that fit our needs, then we coose one randomly. */
             else
                 return proper_vars[Randomizer.GetSingleNumber(0, proper_vars.Count - 1)];
+        }
+
+        /// <summary>
+        /// Returns a list of variables from the instruction's DeadVariables list with FREE or FILLED state.
+        /// </summary>
+        /// <param name="ins">The actual instruction.</param>
+        /// <param name="amount">Shows how many right values do we need.</param>
+        /// <returns>A list of proper variables which may hold less variables than needed.</returns>
+        private static List<Variable> GetRandomRightValues(Instruction ins, int amount)
+        {
+            /* First we gather the variables with the proper state. */
+            List<Variable> proper_vars = new List<Variable>();
+            foreach (Variable var in ins.DeadVariables.Keys)
+            {
+                if (ins.DeadVariables[var] == Variable.State.Free || ins.DeadVariables[var] == Variable.State.Filled)
+                    proper_vars.Add(var);
+            }
+
+            /* If we have less proper variables than needed: we return as many as we have. */
+            if (proper_vars.Count <= amount)
+                return proper_vars;
+
+            /* If we have more, then we pick randomly. */
+            else
+            {
+                List<Variable> picked_vars = new List<Variable>();
+                List<int> picked_nums = Randomizer.GetMultipleNumbers(amount, 0, proper_vars.Count - 1, false, false);
+                foreach (int num in picked_nums)
+                    picked_vars.Add(proper_vars[num]);
+                return picked_vars;
+            }
         }
 
         public static void GenerateNoOperations(Function func_orig)
