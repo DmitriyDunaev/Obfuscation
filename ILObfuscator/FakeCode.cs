@@ -126,9 +126,13 @@ namespace Obfuscator
             }
 
             /* 
-             * At this point we have a perfectly chosen jumptarget,
-             * so we can finally make the conditional jump.
+             * At this point we have a perfectly chosen jumptarget, so we should
+             * split it into two pieces, so we can make a jump right in the middle
+             * of the basic block, making it harder to recognize the original control
+             * flow.
              */
+            Instruction splithere = jumptarget.Instructions[Randomizer.GetSingleNumber(0, jumptarget.Instructions.Count - 1)];
+            jumptarget = jumptarget.SplitAfterInstruction(splithere);
 
             /*
              * When we make a coditional jump here, we use a (fake) parameter with
