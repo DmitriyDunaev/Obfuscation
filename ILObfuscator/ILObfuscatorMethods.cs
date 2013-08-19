@@ -61,6 +61,19 @@ namespace Internal
         }
 
         /// <summary>
+        /// Returns a reference to all basic blocks of a function, which last instruction is ConditionalJump with one referenced variable
+        /// </summary>
+        /// <returns>A list of basicblocks, whith last instruction being ConditionalJump</returns>
+        public List<BasicBlock> GetConditionalJumps()
+        {
+            List<BasicBlock> list = new List<BasicBlock>();
+            foreach (BasicBlock bb in BasicBlocks)
+                if ((bb.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump) && (bb.Instructions.Last().RefVariables.Count() == 1))
+                    list.Add(bb);
+            return list;
+        }
+
+        /// <summary>
         /// Gets local variable of a function by its unique identifier
         /// </summary>
         /// <param name="id">GUID of a variable</param>
@@ -187,7 +200,7 @@ namespace Internal
         /// </summary>
         /// <param name="polyrequired">If true, the Instructions will be polyrequired</param>
         /// <returns>The created BasicBlock</returns>
-        public BasicBlock Clone(bool polyrequired)
+        public BasicBlock Clone(bool polyrequired = false)
         {
             /// Creating the clone
             BasicBlock clone = new BasicBlock(parent);
@@ -410,6 +423,18 @@ namespace Internal
                     TACtext_new = string.Join(" ", TACtext_new, variable.name);
             }
             TACtext = TACtext_new.Trim();
+        }
+
+
+        /// <summary>
+        /// Extracts the parts of a condition into the parameters
+        /// </summary>
+        /// <param name="var">The referenced variable</param>
+        /// <param name="relop">The relational operator</param>
+        /// <param name="C">The constant</param>
+        internal void GetValuesFromCondition(Variable var, RelationalOperationType relop, int C)
+        {
+            // TODO;
         }
 
 #if !WORKING_IN_PROGRESS

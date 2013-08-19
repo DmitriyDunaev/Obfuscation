@@ -49,14 +49,19 @@ namespace Obfuscator
         /// <param name="funct">Thse function which has the control flow transitions to be meshed up</param>
         public static void MeshFunction( Function funct )
         {
-            // Now it meshes up all of the unconditional jumps, and only them.
+            /// Meshing of the unconditional jumps
             List<BasicBlock> basicblocks = funct.GetUnconditionalJumps();
             foreach (BasicBlock bb in basicblocks)
             {
                 InsertFakeLane(bb);
-
                 InsertDeadLane(bb);
-                //TODO: Debug the upgraded fake lane injector
+            }
+
+            /// Meshing of the conditional jumps
+            basicblocks = funct.GetConditionalJumps();
+            foreach (BasicBlock bb in basicblocks)
+            {
+                MeshConditionals(bb);
             }
         }
 
@@ -130,6 +135,38 @@ namespace Obfuscator
             dead2.LinkTo(Randomizer.GetJumpableBasicBlock(bb.parent), true);
             dead3.LinkTo(Randomizer.GetJumpableBasicBlock(bb.parent), true);
 
+        }
+
+        /// <summary>
+        /// Class of constants with the relational operations available list
+        /// </summary>
+        private class CondConstants
+        {
+            public enum RelopAvailability
+            {
+                Usable,
+                NonUsable,
+                Ambigious
+            }
+
+            int value;
+            Dictionary< Instruction.RelationalOperationType, RelopAvailability > RelopAvailabilityList;
+
+        }
+
+        /// <summary>
+        /// This function meshes up a conditional jump
+        /// </summary>
+        /// <param name="bb">The block containing the conditional jump to mesh up</param>
+        private static void MeshConditionals(BasicBlock bb)
+        {
+            Variable var = null;
+            Instruction.RelationalOperationType relop = 0;
+            int C = 0;
+
+            bb.Instructions.Last().GetValuesFromCondition(var, relop, C);
+
+            //list<CondConstants> constlist = GenetateConstList(C);
         }
 
         /// <summary>
