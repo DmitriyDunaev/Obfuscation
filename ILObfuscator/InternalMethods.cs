@@ -1,6 +1,4 @@
-﻿//#define WORKING_IN_PROGRESS
-
-/*
+﻿/*
  * WARNING FOR FUTURE (1):
  * We assume that a dead pointer can only point to a non-pointer dead variable.
  * We are setting them like this, and using them like this, so be aware of this fact.
@@ -468,8 +466,6 @@ namespace Internal
             return 100;
         }
 
-#if !WORKING_IN_PROGRESS
-
         /*
          * When we modify a fake instruction, we change the states in it, so we
          * have to update the dead variables in the following instructions.
@@ -643,8 +639,6 @@ namespace Internal
             }
             return state;
         }
-#endif
-
     }
 
 
