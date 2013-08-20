@@ -96,6 +96,10 @@ namespace Internal
                 throw new ValidatorException("No predecessors and no successors found for basic block " + ID);
             if (Instructions.Count == 0)
                 throw new ValidatorException("No instructions found for basic block " + ID);
+            if (Predecessors.Count == 0 && !parent.BasicBlocks.First().Equals(this))
+                throw new ValidatorException("No predecessors found at basic block " + ID + ". By convention, only the first basic block has empty Predecessors list.");
+            if(Successors.Count == 0 && Instructions.Count != 1 && Instructions[0].TACtext != "return")
+                throw new ValidatorException("No successors found at basic block " + ID + ". By convention, only the 'fake exit block' has empty Successors list.");
             if (Successors.Count > 2)
                 throw new ValidatorException("More than two successors found in basic block " + ID);
             if (Successors.Count == 2)
@@ -111,6 +115,7 @@ namespace Internal
                         found = true;
                 }
                 if (!found)
+                //if(!resultString.Equals(Successors[0].ID))
                     throw new ValidatorException("The successors' IDs do not match last GOTO instruction. Basic block: " + ID);
             }
             //if (Predecessors.Count == 1 && Predecessors[0].Instructions.Last().statementType == StatementTypeType.EnumValues.eUnconditionalJump)

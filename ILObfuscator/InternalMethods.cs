@@ -45,31 +45,6 @@ namespace Internal
             return BasicBlocks[0];
         }
 
-        /// <summary>
-        /// This function returns a reference to all basic blocks of a function, which last instruction is UnconditionalJump
-        /// </summary>
-        /// <returns>A list of basicblocks, which last instruction is UnconditionalJump </returns>
-        public List<BasicBlock> GetUnconditionalJumps()
-        {
-            List<BasicBlock> list = new List<BasicBlock>();
-            foreach (BasicBlock bb in BasicBlocks)
-                if (bb.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
-                    list.Add(bb);
-            return list;
-        }
-
-        /// <summary>
-        /// Returns a reference to all basic blocks of a function, which last instruction is ConditionalJump with one referenced variable
-        /// </summary>
-        /// <returns>A list of basicblocks, whith last instruction being ConditionalJump</returns>
-        public List<BasicBlock> GetConditionalJumps()
-        {
-            List<BasicBlock> list = new List<BasicBlock>();
-            foreach (BasicBlock bb in BasicBlocks)
-                if ((bb.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump) && (bb.Instructions.Last().RefVariables.Count() == 1))
-                    list.Add(bb);
-            return list;
-        }
 
         /// <summary>
         /// Gets local variable of a function by its unique identifier
@@ -153,9 +128,9 @@ namespace Internal
             // Relinking the blocks
             foreach (BasicBlock bb in Successors)
             {
-                newBB.LinkTo(bb);
+                newBB.LinkToSuccessor(bb);
             }
-            this.LinkTo(newBB, true);
+            this.LinkToSuccessor(newBB, true);
             List<Instruction> move = Instructions.GetRange(Instructions.BinarySearch(inst) + 1, Instructions.Count - Instructions.BinarySearch(inst) - 1);
             // If something is moved, then clear NoOperation default instruction in the new basic block
             if (move.Count > 0)
@@ -188,7 +163,7 @@ namespace Internal
         /// </summary>
         /// <param name="successor">A new successor basic block</param>
         /// <param name="clear">If true - clears all other successor-predecessor links before linking to a new successor</param>
-        public void LinkTo(BasicBlock successor, bool clear = false)
+        public void LinkToSuccessor(BasicBlock successor, bool clear = false)
         {
             if (Successors.Count > 2)
                 throw new ObfuscatorException("Basic block cannot have more than 2 successors.");
@@ -203,9 +178,9 @@ namespace Internal
         }
 
         /// <summary>
-        /// Clones a BasicBlock with its Instructions and successors
+        /// Clones a BasicBlock with its instructions and successors
         /// </summary>
-        /// <param name="polyrequired">If true, the Instructions will be polyrequired</param>
+        /// <param name="polyrequired">If true, the polyRequired property is set</param>
         /// <returns>The created BasicBlock</returns>
         public BasicBlock Clone(bool polyrequired = false)
         {
@@ -219,7 +194,6 @@ namespace Internal
             {
                 Instruction i = new Instruction(ins, clone);
                 clone.Instructions.Add(i);
-
             }
             foreach (Instruction ins in clone.Instructions)
                 ins.parent = clone;
@@ -231,7 +205,7 @@ namespace Internal
 
             /// Setting the successors
             foreach (BasicBlock bb in Successors)
-                clone.LinkTo(bb);
+                clone.LinkToSuccessor(bb);
 
             return clone;
         }

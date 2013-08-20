@@ -180,7 +180,7 @@ namespace Internal
                     throw new ObfuscatorException("Unsupported relational operation type.");
             }
             TACtext = string.Join(" ", "if", left_value.name, strRelop, right_value, "goto", target.ID);
-            parent.LinkTo(target);
+            parent.LinkToSuccessor(target);
         }
 
 
@@ -233,7 +233,7 @@ namespace Internal
 
             statementType = ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump;
             TACtext = string.Join(" ", "goto", target.ID);
-            parent.LinkTo(target, true);
+            parent.LinkToSuccessor(target, true);
         }
     }
 }
