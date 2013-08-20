@@ -275,7 +275,7 @@ namespace Internal
         {
             if (!pointer && (memoryUnitSize != memoryRegionSize))
                 throw new ValidatorException("Non-pointer variable cannot have MemoryUnitSize not equal to MemoryRegionSize. Variable: " + ID);
-            if (minValue.HasValue && maxValue.HasValue && !(minValue.Value < maxValue.Value))
+            if (minValue.HasValue && maxValue.HasValue && (minValue.Value > maxValue.Value))
                 throw new ValidatorException("MinValue must be smaller than MaxValue for variable " + ID);
         }
     }

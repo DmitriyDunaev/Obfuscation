@@ -263,7 +263,7 @@ namespace Internal
                 maxValue = null;
         }
 
-        public Variable(int memory_region_size, Kind kind, Purpose purpose)
+        public Variable(Kind kind, Purpose purpose, int memory_region_size = 4, int? min_value = null, int? max_value = null)
         {
             _ID = new IDManager();
             switch (purpose)
@@ -286,12 +286,11 @@ namespace Internal
             memoryRegionSize = memory_region_size;
             pointer = false;
             fake = true;
+            minValue = min_value;
+            maxValue = max_value;
             this.kind = kind;
         }
 
-        protected internal Variable()
-        {
-        }
 
         public override bool Equals(object obj)
         {
