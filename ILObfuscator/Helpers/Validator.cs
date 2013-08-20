@@ -52,6 +52,12 @@ namespace Internal
             //    !Regex.IsMatch(BasicBlocks[BasicBlocks.Count-1].Instructions[0].text, @"^leave ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
             //    throw new ValidatorException("No 'enter' and/or 'leave' instructions found in function " + ID);
 
+            if (BasicBlocks.FindAll(x => x.getSuccessors.Count == 0 && x.getPredecessors.Count > 0 && x.Instructions.Count == 1 && x.Instructions[0].TACtext == "return").Count == 0)
+                throw new ValidatorException("Function " + ID + " has no 'fake exit block'.");
+
+            if (BasicBlocks.FindAll(x => x.getSuccessors.Count == 0 && x.getPredecessors.Count > 0 && x.Instructions.Count == 1 && x.Instructions[0].TACtext == "return").Count > 1)
+                throw new ValidatorException("Function " + ID + " has more than one 'fake exit block'.");
+
             foreach (BasicBlock bb in this.BasicBlocks)
             {
                 if (bb.parent != this)
@@ -96,12 +102,14 @@ namespace Internal
                 throw new ValidatorException("No predecessors and no successors found for basic block " + ID);
             if (Instructions.Count == 0)
                 throw new ValidatorException("No instructions found for basic block " + ID);
-            if (Predecessors.Count == 0 && !parent.BasicBlocks.First().Equals(this))
-                throw new ValidatorException("No predecessors found at basic block " + ID + ". By convention, only the first basic block has empty Predecessors list.");
-            if(Successors.Count == 0 && Instructions.Count != 1 && Instructions[0].TACtext != "return")
-                throw new ValidatorException("No successors found at basic block " + ID + ". By convention, only the 'fake exit block' has empty Successors list.");
             if (Successors.Count > 2)
                 throw new ValidatorException("More than two successors found in basic block " + ID);
+            if (parent.BasicBlocks.First().Equals(this) && Predecessors.Count != 0)
+                throw new ValidatorException("The first basic block in a list must be an entrance block without predecessors. Basic block: " + ID);
+            if (Predecessors.Count == 0 && !parent.BasicBlocks.First().Equals(this))
+                throw new ValidatorException("No predecessors found at basic block " + ID + ". By convention, only the first basic block has empty Predecessors list.");
+            if(Successors.Count == 0 && (Instructions.Count != 1 || Instructions[0].TACtext != "return"))
+                throw new ValidatorException("No successors found at basic block " + ID + ". By convention, only the 'fake exit block' has empty Successors list.");
             if (Successors.Count == 2)
             {
                 if (Instructions.Last().statementType != StatementTypeType.EnumValues.eConditionalJump)

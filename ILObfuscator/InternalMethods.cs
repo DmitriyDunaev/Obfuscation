@@ -22,102 +22,68 @@ namespace Internal
     public partial class Function
     {
         /// <summary>
-        /// Gets the last basic block, which is a "fake end block"
+        /// Gets the "fake exit block" (it is not the last block in the list) of a function
         /// </summary>
-        /// <returns>The last basic block in a function</returns>
-        public BasicBlock GetLastBasicBlock()
+        /// <returns>The "fake exit block"</returns>
+        public BasicBlock GetFakeExitBasicBlock()
         {
-            foreach (BasicBlock bb in BasicBlocks)
-                if (bb.getSuccessors.Count.Equals(0))
-                    return bb;
-            throw new ObfuscatorException("No 'fake end block' is found in function " + ID);
+            return BasicBlocks.Find(x => x.getSuccessors.Count == 0);
         }
 
+
         /// <summary>
-        /// Gets the first basic block.
+        /// Gets the entrance basic block of a function. By convention it is the first basic block in a list 
         /// </summary>
-        /// <returns>The first basic block in a function.</returns>
-        public BasicBlock GetFirstBasicBlock()
+        /// <returns>The entrance basic block</returns>
+        public BasicBlock GetEntranceBasicBlock()
         {
-            if (BasicBlocks.Count == 0)
-                throw new ObfuscatorException("A function must have at least one basic block");
-            // The first item in the BasicBlocks list is always the first basic block of the function.
             return BasicBlocks[0];
         }
 
 
         /// <summary>
-        /// Gets local variable of a function by its unique identifier
+        /// Creates a new fake local variable and adds it to the function
         /// </summary>
-        /// <param name="id">GUID of a variable</param>
-        /// <returns>Local variable</returns>
-        public Variable GetLocalVariableByID(string id)
+        /// <param name="purpose">Purpose of creation (choose from enumeration)</param>
+        /// <param name="MemoryRegionSize">Memory region size; 4 bytes for integer</param>
+        /// <returns>The created variable</returns>
+        public Variable NewLocalVariable(Variable.Purpose purpose, Common.MemoryRegionSize size)
         {
-            foreach (Variable var in LocalVariables)
-            {
-                if (var.ID == id)
-                    return var;
-            }
-            throw new ObfuscatorException("No local variable " + id + " found in function.");
-        }
-
-
-        public Variable NewLocalVariable(Variable.Purpose purpose, int MemoryRegionSize = 4)
-        {
-            Variable var = new Variable(Variable.Kind.Local, purpose, MemoryRegionSize);
+            Variable var = new Variable(Variable.Kind.Local, purpose, size);
             LocalVariables.Add(var);
             return var;
         }
 
 
+        /// <summary>
+        /// Creates a new fake input parameter and adds it to the function
+        /// </summary>
+        /// <param name="min_value">Fixed minimum value (positive integer)</param>
+        /// <param name="max_value">Fixed maximum value (positive integer)</param>
+        /// <returns>A variable</returns>
         public Variable NewFakeInputParameter(int? min_value, int? max_value)
         {
             if (min_value.HasValue && max_value.HasValue && min_value > max_value)
                 throw new ObfuscatorException("Wrong parameter passing: minvalue cannot exceed maxvalue.");
-            Variable fake_input = new Variable(Variable.Kind.Input, Variable.Purpose.Fake, 4, min_value, max_value);
+            if (!min_value.HasValue && !max_value.HasValue)
+                throw new ObfuscatorException("One of values (FixedMin or FixedMax) should be a not-null value.");
+            if ((min_value.HasValue && min_value.Value < 0) || (max_value.HasValue && max_value.Value < 0))
+                throw new ObfuscatorException("At present time only positive integer FixedMin and FixedMax are supported.");
+            Variable fake_input = new Variable(Variable.Kind.Input, Variable.Purpose.Fake, Common.MemoryRegionSize.Integer, min_value, max_value);
             LocalVariables.Add(fake_input);
             return fake_input;
         }
     }
 
 
+
     public partial class BasicBlock
     {
-
-
         /// <summary>
-        /// This is the dumb version of the InsertAfter, which inserts a BasicBlock after an unconditional jump
+        /// Splits the basic block into two after the given instruction (+ handles successor-predecessor links)
         /// </summary>
-        /// <param name="bbTarget">The target of the unconditional jump</param>
-        /// <returns>The created block</returns>
-        //public BasicBlock InsertAfter(BasicBlock target)
-        //{
-        //    if (Successors.Count > 1) // two successors
-        //        throw new ObfuscatorException("You cannot insert new basic block after the basic block with two successors.");
-
-        //    BasicBlock newblock = new BasicBlock(parent, new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation));
-
-        //    if (Successors.Count == 1)  // one successor
-        //    {
-        //        Successors.Clear();
-        //        Successors.Add(newblock);
-        //        target.Predecessors.Remove(this);
-        //        target.Predecessors.Add(newblock);
-        //        newblock.Predecessors.Add(this);
-        //        newblock.Successors.Add(target);
-        //    }
-        //    else // no successors
-        //    {
-        //        Successors.Add(newblock);
-        //        newblock.Predecessors.Add(this);
-        //    }
-
-        //    // The last instruction is modified if it was an unconditional 'goto' to match new target.ID
-        //    RetargetLastUnconditionalGoto(newblock.ID);
-        //    return newblock;
-        //}
-
-
+        /// <param name="inst">Instruction to split after</param>
+        /// <returns>The new basic block (the second after splitting)</returns>
         public BasicBlock SplitAfterInstruction(Instruction inst)
         {
             if (!inst.parent.Equals(this) || !this.Instructions.Contains(inst))
@@ -127,9 +93,7 @@ namespace Internal
             BasicBlock newBB = new BasicBlock(parent);
             // Relinking the blocks
             foreach (BasicBlock bb in Successors)
-            {
                 newBB.LinkToSuccessor(bb);
-            }
             this.LinkToSuccessor(newBB, true);
             List<Instruction> move = Instructions.GetRange(Instructions.BinarySearch(inst) + 1, Instructions.Count - Instructions.BinarySearch(inst) - 1);
             // If something is moved, then clear NoOperation default instruction in the new basic block
@@ -139,30 +103,18 @@ namespace Internal
             Instructions.RemoveRange(Instructions.BinarySearch(inst) + 1, Instructions.Count - Instructions.BinarySearch(inst) - 1);
             foreach (Instruction ins in newBB.Instructions)
                 ins.parent = newBB;
+            // We have to retarget the last unconditional GOTO to a new basic block
             if (inst.statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
-                RetargetLastUnconditionalGoto(newBB.ID);
+                Instructions.Last().TACtext = Instructions.Last().TACtext.Replace(Regex.Match(Instructions.Last().TACtext, @"\bID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b").Value, newBB.ID);
             return newBB;
         }
 
-        /// <summary>
-        /// Retargets last unconditional jump (its 'goto' instruction) of a basic block to a new ID_'GUID'
-        /// </summary>
-        /// <param name="targetID">ID_'GUID' to be retargeted to</param>
-        /// <returns>True if 'goto' has been retargeted successfully; false if the last instruction is not 'goto'</returns>
-        private bool RetargetLastUnconditionalGoto(string targetID)
-        {
-            string resultString = null;
-            resultString = Regex.Match(Instructions.Last().TACtext, @"\bID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b").Value;
-            Instructions.Last().TACtext = Instructions.Last().TACtext.Replace(resultString, targetID);
-            return true;
-        }
-
 
         /// <summary>
-        /// Links the basic block to a new successor (sets Predecessor and Successor properties)
+        /// Links the basic block to a new successor (sets this.Successor and successor.Predecessor properties)
         /// </summary>
         /// <param name="successor">A new successor basic block</param>
-        /// <param name="clear">If true - clears all other successor-predecessor links before linking to a new successor</param>
+        /// <param name="clear">If true - clears all other successor-predecessor links of the basic block before linking to a new successor</param>
         public void LinkToSuccessor(BasicBlock successor, bool clear = false)
         {
             if (Successors.Count > 2)
@@ -176,6 +128,7 @@ namespace Internal
             Successors.Add(successor);
             successor.Predecessors.Add(this);
         }
+
 
         /// <summary>
         /// Clones a BasicBlock with its instructions and successors
@@ -240,6 +193,7 @@ namespace Internal
             return preceding;
         }
 
+
         /// <summary>
         /// Gets a list of the instructions following the given instruction in a control flow (directly following in CFG)
         /// </summary>
@@ -266,6 +220,7 @@ namespace Internal
             return following;
         }
 
+
         /// <summary>
         /// Gets a list of unsafe variables, that contains variables which never become 'dead'
         /// </summary>
@@ -279,10 +234,11 @@ namespace Internal
                 if (string.IsNullOrEmpty(resultString))
                     return unsafeVar;
                 resultString = Regex.Match(TACtext, @"[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$").Value;
-                unsafeVar.Add(this.parent.parent.GetLocalVariableByID(resultString));
+                unsafeVar.Add(this.parent.parent.LocalVariables.Find(x => x.ID == resultString));
             }
             return unsafeVar;
         }
+
 
         /// <summary>
         /// Determines the new state of a dead variable (a pointer) as a result of the instruction
@@ -382,8 +338,7 @@ namespace Internal
             }
             return var_states;
         }
-
-
+        
 
         /// <summary>
         /// Modifies the TAC text of instruction: replaces numerical constant to variable name
@@ -393,7 +348,7 @@ namespace Internal
         public void ModifyConstInstruction(Variable variable, int? value)
         {
             if (variable == null || value == null)
-                throw new ObfuscatorException("ModifyConstInstruction: wrong parameter passing.");
+                throw new ObfuscatorException("Wrong parameter passing.");
             RefVariables.Add(variable);
             string TACtext_new = string.Empty;
             for (int i = 0; i < TACtext.Split(' ').Length; i++)
@@ -542,7 +497,7 @@ namespace Internal
              * dead, and it's state differs from the new state.
              */
             if (DeadVariables.ContainsKey(var)      // This variable is dead.
-                && DeadVariables[var] != state)     // The states differ.
+                && DeadVariables[var] != state)     // The state differs.
             {
                 foreach (Variable v in RefVariables)
                 {

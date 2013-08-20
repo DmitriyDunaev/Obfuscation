@@ -97,7 +97,7 @@ namespace Obfuscator
               * If going downwards (looking for NOT_INITIALIZED dead variables),
               * we start from the very first basic block (func.BasicBlocks[0]).
               */
-             BasicBlock block = (state == Variable.State.Free) ? func.GetLastBasicBlock() : func.GetFirstBasicBlock();
+             BasicBlock block = (state == Variable.State.Free) ? func.GetFakeExitBasicBlock() : func.GetEntranceBasicBlock();
 
             /*
              * We go through all the instructions and deal with all their

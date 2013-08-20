@@ -263,7 +263,7 @@ namespace Internal
                 fixedMax = null;
         }
 
-        public Variable(Kind kind, Purpose purpose, int memory_region_size = 4, int? min_value = null, int? max_value = null)
+        public Variable(Kind kind, Purpose purpose, Common.MemoryRegionSize memory_region_size = Common.MemoryRegionSize.Integer, int? min_value = null, int? max_value = null)
         {
             _ID = new IDManager();
             switch (purpose)
@@ -283,7 +283,7 @@ namespace Internal
                 default:
                     throw new ObfuscatorException("Unsupported Variable.Purpose value.");
             }
-            memoryRegionSize = memory_region_size;
+            memoryRegionSize = Convert.ToInt32(memory_region_size);
             pointer = false;
             fake = true;
             fixedMin = min_value;

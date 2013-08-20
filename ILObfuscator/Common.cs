@@ -16,6 +16,14 @@ namespace Obfuscator
         /// Minimal number used in fake code generation (e.g. in conditional statements) 
         /// </summary>
         public static int GlobalMinNumber = 10;
+        /// <summary>
+        /// Memory region sizes for supported types
+        /// </summary>
+        public enum MemoryRegionSize
+        {
+            Integer = 4,
+            Char = 1
+        }
 
         /// <summary>
         /// Provides a full copy of original object

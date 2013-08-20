@@ -66,8 +66,8 @@ namespace Obfuscator
             Instruction nop1 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, const_inst.parent);
             Instruction nop2 = new Instruction(ExchangeFormat.StatementTypeType.EnumValues.eNoOperation, const_inst.parent);
             // We assume that we need 4 bytes for each constant.
-            Variable t1 = const_inst.parent.parent.NewLocalVariable(Variable.Purpose.ConstRecalculation);
-            Variable t2 = const_inst.parent.parent.NewLocalVariable(Variable.Purpose.ConstRecalculation);
+            Variable t1 = const_inst.parent.parent.NewLocalVariable(Variable.Purpose.ConstRecalculation, Common.MemoryRegionSize.Integer);
+            Variable t2 = const_inst.parent.parent.NewLocalVariable(Variable.Purpose.ConstRecalculation, Common.MemoryRegionSize.Integer);
             int first_number = Randomizer.GetSingleNumber(1, 99);
             Instruction.ArithmeticOperationType op = first_number < const_value ? Instruction.ArithmeticOperationType.Addition : Instruction.ArithmeticOperationType.Subtraction;
             int second_number = Math.Abs(first_number - const_value);
