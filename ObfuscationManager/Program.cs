@@ -75,7 +75,7 @@ namespace ObfuscationManager
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\n\nProgram failed!");
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.Write(string.Format("- Message: {0}\n- Target: [{1}.{2}]\nYou can fing the full stack trace in a log file.\n", 
+                Console.Write(string.Format("- Message: {0}\n- Target: [{1}.{2}]\nYou can find the full stack trace in a log file.\n", 
                     e.Message, e.TargetSite.DeclaringType, e.TargetSite.Name));
                 Console.ResetColor();
 //                Console.WriteLine(e.StackTrace);

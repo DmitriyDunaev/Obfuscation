@@ -23,8 +23,14 @@ namespace Internal
             if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
                 throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");
 
-            if ((right_value2 == null && right_value_int == null) || (right_value2 != null && right_value_int != null) || left_value == null || right_value1 == null)
-                throw new ObfuscatorException("Wrong parameter passing.");
+            if (right_value2 == null && right_value_int == null)
+                throw new ObfuscatorException("Wrong parameter passing: one of the second right value and the constant must be null.");
+            if (right_value2 != null && right_value_int != null)
+                throw new ObfuscatorException("Wrong parameter passing: both second right value and constant is null.");
+            if (left_value == null)
+                throw new ObfuscatorException("Wrong parameter passing: left value missing.");
+            if (right_value1 == null)
+                throw new ObfuscatorException("Wrong parameter passing: first right value missing.");
 
             string left1 = left_value.name;
             string right1 = right_value1.name;
@@ -68,8 +74,10 @@ namespace Internal
             if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
                 throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");
 
-            if (left_value == null || right_value == null)
-                throw new ObfuscatorException("Wrong parameter passing.");
+            if (left_value == null)
+                throw new ObfuscatorException("Wrong parameter passing: missing left value.");
+            if (right_value == null)
+                throw new ObfuscatorException("Wrong parameter passing: missing right value.");
 
             string op = string.Empty;
             switch (operation)
@@ -104,8 +112,12 @@ namespace Internal
             if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
                 throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");
 
-            if (left_value == null || (right_value == null && right_value_int == null) || (right_value != null && right_value_int != null))
-                throw new ObfuscatorException("Wrong parameter passing.");
+            if (left_value == null)
+                throw new ObfuscatorException("Wrong parameter passing: missing left value.");
+            if (right_value == null && right_value_int == null)
+                throw new ObfuscatorException("Wrong parameter passing: both right value and constant is null.");
+            if (right_value != null && right_value_int != null)
+                throw new ObfuscatorException("Wrong parameter passing: one of the right value and the constant must be null.");
 
             RefVariables.Clear();
             RefVariables.Add(left_value);

@@ -132,7 +132,7 @@ namespace Obfuscator
              */
             foreach (Instruction ins in actual.Instructions)
             {
-                if (ins.isFake == false) 
+                if (/*ins.isFake == false*/ true) 
                 {
                     foreach (Variable var in ins.RefVariables)
                         deal_with_var(var, ins, state);

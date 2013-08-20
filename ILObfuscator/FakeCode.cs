@@ -16,9 +16,9 @@ namespace Obfuscator
         /// Describes the probability of generating a conditional jump in percents.
         /// </summary>
         private static int prob_of_cond_jump = 30;
-        private static int FPO = 10;
-        private static int fake_padding = 20;
-        private static int fake_padding_variability = 5;
+        private static int FPO = 1;
+        private static int fake_padding = 0;
+        private static int fake_padding_variability = 0;
 
         /// <summary>
         /// Function to change the nop's in the function to actual fake code.
@@ -27,10 +27,12 @@ namespace Obfuscator
         public static void Generate (Function func)
         {
             /* We have to go through all the nop's in the function. */
-            foreach (BasicBlock bb in func.BasicBlocks)
+            for (int j = 0; j < func.BasicBlocks.Count; j++)
             {
-                foreach (Instruction ins in bb.Instructions)
+                BasicBlock bb = func.BasicBlocks[j];
+                for (int i = 0; i < bb.Instructions.Count; i++)
                 {
+                    Instruction ins = bb.Instructions[i];
                     if (ins.statementType == StatementTypeType.EnumValues.eNoOperation)
                     {
                         /*
@@ -47,29 +49,30 @@ namespace Obfuscator
                          * However we must not choose this if we have no dead variables
                          * available for using as a left value present.
                          */
-                        if (func.BasicBlocks.Count < 3 && GetRandomLeftValue(ins) == null)
-                            throw new ObfuscatorException("We cannot really do anything with this instruction right now, sorry.");
+                        if (/*func.BasicBlocks.Count < 3 && */GetRandomLeftValue(ins) == null)
+                            continue;
+                        //    throw new ObfuscatorException("We cannot really do anything with this instruction right now, sorry.");
 
-                        if (Randomizer.GetSingleNumber(0, 99) < prob_of_cond_jump)
-                        {
-                            if (func.BasicBlocks.Count < 3)
-                            {
-                                /* Though randomizer said we should do this, we unfortunately cannot. */
-                                GenerateFakeInstruction(ins);
-                            }
-                            /* This is where we generate a conditional jump.*/
-                            GenerateConditionalJump(ins);
-                        }
-                        else
-                        {
-                            if (GetRandomLeftValue(ins) == null)
-                            {
-                                /* Though randomizer said we should do this, we unfortunately cannot. */
-                                GenerateConditionalJump(ins);
-                            }
+                        //if (Randomizer.GetSingleNumber(0, 99) < prob_of_cond_jump)
+                        //{
+                        //    if (func.BasicBlocks.Count < 3)
+                        //    {
+                        //        /* Though randomizer said we should do this, we unfortunately cannot. */
+                        //        GenerateFakeInstruction(ins);
+                        //    }
+                        //    /* This is where we generate a conditional jump.*/
+                        //    GenerateConditionalJump(ins);
+                        //}
+                        //else
+                        //{
+                        //    if (GetRandomLeftValue(ins) == null)
+                        //    {
+                        //        /* Though randomizer said we should do this, we unfortunately cannot. */
+                        //        GenerateConditionalJump(ins);
+                        //    }
                             /* This is where we generate instructions with dead variables. */
                             GenerateFakeInstruction(ins);
-                        }
+                        //}
 
                         /* The instruction is made, so we have to refresh the states of the dead variables. */
                         ins.RefreshNext();
@@ -273,7 +276,7 @@ namespace Obfuscator
                                 op = Instruction.ArithmeticOperationType.Division;
                                 break;
                             default:
-                                /* Just to aviod the error... */
+                                /* Just to avoid the error... */
                                 op = Instruction.ArithmeticOperationType.Addition;
                                 break;
                         }
@@ -316,7 +319,7 @@ namespace Obfuscator
                                 //    op = Instruction.ArithmeticOperationType.Division;
                                 //    break;
                                 default:
-                                    /* Just to aviod the error... */
+                                    /* Just to avoid the error... */
                                     op = Instruction.ArithmeticOperationType.Addition;
                                     break;
                             }
@@ -386,6 +389,10 @@ namespace Obfuscator
         {
             foreach (BasicBlock bb in func_orig.BasicBlocks)
             {
+                /* If this is the "fake exit block", then we shouldn't fill it with nops. */
+                if (bb.getSuccessors.Count == 0)
+                    continue;
+
                 List<Instruction> insts = Common.DeepClone(bb.Instructions) as List<Instruction>;
                 foreach (Instruction inst in insts)
                 {
