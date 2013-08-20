@@ -86,6 +86,8 @@
 						</xs:simpleType>
 					</xs:attribute>
 					<xs:attribute name="FixedValue" type="xs:string" use="optional"/>
+					<xs:attribute name="MinValue" type="xs:integer" use="optional"/>
+					<xs:attribute name="MaxValue" type="xs:integer" use="optional"/>
 					<xs:attribute name="GlobalID" type="xs:string" use="optional"/>
 					<xs:attribute name="Fake" type="xs:boolean" use="optional"/>
 				</xs:extension>

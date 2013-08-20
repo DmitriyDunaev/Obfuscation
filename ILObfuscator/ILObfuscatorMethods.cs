@@ -87,13 +87,22 @@ namespace Internal
         }
 
 
-        public Variable NewLocalVariable(int MemoryRegionSize, Variable.Purpose purpose)
+        public Variable NewLocalVariable(Variable.Purpose purpose, int MemoryRegionSize = 4)
         {
-            Variable var = new Variable(MemoryRegionSize, Variable.Kind.Local, purpose);
+            Variable var = new Variable(Variable.Kind.Local, purpose, MemoryRegionSize);
             LocalVariables.Add(var);
             return var;
         }
 
+
+        public Variable NewFakeInputParameter(int? min_value, int? max_value)
+        {
+            if (min_value.HasValue && max_value.HasValue && min_value > max_value)
+                throw new ObfuscatorException("Wrong parameter passing: minvalue cannot exceed maxvalue.");
+            Variable fake_input = new Variable(Variable.Kind.Input, Variable.Purpose.Fake, 4, min_value, max_value);
+            LocalVariables.Add(fake_input);
+            return fake_input;
+        }
     }
 
 
