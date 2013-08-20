@@ -1,6 +1,4 @@
-﻿#define PSEUDOCODE
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -155,19 +153,18 @@ namespace Obfuscator
              * So we get a random parameter with a fixed value, we get a random
              * constant, and we generate the condition according to these.
              */
-
-#if !PSEUDOCODE
-
-            Variable param = ins.parent.parent.GetFixedParam();
-            int constant;
-            Instruction.RelationalOperationType type;
+            Variable param = Randomizer.GetFakeInputParameter(ins.parent.parent);
+            
+            /* We initialize these just to avoid further errors, it means nothing. */
+            int constant = 0;
+            Instruction.RelationalOperationType type = Instruction.RelationalOperationType.NotEquals;
             
             /* We decide whether we want the (1) or (2) type. */
             switch (Randomizer.GetSingleNumber(1, 2))
             {
                 case 1:
                     /* We generate an a, where a < min. */
-                    constant = Randomizer.GetSingleNumber(0, param.FixedMin - 1);
+                    constant = Randomizer.GetSingleNumber(0, (int)param.fixedMin - 1);
 
                     /* We decide the operator type. */
                     switch (Randomizer.GetSingleNumber(0, 2))
@@ -180,13 +177,14 @@ namespace Obfuscator
                             break;
                         case 2:
                             type = Instruction.RelationalOperationType.LessOrEquals;
+                            break;
                     }
                     break;
 
                 case 2:
                     /* We generate a b, where b > max. */
                     /* TODO: a more reasonable upper bound. */
-                    constant = Randomizer.GetSingleNumber(param.FixedMax + 1, param.FixedMax + 1000);
+                    constant = Randomizer.GetSingleNumber((int)param.fixedMax + 1, (int)param.fixedMax + 1000);
 
                     /* We decide the operator type. */
                     switch (Randomizer.GetSingleNumber(0, 2))
@@ -199,14 +197,13 @@ namespace Obfuscator
                             break;
                         case 2:
                             type = Instruction.RelationalOperationType.GreaterOrEquals;
+                            break;
                     }
                     break;
             }
 
             /* Now we have everything set properly, now we can make the Conditional jump. */
             ins.MakeConditionalJump(param, constant, type, jumptarget);
-
-#endif
         }
 
         /* TODO: more reasonable random numbers... */
