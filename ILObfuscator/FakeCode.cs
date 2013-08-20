@@ -173,10 +173,10 @@ namespace Obfuscator
                             type = Instruction.RelationalOperationType.Equals;
                             break;
                         case 1:
-                            type = Instruction.RelationalOperationType.Less;
+                            type = Instruction.RelationalOperationType.Smaller;
                             break;
                         case 2:
-                            type = Instruction.RelationalOperationType.LessOrEquals;
+                            type = Instruction.RelationalOperationType.SmallerOrEquals;
                             break;
                     }
                     break;

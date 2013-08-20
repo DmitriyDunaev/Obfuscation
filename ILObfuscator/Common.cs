@@ -8,6 +8,14 @@ namespace Obfuscator
 {
     public static class Common
     {
+        /// <summary>
+        /// Maximal number used in fake code generation (e.g. in conditional statements) 
+        /// </summary>
+        public static int GlobalMaxNumber = 1000;
+        /// <summary>
+        /// Minimal number used in fake code generation (e.g. in conditional statements) 
+        /// </summary>
+        public static int GlobalMinNumber = 10;
 
         /// <summary>
         /// Provides a full copy of original object

@@ -80,7 +80,18 @@ namespace Obfuscator
         /// <returns>Random relational operator</returns>
         public static Instruction.RelationalOperationType GetRelop()
         {
-            return (Instruction.RelationalOperationType) GetSingleNumber(0, 5);
+            return (Instruction.RelationalOperationType)GetSingleNumber(0, 5);
+        }
+
+
+        /// <summary>
+        /// Randomly selects one value from many
+        /// </summary>
+        /// <param name="many">Values one-by-one</param>
+        /// <returns>Random value, selected among the parameters</returns>
+        public static object GetOneFromMany(params object[] many)
+        {
+            return many[GetSingleNumber(0, many.Length - 1)];
         }
 
 
@@ -98,13 +109,92 @@ namespace Obfuscator
         }
 
 
-        public static void MakeConditionalJumpInstruction(Instruction nop, Instruction.ConditionType condition)
+        /// <summary>
+        /// Makes random conditional jump instruction + links basic blocks and sets RefVars
+        /// </summary>
+        /// <param name="nop">NoOperation instruction (will be made into ConditionalJump)</param>
+        /// <param name="condition">Type of condition</param>
+        /// <param name="target">Target basic block the control flow is transfered to, if the relation holds true.</param>
+        public static void MakeConditionalJumpInstruction(Instruction nop, Instruction.ConditionType condition, BasicBlock target)
         {
-            //if(nop.statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
-            //    throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");
+            if (nop.statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
+                throw new RandomizerException("Only NoOperation instruction can be modified to other type!");
+            if (nop.parent == null || nop.parent.parent == null)
+                throw new RandomizerException("Instruction -> basic block -> function parent link is broken.");
+            if (nop.parent.parent != target.parent)
+                throw new RandomizerException("The instruction and the basic block should be contained in the same function.");
 
-            //if(condition == Instruction.ConditionType.AlwaysTrue)
+            Variable var = GetFakeInputParameter(nop.parent.parent);
+            if (var.fixedMax.HasValue && var.fixedMax.Value > Common.GlobalMaxNumber)
+                throw new RandomizerException("The fixedMax value is greated then the globally accepted maximum.");
+            if (var.fixedMin.HasValue && var.fixedMin.Value < Common.GlobalMinNumber)
+                throw new RandomizerException("The fixedMin value is smaller then the globally accepted minimum.");
+            int right_value = 0;
+            Instruction.RelationalOperationType relop = Instruction.RelationalOperationType.Equals;
+            bool use_min_limit = false;
+            // Here we chose to use a FixedMin or FixedMax for logical relation
+            if (var.fixedMin.HasValue && var.fixedMax.HasValue)
+                use_min_limit = (bool)GetOneFromMany(true, false);
+            else if (var.fixedMin.HasValue)
+                use_min_limit = true;
+       
+            if (use_min_limit)  // FixedMin will be used
+            {
+                right_value = GetSingleNumber(Common.GlobalMinNumber, var.fixedMin.Value);
+                switch (condition)
+                {
+                    case Instruction.ConditionType.AlwaysTrue:
+                        relop = (Instruction.RelationalOperationType)GetOneFromMany(Instruction.RelationalOperationType.Greater,
+                                                                                    Instruction.RelationalOperationType.GreaterOrEquals,
+                                                                                    Instruction.RelationalOperationType.NotEquals);
+                        break;
+                    case Instruction.ConditionType.AlwaysFalse:
+                        relop = (Instruction.RelationalOperationType)GetOneFromMany(Instruction.RelationalOperationType.Smaller,
+                                                                                    Instruction.RelationalOperationType.SmallerOrEquals,
+                                                                                    Instruction.RelationalOperationType.Equals);
+                        break;
+                    case Instruction.ConditionType.Random:
+                        relop = (Instruction.RelationalOperationType)GetOneFromMany(Instruction.RelationalOperationType.Smaller,
+                                                                                    Instruction.RelationalOperationType.SmallerOrEquals,
+                                                                                    Instruction.RelationalOperationType.Equals,
+                                                                                    Instruction.RelationalOperationType.Greater,
+                                                                                    Instruction.RelationalOperationType.GreaterOrEquals,
+                                                                                    Instruction.RelationalOperationType.NotEquals);
+                        break;
+                    default:
+                        throw new RandomizerException("Unrecognized condition type.");
+                }
+            }
 
+            if (!use_min_limit)     // FixedMax will be used
+            {
+                right_value = GetSingleNumber(var.fixedMax.Value, Common.GlobalMaxNumber);
+                switch (condition)
+                {
+                    case Instruction.ConditionType.AlwaysTrue:
+                        relop = (Instruction.RelationalOperationType)GetOneFromMany(Instruction.RelationalOperationType.Smaller,
+                                                                                    Instruction.RelationalOperationType.SmallerOrEquals,
+                                                                                    Instruction.RelationalOperationType.Equals);
+                        break;
+                    case Instruction.ConditionType.AlwaysFalse:
+                        relop = (Instruction.RelationalOperationType)GetOneFromMany(Instruction.RelationalOperationType.Greater,
+                                                                                    Instruction.RelationalOperationType.GreaterOrEquals,
+                                                                                    Instruction.RelationalOperationType.NotEquals);
+                        break;
+                    case Instruction.ConditionType.Random:
+                        relop = (Instruction.RelationalOperationType)GetOneFromMany(Instruction.RelationalOperationType.Smaller,
+                                                                                    Instruction.RelationalOperationType.SmallerOrEquals,
+                                                                                    Instruction.RelationalOperationType.Equals,
+                                                                                    Instruction.RelationalOperationType.Greater,
+                                                                                    Instruction.RelationalOperationType.GreaterOrEquals,
+                                                                                    Instruction.RelationalOperationType.NotEquals);
+                        break;
+                    default:
+                        throw new RandomizerException("Unrecognized condition type.");
+                }
+            }
+            nop.MakeConditionalJump(var, right_value, relop, target);
         }
     }
+
 }

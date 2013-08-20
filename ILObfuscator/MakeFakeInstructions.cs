@@ -134,7 +134,7 @@ namespace Internal
         /// <param name="left_value">Left value in relation (only variable)</param>
         /// <param name="right_value">Left value in relation (only numerical value)</param>
         /// <param name="relop">Relational operation</param>
-        /// <param name="target">Target basic block the control flow is transfered to, if the relation holds true.</param>
+        /// <param name="target">Target basic block the control flow is transfered to, if the relation holds true</param>
         public void MakeConditionalJump(Variable left_value, int right_value, RelationalOperationType relop, BasicBlock target)
         {
             if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
@@ -170,10 +170,10 @@ namespace Internal
                 case RelationalOperationType.GreaterOrEquals:
                     strRelop = ">=";
                     break;
-                case RelationalOperationType.Less:
+                case RelationalOperationType.Smaller:
                     strRelop = "<";
                     break;
-                case RelationalOperationType.LessOrEquals:
+                case RelationalOperationType.SmallerOrEquals:
                     strRelop = "<=";
                     break;
                 default:

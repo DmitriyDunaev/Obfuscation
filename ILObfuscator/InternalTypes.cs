@@ -328,8 +328,8 @@ namespace Internal
             NotEquals = 1,
             Greater = 2,
             GreaterOrEquals = 3,
-            Less = 4,
-            LessOrEquals = 5
+            Smaller = 4,
+            SmallerOrEquals = 5
         }
 
         public enum ConditionType

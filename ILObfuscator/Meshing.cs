@@ -126,10 +126,10 @@ namespace Obfuscator
             dead3.dead = true;
 
             // Now creating the conditional jump
-            dead1.Instructions.Last().MakeConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead3);
+            dead1.Instructions.Last().MakeConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Smaller, dead3);
 
             // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always false
-            bb.Instructions.Last().ConvertUncondToCondJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Less, dead1);
+            bb.Instructions.Last().ConvertUncondToCondJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Smaller, dead1);
 
             // And finally we link the remaining blocks
             dead2.LinkTo(Randomizer.GetJumpableBasicBlock(bb.parent), true);
@@ -191,8 +191,8 @@ namespace Obfuscator
                             relop = Instruction.RelationalOperationType.Greater;
                             JumpType = BlockJumpType.Last;
                             break;
-                        case Instruction.RelationalOperationType.Less:
-                            relop = Instruction.RelationalOperationType.LessOrEquals;
+                        case Instruction.RelationalOperationType.Smaller:
+                            relop = Instruction.RelationalOperationType.SmallerOrEquals;
                             JumpType = BlockJumpType.Last;
                             break;
                         case Instruction.RelationalOperationType.Equals:
@@ -200,7 +200,7 @@ namespace Obfuscator
                             JumpType = BlockJumpType.Last;
                             break;
                         case Instruction.RelationalOperationType.NotEquals:
-                            relop = Instruction.RelationalOperationType.Less;
+                            relop = Instruction.RelationalOperationType.Smaller;
                             JumpType = BlockJumpType.Last;
                             break;
                         default:
@@ -216,12 +216,12 @@ namespace Obfuscator
                             relop = Instruction.RelationalOperationType.GreaterOrEquals;
                             JumpType = BlockJumpType.Last;
                             break;
-                        case Instruction.RelationalOperationType.LessOrEquals:
-                            relop = Instruction.RelationalOperationType.Less;
+                        case Instruction.RelationalOperationType.SmallerOrEquals:
+                            relop = Instruction.RelationalOperationType.Smaller;
                             JumpType = BlockJumpType.Last;
                             break;
                         case Instruction.RelationalOperationType.Equals:
-                            relop = Instruction.RelationalOperationType.Less;
+                            relop = Instruction.RelationalOperationType.Smaller;
                             JumpType = BlockJumpType.Last;
                             break;
                         case Instruction.RelationalOperationType.NotEquals:
@@ -266,7 +266,7 @@ namespace Obfuscator
             private void LessPattern(Instruction.RelationalOperationType originalrelop)
             {
                 relop = Randomizer.GetRelop();
-                if (relop == Instruction.RelationalOperationType.Less || relop == Instruction.RelationalOperationType.LessOrEquals || relop == Instruction.RelationalOperationType.Equals)
+                if (relop == Instruction.RelationalOperationType.Smaller || relop == Instruction.RelationalOperationType.SmallerOrEquals || relop == Instruction.RelationalOperationType.Equals)
                 {
                     if (originalrelop == Instruction.RelationalOperationType.Greater || originalrelop == Instruction.RelationalOperationType.GreaterOrEquals || originalrelop == Instruction.RelationalOperationType.Equals)
                         JumpType = BlockJumpType.False;
