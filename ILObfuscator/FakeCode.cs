@@ -280,7 +280,7 @@ namespace Obfuscator
                                 op = Instruction.ArithmeticOperationType.Addition;
                                 break;
                         }
-                        if (op == Instruction.ArithmeticOperationType.Addition || op == Instruction.ArithmeticOperationType.Division)
+                        if (op == Instruction.ArithmeticOperationType.Addition || op == Instruction.ArithmeticOperationType.Subtraction)
                             ins.MakeFullAssignment(leftvalue, rightvalues.First(), null, Randomizer.GetSingleNumber(0, 1000), op);
                         else
                         {
