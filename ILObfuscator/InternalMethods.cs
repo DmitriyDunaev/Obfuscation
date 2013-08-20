@@ -466,6 +466,24 @@ namespace Internal
             return 100;
         }
 
+        /// <summary>
+        /// Gets the true case successor
+        /// </summary>
+        /// <returns>The true cuccessor BasicBlock</returns>
+        internal BasicBlock GetTrueSucc()
+        {
+            return parent.getSuccessors.First();
+        }
+
+        /// <summary>
+        /// Gets the false case successor
+        /// </summary>
+        /// <returns>The false cuccessor BasicBlock</returns>
+        internal BasicBlock GetFalseSucc()
+        {
+            return parent.getSuccessors.Last();
+        }
+
         /*
          * When we modify a fake instruction, we change the states in it, so we
          * have to update the dead variables in the following instructions.

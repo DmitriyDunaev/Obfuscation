@@ -61,7 +61,7 @@ namespace Obfuscator
             basicblocks = funct.GetConditionalJumps();
             foreach (BasicBlock bb in basicblocks)
             {
-                MeshConditionals(bb);
+                //MeshConditionals(bb);
             }
         }
 
@@ -142,13 +142,6 @@ namespace Obfuscator
         /// </summary>
         internal class Cond
         {
-            public enum RelopAvailability
-            {
-                Usable,
-                NonUsable,
-                Ambigious
-            }
-
             public enum BlockJumpType
             {
                 True,
@@ -286,13 +279,81 @@ namespace Obfuscator
             Instruction.RelationalOperationType relop = bb.Instructions.Last().GetRelopFromCondition();
             int C = bb.Instructions.Last().GetConstFromCondition();
 
+            List<Cond> condlist = GenetateCondList(C, relop);
+            BasicBlock truesucc = bb.Instructions.Last().GetTrueSucc();
+            BasicBlock falsesucc = bb.Instructions.Last().GetFalseSucc();
+            List<BasicBlock> generatedblocks = GenerateBlocks(bb, var, truesucc, falsesucc, condlist);
             
-            List<Cond> constlist = GenetateCondList(C, relop);
-            RepositionLasts(constlist);
-
+            generatedblocks.Last().LinkTo(falsesucc);
+            bb.Instructions.Remove(bb.Instructions.Last());
+            bb.LinkTo(generatedblocks.First(), true);
+            
             /// TODO:   Generate the blocks
             ///         Generate the jumps between them, and the True-False lanes (polyrequ blocks also)
             ///         Insert the meshed control flow trnasition to the original place
+        }
+
+        /// <summary>
+        /// This function generates the BasicBlocks into the function, based on the condition list
+        /// </summary>
+        /// <param name="bb">The actual basicblock with the conditional jump at the end</param>
+        /// <param name="truelane">The true successor</param>
+        /// <param name="falselane">The false successor</param>
+        /// <param name="condlist">The condition list</param>
+        /// <returns>The list of the generated BasicBlocks</returns>
+        private static List<BasicBlock> GenerateBlocks(BasicBlock bb, Variable var, BasicBlock truelane, BasicBlock falselane, List<Cond> condlist)
+        {
+            List<BasicBlock> bblist = new List<BasicBlock>();
+            foreach (Cond c in condlist)
+            {
+                bblist.Add(new BasicBlock(bb.parent));
+            }
+            for (int i = 0; i < condlist.Count(); i++)
+            {
+                switch (condlist[i].JumpType)
+                {
+                    case Cond.BlockJumpType.True:
+                    case Cond.BlockJumpType.Last:
+                        if (i != condlist.Count() - 1)
+                            bblist[i].LinkTo(bblist[i + 1]);
+                        else
+                            bblist[i].LinkTo(falselane);
+                        bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, truelane);
+                        break;
+                    case Cond.BlockJumpType.False:
+                        if (i != condlist.Count() - 1)
+                            bblist[i].LinkTo(bblist[i + 1]);
+                        else
+                            bblist[i].LinkTo(falselane);
+                        bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, falselane);
+                        break;
+                    case Cond.BlockJumpType.Ambigious:
+                        bblist[i].LinkTo(falselane);
+                        bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, bblist[i + 1]);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return bblist;
+        }
+
+        /// <summary>
+        /// Shuffles the content of a generic list, with the randomizer
+        /// </summary>
+        /// <typeparam name="T">The contents of the list</typeparam>
+        /// <param name="condlist">The list itself</param>
+        /// <returns>The new, shuffled list</returns>
+        private static List<T> ShuffleList<T>(List<T> condlist)
+        {
+            List<int> randomlist = Randomizer.GetMultipleNumbers(condlist.Count(), 0, condlist.Count()-1, false, false);
+            List<T> newlist = new List<T>();
+            foreach (int i in randomlist)
+            {
+                newlist.Add(condlist[i]);
+            }
+            return newlist;
         }
 
         /// <summary>
@@ -303,7 +364,7 @@ namespace Obfuscator
         {
             
             List<Cond> lasts = GetLasts(condlist);
-
+            if (lasts.Count() == 2) lasts.First().JumpType = Cond.BlockJumpType.Ambigious;
             foreach (Cond c in lasts)
             {
                 condlist.Remove(c);
@@ -365,6 +426,8 @@ namespace Obfuscator
                 else if (i < -1) i--;
                 i *= -1;
             }
+            returnlist = ShuffleList<Cond>(returnlist);
+            RepositionLasts(returnlist);
             return returnlist;
         }
 
