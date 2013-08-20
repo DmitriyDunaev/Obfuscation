@@ -235,6 +235,8 @@ namespace Internal
         public int memoryRegionSize { get; private set; }
         public string fixedValue { get; private set; }
         public string globalID { get; private set; }
+        public int? minValue { get; set; }
+        public int? maxValue { get; set; }
         public bool fake { get; private set; }
         public Kind kind { get; private set; }
 
@@ -251,6 +253,14 @@ namespace Internal
             globalID = var.GlobalID.Exists() ? var.GlobalID.Value : string.Empty;
             fake = var.Fake.Exists() ? var.Fake.Value : false;
             kind = kind1;
+            if (var.MinValue.Exists())
+                minValue = Convert.ToInt32(var.MinValue.Value);
+            else
+                minValue = null;
+            if (var.MaxValue.Exists())
+                maxValue = Convert.ToInt32(var.MaxValue.Value);
+            else
+                maxValue = null;
         }
 
         public Variable(int memory_region_size, Kind kind, Purpose purpose)
