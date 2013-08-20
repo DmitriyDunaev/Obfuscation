@@ -54,7 +54,7 @@ namespace Internal
             sb.AppendLine("********************************************************************");
             sb.AppendLine("BASIC BLOCKS:");
             foreach (BasicBlock bb in BasicBlocks)
-                sb.Append(bb.ToString());
+                sb.AppendLine(bb.ToString());
             return sb.ToString();
         }
     }
@@ -78,6 +78,25 @@ namespace Internal
             sb.AppendLine("- Instructions total: " + Instructions.Count);
             sb.AppendLine("    - Original: " + Instructions.Count(x => !x.isFake));
             sb.AppendLine("    - Fake: " + Instructions.Count(x => x.isFake));
+            sb.AppendLine("****************");
+            foreach (Instruction inst in Instructions)
+                sb.AppendLine(inst.ToString());
+            return sb.ToString();
+        }
+    }
+
+
+
+    public partial class Instruction
+    {
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(statementType.ToString().Substring(1));
+                for (int i = 0; i < (20-statementType.ToString().Substring(1).Length); i++)
+                    sb.Append(" ");
+            sb.Append("|\t");
+            sb.Append(TACtext);
             return sb.ToString();
         }
     }
