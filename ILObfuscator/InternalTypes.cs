@@ -10,7 +10,7 @@ using Obfuscator;
 namespace Internal
 {
     /// <summary>
-    /// Class to store the state and the pointed variable of a pointer.
+    /// Container class for a pointer.
     /// </summary>
     [Serializable]
     public class PointerData
@@ -166,8 +166,7 @@ namespace Internal
             foreach (InstructionType instr in bb.Instruction)
                 Instructions.Add(new Instruction(instr, this));
         }
-
-
+        
 
         /// <summary>
         /// Constructor for BasicBlock that contains one NoOperation instruction
@@ -176,8 +175,8 @@ namespace Internal
         public BasicBlock(Function parent)
         {
             if (parent == null || parent.parent == null)
-                throw new ObfuscatorException("Basic block is created outside Function.");
-            Instruction instruction = new Instruction(StatementTypeType.EnumValues.eNoOperation, this);
+                throw new ObfuscatorException("Basic block cannot be created outside a function.");
+            Instruction instruction = new Instruction(this);
             Instructions.Add(instruction);
             _ID = new IDManager();
             this.parent = parent;
@@ -297,7 +296,6 @@ namespace Internal
             return (obj as Variable) == null ? base.Equals(obj) : ((Variable)obj).ID == ID;
         }
 
-
         public override int GetHashCode()
         {
             return ID.GetHashCode();
@@ -348,15 +346,12 @@ namespace Internal
         }
         public StatementTypeType.EnumValues statementType { get; private set; }
         public string TACtext { get; set; }
-        public bool polyRequired { get; internal set; }
+        public bool polyRequired { get; set; }
         public bool isFake { get; private set; }
 
         public List<Variable> RefVariables = new List<Variable>();
-        public Dictionary<Variable, Variable.State> DeadVariables = new Dictionary<Variable, Variable.State>();
 
-        /// <summary>
-        /// It stores the state, and the pointed variable of the pointer (key).
-        /// </summary>
+        public Dictionary<Variable, Variable.State> DeadVariables = new Dictionary<Variable, Variable.State>();
         public Dictionary<Variable, PointerData> DeadPointers = new Dictionary<Variable, PointerData>();
 
         //Constructors
@@ -395,41 +390,29 @@ namespace Internal
         /// </summary>
         /// <param name="ins">The instruction to copy</param>
         /// <param name="par">The new parent of the instuction. By default, it is the parent of the instruction</param>
-        public Instruction(Instruction ins, BasicBlock par = null)
+        //public Instruction(Instruction ins, BasicBlock par = null)
+        //{
+        //    if (par == null) parent = ins.parent;
+        //    else parent = par;
+        //    _ID = new IDManager();
+        //    statementType = ins.statementType;
+        //    TACtext = ins.TACtext;
+        //    isFake = false;
+        //    polyRequired = false;
+        //    RefVariables = ins.RefVariables;
+        //    DeadPointers = ins.DeadPointers;
+        //    DeadVariables = ins.DeadVariables;
+        //}
+
+
+        public Instruction(BasicBlock parent)
         {
-            if (par == null) parent = ins.parent;
-            else parent = par;
             _ID = new IDManager();
-            statementType = ins.statementType;
-            TACtext = ins.TACtext;
-            isFake = false;
-            polyRequired = false;
-            RefVariables = ins.RefVariables;
-            DeadPointers = ins.DeadPointers;
-            DeadVariables = ins.DeadVariables;
-        }
-
-        private void setInstructionValues(BasicBlock parent, StatementTypeType.EnumValues statementType, string TACtext, List<Variable> refVariables, bool polyRequired = false)
-        {
-            this._ID = new IDManager();
-            this.isFake = true;
+            isFake = true;
             this.parent = parent;
-            this.statementType = statementType;
-            this.TACtext = TACtext;
-            this.RefVariables = refVariables == null ? new List<Variable>() : refVariables;
-            this.polyRequired = polyRequired;
-        }
-
-        public Instruction(StatementTypeType.EnumValues statementType, BasicBlock parent = null)
-        {
-            switch (statementType)
-            {
-                case StatementTypeType.EnumValues.eNoOperation:
-                    setInstructionValues(parent, statementType, "nop", null);
-                    break;
-                default:
-                    throw new ObfuscatorException("Only the 'NoOperation' type instruction can be created.\n");
-            }
+            statementType = StatementTypeType.EnumValues.eNoOperation;
+            TACtext = "nop";
+            polyRequired = false;
         }
 
 

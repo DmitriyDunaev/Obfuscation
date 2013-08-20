@@ -85,12 +85,20 @@ namespace Obfuscator
             BasicBlock fake3 = fake2.SplitAfterInstruction(fake2.Instructions.Last());
 
             // Creating a clone of the original target in order to make the CFT more obfuscated
-            BasicBlock polyrequtarget = originaltarget.Clone(true);
+            //BasicBlock polyrequtarget = originaltarget.Clone(true);
+            
+            // ************ Andris! Please, check if it is what you wanted to do with Clone(...)
+            BasicBlock polyrequtarget = Obfuscator.Common.DeepClone(originaltarget) as BasicBlock;
+            polyrequtarget.Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
+            // ************ Please, check successor-predecessor links that you are setting below, maybe there is a problem...
+            // ************ If you need method for setting predecessors (like LinkToSuccessors), please let me know
 
             // And now setting the edges
             fake2.LinkToSuccessor(polyrequtarget, true);
 
             // And then converting its nop instruction into a ConditionalJump, and by that we create a new block
+
+            // ************* Please, use MakeConditionalJumpInstruction(...) method from Randomizer class
             fake1.Instructions.First().MakeConditionalJump(fake1.parent.LocalVariables[ Randomizer.GetSingleNumber( 0, fake1.parent.LocalVariables.Count-1)], Randomizer.GetSingleNumber(0, 100), (Instruction.RelationalOperationType) Randomizer.GetSingleNumber(0,5), fake3);
 
             // It creates the fake lane, but the condition is not a smart one yet, it is a ~random~ condition.

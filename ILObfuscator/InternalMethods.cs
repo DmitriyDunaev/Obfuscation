@@ -135,33 +135,33 @@ namespace Internal
         /// </summary>
         /// <param name="polyrequired">If true, the polyRequired property is set</param>
         /// <returns>The created BasicBlock</returns>
-        public BasicBlock Clone(bool polyrequired = false)
-        {
-            /// Creating the clone
-            BasicBlock clone = new BasicBlock(parent);
+    //    public BasicBlock Clone(bool polyrequired = false)
+    //    {
+    //        /// Creating the clone
+    //        BasicBlock clone = new BasicBlock(parent);
 
-            clone.Instructions.Clear();
+    //        clone.Instructions.Clear();
 
-            /// Cloning the instructions
-            foreach (Instruction ins in Instructions)
-            {
-                Instruction i = new Instruction(ins, clone);
-                clone.Instructions.Add(i);
-            }
-            foreach (Instruction ins in clone.Instructions)
-                ins.parent = clone;
+    //        /// Cloning the instructions
+    //        foreach (Instruction ins in Instructions)
+    //        {
+    //            Instruction i = new Instruction(ins, clone);
+    //            clone.Instructions.Add(i);
+    //        }
+    //        foreach (Instruction ins in clone.Instructions)
+    //            ins.parent = clone;
 
-            /// Setting the instructions to polyrequired, if needed
-            if (polyrequired)
-                foreach (Instruction ins in clone.Instructions)
-                    ins.polyRequired = true;
+    //        /// Setting the instructions to polyrequired, if needed
+    //        if (polyrequired)
+    //            foreach (Instruction ins in clone.Instructions)
+    //                ins.polyRequired = true;
 
-            /// Setting the successors
-            foreach (BasicBlock bb in Successors)
-                clone.LinkToSuccessor(bb);
+    //        /// Setting the successors
+    //        foreach (BasicBlock bb in Successors)
+    //            clone.LinkToSuccessor(bb);
 
-            return clone;
-        }
+    //        return clone;
+    //    }
     }
 
 

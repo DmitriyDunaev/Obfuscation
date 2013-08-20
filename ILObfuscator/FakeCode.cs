@@ -422,9 +422,9 @@ namespace Obfuscator
                         for (int i = 0; i < fakes_orig; i++)
                         {
                             if (i < original_place)
-                                bb.Instructions.Insert(bb.Instructions.BinarySearch(inst), new Instruction(StatementTypeType.EnumValues.eNoOperation, bb));
+                                bb.Instructions.Insert(bb.Instructions.BinarySearch(inst), new Instruction(bb));
                             else if (i > original_place)
-                                bb.Instructions.Insert(bb.Instructions.BinarySearch(inst) + 1, new Instruction(StatementTypeType.EnumValues.eNoOperation, bb));
+                                bb.Instructions.Insert(bb.Instructions.BinarySearch(inst) + 1, new Instruction(bb));
                         }
                     }
                 }
@@ -433,7 +433,7 @@ namespace Obfuscator
                     int fakes = Math.Abs(Randomizer.GetSingleNumber(fake_padding - fake_padding_variability, fake_padding + fake_padding_variability) - bb.Instructions.Count);
                     for (int i = 0; i < fakes; i++)
                     {
-                        bb.Instructions.Insert(0, new Instruction(StatementTypeType.EnumValues.eNoOperation, bb));
+                        bb.Instructions.Insert(0, new Instruction(bb));
                     }
                 }
             }
