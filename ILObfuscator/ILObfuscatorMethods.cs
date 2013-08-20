@@ -102,6 +102,7 @@ namespace Internal
             if (min_value.HasValue && max_value.HasValue && min_value > max_value)
                 throw new ObfuscatorException("Wrong parameter passing: minvalue cannot exceed maxvalue.");
             Variable fake_input = new Variable(Variable.Kind.Input, Variable.Purpose.Fake, 4, min_value, max_value);
+            LocalVariables.Add(fake_input);
             return fake_input;
         }
     }
