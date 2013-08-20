@@ -109,7 +109,7 @@ namespace Obfuscator
             /* If there are such basic blocks. */
             if (bodies.Count() != 0)
             {
-                int num = Randomizer.GetSingleNumber(0, bodies.Count() - 1);
+                int num = Randomizer.SingleNumber(0, bodies.Count() - 1);
                 jumptarget = bodies[num];
             }
 
@@ -127,7 +127,7 @@ namespace Obfuscator
                         all_bbs.Add(bb);
                 }
 
-                int num = Randomizer.GetSingleNumber(0, all_bbs.Count() - 1);
+                int num = Randomizer.SingleNumber(0, all_bbs.Count() - 1);
                 jumptarget = all_bbs[num];
             }
 
@@ -137,7 +137,7 @@ namespace Obfuscator
              * of the basic block, making it harder to recognize the original control
              * flow.
              */
-            Instruction splithere = jumptarget.Instructions[Randomizer.GetSingleNumber(0, jumptarget.Instructions.Count - 1)];
+            Instruction splithere = jumptarget.Instructions[Randomizer.SingleNumber(0, jumptarget.Instructions.Count - 1)];
             jumptarget = jumptarget.SplitAfterInstruction(splithere);
 
             /*
@@ -154,21 +154,21 @@ namespace Obfuscator
              * So we get a random parameter with a fixed value, we get a random
              * constant, and we generate the condition according to these.
              */
-            Variable param = Randomizer.GetFakeInputParameter(ins.parent.parent);
+            Variable param = Randomizer.FakeInputParameter(ins.parent.parent);
             
             /* We initialize these just to avoid further errors, it means nothing. */
             int constant = 0;
             Instruction.RelationalOperationType type = Instruction.RelationalOperationType.NotEquals;
             
             /* We decide whether we want the (1) or (2) type. */
-            switch (Randomizer.GetSingleNumber(1, 2))
+            switch (Randomizer.SingleNumber(1, 2))
             {
                 case 1:
                     /* We generate an a, where a < min. */
-                    constant = Randomizer.GetSingleNumber(0, (int)param.fixedMin - 1);
+                    constant = Randomizer.SingleNumber(0, (int)param.fixedMin - 1);
 
                     /* We decide the operator type. */
-                    switch (Randomizer.GetSingleNumber(0, 2))
+                    switch (Randomizer.SingleNumber(0, 2))
                     {
                         case 0:
                             type = Instruction.RelationalOperationType.Equals;
@@ -185,10 +185,10 @@ namespace Obfuscator
                 case 2:
                     /* We generate a b, where b > max. */
                     /* TODO: a more reasonable upper bound. */
-                    constant = Randomizer.GetSingleNumber((int)param.fixedMax + 1, (int)param.fixedMax + 1000);
+                    constant = Randomizer.SingleNumber((int)param.fixedMax + 1, (int)param.fixedMax + 1000);
 
                     /* We decide the operator type. */
-                    switch (Randomizer.GetSingleNumber(0, 2))
+                    switch (Randomizer.SingleNumber(0, 2))
                     {
                         case 0:
                             type = Instruction.RelationalOperationType.Equals;
@@ -254,11 +254,11 @@ namespace Obfuscator
 
                     /* We don't have any right values, so we have to copy a constant value. */
                     else
-                        ins.MakeCopy(leftvalue, null, Randomizer.GetSingleNumber(0, 1000));
+                        ins.MakeCopy(leftvalue, null, Randomizer.SingleNumber(0, 1000));
                     break;
 
                 case 1:
-                    int rnd = Randomizer.GetSingleNumber(1, 3);
+                    int rnd = Randomizer.SingleNumber(1, 3);
 
                     /* We choose Full Assignment, or rightvalue is the same as leftvalue, or we are in a loop body. */
                     if (DataAnalysis.isLoopBody(ins.parent) || leftvalue.Equals(rightvalues[0]) || rnd == 3)
@@ -266,7 +266,7 @@ namespace Obfuscator
                         /* Here we random generate an operator. */
                         Instruction.ArithmeticOperationType op;
                         // ********* Please, use Randomizer.GetOneFromMany(...) method. Find its usage in the project.
-                        switch (Randomizer.GetSingleNumber(0, 3))
+                        switch (Randomizer.SingleNumber(0, 3))
                         {
                             case 0:
                                 op = Instruction.ArithmeticOperationType.Addition;
@@ -290,18 +290,18 @@ namespace Obfuscator
                         }
                         if (op == Instruction.ArithmeticOperationType.Addition || op == Instruction.ArithmeticOperationType.Subtraction)
                             // *********** The same problem as below - do not use 0 and 1000 as numerical values.
-                            ins.MakeFullAssignment(leftvalue, leftvalue, null, Randomizer.GetSingleNumber(0, 1000), op);
+                            ins.MakeFullAssignment(leftvalue, leftvalue, null, Randomizer.SingleNumber(0, 1000), op);
                         else
                         {
                             // ************** Please do not use any other constants except for defined in Common class
 
                             // BAD USAGE:
-                            int num = (int)Math.Pow(2, Randomizer.GetSingleNumber(1, 5));
+                            int num = (int)Math.Pow(2, Randomizer.SingleNumber(1, 5));
                             
                             // EXAMPLE OF CORRECT USAGE:
                             int min = Convert.ToInt32(Math.Ceiling(Math.Log(Common.GlobalMinNumber, 2)));
                             int max = Convert.ToInt32(Math.Floor(Math.Log(Common.GlobalMaxNumber, 2)));
-                            num = Randomizer.GetSingleNumber(min, max);
+                            num = Randomizer.SingleNumber(min, max);
 
                             ins.MakeFullAssignment(leftvalue, leftvalue, null, num, op);
                         }
@@ -323,7 +323,7 @@ namespace Obfuscator
                         rightvalues[0] = rightvalues[1];
                         rightvalues[1] = tmp;
                     }
-                    switch (Randomizer.GetSingleNumber(1, 3))
+                    switch (Randomizer.SingleNumber(1, 3))
                     {
                         case 1:
                             ins.MakeCopy(leftvalue, rightvalues.First(), null);
@@ -339,7 +339,7 @@ namespace Obfuscator
                             // ******** But mark the code with 'TODO:' in order not to forget in future
 
                             Instruction.ArithmeticOperationType op;
-                            switch (Randomizer.GetSingleNumber(0, 3))
+                            switch (Randomizer.SingleNumber(0, 3))
                             {
                                 case 0:
                                     op = Instruction.ArithmeticOperationType.Addition;
@@ -387,7 +387,7 @@ namespace Obfuscator
 
             /* If there are ones that fit our needs, then we coose one randomly. */
             else
-                return proper_vars[Randomizer.GetSingleNumber(0, proper_vars.Count - 1)];
+                return proper_vars[Randomizer.SingleNumber(0, proper_vars.Count - 1)];
         }
 
         /// <summary>
@@ -414,7 +414,7 @@ namespace Obfuscator
             else
             {
                 List<Variable> picked_vars = new List<Variable>();
-                List<int> picked_nums = Randomizer.GetMultipleNumbers(amount, 0, proper_vars.Count - 1, false, false);
+                List<int> picked_nums = Randomizer.MultipleNumbers(amount, 0, proper_vars.Count - 1, false, false);
                 foreach (int num in picked_nums)
                     picked_vars.Add(proper_vars[num]);
                 return picked_vars;
@@ -435,7 +435,7 @@ namespace Obfuscator
                     if (!inst.isFake)
                     {
                         int fakes_orig = FPO + 1;
-                        int original_place = Randomizer.GetSingleNumber(0, fakes_orig);
+                        int original_place = Randomizer.SingleNumber(0, fakes_orig);
                         if (inst.statementType == StatementTypeType.EnumValues.eConditionalJump || inst.statementType == StatementTypeType.EnumValues.eUnconditionalJump)
                             original_place = fakes_orig;
                         for (int i = 0; i < fakes_orig; i++)
@@ -449,7 +449,7 @@ namespace Obfuscator
                 }
                 if (bb.Instructions.Count < fake_padding)
                 {
-                    int fakes = Math.Abs(Randomizer.GetSingleNumber(fake_padding - fake_padding_variability, fake_padding + fake_padding_variability) - bb.Instructions.Count);
+                    int fakes = Math.Abs(Randomizer.SingleNumber(fake_padding - fake_padding_variability, fake_padding + fake_padding_variability) - bb.Instructions.Count);
                     for (int i = 0; i < fakes; i++)
                     {
                         bb.Instructions.Insert(0, new Instruction(bb));

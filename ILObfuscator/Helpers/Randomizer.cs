@@ -21,7 +21,7 @@ namespace Obfuscator
         /// <param name="equal">If true, generated random numbers can be equal to each other</param>
         /// <param name="sort_ascending">If true, the returned list will be sorted in ascending order</param>
         /// <returns>A list of random numbers within specified boundaries</returns>
-        public static List<int> GetMultipleNumbers(int quantity, int min, int max, bool equal, bool sort_ascending)
+        public static List<int> MultipleNumbers(int quantity, int min, int max, bool equal, bool sort_ascending)
         {
             if (min > max || min < 0 || max < 0)
                 throw new RandomizerException("Random numbers cannot be generated. Wrong conditions passed.");
@@ -48,7 +48,7 @@ namespace Obfuscator
         /// <param name="min">Nonnegative inclusive lower bound</param>
         /// <param name="max">Nonnegative inclusive upper bound</param>
         /// <returns>A single random number within specified boundaries</returns>
-        public static int GetSingleNumber(int min, int max)
+        public static int SingleNumber(int min, int max)
         {
             if (max < min || max < 0 || min < 0)
                 throw new RandomizerException("Random numbers cannot be generated. Wrong conditions passed.");
@@ -61,14 +61,14 @@ namespace Obfuscator
         /// </summary>
         /// <param name="func">A parent function</param>
         /// <returns>Random basic block</returns>
-        public static BasicBlock GetJumpableBasicBlock(Function func)
+        public static BasicBlock JumpableBasicBlock(Function func)
         {
             if (func.BasicBlocks.Count < 2)
                 throw new RandomizerException("Function has no jumpable basic blocks.");
             int block_num = 0;
             do
             {
-                block_num = GetSingleNumber(0, func.BasicBlocks.Count - 1);
+                block_num = SingleNumber(0, func.BasicBlocks.Count - 1);
             } while (func.BasicBlocks[block_num].getSuccessors.Count == 0);
             return func.BasicBlocks[block_num];
         }
@@ -78,9 +78,9 @@ namespace Obfuscator
         /// Gets a random relational operation
         /// </summary>
         /// <returns>Random relational operator</returns>
-        public static Instruction.RelationalOperationType GetRelop()
+        public static Instruction.RelationalOperationType RelationalOperator()
         {
-            return (Instruction.RelationalOperationType)GetSingleNumber(0, 5);
+            return (Instruction.RelationalOperationType)SingleNumber(0, 5);
         }
 
 
@@ -89,24 +89,47 @@ namespace Obfuscator
         /// </summary>
         /// <param name="many">Values one-by-one</param>
         /// <returns>Random value, selected among the parameters</returns>
-        public static object GetOneFromMany(params object[] many)
+        public static object OneFromMany(params object[] many)
         {
-            return many[GetSingleNumber(0, many.Length - 1)];
+            return many[SingleNumber(0, many.Length - 1)];
         }
 
 
         /// <summary>
-        /// Gets randomely one fake input parameter of a function. Throws exception if no such found.
+        /// Gets randomly one fake input parameter of a function. Throws exception if no such found.
         /// </summary>
         /// <param name="func">A function with parameters</param>
         /// <returns>One random fake input parameter of a function</returns>
-        public static Variable GetFakeInputParameter(Function func)
+        public static Variable FakeInputParameter(Function func)
         {
             if (func.LocalVariables.Count(x => x.kind == Variable.Kind.Input && x.fake) == 0)
                 throw new RandomizerException("Function " + func.ID + " has no fake input variables (parameters).");
             List<Variable> fake_inputs = func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake);
-            return fake_inputs[GetSingleNumber(0, fake_inputs.Count - 1)];
+            return fake_inputs[SingleNumber(0, fake_inputs.Count - 1)];
         }
+
+
+        /// <summary>
+        /// Gets randomly one dead variable with given states
+        /// </summary>
+        /// <param name="ins">An instruction, which contains dead variables</param>
+        /// <param name="states">The states of dead variables, which will be collected</param>
+        /// <returns>The dead variable</returns>
+        public static Variable DeadVariable(Instruction ins, params Variable.State[] states)
+        {
+            /* First we gather the variables with the proper state. */
+            List<Variable> proper_vars = new List<Variable>();
+            foreach (KeyValuePair<Variable, Variable.State> dead in ins.DeadVariables)
+                if (states.Contains(dead.Value))
+                    proper_vars.Add(dead.Key);
+            /* If no such exists, we return null. */
+            if (proper_vars.Count == 0)
+                return null;
+            /* If there are ones that fit our needs, then we choose one randomly. */
+            else
+                return proper_vars[Randomizer.SingleNumber(0, proper_vars.Count - 1)];
+        }
+
 
 
         /// <summary>
@@ -124,7 +147,7 @@ namespace Obfuscator
             if (nop.parent.parent != target.parent)
                 throw new RandomizerException("The instruction and the basic block should be contained in the same function.");
 
-            Variable var = GetFakeInputParameter(nop.parent.parent);
+            Variable var = FakeInputParameter(nop.parent.parent);
             if (var.fixedMax.HasValue && var.fixedMax.Value > Common.GlobalMaxNumber)
                 throw new RandomizerException("The fixedMax value is greated then the globally accepted maximum.");
             if (var.fixedMin.HasValue && var.fixedMin.Value < Common.GlobalMinNumber)
@@ -134,27 +157,27 @@ namespace Obfuscator
             bool use_min_limit = false;
             // Here we chose to use a FixedMin or FixedMax for logical relation
             if (var.fixedMin.HasValue && var.fixedMax.HasValue)
-                use_min_limit = (bool)GetOneFromMany(true, false);
+                use_min_limit = (bool)OneFromMany(true, false);
             else if (var.fixedMin.HasValue)
                 use_min_limit = true;
        
             if (use_min_limit)  // FixedMin will be used
             {
-                right_value = GetSingleNumber(Common.GlobalMinNumber, var.fixedMin.Value);
+                right_value = SingleNumber(Common.GlobalMinNumber, var.fixedMin.Value);
                 switch (condition)
                 {
                     case Instruction.ConditionType.AlwaysTrue:
-                        relop = (Instruction.RelationalOperationType)GetOneFromMany(Instruction.RelationalOperationType.Greater,
+                        relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Greater,
                                                                                     Instruction.RelationalOperationType.GreaterOrEquals,
                                                                                     Instruction.RelationalOperationType.NotEquals);
                         break;
                     case Instruction.ConditionType.AlwaysFalse:
-                        relop = (Instruction.RelationalOperationType)GetOneFromMany(Instruction.RelationalOperationType.Smaller,
+                        relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Smaller,
                                                                                     Instruction.RelationalOperationType.SmallerOrEquals,
                                                                                     Instruction.RelationalOperationType.Equals);
                         break;
                     case Instruction.ConditionType.Random:
-                        relop = (Instruction.RelationalOperationType)GetOneFromMany(Instruction.RelationalOperationType.Smaller,
+                        relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Smaller,
                                                                                     Instruction.RelationalOperationType.SmallerOrEquals,
                                                                                     Instruction.RelationalOperationType.Equals,
                                                                                     Instruction.RelationalOperationType.Greater,
@@ -168,21 +191,21 @@ namespace Obfuscator
 
             if (!use_min_limit)     // FixedMax will be used
             {
-                right_value = GetSingleNumber(var.fixedMax.Value, Common.GlobalMaxNumber);
+                right_value = SingleNumber(var.fixedMax.Value, Common.GlobalMaxNumber);
                 switch (condition)
                 {
                     case Instruction.ConditionType.AlwaysTrue:
-                        relop = (Instruction.RelationalOperationType)GetOneFromMany(Instruction.RelationalOperationType.Smaller,
+                        relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Smaller,
                                                                                     Instruction.RelationalOperationType.SmallerOrEquals,
                                                                                     Instruction.RelationalOperationType.Equals);
                         break;
                     case Instruction.ConditionType.AlwaysFalse:
-                        relop = (Instruction.RelationalOperationType)GetOneFromMany(Instruction.RelationalOperationType.Greater,
+                        relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Greater,
                                                                                     Instruction.RelationalOperationType.GreaterOrEquals,
                                                                                     Instruction.RelationalOperationType.NotEquals);
                         break;
                     case Instruction.ConditionType.Random:
-                        relop = (Instruction.RelationalOperationType)GetOneFromMany(Instruction.RelationalOperationType.Smaller,
+                        relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Smaller,
                                                                                     Instruction.RelationalOperationType.SmallerOrEquals,
                                                                                     Instruction.RelationalOperationType.Equals,
                                                                                     Instruction.RelationalOperationType.Greater,

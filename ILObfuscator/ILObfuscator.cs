@@ -28,7 +28,7 @@ namespace Obfuscator
             routine.Functions[0].NewFakeInputParameter(11, 55);
             routine.Functions[0].NewFakeInputParameter(22, 155);
             routine.Functions[0].NewFakeInputParameter(33, 545);
-            Variable var = Randomizer.GetFakeInputParameter(routine.Functions[0]);
+            Variable var = Randomizer.FakeInputParameter(routine.Functions[0]);
             Logging.WriteRoutine(routine, "After");
 
             Console.Write("Constants covering algorithm");

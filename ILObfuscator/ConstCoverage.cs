@@ -66,13 +66,13 @@ namespace Obfuscator
         /// <param name="const_value">Numerical constant value to be covered</param>
         private static void ProcessConstant(Instruction const_inst, int const_value)
         {
-            List<int> two_places = Randomizer.GetMultipleNumbers(2, 0, const_inst.parent.Instructions.BinarySearch(const_inst), true, true);
+            List<int> two_places = Randomizer.MultipleNumbers(2, 0, const_inst.parent.Instructions.BinarySearch(const_inst), true, true);
             Instruction nop1 = new Instruction(const_inst.parent);
             Instruction nop2 = new Instruction(const_inst.parent);
             // We assume that we need 4 bytes for each constant.
             Variable t1 = const_inst.parent.parent.NewLocalVariable(Variable.Purpose.ConstRecalculation, Common.MemoryRegionSize.Integer);
             Variable t2 = const_inst.parent.parent.NewLocalVariable(Variable.Purpose.ConstRecalculation, Common.MemoryRegionSize.Integer);
-            int first_number = Randomizer.GetSingleNumber(Common.GlobalMinNumber, Common.GlobalMaxNumber);
+            int first_number = Randomizer.SingleNumber(Common.GlobalMinNumber, Common.GlobalMaxNumber);
             Instruction.ArithmeticOperationType op = first_number < const_value ? Instruction.ArithmeticOperationType.Addition : Instruction.ArithmeticOperationType.Subtraction;
             int second_number = Math.Abs(first_number - const_value);
             nop1.MakeCopy(t2, null, first_number);

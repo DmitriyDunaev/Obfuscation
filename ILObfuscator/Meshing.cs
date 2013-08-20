@@ -99,7 +99,7 @@ namespace Obfuscator
             // And then converting its nop instruction into a ConditionalJump, and by that we create a new block
 
             // ************* Please, use MakeConditionalJumpInstruction(...) method from Randomizer class
-            fake1.Instructions.First().MakeConditionalJump(fake1.parent.LocalVariables[ Randomizer.GetSingleNumber( 0, fake1.parent.LocalVariables.Count-1)], Randomizer.GetSingleNumber(0, 100), (Instruction.RelationalOperationType) Randomizer.GetSingleNumber(0,5), fake3);
+            fake1.Instructions.First().MakeConditionalJump(fake1.parent.LocalVariables[ Randomizer.SingleNumber( 0, fake1.parent.LocalVariables.Count-1)], Randomizer.SingleNumber(0, 100), (Instruction.RelationalOperationType) Randomizer.SingleNumber(0,5), fake3);
 
             // It creates the fake lane, but the condition is not a smart one yet, it is a ~random~ condition.
             // TODO: Creating smart conditions
@@ -134,14 +134,14 @@ namespace Obfuscator
             dead3.dead = true;
 
             // Now creating the conditional jump
-            dead1.Instructions.Last().MakeConditionalJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Smaller, dead3);
+            dead1.Instructions.Last().MakeConditionalJump(bb.parent.LocalVariables[Randomizer.SingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.SingleNumber(0, 100), Instruction.RelationalOperationType.Smaller, dead3);
 
             // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always false
-            bb.Instructions.Last().ConvertUncondToCondJump(bb.parent.LocalVariables[Randomizer.GetSingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.GetSingleNumber(0, 100), Instruction.RelationalOperationType.Smaller, dead1);
+            bb.Instructions.Last().ConvertUncondToCondJump(bb.parent.LocalVariables[Randomizer.SingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.SingleNumber(0, 100), Instruction.RelationalOperationType.Smaller, dead1);
 
             // And finally we link the remaining blocks
-            dead2.LinkToSuccessor(Randomizer.GetJumpableBasicBlock(bb.parent), true);
-            dead3.LinkToSuccessor(Randomizer.GetJumpableBasicBlock(bb.parent), true);
+            dead2.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
+            dead3.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
 
         }
 
@@ -250,7 +250,7 @@ namespace Obfuscator
             /// <param name="originalrelop">The original relational operator</param>
             private void GreaterPattern(Instruction.RelationalOperationType originalrelop)
             {
-                relop = Randomizer.GetRelop();
+                relop = Randomizer.RelationalOperator();
                 if (relop == Instruction.RelationalOperationType.Greater || relop == Instruction.RelationalOperationType.GreaterOrEquals || relop == Instruction.RelationalOperationType.Equals)
                 {
                     if (originalrelop == Instruction.RelationalOperationType.Greater || originalrelop == Instruction.RelationalOperationType.GreaterOrEquals || originalrelop == Instruction.RelationalOperationType.NotEquals)
@@ -266,7 +266,7 @@ namespace Obfuscator
             /// <param name="originalrelop">The original relational operator</param>
             private void LessPattern(Instruction.RelationalOperationType originalrelop)
             {
-                relop = Randomizer.GetRelop();
+                relop = Randomizer.RelationalOperator();
                 if (relop == Instruction.RelationalOperationType.Smaller || relop == Instruction.RelationalOperationType.SmallerOrEquals || relop == Instruction.RelationalOperationType.Equals)
                 {
                     if (originalrelop == Instruction.RelationalOperationType.Greater || originalrelop == Instruction.RelationalOperationType.GreaterOrEquals || originalrelop == Instruction.RelationalOperationType.Equals)
@@ -355,7 +355,7 @@ namespace Obfuscator
         /// <returns>The new, shuffled list</returns>
         private static List<T> ShuffleList<T>(List<T> condlist)
         {
-            List<int> randomlist = Randomizer.GetMultipleNumbers(condlist.Count(), 0, condlist.Count()-1, false, false);
+            List<int> randomlist = Randomizer.MultipleNumbers(condlist.Count(), 0, condlist.Count()-1, false, false);
             List<T> newlist = new List<T>();
             foreach (int i in randomlist)
             {
