@@ -147,13 +147,15 @@ namespace ExchangeFormat
         public static readonly int _altova_mi_altova_VariableType_altova_MemoryRegionSize = 28;
         public static readonly int _altova_mi_altova_VariableType_altova_MemoryUnitSize = 29;
         public static readonly int _altova_mi_altova_VariableType_altova_FixedValue = 30;
-        public static readonly int _altova_mi_altova_VariableType_altova_GlobalID = 31;
-        public static readonly int _altova_mi_altova_VariableType_altova_Fake = 32;
-        public static readonly int _altova_mil_altova_VariableType = 33;
+        public static readonly int _altova_mi_altova_VariableType_altova_MinValue = 31;
+        public static readonly int _altova_mi_altova_VariableType_altova_MaxValue = 32;
+        public static readonly int _altova_mi_altova_VariableType_altova_GlobalID = 33;
+        public static readonly int _altova_mi_altova_VariableType_altova_Fake = 34;
+        public static readonly int _altova_mil_altova_VariableType = 35;
 
         public static readonly int _altova_mif_altova_myVariableType = _altova_mil_altova_VariableType;
         public static readonly int _altova_mi_altova_myVariableType_altova_unnamed = _altova_mif_altova_myVariableType;
-        public static readonly int _altova_mil_altova_myVariableType = 34;
+        public static readonly int _altova_mil_altova_myVariableType = 36;
 
         public static readonly int _altova_mif_altova_MemoryRegionSizeType = _altova_mil_altova_myVariableType;
         public static readonly int _altova_mil_altova_MemoryRegionSizeType = _altova_mif_altova_MemoryRegionSizeType;
@@ -202,7 +204,7 @@ namespace ExchangeFormat
 
         public static readonly int _altova_mif_xs_altova_anyType = _altova_mil_xs_altova_anySimpleType;
         public static readonly int _altova_mi_xs_altova_anyType_altova_unnamed = _altova_mif_xs_altova_anyType;
-        public static readonly int _altova_mil_xs_altova_anyType = 35;
+        public static readonly int _altova_mil_xs_altova_anyType = 37;
 
         public static readonly int _altova_mif_xs_altova_anyURI = _altova_mil_xs_altova_anyType;
         public static readonly int _altova_mil_xs_altova_anyURI = _altova_mif_xs_altova_anyURI;
@@ -690,6 +692,8 @@ namespace ExchangeFormat
 			new MemberInfo (binder, "", "MemoryRegionSize", _altova_ti_altova_VariableType, _altova_ti_altova_MemoryRegionSizeType, MemberFlags.None|MemberFlags.IsAttribute, 1, 1),
 			new MemberInfo (binder, "", "MemoryUnitSize", _altova_ti_altova_VariableType, _altova_ti_altova_MemoryUnitSizeType, MemberFlags.None|MemberFlags.IsAttribute, 0, 1),
 			new MemberInfo (binder, "", "FixedValue", _altova_ti_altova_VariableType, _altova_ti_xs_altova_string2, MemberFlags.None|MemberFlags.IsAttribute, 0, 1),
+			new MemberInfo (binder, "", "MinValue", _altova_ti_altova_VariableType, _altova_ti_xs_altova_integer, MemberFlags.None|MemberFlags.IsAttribute, 0, 1),
+			new MemberInfo (binder, "", "MaxValue", _altova_ti_altova_VariableType, _altova_ti_xs_altova_integer, MemberFlags.None|MemberFlags.IsAttribute, 0, 1),
 			new MemberInfo (binder, "", "GlobalID", _altova_ti_altova_VariableType, _altova_ti_xs_altova_string2, MemberFlags.None|MemberFlags.IsAttribute, 0, 1),
 			new MemberInfo (binder, "", "Fake", _altova_ti_altova_VariableType, _altova_ti_xs_altova_boolean, MemberFlags.None|MemberFlags.IsAttribute, 0, 1),
 

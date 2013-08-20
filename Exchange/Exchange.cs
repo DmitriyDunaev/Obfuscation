@@ -1077,6 +1077,8 @@ namespace ExchangeFormat
             MemoryRegionSize = new MemberAttribute_MemoryRegionSize(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_MemoryRegionSize]);
             MemoryUnitSize = new MemberAttribute_MemoryUnitSize(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_MemoryUnitSize]);
             FixedValue = new MemberAttribute_FixedValue(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_FixedValue]);
+            MinValue = new MemberAttribute_MinValue(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_MinValue]);
+            MaxValue = new MemberAttribute_MaxValue(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_MaxValue]);
             GlobalID = new MemberAttribute_GlobalID(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_GlobalID]);
             Fake = new MemberAttribute_Fake(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_VariableType_altova_Fake]);
 
@@ -1188,6 +1190,50 @@ namespace ExchangeFormat
                 get
                 {
                     return (string)Altova.Xml.XmlTreeOperations.CastToString(Altova.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                }
+                set
+                {
+                    Altova.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                }
+            }
+            public bool Exists() { return owner.GetAttribute(info) != null; }
+            public void Remove() { owner.RemoveAttribute(info); }
+
+            public Altova.Xml.Meta.Attribute Info { get { return new Altova.Xml.Meta.Attribute(info); } }
+        }
+        public MemberAttribute_MinValue MinValue;
+        public class MemberAttribute_MinValue
+        {
+            private Altova.Xml.TypeBase owner;
+            private Altova.TypeInfo.MemberInfo info;
+            public MemberAttribute_MinValue(Altova.Xml.TypeBase owner, Altova.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            public decimal Value
+            {
+                get
+                {
+                    return (decimal)Altova.Xml.XmlTreeOperations.CastToDecimal(Altova.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                }
+                set
+                {
+                    Altova.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                }
+            }
+            public bool Exists() { return owner.GetAttribute(info) != null; }
+            public void Remove() { owner.RemoveAttribute(info); }
+
+            public Altova.Xml.Meta.Attribute Info { get { return new Altova.Xml.Meta.Attribute(info); } }
+        }
+        public MemberAttribute_MaxValue MaxValue;
+        public class MemberAttribute_MaxValue
+        {
+            private Altova.Xml.TypeBase owner;
+            private Altova.TypeInfo.MemberInfo info;
+            public MemberAttribute_MaxValue(Altova.Xml.TypeBase owner, Altova.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            public decimal Value
+            {
+                get
+                {
+                    return (decimal)Altova.Xml.XmlTreeOperations.CastToDecimal(Altova.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
