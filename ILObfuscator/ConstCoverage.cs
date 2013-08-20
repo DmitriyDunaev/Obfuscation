@@ -12,7 +12,11 @@ namespace Obfuscator
     public static class ConstCoverage
     {
         
-        public static void CoverConsts(Routine routine)
+        /// <summary>
+        /// Covers constant values in the routine as a protective measure against a signature search 
+        /// </summary>
+        /// <param name="routine">A routine to be protected</param>
+        public static void CoverConstants(Routine routine)
         {
             /*
              * We have to replace all the occurrences of the constant values,
@@ -22,13 +26,13 @@ namespace Obfuscator
             {
                 foreach (BasicBlock bb in func.BasicBlocks)
                 {
-                    Dictionary<Instruction, int> tmp = GetInstructionsWithConstants(bb);
-                    foreach (Instruction ins in tmp.Keys)
+                    Dictionary<Instruction, int> constants = GetInstructionsWithConstants(bb);
+                    foreach (Instruction ins in constants.Keys)
                         /* 
                          * Now that we have the list, we have to do the necessary
                          * insertions for all the instructions in the list.
                          */  
-                        PreprocessConstant(ins, tmp[ins]);
+                        ProcessConstant(ins, constants[ins]);
                 }
             }
         }
@@ -60,7 +64,7 @@ namespace Obfuscator
         /// </summary>
         /// <param name="const_inst">The instruction with a constant value</param>
         /// <param name="const_value">Numerical constant value to be covered</param>
-        private static void PreprocessConstant(Instruction const_inst, int const_value)
+        private static void ProcessConstant(Instruction const_inst, int const_value)
         {
             List<int> two_places = Randomizer.GetMultipleNumbers(2, 0, const_inst.parent.Instructions.BinarySearch(const_inst), true, true);
             Instruction nop1 = new Instruction(const_inst.parent);
@@ -68,7 +72,7 @@ namespace Obfuscator
             // We assume that we need 4 bytes for each constant.
             Variable t1 = const_inst.parent.parent.NewLocalVariable(Variable.Purpose.ConstRecalculation, Common.MemoryRegionSize.Integer);
             Variable t2 = const_inst.parent.parent.NewLocalVariable(Variable.Purpose.ConstRecalculation, Common.MemoryRegionSize.Integer);
-            int first_number = Randomizer.GetSingleNumber(1, 99);
+            int first_number = Randomizer.GetSingleNumber(Common.GlobalMinNumber, Common.GlobalMaxNumber);
             Instruction.ArithmeticOperationType op = first_number < const_value ? Instruction.ArithmeticOperationType.Addition : Instruction.ArithmeticOperationType.Subtraction;
             int second_number = Math.Abs(first_number - const_value);
             nop1.MakeCopy(t2, null, first_number);

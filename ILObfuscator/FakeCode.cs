@@ -25,6 +25,7 @@ namespace Obfuscator
         public static void Generate (Function func)
         {
             /* We have to go through all the nop's in the function. */
+            //************* Why not to use FOREACH?
             for (int j = 0; j < func.BasicBlocks.Count; j++)
             {
                 BasicBlock bb = func.BasicBlocks[j];
@@ -264,6 +265,7 @@ namespace Obfuscator
                     {
                         /* Here we random generate an operator. */
                         Instruction.ArithmeticOperationType op;
+                        // ********* Please, use Randomizer.GetOneFromMany(...) method. Find its usage in the project.
                         switch (Randomizer.GetSingleNumber(0, 3))
                         {
                             case 0:
@@ -280,14 +282,27 @@ namespace Obfuscator
                                 break;
                             default:
                                 /* Just to avoid the error... */
+                                
+                            // *********** Please, do not do it! By this you are not avoiding error, but covering it! 
+                            // *********** Throw exception instead.
                                 op = Instruction.ArithmeticOperationType.Addition;
                                 break;
                         }
                         if (op == Instruction.ArithmeticOperationType.Addition || op == Instruction.ArithmeticOperationType.Subtraction)
+                            // *********** The same problem as below - do not use 0 and 1000 as numerical values.
                             ins.MakeFullAssignment(leftvalue, leftvalue, null, Randomizer.GetSingleNumber(0, 1000), op);
                         else
                         {
+                            // ************** Please do not use any other constants except for defined in Common class
+
+                            // BAD USAGE:
                             int num = (int)Math.Pow(2, Randomizer.GetSingleNumber(1, 5));
+                            
+                            // EXAMPLE OF CORRECT USAGE:
+                            int min = Convert.ToInt32(Math.Ceiling(Math.Log(Common.GlobalMinNumber, 2)));
+                            int max = Convert.ToInt32(Math.Floor(Math.Log(Common.GlobalMaxNumber, 2)));
+                            num = Randomizer.GetSingleNumber(min, max);
+
                             ins.MakeFullAssignment(leftvalue, leftvalue, null, num, op);
                         }
                     }
@@ -319,6 +334,10 @@ namespace Obfuscator
                         case 3:
                             /* Here we random generate an operator: + or - */
                             /* QUESTION: do we want * and / here? */
+
+                            // ******** Now do it for Addition and Subtraction only. Multiplication and division will be realized later.
+                            // ******** But mark the code with 'TODO:' in order not to forget in future
+
                             Instruction.ArithmeticOperationType op;
                             switch (Randomizer.GetSingleNumber(0, 3))
                             {

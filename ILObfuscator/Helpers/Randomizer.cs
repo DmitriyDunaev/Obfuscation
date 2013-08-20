@@ -115,7 +115,7 @@ namespace Obfuscator
         /// <param name="nop">NoOperation instruction (will be made into ConditionalJump)</param>
         /// <param name="condition">Type of condition</param>
         /// <param name="target">Target basic block the control flow is transfered to, if the relation holds true.</param>
-        public static void MakeConditionalJumpInstruction(Instruction nop, Instruction.ConditionType condition, BasicBlock target)
+        public static void GenerateConditionalJumpInstruction(Instruction nop, Instruction.ConditionType condition, BasicBlock target)
         {
             if (nop.statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
                 throw new RandomizerException("Only NoOperation instruction can be modified to other type!");

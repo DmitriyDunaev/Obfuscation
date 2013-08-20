@@ -18,6 +18,9 @@ namespace Obfuscator
         /// </summary>
         private static List<string> done_ids = new List<string>();
 
+        /// <summary>
+        /// A list of unsafe variables (pointer to pointer) that will not be processed as dead
+        /// </summary>
         private static List<Variable> unsafe_vars = new List<Variable>();
 
         /*
@@ -46,7 +49,7 @@ namespace Obfuscator
             unsafe_vars = unsafe_vars.Distinct().ToList();
 
             /* First we clear all the DeadVariables lists. */
-            ClearDeadVarsLists(func);
+            func.BasicBlocks.ForEach(delegate(BasicBlock bb) { bb.Instructions.ForEach(delegate(Instruction inst) { inst.DeadVariables.Clear(); }); });
 
             /* Then we search for the FREE and the NOT_INITIALIZED dead variables. */
             _DeadVarsAlgortihm(func, Variable.State.Free);
@@ -198,16 +201,6 @@ namespace Obfuscator
             }
         }
 
-        /// <summary>
-        /// Clears all the DeadVariables lists of the function's instructions.
-        /// </summary>
-        /// <param name="func">Actual Function</param>
-        private static void ClearDeadVarsLists(Function func)
-        {
-            foreach (BasicBlock bb in func.BasicBlocks)
-                foreach (Instruction inst in bb.Instructions)
-                    inst.DeadVariables.Clear();
-        }
 
         /// <summary>
         /// Fills the DeadVariables lists with the variables that aren't already in them.

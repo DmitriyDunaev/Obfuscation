@@ -32,7 +32,7 @@ namespace Obfuscator
             Logging.WriteRoutine(routine, "After");
 
             Console.Write("Constants covering algorithm");
-            ConstCoverage.CoverConsts(routine);
+            ConstCoverage.CoverConstants(routine);
             routine.Validate();
             PrintSuccess();
 
