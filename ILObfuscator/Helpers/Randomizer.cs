@@ -73,5 +73,13 @@ namespace Obfuscator
             return func.BasicBlocks[block_num];
         }
 
+        /// <summary>
+        /// Gets a random relational operation
+        /// </summary>
+        /// <returns>Random relational operator</returns>
+        public static Instruction.RelationalOperationType GetRelop()
+        {
+            return (Instruction.RelationalOperationType) GetSingleNumber(0, 5);
+        }
     }
 }

@@ -445,7 +445,7 @@ namespace Internal
         {
             // TODO;
 
-            return Instruction.RelationalOperationType.Greater;
+            return Instruction.RelationalOperationType.Equals;
         }
 
         /// <summary>
@@ -456,7 +456,7 @@ namespace Internal
         {
             // TODO;
 
-            return 55;
+            return 100;
         }
 
 #if !WORKING_IN_PROGRESS
