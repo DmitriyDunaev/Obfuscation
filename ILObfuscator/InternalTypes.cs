@@ -332,6 +332,13 @@ namespace Internal
             LessOrEquals = 5
         }
 
+        public enum ConditionType
+        {
+            AlwaysTrue = 0,
+            AlwaysFalse = 1,
+            Random = 3
+        }
+
         //Attributes
         public BasicBlock parent { get; set; }
         private IDManager _ID;

@@ -73,6 +73,7 @@ namespace Obfuscator
             return func.BasicBlocks[block_num];
         }
 
+
         /// <summary>
         /// Gets a random relational operation
         /// </summary>
@@ -80,6 +81,30 @@ namespace Obfuscator
         public static Instruction.RelationalOperationType GetRelop()
         {
             return (Instruction.RelationalOperationType) GetSingleNumber(0, 5);
+        }
+
+
+        /// <summary>
+        /// Gets randomely one fake input parameter of a function. Throws exception if no such found.
+        /// </summary>
+        /// <param name="func">A function with parameters</param>
+        /// <returns>One random fake input parameter of a function</returns>
+        public static Variable GetFakeInputParameter(Function func)
+        {
+            if (func.LocalVariables.Count(x => x.kind == Variable.Kind.Input && x.fake) == 0)
+                throw new RandomizerException("Function " + func.ID + " has no fake input variables (parameters).");
+            List<Variable> fake_inputs = func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake);
+            return fake_inputs[GetSingleNumber(0, fake_inputs.Count - 1)];
+        }
+
+
+        public static void MakeConditionalJumpInstruction(Instruction nop, Instruction.ConditionType condition)
+        {
+            //if(nop.statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
+            //    throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");
+
+            //if(condition == Instruction.ConditionType.AlwaysTrue)
+
         }
     }
 }

@@ -24,6 +24,13 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
 
+            Logging.WriteRoutine(routine, "Before");
+            routine.Functions[0].NewFakeInputParameter(11, 55);
+            routine.Functions[0].NewFakeInputParameter(22, 155);
+            routine.Functions[0].NewFakeInputParameter(33, 545);
+            Variable var = Randomizer.GetFakeInputParameter(routine.Functions[0]);
+            Logging.WriteRoutine(routine, "After");
+
             Console.Write("Constants covering algorithm");
             ConstCoverage.CoverConsts(routine);
             routine.Validate();
@@ -39,8 +46,7 @@ namespace Obfuscator
                 DataAnalysis.DeadVarsAlgortihm(func);
             routine.Validate();
             PrintSuccess();
-
-            Logging.WriteRoutine(routine, "DeadVars");
+                        
             Console.Write("Generation of fake NoOperation instructions");
             foreach (Function func in routine.Functions)
                 FakeCode.GenerateNoOperations(func);

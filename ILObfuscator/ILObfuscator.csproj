@@ -47,11 +47,11 @@
     <Compile Include="Helpers\Logging.cs" />
     <Compile Include="Helpers\ToString.cs" />
     <Compile Include="MakeFakeInstructions.cs" />
-    <Compile Include="ILObfuscatorMethods.cs" />
+    <Compile Include="InternalMethods.cs" />
     <Compile Include="Meshing.cs" />
     <Compile Include="ConstCoverage.cs" />
     <Compile Include="ILObfuscator.cs" />
-    <Compile Include="ILObfuscatorTypes.cs" />
+    <Compile Include="InternalTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\Randomizer.cs" />
     <Compile Include="Helpers\Validator.cs" />
