@@ -49,7 +49,7 @@ namespace Obfuscator
                          * However we must not choose this if we have no dead variables
                          * available for using as a left value present.
                          */
-                        if (/*func.BasicBlocks.Count < 3 && */GetRandomLeftValue(ins) == null)
+                        if (/*func.BasicBlocks.Count < 3 && */GetRandomLeftValue(ins, DataAnalysis.isMainRoute(ins.parent)) == null)
                             continue;
                         //    throw new ObfuscatorException("We cannot really do anything with this instruction right now, sorry.");
 
@@ -217,8 +217,11 @@ namespace Obfuscator
         /// <param name="ins">The nop we want to work on.</param>
         private static void GenerateFakeInstruction(Instruction ins)
         {
-            /* First we get a left value. */
-            Variable leftvalue = GetRandomLeftValue(ins);
+            /* 
+             * First we get a left value.
+             * If we aren't in the main route, then we cannot use NOT_INITIALIZED ones as left value.
+             */
+            Variable leftvalue = GetRandomLeftValue(ins, DataAnalysis.isMainRoute(ins.parent));
 
             /* Then we check how many variables can we use as right value. */
             List<Variable> rightvalues = GetRandomRightValues(ins, 2);
@@ -237,27 +240,30 @@ namespace Obfuscator
              *    
              *  - If we have two, we can make all these and a Full Assignment with two
              *    variables.
+             *    
+             * Another important thing is that we cannot fill the variables with a value
+             * without using themselves (like t = t + 1) while inside a loop.
              */
             switch (rightvalues.Count)
             {
                 case 0:
+                    /* 
+                     * If we have no available right values, and we are in a loop, then we can't do anything.
+                     * ( maybe t = -t, but that isn't quite reasonable... )
+                     */
+                    if (DataAnalysis.isLoopBody(ins.parent))
+                        return;
+
                     /* We don't have any right values, so we have to copy a constant value. */
-                    ins.MakeCopy(leftvalue, null, Randomizer.GetSingleNumber(0, 1000));
+                    else
+                        ins.MakeCopy(leftvalue, null, Randomizer.GetSingleNumber(0, 1000));
                     break;
 
                 case 1:
                     int rnd = Randomizer.GetSingleNumber(1, 3);
 
-                    /* If rightvalue is the same as the leftvalue, or we choose Unary Assignment. */
-                    if (leftvalue.Equals(rightvalues.First()) || rnd == 2)
-                        ins.MakeUnaryAssignment(leftvalue, rightvalues.First(), Instruction.UnaryOperationType.ArithmeticNegation);
-
-                    /* If we choose Copy. */
-                    else if (rnd == 1)
-                        ins.MakeCopy(leftvalue, rightvalues.First(), null);
-
-                    /* If we choose Full Assignment. */
-                    else
+                    /* We choose Full Assignment, or rightvalue is the same as leftvalue, or we are in a loop body. */
+                    if (DataAnalysis.isLoopBody(ins.parent) || leftvalue.Equals(rightvalues[0]) || rnd == 3)
                     {
                         /* Here we random generate an operator. */
                         Instruction.ArithmeticOperationType op;
@@ -281,17 +287,30 @@ namespace Obfuscator
                                 break;
                         }
                         if (op == Instruction.ArithmeticOperationType.Addition || op == Instruction.ArithmeticOperationType.Subtraction)
-                            ins.MakeFullAssignment(leftvalue, rightvalues.First(), null, Randomizer.GetSingleNumber(0, 1000), op);
+                            ins.MakeFullAssignment(leftvalue, leftvalue, null, Randomizer.GetSingleNumber(0, 1000), op);
                         else
                         {
                             int num = (int)Math.Pow(2, Randomizer.GetSingleNumber(1, 5));
-                            ins.MakeFullAssignment(leftvalue, rightvalues.First(), null, num, op);
+                            ins.MakeFullAssignment(leftvalue, leftvalue, null, num, op);
                         }
                     }
 
+                    /* If we choose Unary Assignment. */
+                    if (rnd == 2)
+                        ins.MakeUnaryAssignment(leftvalue, rightvalues.First(), Instruction.UnaryOperationType.ArithmeticNegation);
+
+                    /* If we choose Copy. */
+                    else if (rnd == 1)
+                        ins.MakeCopy(leftvalue, rightvalues.First(), null);
                     break;
 
                 case 2:
+                    if (leftvalue.Equals(rightvalues.First()))
+                    {
+                        Variable tmp = rightvalues[0];
+                        rightvalues[0] = rightvalues[1];
+                        rightvalues[1] = tmp;
+                    }
                     switch (Randomizer.GetSingleNumber(1, 3))
                     {
                         case 1:
@@ -334,14 +353,15 @@ namespace Obfuscator
         /// Returns a variable from the instruction's DeadVariables list with FREE or NOT_INITIALIZED state.
         /// </summary>
         /// <param name="ins">The actual instruction.</param>
+        /// <param name="ins">Do we want NOT_INITIALIZED as well, or not?</param>
         /// <returns>A proper variable, or null, if no such exists.</returns>
-        private static Variable GetRandomLeftValue(Instruction ins)
+        private static Variable GetRandomLeftValue(Instruction ins, bool not_init)
         {
             /* First we gather the variables with the proper state. */
             List<Variable> proper_vars = new List<Variable>();
             foreach (Variable var in ins.DeadVariables.Keys)
             {
-                if (ins.DeadVariables[var] == Variable.State.Free || ins.DeadVariables[var] == Variable.State.Not_Initialized)
+                if (ins.DeadVariables[var] == Variable.State.Free || (not_init && ins.DeadVariables[var] == Variable.State.Not_Initialized))
                     proper_vars.Add(var);
             }
 

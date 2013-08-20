@@ -41,15 +41,15 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
 
-            Console.Write("Dead variables algorithm");
-            foreach (Function func in routine.Functions)
-                DataAnalysis.DeadVarsAlgortihm(func);
-            routine.Validate();
-            PrintSuccess();
-                        
             Console.Write("Generation of fake NoOperation instructions");
             foreach (Function func in routine.Functions)
                 FakeCode.GenerateNoOperations(func);
+            routine.Validate();
+            PrintSuccess();
+
+            Console.Write("Dead variables algorithm");
+            foreach (Function func in routine.Functions)
+                DataAnalysis.DeadVarsAlgortihm(func);
             routine.Validate();
             PrintSuccess();
         }
