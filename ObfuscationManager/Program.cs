@@ -19,7 +19,7 @@ namespace ObfuscationManager
             try
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\n\tIMPORTING DATA\n");
+                Console.WriteLine("\n\tIMPORTING ROUTINE\n");
                 Console.ResetColor();
                 Console.Write("Loading XML, checking complience with Exchange.xsd");
                 Internal.Validator.ValidateXML(doc);
@@ -43,7 +43,25 @@ namespace ObfuscationManager
             Obfuscator.ILObfuscator.Obfuscate(exch);
 
 
-            
+
+            // Validating XML by Schema
+            try
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("\n\tEXPORTING ROUTINE\n");
+                Console.ResetColor();
+                Console.Write("Generating XML, checking complience with Exchange.xsd");
+                Console.WriteLine(" . COMING SOON");
+            }
+            catch (Obfuscator.ValidatorException exc)
+            {
+                Console.WriteLine(exc.Message);
+                if (exc.InnerException != null)
+                    throw exc.InnerException;
+                else throw exc;
+            }
+            //Obfuscator.ILObfuscator.PrintSuccess();
+
 
 
             //   ...

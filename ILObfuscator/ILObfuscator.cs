@@ -52,6 +52,12 @@ namespace Obfuscator
                 DataAnalysis.DeadVarsAlgortihm(func);
             routine.Validate();
             PrintSuccess();
+
+            Console.Write("Generation of fake instructions from NoOperation");
+            Console.WriteLine(". . . . COMING SOON");
+            // Call algorithm here
+            //routine.Validate();
+            //PrintSuccess();
         }
 
 

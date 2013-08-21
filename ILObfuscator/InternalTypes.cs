@@ -88,7 +88,7 @@ namespace Internal
             // Collecting all variables
             if (function.Local.Exists)
             {
-                foreach (VariableType var in function.Local[0].Variable)
+                foreach (VariableType var in function.Local.First.Variable)
                 {
                     if (function.RefInputVars.Exists() && function.RefInputVars.Value.Split(' ').Contains(var.ID.Value))
                         LocalVariables.Add(new Variable(var, Variable.Kind.Input));
@@ -99,14 +99,10 @@ namespace Internal
                 }
             }
             // Testing incoming data for correctness
-            Func<Variable, bool> inputVariables = delegate(Variable v) { return v.kind == Variable.Kind.Input; };
-            Func<Variable, bool> outputVariables = delegate(Variable v) { return v.kind == Variable.Kind.Output; };
-            int input_vars = LocalVariables.Count(inputVariables);
-            int output_vars = LocalVariables.Count(outputVariables);
-            if (function.RefInputVars.Exists() && (function.RefInputVars.Value.Split(' ').Count() != input_vars))
-                throw new ValidatorException("Referenced input variables were not found in function " + function.ID.Value);
-            if (function.RefOutputVars.Exists() && (function.RefOutputVars.Value.Split(' ').Count() != output_vars))
-                throw new ValidatorException("Referenced output variables were not found in function " + function.ID.Value);
+            if (function.RefInputVars.Exists() && (function.RefInputVars.Value.Split(' ').Count() != LocalVariables.Count(x => x.kind == Variable.Kind.Input)))
+                throw new ValidatorException("Some referenced input variables were not found in function " + function.ID.Value);
+            if (function.RefOutputVars.Exists() && (function.RefOutputVars.Value.Split(' ').Count() != LocalVariables.Count(x => x.kind == Variable.Kind.Output)))
+                throw new ValidatorException("Some referenced output variables were not found in function " + function.ID.Value);
 
             // Getting basic blocks
             foreach (BasicBlockType bb in function.BasicBlock)
@@ -446,27 +442,25 @@ namespace Internal
     }
 
 
+    /// <summary>
+    /// Class for generating and storing the Unique Identifiers for objects 
+    /// </summary>
     [Serializable]
     public class IDManager
     {
         private string ID;
         private const string startID = "ID_";
+
         public IDManager()
         {
             ID = string.Concat(startID, Guid.NewGuid().ToString()).ToUpper();
         }
+
         public IDManager(string id)
         {
             ID = id;
         }
-        public void setAndCheckID(string id)
-        {
-            if (Regex.IsMatch(id, @"^ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
-                ID = id;
-            else
-                throw new ArgumentException("Incorrect ID. The unique identifier " + id + " is not in a form ID_'GUID'");
-        }
-
+        
         public override bool Equals(object obj)
         {
             return (obj as IDManager) == null ? base.Equals(obj) : ((IDManager)obj).ID == ID;
@@ -476,7 +470,7 @@ namespace Internal
         {
             return ID.GetHashCode();
         }
-
+        
         public override string ToString()
         {
             return ID;
