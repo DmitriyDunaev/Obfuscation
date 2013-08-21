@@ -24,6 +24,10 @@ namespace Obfuscator
             Integer = 4,
             Char = 1
         }
+        /// <summary>
+        /// The number of the fake conditions that are generated in the conditional meshing algorithm
+        /// </summary>
+        public static int ConditionalJumpMeshingNumber = 6;
 
         /// <summary>
         /// Provides a full copy of original object

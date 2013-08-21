@@ -361,12 +361,15 @@ namespace Internal
             TACtext = TACtext_new.Trim();
         }
 
+        /// I needed this functions, to somehow extract the variable, the relop and the constant from a condition.
+        /// These are only test functions, the real one(s) are still has to be done.
+        /// If you can do this, it will be a huge help for me.
 
         /// <summary>
         /// Extracts the variable from a condition
         /// </summary>
         /// <returns>The extracted variable</returns>
-        internal Variable GetVarFromCondition()
+        public Variable GetVarFromCondition()
         {
             // TODO;
 
@@ -377,7 +380,7 @@ namespace Internal
         /// Extracts the relop from a condition
         /// </summary>
         /// <returns>The extracted variable</returns>
-        internal Instruction.RelationalOperationType GetRelopFromCondition()
+        public Instruction.RelationalOperationType GetRelopFromCondition()
         {
             // TODO;
 
@@ -388,7 +391,7 @@ namespace Internal
         /// Extracts the constant from a condition
         /// </summary>
         /// <returns>The extracted variable</returns>
-        internal int GetConstFromCondition()
+        public int GetConstFromCondition()
         {
             // TODO;
 
@@ -399,8 +402,10 @@ namespace Internal
         /// Gets the true case successor
         /// </summary>
         /// <returns>The true cuccessor BasicBlock</returns>
-        internal BasicBlock GetTrueSucc()
+        public BasicBlock GetTrueSucc()
         {
+            /// It's not a convention, only the test version of the function.
+            /// Todo: Checking the tac text -> the target of the goto will be the true
             return parent.getSuccessors.First();
         }
 
@@ -408,8 +413,9 @@ namespace Internal
         /// Gets the false case successor
         /// </summary>
         /// <returns>The false cuccessor BasicBlock</returns>
-        internal BasicBlock GetFalseSucc()
+        public BasicBlock GetFalseSucc()
         {
+            /// Todo: Returning not the true one.
             return parent.getSuccessors.Last();
         }
 

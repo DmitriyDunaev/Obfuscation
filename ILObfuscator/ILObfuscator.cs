@@ -25,10 +25,10 @@ namespace Obfuscator
             PrintSuccess();
 
             Logging.WriteRoutine(routine, "Before");
-            routine.Functions[0].NewFakeInputParameter(11, 55);
-            routine.Functions[0].NewFakeInputParameter(22, 155);
-            routine.Functions[0].NewFakeInputParameter(33, 545);
-            Variable var = Randomizer.FakeInputParameter(routine.Functions[0]);
+            routine.Functions[1].NewFakeInputParameter(11, 55);
+            routine.Functions[1].NewFakeInputParameter(22, 155);
+            routine.Functions[1].NewFakeInputParameter(33, 545);
+            Variable var = Randomizer.FakeInputParameter(routine.Functions[1]);
             Logging.WriteRoutine(routine, "After");
 
             Console.Write("Constants covering algorithm");
@@ -36,8 +36,14 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
 
-            Console.Write("Meshing algorithm");
-            Meshing.MeshingAlgorithm(routine);
+
+            Console.Write("Meshing algorithm - Unconditional Jumps");
+            Meshing.MeshUnconditionals(routine);
+            routine.Validate();
+            PrintSuccess();
+
+            Console.Write("Meshing algorithm - Conditional Jumps");
+            Meshing.MeshConditionals(routine);
             routine.Validate();
             PrintSuccess();
 

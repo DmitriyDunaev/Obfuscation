@@ -187,23 +187,12 @@ namespace Internal
         /// <summary>
         /// Converts UnconditionalJump instruction type to ConditionalJump (+ links Successors and Predecessors and changes the TAC text)
         /// </summary>
-        /// <param name="left_value">Left value in relation (only variable)</param>
-        /// <param name="right_value">Left value in relation (only numerical value)</param>
-        /// <param name="relop">Relational operation</param>
-        /// <param name="secondtarget">The second block which will be the other successor of the basic block</param>
-        public void ConvertUncondToCondJump(Variable left_value, int right_value, RelationalOperationType relop, BasicBlock target)
+        /// <param name="conditiontype">The type of the condition</param>
+        /// <param name="target">Target basic block the control flow is transfered to, if the relation holds true</param>
+        public void ConvertUncondToCondJump(Instruction.ConditionType conditiontype, BasicBlock target)
         {
             if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
                 throw new ObfuscatorException("Only UnconditionalJump instruction can be converted to ConditionalJump type!");
-
-            if (target.parent != parent.parent)
-                throw new ObfuscatorException("Target basic block and original are in different functions.");
-
-            if (parent.getSuccessors.Count != 1)
-                throw new ObfuscatorException("The basic block should have exactly one successor.");
-
-            if (left_value == null || target == null)
-                throw new ObfuscatorException("Wrong parameter passing.");
 
             // Change it to nop
             statementType = ExchangeFormat.StatementTypeType.EnumValues.eNoOperation;
@@ -211,7 +200,7 @@ namespace Internal
             RefVariables.Clear();
 
             // Make a ConditionalJump
-            MakeConditionalJump(left_value, right_value, relop, target);
+            Randomizer.GenerateConditionalJumpInstruction(this, conditiontype, target);
 
         }
 

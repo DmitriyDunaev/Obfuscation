@@ -1,7 +1,4 @@
-﻿//#define PSEUDOCODE
-
-#if !PSEUDOCODE
-
+﻿
 /*
  * So this is the algorithm for meshing the control flow transition blocks.
  * This algorithm can be divided into two main parts:
@@ -26,11 +23,6 @@
 // Dmitriy: Agree on that, but we can easily solve it. Let's discuss it on Friday!
 
 
-/*
- * This is the main function, it meshes up the single conditional and
- * unconditional jumps.
- */
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,25 +36,38 @@ namespace Obfuscator
     {
 
         /// <summary>
-        /// The meshing algorithm, which will mesh the CFT-s in a fuction
+        /// The meshing algorithm, which will mesh the unconditional jumps in a routine
         /// </summary>
-        /// <param name="funct">Thse function which has the control flow transitions to be meshed up</param>
-        public static void MeshFunction( Function funct )
+        /// <param name="rtn">Thse routine which will be meshed up</param>
+        public static void MeshUnconditionals(Routine rtn)
         {
             /// Meshing of the unconditional jumps
-            List<BasicBlock> basicblocks = funct.BasicBlocks.FindAll(x => x.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump);
-            foreach (BasicBlock bb in basicblocks)
+            foreach (Function funct in rtn.Functions)
             {
-                InsertFakeLane(bb);
-                InsertDeadLane(bb);
+                List<BasicBlock> basicblocks = funct.BasicBlocks.FindAll(x => x.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump);
+                foreach (BasicBlock bb in basicblocks)
+                {
+                    InsertFakeLane(bb);
+                    InsertDeadLane(bb);
+                }
             }
+        }
 
+        /// <summary>
+        /// The meshing algorithm, which will mesh the conditional jumps in a routine
+        /// </summary>
+        /// <param name="rtn">Thse routine which will be meshed up</param>
+        public static void MeshConditionals(Routine rtn)
+        {
             /// Meshing of the conditional jumps
-            basicblocks = funct.BasicBlocks.FindAll(x => x.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump);
-            foreach (BasicBlock bb in basicblocks)
+            foreach (Function funct in rtn.Functions)
             {
-                //MeshConditionals(bb);
-            }
+                List<BasicBlock> basicblocks = funct.BasicBlocks.FindAll(x => x.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump);
+                foreach (BasicBlock bb in basicblocks)
+                {
+                    InsertConditionals(bb);
+                }
+            }            
         }
 
         /// <summary>
@@ -88,6 +93,7 @@ namespace Obfuscator
             //BasicBlock polyrequtarget = originaltarget.Clone(true);
             
             // ************ Andris! Please, check if it is what you wanted to do with Clone(...)
+            /// *********** Dmitriy: Can't use the DeepClone, tomorrow I will write an issue about this!
             BasicBlock polyrequtarget = Obfuscator.Common.DeepClone(originaltarget) as BasicBlock;
             polyrequtarget.Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
             // ************ Please, check successor-predecessor links that you are setting below, maybe there is a problem...
@@ -97,13 +103,9 @@ namespace Obfuscator
             fake2.LinkToSuccessor(polyrequtarget, true);
 
             // And then converting its nop instruction into a ConditionalJump, and by that we create a new block
+            Randomizer.GenerateConditionalJumpInstruction(fake1.Instructions.First(), Instruction.ConditionType.Random, fake3);
 
-            // ************* Please, use MakeConditionalJumpInstruction(...) method from Randomizer class
-            fake1.Instructions.First().MakeConditionalJump(fake1.parent.LocalVariables[ Randomizer.SingleNumber( 0, fake1.parent.LocalVariables.Count-1)], Randomizer.SingleNumber(0, 100), (Instruction.RelationalOperationType) Randomizer.SingleNumber(0,5), fake3);
-
-            // It creates the fake lane, but the condition is not a smart one yet, it is a ~random~ condition.
-            // TODO: Creating smart conditions
-            //       Test for mistakes in polyrequied cloning and linking
+            // TODO: Test for mistakes in polyrequied cloning and linking
             
         }
 
@@ -121,6 +123,9 @@ namespace Obfuscator
             // And making it dead
             dead1.dead = true;
 
+            // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always false
+            bb.Instructions.Last().ConvertUncondToCondJump(Instruction.ConditionType.AlwaysFalse, dead1);
+
             // Now including another one, with the basicblock splitter
             BasicBlock dead2 = dead1.SplitAfterInstruction(dead1.Instructions.Last());
 
@@ -133,22 +138,21 @@ namespace Obfuscator
             // And making it dead too
             dead3.dead = true;
 
-            // Now creating the conditional jump
-            dead1.Instructions.Last().MakeConditionalJump(bb.parent.LocalVariables[Randomizer.SingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.SingleNumber(0, 100), Instruction.RelationalOperationType.Smaller, dead3);
+            dead3.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
 
-            // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always false
-            bb.Instructions.Last().ConvertUncondToCondJump(bb.parent.LocalVariables[Randomizer.SingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.SingleNumber(0, 100), Instruction.RelationalOperationType.Smaller, dead1);
+            // Now creating the conditional jump
+            //dead1.Instructions.Last().MakeConditionalJump(bb.parent.LocalVariables[Randomizer.SingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.SingleNumber(0, 100), Instruction.RelationalOperationType.Smaller, dead3);
+            Randomizer.GenerateConditionalJumpInstruction(dead1.Instructions.Last(), Instruction.ConditionType.Random, dead3);
 
             // And finally we link the remaining blocks
             dead2.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
-            dead3.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
 
         }
 
         /// <summary>
         /// Class of constants with the relational operations available list
         /// </summary>
-        internal class Cond
+        public class Cond
         {
             public enum BlockJumpType
             {
@@ -158,10 +162,19 @@ namespace Obfuscator
                 Last
             }
 
+            /// <summary>
+            /// The constant value of the condition
+            /// </summary>
             public int value;
 
+            /// <summary>
+            /// The relational operator of the condition
+            /// </summary>
             public Instruction.RelationalOperationType relop;
 
+            /// <summary>
+            /// The jump type of the unconditional jump, that will be generated from this condition
+            /// </summary>
             public BlockJumpType JumpType;
 
             /// <summary>
@@ -281,7 +294,7 @@ namespace Obfuscator
         /// This function meshes up a conditional jump
         /// </summary>
         /// <param name="bb">The block containing the conditional jump to mesh up</param>
-        private static void MeshConditionals(BasicBlock bb)
+        private static void InsertConditionals(BasicBlock bb)
         {
             Variable var = bb.Instructions.Last().GetVarFromCondition();
             Instruction.RelationalOperationType relop = bb.Instructions.Last().GetRelopFromCondition();
@@ -292,13 +305,8 @@ namespace Obfuscator
             BasicBlock falsesucc = bb.Instructions.Last().GetFalseSucc();
             List<BasicBlock> generatedblocks = GenerateBlocks(bb, var, truesucc, falsesucc, condlist);
             
-            generatedblocks.Last().LinkToSuccessor(falsesucc);
-            bb.Instructions.Remove(bb.Instructions.Last());
-            bb.LinkToSuccessor(generatedblocks.First(), true);
             
-            /// TODO:   Generate the blocks
-            ///         Generate the jumps between them, and the True-False lanes (polyrequ blocks also)
-            ///         Insert the meshed control flow trnasition to the original place
+            /// TODO:   Create the polyRequired clones and the jumps to them
         }
 
         /// <summary>
@@ -316,6 +324,12 @@ namespace Obfuscator
             {
                 bblist.Add(new BasicBlock(bb.parent));
             }
+
+
+            bb.Instructions.Remove(bb.Instructions.Last());
+            bb.Instructions.Add(new Instruction(bb));
+            bb.Instructions.Last().MakeUnconditionalJump(bblist.First());
+            
             for (int i = 0; i < condlist.Count(); i++)
             {
                 switch (condlist[i].JumpType)
@@ -323,25 +337,26 @@ namespace Obfuscator
                     case Cond.BlockJumpType.True:
                     case Cond.BlockJumpType.Last:
                         if (i != condlist.Count() - 1)
-                            bblist[i].LinkToSuccessor(bblist[i + 1]);
+                            bblist[i].LinkToSuccessor(bblist[i + 1], true);
                         else
-                            bblist[i].LinkToSuccessor(falselane);
+                            bblist[i].LinkToSuccessor(falselane, true);
                         bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, truelane);
                         break;
                     case Cond.BlockJumpType.False:
                         if (i != condlist.Count() - 1)
-                            bblist[i].LinkToSuccessor(bblist[i + 1]);
+                            bblist[i].LinkToSuccessor(bblist[i + 1], true);
                         else
-                            bblist[i].LinkToSuccessor(falselane);
+                            bblist[i].LinkToSuccessor(falselane, true);
                         bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, falselane);
                         break;
                     case Cond.BlockJumpType.Ambigious:
-                        bblist[i].LinkToSuccessor(falselane);
+                        bblist[i].LinkToSuccessor(falselane, true);
                         bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, bblist[i + 1]);
                         break;
                     default:
                         break;
                 }
+            
             }
 
             return bblist;
@@ -420,10 +435,10 @@ namespace Obfuscator
         /// </summary>
         /// <param name="originalconstant">The actual constant which is the base of the generation</param>
         /// <param name="originalrelop">The original relational operator</param>
-        /// <param name="num">The number of constants to generate (by default, it equals to 6)</param>
         /// <returns>The litst of the generated CondConstants</returns>
-        private static List<Cond> GenetateCondList(int originalconstant, Instruction.RelationalOperationType originalrelop, int num = 6)
+        private static List<Cond> GenetateCondList(int originalconstant, Instruction.RelationalOperationType originalrelop)
         {
+            int num = Common.ConditionalJumpMeshingNumber;
             List<Cond> returnlist = new List<Cond>();
             for (int i = -1, n = 0; n < num; n++)
             {
@@ -438,299 +453,5 @@ namespace Obfuscator
             RepositionLasts(returnlist);
             return returnlist;
         }
-
-        /// <summary>
-        /// The interface function, that meshes up the functions of a routine
-        /// </summary>
-        /// <param name="rtn">The routine to be meshed up</param>
-        public static void MeshingAlgorithm(Routine rtn)
-        {
-            foreach (Function func in rtn.Functions)
-            {
-                MeshFunction(func);
-            }
-        }
     }
 }
-
-
-#endif
-#if PSEUDOCODE 
-
-void MeshFunction( Function actualfunction )
-{
-    /*
-     * The getBBCunJumps returns a list of the basic blocks that has one
-     * successor, which also has a sucessor. Not all of them, but some,
-     * depending on the CFTRatio.
-     */
-    
-    list<BasicBlock> basicblocks = Function.getBBUncJumps( actualfunction );
-    // TODO: Ebből az alhalmazt, Ratio alapján
-    /*
-     * Now we go through the list, and mesh the jumps.
-     */
-    
-    foreach ( BasicBlock bb in basicblocks )
-        MeshUnconditional( bb );
-    
-    /*
-     * Now we need the list of the conditional jumps.
-     */
-    
-    basicblocks = Function.getBBCondJumps( actualfunction );
-    
-    /*
-     * And go through the list of conditional jumps as well.
-     */
-    
-    foreach ( BasicBlock bb in basicblocks )
-        MeshConditional( bb );
-}
-
-/*
- * The MeshUncoditional function gets a BasicBlock, and creates
- * the Control Flow Transition.
- */
-
-void MeshUnconditional( BasicBlock actualbb )
-{
-    ///* First we insert an entry point. */
-    
-    //BasicBlock ep = InsertEntryPoint( actualbb );
-    
-    ///* Next, we insert the fake flow, with one fake block, and
-    // * we create a copy of the successor of the actual basic block
-    // * (if needed). */
-    
-    //InsertFakeFlow( actualbb );
-    
-    ///* Finally comes the dead flow, with 3 blocks. They are all dead. */
-    
-    //InsertDeadFlow( ep );
-
-
-    
-    
-
-    return;
-    
-
-}
-
-/*
- * The InsertEntryPoint is the function that inserts the fake basic block
- * which will serve as the entry point of the CFT.
- */
-void InsertEntryPoint( BasicBlock bb )
-{
-    /* We need a new BB. */
-
-    BasicBlock ep = new BasicBlock();
-
-    /* And we need to ad it to the function. */
-
-    bb.parent.BasicBlocks.Add( ep );
-    //parent...
-    /* A function now creates an instruction with a fake conditional jump,
-     * and it is fake because it always continues in the true way. */
-
-    Instruction i = CreateFakeCondJump( bb.Instructions[0].getID() );
-
-    /* Appending the instruction to the block we just created. */
-    
-    ep.Append( i );
-
-    /* And setting its successor to the actual block. */
-
-    ep.getSuccessors.Add( bb );
-
-    /* Now we use the ChangeGotos function, and it changes all goto-s in the
-     * function with one ID, to have an other ID */
-
-    bb.parent.ChangeGotos( bb.Instructions[0].getID(), ep.Instructions[0].getID() );
-
-    /* And finally we set the bacisblocks' predecessors and successors, so
-     * the edges in the CFG. */
-    
-    foreach ( BasicBlock pred in pp.getPredecessors )
-    {
-        pred.getSuccessors.Delete( bb );
-        pred.getSuccessors.Add( ep );
-        bb.getPredecessors.Delete( pred );
-    }
-    bb.Predecessors.Add( ep );   
-}
-
-/*
- * Now we can proceed to the second step, wich means inserting the fake side of the
- * meshed control flow. The fake path looks like this:
- * 
- *           ------------------
- *          | Fake entry block |
- *           ------------------
- *        (True) /
- *          -----------
- *         | Actual BB |
- *          -----------
- *    (False) /   \ (True)
- *    ------------ \
- *   | Fake Block | |
- *    ------------ /
- *   |  Actual    |
- *   | Successor  |
- *    ------------
- *    
- * Since we have the injected entry point, this part of the algorythm includes changing
- * the unconditional jump of the actual basicblock into a conditional jump, with the
- * following ends: The true lane must go to the actual successor and the false must go
- * to the fake block. (Because of the future code generation, it cannot be solved that
- * the true lane would be followed immediatelly by the false...)
- */
-
-void InsertFakeFlow( BasicBlock bb )
-{
-    // Using:   AppendTo( BasicBlock, Instruction );
-    //          ChangeToConditional( BasicBlock, BasicBlock, Instruction, TrueEnum TrueOnly, ... );
-
-    BasicBlock fake1 = AppendTo( actualbb );
-    BasicBlock fake2 = AppendTo( actualbb, fake1.Instructions[0] );
-    
-    ChangeToConditional( fake2, actualbb, fake1.Instructions[0], random );
-
-    FillWithFake( fake1 );
-    FllWithFake( fake2 );
-}
-
-/*
- * Todo: somehow change an unconditional jump to a conditional:
- * Notes:
- * Generating the condition is the key.
- * Not sure how the dead variables are represented...
- * We might generate a random reloperand, and choose two random
- * dead variables...
- */
-ChangeToConditional( Instruction );
-
-/*
- * Now here comes the dead path generation.
- * It needs the entry point for parameter.
- */
-
-/*
- * Now here comes the dead part of the control flow transition,
- * wich looks like this:
- * 
- *            ------------------
- *          | Fake entry block |
- *           ------------------
- *                           \ (False)
- *                           ---------
- *                          |   bb1   | 
- *                           ---------
- *                      (True) /    \ (False)
- *                         ------  ------
- *                        | bb2  || bb3  |
- *                         ------  ------
- *                            |       |
- *                        (Random) (Random)
- * 
- * 
- */
-
-void InsertDeadFlow( BasicBlock pre )
-{
-    // Using    ChangeToConditional( BasicBlock, BasicBlock, Instruction, TrueEnum TrueOnly, ... );
-    //          AppendTo( BasicBlock, Instruction );
-    //          RandomJumperBlock( Function );    
-
-    BasicBlock dead1 = RandomJumperBlock( pre.parent );
-    BasicBlock dead2 = RandomJumperBlock( pre.parent );
-
-    ChangeToConditional( pre, dead1, dead1.Instructions[0], trueonly );
-
-    BasicBlock dead3 = AppendTo( dead1, dead1.Instructions[0] );
-    ChangeToConditional( dead3, dead1.Instructions[0], random );
-    
-}
-
-/*
- * So now, we have the full CFT of the unconditional jump:
- * 
- *           ------------------
- *          | Fake entry block |
- *           ------------------
- *      (True) /             \ (False)
- *        -----------       ----------
- *       | Actual BB |      |   bb1   | 
- *        -----------       ----------
- *  (False) /   \ (True) (True) /    \ (False)
- *  ------------ \          ------  ------
- * | Fake Block | |         | bb2  || bb3  |
- *  ------------ /          ------  ------
- * |  Actual    |              |       |
- * | Successor  |          (Random) (Random)
- *  ------------
- *  
- */
-
-/*
- * Now the next step is the conditional jump, which will be a tough one,
- * if I guess right. I start with analyzing the sheet wich describes the
- * method of meshing the conditional jumps, and later on I will try to create
- * the algorithm itself.
- */
-
-enum Relop
-	{
-	    equ,
-        notequ,
-        great,
-        greatequ,
-        less,
-        lessequ
-	}
-
-struct K
-    {
-		int i;
-        bool usable_relops[6];
-        bool used;
-        K(int i) : i(i), used(false)
-        {
-            for (int i=0; i<6; i++)
-                usable_relops[i] = true;
-        }
-	}
-
-void MeshConditional( BasicBlock bb )
-{
-    int C = ReadConst( bb.Instructions.Last() );
-    Relop r = ReadRelop( bb.Instructions.Last() );
-    // Select m;
-    m = 5; // At first we choose a constant number.
-    
-    // Generating the constants based on C
-    list<K> KList;
-    GenerateList( KList, C);
-    
-    // Iterating K[i] 
-    while ( !AllUsed( KList ) )
-    {
-        K selected = Select_i(KList);
-        Relop act_r = SelectUsableRelop( selected );
-    }
-}
-
-/* Still to do:
- * 
- * void InsertFakeFlow(...); <- Done, details needed
- * void InsertDeadFlow(...); <- Done, same situation
- * 
- * These details include the discussion of the way helper functions
- * will work, and so on.
- * 
- * void MeshConditional(); <- Started brainstorming
- */
-
-#endif
