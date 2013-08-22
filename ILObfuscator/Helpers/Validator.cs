@@ -104,8 +104,6 @@ namespace Internal
                 throw new ValidatorException("No instructions found for basic block " + ID);
             if (Successors.Count > 2)
                 throw new ValidatorException("More than two successors found in basic block " + ID);
-            if (parent.BasicBlocks.First().Equals(this) && Predecessors.Count != 0)
-                throw new ValidatorException("The first basic block in a list must be an entrance block without predecessors. Basic block: " + ID);
             if (Predecessors.Count == 0 && !parent.BasicBlocks.First().Equals(this))
                 throw new ValidatorException("No predecessors found at basic block " + ID + ". By convention, only the first basic block has empty Predecessors list.");
             if(Successors.Count == 0 && (Instructions.Count != 1 || Instructions[0].TACtext != "return"))
