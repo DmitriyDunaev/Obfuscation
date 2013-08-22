@@ -137,8 +137,8 @@ namespace Internal
         /// <param name="target">Target basic block the control flow is transfered to, if the relation holds true</param>
         public void MakeConditionalJump(Variable left_value, int right_value, RelationalOperationType relop, BasicBlock target)
         {
-            if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
-                throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");
+            if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation && statementType != ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
+                throw new ObfuscatorException("Only NoOperation or UnconditionalJump instructions can be modified to ConditionalJump type!");
 
             if (target.parent != parent.parent)
                 throw new ObfuscatorException("Target basic block and original are in different functions.");
@@ -150,9 +150,8 @@ namespace Internal
                 throw new ObfuscatorException("Wrong parameter passing.");
 
             if (!parent.Instructions.Last().Equals(this))
-                throw new ObfuscatorException("Only the last NoOperation instruction of a basic block can be modified to ConditionalJump.");
+                throw new ObfuscatorException("Only the last instruction of a basic block can be modified to ConditionalJump.");
 
-            //parent.SplitAfterInstruction(this);
             RefVariables.Add(left_value);
             statementType = ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump;
             string strRelop = string.Empty;
@@ -177,10 +176,10 @@ namespace Internal
                     strRelop = "<=";
                     break;
                 default:
-                    throw new ObfuscatorException("Unsupported relational operation type.");
+                    throw new ObfuscatorException("Unsupported relational operator type.");
             }
             TACtext = string.Join(" ", "if", left_value.name, strRelop, right_value, "goto", target.ID);
-            parent.LinkToSuccessor(target);
+            parent.LinkToSuccessor(target, false, true);
         }
 
 

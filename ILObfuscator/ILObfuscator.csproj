@@ -45,6 +45,7 @@
     <Compile Include="Helpers\Exceptions.cs" />
     <Compile Include="FakeCode.cs" />
     <Compile Include="Helpers\Logging.cs" />
+    <Compile Include="Helpers\Parser.cs" />
     <Compile Include="Helpers\ToString.cs" />
     <Compile Include="MakeFakeInstructions.cs" />
     <Compile Include="InternalMethods.cs" />

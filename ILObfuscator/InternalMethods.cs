@@ -115,17 +115,24 @@ namespace Internal
         /// </summary>
         /// <param name="successor">A new successor basic block</param>
         /// <param name="clear">If true - clears all other successor-predecessor links of the basic block before linking to a new successor</param>
-        public void LinkToSuccessor(BasicBlock successor, bool clear = false)
+        /// /// <param name="clear">If true - the successor is linked as 'true' (important for conditional jumps)</param>
+        public void LinkToSuccessor(BasicBlock successor, bool clear = false, bool true_branch = false)
         {
             if (Successors.Count > 2)
                 throw new ObfuscatorException("Basic block cannot have more than 2 successors.");
+            
             if (clear)
             {
                 foreach (BasicBlock next in Successors)
                     next.Predecessors.Remove(this);
                 Successors.Clear();
             }
-            Successors.Add(successor);
+            
+            if (true_branch)
+                Successors.Insert(0, successor);
+            else
+                Successors.Add(successor);
+
             successor.Predecessors.Add(this);
         }
 
