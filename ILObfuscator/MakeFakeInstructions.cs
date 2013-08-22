@@ -194,9 +194,9 @@ namespace Internal
                 throw new ObfuscatorException("Only UnconditionalJump instruction can be converted to ConditionalJump type!");
 
             // Change it to nop
-            statementType = ExchangeFormat.StatementTypeType.EnumValues.eNoOperation;
-            TACtext = "nop";
-            RefVariables.Clear();
+            //statementType = ExchangeFormat.StatementTypeType.EnumValues.eNoOperation;
+            //TACtext = "nop";
+            //RefVariables.Clear();
 
             // Make a ConditionalJump
             Randomizer.GenerateConditionalJumpInstruction(this, conditiontype, target);

@@ -156,8 +156,8 @@ namespace Obfuscator
         /// <param name="target">Target basic block the control flow is transfered to, if the relation holds true.</param>
         public static void GenerateConditionalJumpInstruction(Instruction nop, Instruction.ConditionType condition, BasicBlock target)
         {
-            if (nop.statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
-                throw new RandomizerException("Only NoOperation instruction can be modified to other type!");
+            if (nop.statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation && nop.statementType != ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
+                throw new RandomizerException("Only NoOperation and UnconditionalJump instructions can be modified to ConditionalJump!");
             if (nop.parent == null || nop.parent.parent == null)
                 throw new RandomizerException("Instruction -> basic block -> function parent link is broken.");
             if (nop.parent.parent != target.parent)
