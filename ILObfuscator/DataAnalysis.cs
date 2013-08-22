@@ -90,17 +90,17 @@ namespace Obfuscator
              * the function. During the algorithm we will remove the variables from these
              * lists that are not really dead at the given point.
              */
-             SetAllVariablesAsDead(func, state);
+            SetAllVariablesAsDead(func, state);
 
-             /*
-              * If we are going upwards (looking for FREE dead variables), we start from
-              * the point called "fake exit block", the one and only ultimate endpoint
-              * of all functions ever created. Thank you Kohlmann!
-              * 
-              * If going downwards (looking for NOT_INITIALIZED dead variables),
-              * we start from the very first basic block (func.BasicBlocks[0]).
-              */
-             BasicBlock block = (state == Variable.State.Free) ? func.GetFakeExitBasicBlock() : func.GetEntranceBasicBlock();
+            /*
+             * If we are going upwards (looking for FREE dead variables), we start from
+             * the point called "fake exit block", the one and only ultimate endpoint
+             * of all functions ever created. Thank you Kohlmann!
+             * 
+             * If going downwards (looking for NOT_INITIALIZED dead variables),
+             * we start from the very first basic block (func.BasicBlocks[0]).
+             */
+            BasicBlock block = (state == Variable.State.Free) ? func.GetFakeExitBasicBlock() : func.GetEntranceBasicBlock();
 
             /*
              * We go through all the instructions and deal with all their
@@ -135,7 +135,7 @@ namespace Obfuscator
              */
             foreach (Instruction ins in actual.Instructions)
             {
-                if (/*ins.isFake == false*/ true) 
+                if (/*ins.isFake == false*/ true)
                 {
                     foreach (Variable var in ins.RefVariables)
                         deal_with_var(var, ins, state);
@@ -156,7 +156,7 @@ namespace Obfuscator
             List<BasicBlock> bblist = (state == Variable.State.Free) ? actual.getPredecessors : actual.getSuccessors;
             foreach (BasicBlock block in bblist)
             {
-                if ( !done_ids.Contains(block.ID) )
+                if (!done_ids.Contains(block.ID))
                     recursive(block, state);
             }
         }
@@ -196,7 +196,7 @@ namespace Obfuscator
                  * If the variable is not in the instruction's dead variables list, then it indicates
                  * that we have dealt with this instruction.
                  */
-                if ( i.DeadVariables.ContainsKey(var) && i.DeadVariables[var] == state )
+                if (i.DeadVariables.ContainsKey(var) && i.DeadVariables[var] == state)
                     deal_with_var(var, i, state);
             }
         }
@@ -313,5 +313,58 @@ namespace Obfuscator
         }
 
         /* ----------- isLoopBody, isMainRoute algorithms end ------------ */
+
+        /// <summary>
+        /// Function to check state collisions for the RefreshNext() method.
+        /// </summary>
+        /// <param name="actual">The actual instruction.</param>
+        /// <param name="var">The actual variable.</param>
+        /// <param name="state">The state we want to refresh to.</param>
+        /// <returns>The state we should refresh to.</returns>
+        public static Variable.State CheckPrecedingStates(Instruction actual, Variable var, Variable.State state)
+        {
+            /* So we get all states from the preceding instructions. */
+            List<Variable.State> preceding_states = new List<Variable.State>();
+            foreach (Instruction ins in actual.GetPrecedingInstructions())
+            {
+                if (ins.DeadVariables.ContainsKey(var) && !preceding_states.Contains(ins.DeadVariables[var]))
+                    preceding_states.Add(ins.DeadVariables[var]);
+                else if (ins.DeadPointers.ContainsKey(var) && !preceding_states.Contains(ins.DeadPointers[var].State))
+                    preceding_states.Add(ins.DeadPointers[var].State);
+            }
+
+            /* We only have to do anything if there are more than one of those. */
+            if (preceding_states.Count() > 1)
+            {
+                switch (state)
+                {
+                    case Variable.State.Free:
+                        if (preceding_states.Contains(Variable.State.Not_Initialized))
+                        {
+                            /* FREE meets NOT_INITIALIZED */
+                            state = Variable.State.Not_Initialized;
+                        }
+                        else if (preceding_states.Contains(Variable.State.Filled))
+                        {
+                            /* FREE meets FILLED */
+                            state = Variable.State.Filled;
+                        }
+                        break;
+
+                    case Variable.State.Filled:
+                        if (preceding_states.Contains(Variable.State.Not_Initialized))
+                        {
+                            /* 
+                             * FILLED meets NOT_INITIALIZED
+                             * 
+                             * TODO: What should we do in these cases?
+                             */
+                            throw new ObfuscatorException("Unhandled state collision, do something!");
+                        }
+                        break;
+                }
+            }
+            return state;
+        }
     }
 }

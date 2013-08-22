@@ -522,7 +522,7 @@ namespace Internal
                  * 
                  * NOTE: we don't know right now what to do if NOT_INIT meets FILLED...
                  */
-                state = check_preceding_states(var, state);
+                state = DataAnalysis.CheckPrecedingStates(this, var, state);
 
                 DeadVariables[var] = state;
                 foreach (Instruction ins in GetFollowingInstructions())
@@ -539,58 +539,12 @@ namespace Internal
                 && DeadPointers[var].State != state)    // The states differ.
             {
                 /* Just like in the previous case, we have to check all the preceding states for collisions. */
-                state = check_preceding_states(var, state);
+                state = DataAnalysis.CheckPrecedingStates(this, var, state);
 
                 DeadPointers[var].State = state;
                 foreach (Instruction ins in GetFollowingInstructions())
                     ins.RefreshNext(var, state);
             }
-        }
-
-        private Variable.State check_preceding_states(Variable var, Variable.State state)
-        {
-            /* So we get all states from the preceding instructions. */
-            List<Variable.State> preceding_states = new List<Variable.State>();
-            foreach (Instruction ins in GetPrecedingInstructions())
-            {
-                if (ins.DeadVariables.ContainsKey(var) && !preceding_states.Contains(ins.DeadVariables[var]))
-                    preceding_states.Add(ins.DeadVariables[var]);
-                else if (ins.DeadPointers.ContainsKey(var) && !preceding_states.Contains(ins.DeadPointers[var].State))
-                    preceding_states.Add(ins.DeadPointers[var].State);
-            }
-
-            /* We only have to do anything if there are more than one of those. */
-            if (preceding_states.Count() > 1)
-            {
-                switch (state)
-                {
-                    case Variable.State.Free:
-                        if (preceding_states.Contains(Variable.State.Not_Initialized))
-                        {
-                            /* FREE meets NOT_INITIALIZED */
-                            state = Variable.State.Not_Initialized;
-                        }
-                        else if (preceding_states.Contains(Variable.State.Filled))
-                        {
-                            /* FREE meets FILLED */
-                            state = Variable.State.Filled;
-                        }
-                        break;
-
-                    case Variable.State.Filled:
-                        if (preceding_states.Contains(Variable.State.Not_Initialized))
-                        {
-                            /* 
-                             * FILLED meets NOT_INITIALIZED
-                             * 
-                             * TODO: What should we do in these cases?
-                             */
-                            throw new ObfuscatorException("Unhandled state collision, do something!");
-                        }
-                        break;
-                }
-            }
-            return state;
         }
     }
 
