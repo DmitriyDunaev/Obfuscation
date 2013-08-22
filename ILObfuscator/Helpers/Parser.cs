@@ -10,7 +10,7 @@ namespace Obfuscator
     public static class Parser
     {
 
-        //public static void ConditionalJumpInstruction(Instruction inst, out Variable left_value, out int right_value, Instruction.RelationalOperationType relop, BasicBlock true_bb, BasicBlock false_bb)
+        //public static void ConditionalJumpInstruction(Instruction inst, out Variable left_value, out int right_value, out Instruction.RelationalOperationType relop, out BasicBlock true_bb, out BasicBlock false_bb)
         //{
 
         //}
