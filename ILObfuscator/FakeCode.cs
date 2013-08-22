@@ -53,32 +53,33 @@ namespace Obfuscator
                         * However we must not choose this if we have no dead variables
                         * available for using as a left value present.
                         */
-                    if ( func.BasicBlocks.Count < 3                                                                                                          /*&&
-                        ( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) &&
-                        ( !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null )*/                                  )
+                    if ( func.BasicBlocks.Count < 3                                                                                                            &&
+                        (( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) ||
+                        ( !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null ))                                  )
                         continue;
 
-                    //if (Randomizer.GetSingleNumber(0, 99) < prob_of_cond_jump)
-                    //{
-                    //    if (func.BasicBlocks.Count < 3)
-                    //    {
-                    //        /* Though randomizer said we should do this, we unfortunately cannot. */
-                    //        GenerateFakeInstruction(ins);
-                    //    }
-                    //    /* This is where we generate a conditional jump.*/
+                    if (/*Randomizer.SingleNumber(0, 99) < prob_of_cond_jump*/ false)
+                    {
+                        if (func.BasicBlocks.Count < 3)
+                        {
+                            /* Though randomizer said we should do this, we unfortunately cannot. */
+                            GenerateFakeInstruction(ins);
+                        }
+                        /* This is where we generate a conditional jump.*/
                         GenerateConditionalJump(ins);
-                    //}
-                    //else
-                    //{
-                    //    if  ( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) &&
-                    //        ( !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null )                                  )
-                    //    {
-                    //        /* Though randomizer said we should do this, we unfortunately cannot. */
-                    //        GenerateConditionalJump(ins);
-                    //    }
-                    //    /* This is where we generate instructions with dead variables. */
-                    //    GenerateFakeInstruction(ins);
-                    //}
+                    }
+                    else
+                    {
+                        if  (( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) ||
+                            (  !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null )                                  )
+                        {
+                            /* Though randomizer said we should do this, we unfortunately cannot. */
+                            //GenerateConditionalJump(ins);
+                            continue;
+                        }
+                        /* This is where we generate instructions with dead variables. */
+                        GenerateFakeInstruction(ins);
+                    }
 
                     /* The instruction is made, so we have to refresh the states of the dead variables. */
                     ins.RefreshNext();
@@ -236,7 +237,8 @@ namespace Obfuscator
                              */
                             int min = Convert.ToInt32(Math.Ceiling(Math.Log(Common.GlobalMinNumber, 2)));
                             int max = Convert.ToInt32(Math.Floor(Math.Log(Common.GlobalMaxNumber, 2)));
-                            int num = Randomizer.SingleNumber(min, max);
+                            int pow = Randomizer.SingleNumber(min, max);
+                            int num = Convert.ToInt32(Math.Pow(2, pow));
 
                             ins.MakeFullAssignment(leftvalue, leftvalue, null, num, op);
                         }
@@ -260,24 +262,32 @@ namespace Obfuscator
                         rightvalues[1] = tmp;
                     }
 
-                    switch (statementType)
+                    /* 
+                     * If we are in a loop body, then we can only make a full assignment like that:
+                     * t1 = t2 op t1
+                     */
+                    if (DataAnalysis.isLoopBody(ins.parent) || statementType == StatementTypeType.EnumValues.eFullAssignment)
                     {
-                        case StatementTypeType.EnumValues.eCopy:
-                            ins.MakeCopy(leftvalue, rightvalues.First(), null);
-                            break;
-                        case StatementTypeType.EnumValues.eUnaryAssignment:
-                            ins.MakeUnaryAssignment(leftvalue, rightvalues.First(), Instruction.UnaryOperationType.ArithmeticNegation);
-                            break;
-                        case StatementTypeType.EnumValues.eFullAssignment:
-                            /* Here we random generate an operator: + or - */
-                            /* TODO: (efficient) * and / */
-                            Instruction.ArithmeticOperationType op =
-                                (Instruction.ArithmeticOperationType)Randomizer.OneFromMany(Instruction.ArithmeticOperationType.Addition    ,
-                                                                                            Instruction.ArithmeticOperationType.Subtraction );
+                        /* Here we random generate an operator: + or - */
+                        /* TODO: (efficient) * and / */
+                        Instruction.ArithmeticOperationType op =
+                            (Instruction.ArithmeticOperationType)Randomizer.OneFromMany(Instruction.ArithmeticOperationType.Addition,
+                                                                                        Instruction.ArithmeticOperationType.Subtraction);
 
+                        if (DataAnalysis.isLoopBody(ins.parent))
+                            ins.MakeFullAssignment(leftvalue, rightvalues[0], leftvalue, null, op);
+
+                        else
                             ins.MakeFullAssignment(leftvalue, rightvalues[0], rightvalues[1], null, op);
-                            break;
                     }
+                    
+                    /* If we choose Copy. */
+                    else if (statementType == StatementTypeType.EnumValues.eCopy)
+                        ins.MakeCopy(leftvalue, rightvalues.First(), null);
+
+                    /* If we choose Unary Assignment. */
+                    else
+                        ins.MakeUnaryAssignment(leftvalue, rightvalues.First(), Instruction.UnaryOperationType.ArithmeticNegation);
                     break;
             }
         }
