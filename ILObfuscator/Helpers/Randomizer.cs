@@ -85,6 +85,22 @@ namespace Obfuscator
 
 
         /// <summary>
+        /// Shuffles the order of elements in a generic list
+        /// </summary>
+        /// <typeparam name="T">Type of list elements</typeparam>
+        /// <param name="original">The original list</param>
+        /// <returns>The shuffled list</returns>
+        private static List<T> ShuffleList<T>(List<T> original)
+        {
+            List<int> randomlist = Randomizer.MultipleNumbers(original.Count(), 0, original.Count() - 1, false, false);
+            List<T> newlist = new List<T>();
+            foreach (int i in randomlist)
+                newlist.Add(original[i]);
+            return newlist;
+        }
+
+
+        /// <summary>
         /// Randomly selects one value from many
         /// </summary>
         /// <param name="many">Values one-by-one</param>
