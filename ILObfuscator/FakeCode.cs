@@ -48,9 +48,10 @@ namespace Obfuscator
                          * However we must not choose this if we have no dead variables
                          * available for using as a left value present.
                          */
-                        if (/*func.BasicBlocks.Count < 3 && */GetRandomLeftValue(ins, DataAnalysis.isMainRoute(ins.parent)) == null)
+                        if (/*func.BasicBlocks.Count < 3                                                                                                          && */
+                            ( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) &&
+                            ( !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null )                                  )
                             continue;
-                        //    throw new ObfuscatorException("We cannot really do anything with this instruction right now, sorry.");
 
                         //if (Randomizer.GetSingleNumber(0, 99) < prob_of_cond_jump)
                         //{
@@ -64,7 +65,8 @@ namespace Obfuscator
                         //}
                         //else
                         //{
-                        //    if (GetRandomLeftValue(ins) == null)
+                        //    if  ( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) &&
+                        //        ( !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null )                                  )
                         //    {
                         //        /* Though randomizer said we should do this, we unfortunately cannot. */
                         //        GenerateConditionalJump(ins);
@@ -140,74 +142,12 @@ namespace Obfuscator
             Instruction splithere = jumptarget.Instructions[Randomizer.SingleNumber(0, jumptarget.Instructions.Count - 1)];
             jumptarget = jumptarget.SplitAfterInstruction(splithere);
 
-            /*
-             * When we make a coditional jump here, we use a (fake) parameter with
-             * a fixed value (min, max), and we must assure that the condition
-             * will always end up as false.
-             * 
-             * These are the coditions that can satisfy this need:
-             * (a, b: const, a < min, b > max)
-             *  - p < <= == a    (1)
-             *  - p > >= == b    (2)
-             *  (These cannot be more complex because of TAC.)
-             *  
-             * So we get a random parameter with a fixed value, we get a random
-             * constant, and we generate the condition according to these.
+            /* 
+             * Now we have done every preparation, so we can make a random conditional
+             * jump here, which has to be always false.
              */
-            Variable param = Randomizer.FakeInputParameter(ins.parent.parent);
-            
-            /* We initialize these just to avoid further errors, it means nothing. */
-            int constant = 0;
-            Instruction.RelationalOperationType type = Instruction.RelationalOperationType.NotEquals;
-            
-            /* We decide whether we want the (1) or (2) type. */
-            switch (Randomizer.SingleNumber(1, 2))
-            {
-                case 1:
-                    /* We generate an a, where a < min. */
-                    constant = Randomizer.SingleNumber(0, (int)param.fixedMin - 1);
-
-                    /* We decide the operator type. */
-                    switch (Randomizer.SingleNumber(0, 2))
-                    {
-                        case 0:
-                            type = Instruction.RelationalOperationType.Equals;
-                            break;
-                        case 1:
-                            type = Instruction.RelationalOperationType.Smaller;
-                            break;
-                        case 2:
-                            type = Instruction.RelationalOperationType.SmallerOrEquals;
-                            break;
-                    }
-                    break;
-
-                case 2:
-                    /* We generate a b, where b > max. */
-                    /* TODO: a more reasonable upper bound. */
-                    constant = Randomizer.SingleNumber((int)param.fixedMax + 1, (int)param.fixedMax + 1000);
-
-                    /* We decide the operator type. */
-                    switch (Randomizer.SingleNumber(0, 2))
-                    {
-                        case 0:
-                            type = Instruction.RelationalOperationType.Equals;
-                            break;
-                        case 1:
-                            type = Instruction.RelationalOperationType.Greater;
-                            break;
-                        case 2:
-                            type = Instruction.RelationalOperationType.GreaterOrEquals;
-                            break;
-                    }
-                    break;
-            }
-
-            /* Now we have everything set properly, now we can make the Conditional jump. */
-            ins.MakeConditionalJump(param, constant, type, jumptarget);
+            Randomizer.GenerateConditionalJumpInstruction(ins, Instruction.ConditionType.AlwaysFalse, jumptarget);
         }
-
-        /* TODO: more reasonable random numbers... */
 
         /// <summary>
         /// Function to make an actual fake instruction out of a Nop.
@@ -215,14 +155,24 @@ namespace Obfuscator
         /// <param name="ins">The nop we want to work on.</param>
         private static void GenerateFakeInstruction(Instruction ins)
         {
-            /* 
-             * First we get a left value.
-             * If we aren't in the main route, then we cannot use NOT_INITIALIZED ones as left value.
-             */
-            Variable leftvalue = GetRandomLeftValue(ins, DataAnalysis.isMainRoute(ins.parent));
+            /* First we get a left value. */
+            Variable leftvalue;
+
+            if (DataAnalysis.isMainRoute(ins.parent))
+                leftvalue = Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized);
+
+            /* If we aren't in the main route, then we cannot use NOT_INITIALIZED ones as left value. */
+            else
+                leftvalue = Randomizer.DeadVariable(ins, Variable.State.Free);
 
             /* Then we check how many variables can we use as right value. */
             List<Variable> rightvalues = GetRandomRightValues(ins, 2);
+
+            /* We random generate a statement type which we may not use according to the available right values. */
+            StatementTypeType.EnumValues statementType =
+                (StatementTypeType.EnumValues) Randomizer.OneFromMany ( StatementTypeType.EnumValues.eCopy              ,
+                                                                        StatementTypeType.EnumValues.eUnaryAssignment   ,
+                                                                        StatementTypeType.EnumValues.eFullAssignment    );
 
             /*
              * The number of the available right values determines which kind of instructions
@@ -254,140 +204,76 @@ namespace Obfuscator
 
                     /* We don't have any right values, so we have to copy a constant value. */
                     else
-                        ins.MakeCopy(leftvalue, null, Randomizer.SingleNumber(0, 1000));
+                        ins.MakeCopy(leftvalue, null, Randomizer.SingleNumber(Common.GlobalMinNumber, Common.GlobalMaxNumber));
                     break;
 
                 case 1:
-                    int rnd = Randomizer.SingleNumber(1, 3);
-
                     /* We choose Full Assignment, or rightvalue is the same as leftvalue, or we are in a loop body. */
-                    if (DataAnalysis.isLoopBody(ins.parent) || leftvalue.Equals(rightvalues[0]) || rnd == 3)
+                    if (DataAnalysis.isLoopBody(ins.parent) || leftvalue.Equals(rightvalues[0]) 
+                                                            || statementType == StatementTypeType.EnumValues.eFullAssignment)
                     {
                         /* Here we random generate an operator. */
-                        Instruction.ArithmeticOperationType op;
-                        // ********* Please, use Randomizer.GetOneFromMany(...) method. Find its usage in the project.
-                        switch (Randomizer.SingleNumber(0, 3))
-                        {
-                            case 0:
-                                op = Instruction.ArithmeticOperationType.Addition;
-                                break;
-                            case 1:
-                                op = Instruction.ArithmeticOperationType.Subtraction;
-                                break;
-                            case 2:
-                                op = Instruction.ArithmeticOperationType.Multiplication;
-                                break;
-                            case 3:
-                                op = Instruction.ArithmeticOperationType.Division;
-                                break;
-                            default:
-                                /* Just to avoid the error... */
-                                
-                            // *********** Please, do not do it! By this you are not avoiding error, but covering it! 
-                            // *********** Throw exception instead.
-                                op = Instruction.ArithmeticOperationType.Addition;
-                                break;
-                        }
+                        Instruction.ArithmeticOperationType op = 
+                            (Instruction.ArithmeticOperationType) Randomizer.OneFromMany(Instruction.ArithmeticOperationType.Addition        ,
+                                                                                         Instruction.ArithmeticOperationType.Division        ,
+                                                                                         Instruction.ArithmeticOperationType.Multiplication  ,
+                                                                                         Instruction.ArithmeticOperationType.Subtraction     );
+                        
                         if (op == Instruction.ArithmeticOperationType.Addition || op == Instruction.ArithmeticOperationType.Subtraction)
-                            // *********** The same problem as below - do not use 0 and 1000 as numerical values.
-                            ins.MakeFullAssignment(leftvalue, leftvalue, null, Randomizer.SingleNumber(0, 1000), op);
+                            ins.MakeFullAssignment(leftvalue, leftvalue, null, Randomizer.SingleNumber(Common.GlobalMinNumber, Common.GlobalMaxNumber), op);
+
                         else
                         {
-                            // ************** Please do not use any other constants except for defined in Common class
-
-                            // BAD USAGE:
-                            int num = (int)Math.Pow(2, Randomizer.SingleNumber(1, 5));
-                            
-                            // EXAMPLE OF CORRECT USAGE:
+                            /* 
+                             * Here we generate an integer number which is the power of 2, and is
+                             * within the boundaries of GlobalMinNumber and GlobalMaxNumber.
+                             */
                             int min = Convert.ToInt32(Math.Ceiling(Math.Log(Common.GlobalMinNumber, 2)));
                             int max = Convert.ToInt32(Math.Floor(Math.Log(Common.GlobalMaxNumber, 2)));
-                            num = Randomizer.SingleNumber(min, max);
+                            int num = Randomizer.SingleNumber(min, max);
 
                             ins.MakeFullAssignment(leftvalue, leftvalue, null, num, op);
                         }
                     }
 
                     /* If we choose Unary Assignment. */
-                    if (rnd == 2)
+                    else if (statementType == StatementTypeType.EnumValues.eUnaryAssignment)
                         ins.MakeUnaryAssignment(leftvalue, rightvalues.First(), Instruction.UnaryOperationType.ArithmeticNegation);
 
                     /* If we choose Copy. */
-                    else if (rnd == 1)
+                    else
                         ins.MakeCopy(leftvalue, rightvalues.First(), null);
                     break;
 
                 case 2:
+                    /* We make sure that the first right value isn't the same as the left value. */
                     if (leftvalue.Equals(rightvalues.First()))
                     {
                         Variable tmp = rightvalues[0];
                         rightvalues[0] = rightvalues[1];
                         rightvalues[1] = tmp;
                     }
-                    switch (Randomizer.SingleNumber(1, 3))
+
+                    switch (statementType)
                     {
-                        case 1:
+                        case StatementTypeType.EnumValues.eCopy:
                             ins.MakeCopy(leftvalue, rightvalues.First(), null);
                             break;
-                        case 2:
+                        case StatementTypeType.EnumValues.eUnaryAssignment:
                             ins.MakeUnaryAssignment(leftvalue, rightvalues.First(), Instruction.UnaryOperationType.ArithmeticNegation);
                             break;
-                        case 3:
+                        case StatementTypeType.EnumValues.eFullAssignment:
                             /* Here we random generate an operator: + or - */
-                            /* QUESTION: do we want * and / here? */
+                            /* TODO: (efficient) * and / */
+                            Instruction.ArithmeticOperationType op =
+                                (Instruction.ArithmeticOperationType)Randomizer.OneFromMany(Instruction.ArithmeticOperationType.Addition    ,
+                                                                                            Instruction.ArithmeticOperationType.Subtraction );
 
-                            // ******** Now do it for Addition and Subtraction only. Multiplication and division will be realized later.
-                            // ******** But mark the code with 'TODO:' in order not to forget in future
-
-                            Instruction.ArithmeticOperationType op;
-                            switch (Randomizer.SingleNumber(0, 3))
-                            {
-                                case 0:
-                                    op = Instruction.ArithmeticOperationType.Addition;
-                                    break;
-                                case 1:
-                                    op = Instruction.ArithmeticOperationType.Subtraction;
-                                    break;
-                                //case 2:
-                                //    op = Instruction.ArithmeticOperationType.Multiplication;
-                                //    break;
-                                //case 3:
-                                //    op = Instruction.ArithmeticOperationType.Division;
-                                //    break;
-                                default:
-                                    /* Just to avoid the error... */
-                                    op = Instruction.ArithmeticOperationType.Addition;
-                                    break;
-                            }
                             ins.MakeFullAssignment(leftvalue, rightvalues[0], rightvalues[1], null, op);
                             break;
                     }
                     break;
             }
-        }
-
-        /// <summary>
-        /// Returns a variable from the instruction's DeadVariables list with FREE or NOT_INITIALIZED state.
-        /// </summary>
-        /// <param name="ins">The actual instruction.</param>
-        /// <param name="ins">Do we want NOT_INITIALIZED as well, or not?</param>
-        /// <returns>A proper variable, or null, if no such exists.</returns>
-        private static Variable GetRandomLeftValue(Instruction ins, bool not_init)
-        {
-            /* First we gather the variables with the proper state. */
-            List<Variable> proper_vars = new List<Variable>();
-            foreach (Variable var in ins.DeadVariables.Keys)
-            {
-                if (ins.DeadVariables[var] == Variable.State.Free || (not_init && ins.DeadVariables[var] == Variable.State.Not_Initialized))
-                    proper_vars.Add(var);
-            }
-
-            /* If no such exists, we return null. */
-            if (proper_vars.Count == 0)
-                return null;
-
-            /* If there are ones that fit our needs, then we coose one randomly. */
-            else
-                return proper_vars[Randomizer.SingleNumber(0, proper_vars.Count - 1)];
         }
 
         /// <summary>
