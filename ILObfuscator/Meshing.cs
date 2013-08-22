@@ -90,14 +90,8 @@ namespace Obfuscator
             BasicBlock fake3 = fake2.SplitAfterInstruction(fake2.Instructions.Last());
 
             // Creating a clone of the original target in order to make the CFT more obfuscated
-            //BasicBlock polyrequtarget = originaltarget.Clone(true);
-            
-            // ************ Andris! Please, check if it is what you wanted to do with Clone(...)
-            /// *********** Dmitriy: Can't use the DeepClone, tomorrow I will write an issue about this!
-            BasicBlock polyrequtarget = Obfuscator.Common.DeepClone(originaltarget) as BasicBlock;
+            BasicBlock polyrequtarget = new BasicBlock(originaltarget, originaltarget.getSuccessors);
             polyrequtarget.Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
-            // ************ Please, check successor-predecessor links that you are setting below, maybe there is a problem...
-            // ************ If you need method for setting predecessors (like LinkToSuccessors), please let me know
 
             // And now setting the edges
             fake2.LinkToSuccessor(polyrequtarget, true);

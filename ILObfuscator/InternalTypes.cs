@@ -185,14 +185,20 @@ namespace Internal
         /// </summary>
         /// <param name="original">Original basic block to be copied</param>
         /// <param name="newSuccessors">List of new successors</param>
-        /// <param name="newPredecessors">List of new predecessors</param>
-        public BasicBlock(BasicBlock original, List<BasicBlock> newSuccessors, List<BasicBlock> newPredecessors)
+        public BasicBlock(BasicBlock original, List<BasicBlock> newSuccessors)
         {            
             this._ID = new IDManager();
             this.dead = original.dead;
             this.parent = original.parent;
             this.Instructions = Common.DeepClone(original.Instructions) as List<Instruction>;
-            // TODO (Andras): Add necessary manipulations and assignments here
+            foreach (Instruction i in Instructions)
+            {
+                i.parent = this;
+            }
+            foreach (BasicBlock bb in newSuccessors)
+            {
+                LinkToSuccessor(bb);
+            }
         }
 
 
