@@ -25,59 +25,63 @@ namespace Obfuscator
         public static void Generate (Function func)
         {
             /* We have to go through all the nop's in the function. */
-            //************* Why not to use FOREACH?
-            for (int j = 0; j < func.BasicBlocks.Count; j++)
+            List<Instruction> nops = new List<Instruction>();
+            foreach (BasicBlock bb in func.BasicBlocks)
             {
-                BasicBlock bb = func.BasicBlocks[j];
-                for (int i = 0; i < bb.Instructions.Count; i++)
+                foreach (Instruction ins in bb.Instructions)
                 {
-                    Instruction ins = bb.Instructions[i];
                     if (ins.statementType == StatementTypeType.EnumValues.eNoOperation)
-                    {
-                        /*
-                         * Now we found a nop, so we have to decide what to do with it.
-                         * 
-                         * At a certain probability we generate a Conditional Jump, which condition
-                         * depends on a parameter value, and happens to be always false.
-                         * We use these jumps to make the control flow irreducible.
-                         * However we must not choose this if we have only one basic block
-                         * apart from the "fake exit block". So we must have at least 3 BBs.
-                         * 
-                         * At the remaining probability we generate instructions that are
-                         * using the dead variables present at the point of the actual nop.
-                         * However we must not choose this if we have no dead variables
-                         * available for using as a left value present.
-                         */
-                        if (/*func.BasicBlocks.Count < 3                                                                                                          && */
-                            ( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) &&
-                            ( !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null )                                  )
-                            continue;
+                        nops.Add(ins);
+                }
+            }
+            
+            foreach (Instruction ins in nops)
+            {
+                if (ins.statementType == StatementTypeType.EnumValues.eNoOperation)
+                {
+                    /*
+                        * Now we found a nop, so we have to decide what to do with it.
+                        * 
+                        * At a certain probability we generate a Conditional Jump, which condition
+                        * depends on a parameter value, and happens to be always false.
+                        * We use these jumps to make the control flow irreducible.
+                        * However we must not choose this if we have only one basic block
+                        * apart from the "fake exit block". So we must have at least 3 BBs.
+                        * 
+                        * At the remaining probability we generate instructions that are
+                        * using the dead variables present at the point of the actual nop.
+                        * However we must not choose this if we have no dead variables
+                        * available for using as a left value present.
+                        */
+                    if ( func.BasicBlocks.Count < 3                                                                                                          /*&&
+                        ( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) &&
+                        ( !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null )*/                                  )
+                        continue;
 
-                        //if (Randomizer.GetSingleNumber(0, 99) < prob_of_cond_jump)
-                        //{
-                        //    if (func.BasicBlocks.Count < 3)
-                        //    {
-                        //        /* Though randomizer said we should do this, we unfortunately cannot. */
-                        //        GenerateFakeInstruction(ins);
-                        //    }
-                        //    /* This is where we generate a conditional jump.*/
-                        //    GenerateConditionalJump(ins);
-                        //}
-                        //else
-                        //{
-                        //    if  ( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) &&
-                        //        ( !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null )                                  )
-                        //    {
-                        //        /* Though randomizer said we should do this, we unfortunately cannot. */
-                        //        GenerateConditionalJump(ins);
-                        //    }
-                            /* This is where we generate instructions with dead variables. */
-                            GenerateFakeInstruction(ins);
-                        //}
+                    //if (Randomizer.GetSingleNumber(0, 99) < prob_of_cond_jump)
+                    //{
+                    //    if (func.BasicBlocks.Count < 3)
+                    //    {
+                    //        /* Though randomizer said we should do this, we unfortunately cannot. */
+                    //        GenerateFakeInstruction(ins);
+                    //    }
+                    //    /* This is where we generate a conditional jump.*/
+                        GenerateConditionalJump(ins);
+                    //}
+                    //else
+                    //{
+                    //    if  ( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) &&
+                    //        ( !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null )                                  )
+                    //    {
+                    //        /* Though randomizer said we should do this, we unfortunately cannot. */
+                    //        GenerateConditionalJump(ins);
+                    //    }
+                    //    /* This is where we generate instructions with dead variables. */
+                    //    GenerateFakeInstruction(ins);
+                    //}
 
-                        /* The instruction is made, so we have to refresh the states of the dead variables. */
-                        ins.RefreshNext();
-                    }
+                    /* The instruction is made, so we have to refresh the states of the dead variables. */
+                    ins.RefreshNext();
                 }
             }
         }
@@ -91,9 +95,10 @@ namespace Obfuscator
             /* 
              * Before doing anything, we have to split the basic block holding this
              * instruction, so we can make a conditional jump at the and of the
-             * new basic block.
+             * new basic block, unless it is already the last instruction.
              */
-            ins.parent.SplitAfterInstruction(ins);
+            if ( !ins.Equals(ins.parent.Instructions.Last()) )
+                ins.parent.SplitAfterInstruction(ins);
 
             BasicBlock jumptarget;
             /*
@@ -134,13 +139,14 @@ namespace Obfuscator
             }
 
             /* 
+             * TODO:
              * At this point we have a perfectly chosen jumptarget, so we should
              * split it into two pieces, so we can make a jump right in the middle
              * of the basic block, making it harder to recognize the original control
              * flow.
              */
-            Instruction splithere = jumptarget.Instructions[Randomizer.SingleNumber(0, jumptarget.Instructions.Count - 1)];
-            jumptarget = jumptarget.SplitAfterInstruction(splithere);
+            //Instruction splithere = jumptarget.Instructions[Randomizer.SingleNumber(0, jumptarget.Instructions.Count - 1)];
+            //jumptarget = jumptarget.SplitAfterInstruction(splithere);
 
             /* 
              * Now we have done every preparation, so we can make a random conditional
