@@ -299,15 +299,17 @@ namespace Obfuscator
         /// <param name="bb">The block containing the conditional jump to mesh up</param>
         private static void InsertConditionals(BasicBlock bb)
         {
-            Variable var = bb.Instructions.Last().GetVarFromCondition();
-            Instruction.RelationalOperationType relop = bb.Instructions.Last().GetRelopFromCondition();
-            int C = bb.Instructions.Last().GetConstFromCondition();
+            Variable var = null;
+            Instruction.RelationalOperationType relop = 0;
+            int C = 0;
+            BasicBlock truesucc = null;
+            BasicBlock falsesucc = null;
+
+            Parser.ConditionalJumpInstruction(bb.Instructions.Last(), out var, out C, out relop, out truesucc, out falsesucc);
 
             List<Cond> condlist = GenetateCondList(C, relop);
-            BasicBlock truesucc = bb.Instructions.Last().GetTrueSucc();
-            BasicBlock falsesucc = bb.Instructions.Last().GetFalseSucc();
-            List<BasicBlock> generatedblocks = GenerateBlocks(bb, var, truesucc, falsesucc, condlist);
             
+            List<BasicBlock> generatedblocks = GenerateBlocks(bb, var, truesucc, falsesucc, condlist);
             
             /// TODO:   Create the polyRequired clones and the jumps to them
         }
