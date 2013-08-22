@@ -179,6 +179,29 @@ namespace Internal
             parent.BasicBlocks.Add(this);
         }
 
+
+        /// <summary>
+        /// Copy constructor for basic block
+        /// </summary>
+        /// <param name="original">Original basic block to be copied</param>
+        /// <param name="newSuccessors">List of new successors</param>
+        public BasicBlock(BasicBlock original, List<BasicBlock> newSuccessors)
+        {            
+            this._ID = new IDManager();
+            this.dead = original.dead;
+            this.parent = original.parent;
+            this.Instructions = Common.DeepClone(original.Instructions) as List<Instruction>;
+            foreach (Instruction i in Instructions)
+            {
+                i.parent = this;
+            }
+            foreach (BasicBlock bb in newSuccessors)
+            {
+                LinkToSuccessor(bb);
+            }
+        }
+
+
         // Overloaded methods
         public override bool Equals(object obj)
         {

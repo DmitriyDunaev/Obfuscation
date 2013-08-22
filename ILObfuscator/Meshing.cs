@@ -90,14 +90,8 @@ namespace Obfuscator
             BasicBlock fake3 = fake2.SplitAfterInstruction(fake2.Instructions.Last());
 
             // Creating a clone of the original target in order to make the CFT more obfuscated
-            //BasicBlock polyrequtarget = originaltarget.Clone(true);
-            
-            // ************ Andris! Please, check if it is what you wanted to do with Clone(...)
-            /// *********** Dmitriy: Can't use the DeepClone, tomorrow I will write an issue about this!
-            BasicBlock polyrequtarget = Obfuscator.Common.DeepClone(originaltarget) as BasicBlock;
+            BasicBlock polyrequtarget = new BasicBlock(originaltarget, originaltarget.getSuccessors);
             polyrequtarget.Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
-            // ************ Please, check successor-predecessor links that you are setting below, maybe there is a problem...
-            // ************ If you need method for setting predecessors (like LinkToSuccessors), please let me know
 
             // And now setting the edges
             fake2.LinkToSuccessor(polyrequtarget, true);
@@ -124,7 +118,7 @@ namespace Obfuscator
             dead1.dead = true;
 
             // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always false
-            bb.Instructions.Last().ConvertUncondToCondJump(Instruction.ConditionType.AlwaysFalse, dead1);
+            Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, dead1);
 
             // Now including another one, with the basicblock splitter
             BasicBlock dead2 = dead1.SplitAfterInstruction(dead1.Instructions.Last());
@@ -141,7 +135,6 @@ namespace Obfuscator
             dead3.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
 
             // Now creating the conditional jump
-            //dead1.Instructions.Last().MakeConditionalJump(bb.parent.LocalVariables[Randomizer.SingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.SingleNumber(0, 100), Instruction.RelationalOperationType.Smaller, dead3);
             Randomizer.GenerateConditionalJumpInstruction(dead1.Instructions.Last(), Instruction.ConditionType.Random, dead3);
 
             // And finally we link the remaining blocks
@@ -263,7 +256,12 @@ namespace Obfuscator
             /// <param name="originalrelop">The original relational operator</param>
             private void GreaterPattern(Instruction.RelationalOperationType originalrelop)
             {
-                relop = Randomizer.RelationalOperator();
+                relop = (Instruction.RelationalOperationType)Randomizer.OneFromMany(Instruction.RelationalOperationType.Equals,
+                                                                                    Instruction.RelationalOperationType.Greater,
+                                                                                    Instruction.RelationalOperationType.GreaterOrEquals,
+                                                                                    Instruction.RelationalOperationType.NotEquals,
+                                                                                    Instruction.RelationalOperationType.Smaller,
+                                                                                    Instruction.RelationalOperationType.SmallerOrEquals);
                 if (relop == Instruction.RelationalOperationType.Greater || relop == Instruction.RelationalOperationType.GreaterOrEquals || relop == Instruction.RelationalOperationType.Equals)
                 {
                     if (originalrelop == Instruction.RelationalOperationType.Greater || originalrelop == Instruction.RelationalOperationType.GreaterOrEquals || originalrelop == Instruction.RelationalOperationType.NotEquals)
@@ -279,7 +277,12 @@ namespace Obfuscator
             /// <param name="originalrelop">The original relational operator</param>
             private void LessPattern(Instruction.RelationalOperationType originalrelop)
             {
-                relop = Randomizer.RelationalOperator();
+                relop = (Instruction.RelationalOperationType)Randomizer.OneFromMany(Instruction.RelationalOperationType.Equals,
+                                                                                    Instruction.RelationalOperationType.Greater,
+                                                                                    Instruction.RelationalOperationType.GreaterOrEquals,
+                                                                                    Instruction.RelationalOperationType.NotEquals,
+                                                                                    Instruction.RelationalOperationType.Smaller,
+                                                                                    Instruction.RelationalOperationType.SmallerOrEquals);
                 if (relop == Instruction.RelationalOperationType.Smaller || relop == Instruction.RelationalOperationType.SmallerOrEquals || relop == Instruction.RelationalOperationType.Equals)
                 {
                     if (originalrelop == Instruction.RelationalOperationType.Greater || originalrelop == Instruction.RelationalOperationType.GreaterOrEquals || originalrelop == Instruction.RelationalOperationType.Equals)
@@ -296,15 +299,17 @@ namespace Obfuscator
         /// <param name="bb">The block containing the conditional jump to mesh up</param>
         private static void InsertConditionals(BasicBlock bb)
         {
-            Variable var = bb.Instructions.Last().GetVarFromCondition();
-            Instruction.RelationalOperationType relop = bb.Instructions.Last().GetRelopFromCondition();
-            int C = bb.Instructions.Last().GetConstFromCondition();
+            Variable var = null;
+            Instruction.RelationalOperationType relop = 0;
+            int C = 0;
+            BasicBlock truesucc = null;
+            BasicBlock falsesucc = null;
+
+            Parser.ConditionalJumpInstruction(bb.Instructions.Last(), out var, out C, out relop, out truesucc, out falsesucc);
 
             List<Cond> condlist = GenetateCondList(C, relop);
-            BasicBlock truesucc = bb.Instructions.Last().GetTrueSucc();
-            BasicBlock falsesucc = bb.Instructions.Last().GetFalseSucc();
-            List<BasicBlock> generatedblocks = GenerateBlocks(bb, var, truesucc, falsesucc, condlist);
             
+            List<BasicBlock> generatedblocks = GenerateBlocks(bb, var, truesucc, falsesucc, condlist);
             
             /// TODO:   Create the polyRequired clones and the jumps to them
         }
@@ -360,23 +365,6 @@ namespace Obfuscator
             }
 
             return bblist;
-        }
-
-        /// <summary>
-        /// Shuffles the content of a generic list, with the randomizer
-        /// </summary>
-        /// <typeparam name="T">The contents of the list</typeparam>
-        /// <param name="condlist">The list itself</param>
-        /// <returns>The new, shuffled list</returns>
-        private static List<T> ShuffleList<T>(List<T> condlist)
-        {
-            List<int> randomlist = Randomizer.MultipleNumbers(condlist.Count(), 0, condlist.Count()-1, false, false);
-            List<T> newlist = new List<T>();
-            foreach (int i in randomlist)
-            {
-                newlist.Add(condlist[i]);
-            }
-            return newlist;
         }
 
         /// <summary>
@@ -449,7 +437,7 @@ namespace Obfuscator
                 else if (i < -1) i--;
                 i *= -1;
             }
-            returnlist = ShuffleList<Cond>(returnlist);
+            returnlist = Randomizer.ShuffleList<Cond>(returnlist);
             RepositionLasts(returnlist);
             return returnlist;
         }

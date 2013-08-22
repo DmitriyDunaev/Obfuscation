@@ -184,27 +184,6 @@ namespace Internal
 
 
         /// <summary>
-        /// Converts UnconditionalJump instruction type to ConditionalJump (+ links Successors and Predecessors and changes the TAC text)
-        /// </summary>
-        /// <param name="conditiontype">The type of the condition</param>
-        /// <param name="target">Target basic block the control flow is transfered to, if the relation holds true</param>
-        public void ConvertUncondToCondJump(Instruction.ConditionType conditiontype, BasicBlock target)
-        {
-            if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
-                throw new ObfuscatorException("Only UnconditionalJump instruction can be converted to ConditionalJump type!");
-
-            // Change it to nop
-            statementType = ExchangeFormat.StatementTypeType.EnumValues.eNoOperation;
-            TACtext = "nop";
-            RefVariables.Clear();
-
-            // Make a ConditionalJump
-            Randomizer.GenerateConditionalJumpInstruction(this, conditiontype, target);
-
-        }
-
-
-        /// <summary>
         /// Makes UnconditionalJump instruction type from NoOperation (+ links Successors and Predecessors)
         /// </summary>
         /// <param name="target">Target basic block the control flow is transfered to after 'goto'</param>

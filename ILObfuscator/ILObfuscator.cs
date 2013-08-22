@@ -47,6 +47,15 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
 
+            // TESTING PARSER
+            Variable left;
+            int right;
+            BasicBlock ts;
+            BasicBlock fs; 
+            Instruction.RelationalOperationType rel;
+            Parser.ConditionalJumpInstruction(routine.Functions[1].BasicBlocks[18].Instructions.Last(), out left, out right, out rel, out ts, out fs);
+            // END  TEST
+
             Console.Write("Generation of fake NoOperation instructions");
             foreach (Function func in routine.Functions)
                 FakeCode.GenerateNoOperations(func);
