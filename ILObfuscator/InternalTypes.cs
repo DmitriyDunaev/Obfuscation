@@ -191,14 +191,8 @@ namespace Internal
             this.dead = original.dead;
             this.parent = original.parent;
             this.Instructions = Common.DeepClone(original.Instructions) as List<Instruction>;
-            foreach (Instruction i in Instructions)
-            {
-                i.parent = this;
-            }
-            foreach (BasicBlock bb in newSuccessors)
-            {
-                LinkToSuccessor(bb);
-            }
+            Instructions.ForEach(x => x.parent = this);
+            newSuccessors.ForEach(x => LinkToSuccessor(x));
         }
 
 
