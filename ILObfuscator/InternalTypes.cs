@@ -193,6 +193,7 @@ namespace Internal
             this.Instructions = Common.DeepClone(original.Instructions) as List<Instruction>;
             Instructions.ForEach(x => x.parent = this);
             newSuccessors.ForEach(x => LinkToSuccessor(x));
+            parent.BasicBlocks.Add(this);
         }
 
 
