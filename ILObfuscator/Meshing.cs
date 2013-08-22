@@ -124,7 +124,7 @@ namespace Obfuscator
             dead1.dead = true;
 
             // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always false
-            bb.Instructions.Last().ConvertUncondToCondJump(Instruction.ConditionType.AlwaysFalse, dead1);
+            Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, dead1);
 
             // Now including another one, with the basicblock splitter
             BasicBlock dead2 = dead1.SplitAfterInstruction(dead1.Instructions.Last());
@@ -141,7 +141,6 @@ namespace Obfuscator
             dead3.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
 
             // Now creating the conditional jump
-            //dead1.Instructions.Last().MakeConditionalJump(bb.parent.LocalVariables[Randomizer.SingleNumber(0, bb.parent.LocalVariables.Count - 1)], Randomizer.SingleNumber(0, 100), Instruction.RelationalOperationType.Smaller, dead3);
             Randomizer.GenerateConditionalJumpInstruction(dead1.Instructions.Last(), Instruction.ConditionType.Random, dead3);
 
             // And finally we link the remaining blocks
@@ -263,7 +262,12 @@ namespace Obfuscator
             /// <param name="originalrelop">The original relational operator</param>
             private void GreaterPattern(Instruction.RelationalOperationType originalrelop)
             {
-                relop = Randomizer.RelationalOperator();
+                relop = (Instruction.RelationalOperationType)Randomizer.OneFromMany(Instruction.RelationalOperationType.Equals,
+                                                                                    Instruction.RelationalOperationType.Greater,
+                                                                                    Instruction.RelationalOperationType.GreaterOrEquals,
+                                                                                    Instruction.RelationalOperationType.NotEquals,
+                                                                                    Instruction.RelationalOperationType.Smaller,
+                                                                                    Instruction.RelationalOperationType.SmallerOrEquals);
                 if (relop == Instruction.RelationalOperationType.Greater || relop == Instruction.RelationalOperationType.GreaterOrEquals || relop == Instruction.RelationalOperationType.Equals)
                 {
                     if (originalrelop == Instruction.RelationalOperationType.Greater || originalrelop == Instruction.RelationalOperationType.GreaterOrEquals || originalrelop == Instruction.RelationalOperationType.NotEquals)
@@ -279,7 +283,12 @@ namespace Obfuscator
             /// <param name="originalrelop">The original relational operator</param>
             private void LessPattern(Instruction.RelationalOperationType originalrelop)
             {
-                relop = Randomizer.RelationalOperator();
+                relop = (Instruction.RelationalOperationType)Randomizer.OneFromMany(Instruction.RelationalOperationType.Equals,
+                                                                                    Instruction.RelationalOperationType.Greater,
+                                                                                    Instruction.RelationalOperationType.GreaterOrEquals,
+                                                                                    Instruction.RelationalOperationType.NotEquals,
+                                                                                    Instruction.RelationalOperationType.Smaller,
+                                                                                    Instruction.RelationalOperationType.SmallerOrEquals);
                 if (relop == Instruction.RelationalOperationType.Smaller || relop == Instruction.RelationalOperationType.SmallerOrEquals || relop == Instruction.RelationalOperationType.Equals)
                 {
                     if (originalrelop == Instruction.RelationalOperationType.Greater || originalrelop == Instruction.RelationalOperationType.GreaterOrEquals || originalrelop == Instruction.RelationalOperationType.Equals)
@@ -363,23 +372,6 @@ namespace Obfuscator
         }
 
         /// <summary>
-        /// Shuffles the content of a generic list, with the randomizer
-        /// </summary>
-        /// <typeparam name="T">The contents of the list</typeparam>
-        /// <param name="condlist">The list itself</param>
-        /// <returns>The new, shuffled list</returns>
-        private static List<T> ShuffleList<T>(List<T> condlist)
-        {
-            List<int> randomlist = Randomizer.MultipleNumbers(condlist.Count(), 0, condlist.Count()-1, false, false);
-            List<T> newlist = new List<T>();
-            foreach (int i in randomlist)
-            {
-                newlist.Add(condlist[i]);
-            }
-            return newlist;
-        }
-
-        /// <summary>
         /// This function repositions the Cond or Conds with JumpType Last behind the last of the ambigous ones in the list
         /// </summary>
         /// <param name="condlist">A list of Conds to reorganize</param>
@@ -449,7 +441,7 @@ namespace Obfuscator
                 else if (i < -1) i--;
                 i *= -1;
             }
-            returnlist = ShuffleList<Cond>(returnlist);
+            returnlist = Randomizer.ShuffleList<Cond>(returnlist);
             RepositionLasts(returnlist);
             return returnlist;
         }

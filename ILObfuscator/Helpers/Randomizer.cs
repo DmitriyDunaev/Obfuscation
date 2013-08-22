@@ -75,22 +75,12 @@ namespace Obfuscator
 
 
         /// <summary>
-        /// Gets a random relational operation
-        /// </summary>
-        /// <returns>Random relational operator</returns>
-        public static Instruction.RelationalOperationType RelationalOperator()
-        {
-            return (Instruction.RelationalOperationType)SingleNumber(0, 5);
-        }
-
-
-        /// <summary>
         /// Shuffles the order of elements in a generic list
         /// </summary>
         /// <typeparam name="T">Type of list elements</typeparam>
         /// <param name="original">The original list</param>
         /// <returns>The shuffled list</returns>
-        private static List<T> ShuffleList<T>(List<T> original)
+        public static List<T> ShuffleList<T>(List<T> original)
         {
             List<int> randomlist = Randomizer.MultipleNumbers(original.Count(), 0, original.Count() - 1, false, false);
             List<T> newlist = new List<T>();
