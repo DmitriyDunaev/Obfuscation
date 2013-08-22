@@ -114,6 +114,10 @@ namespace Obfuscator
             // First, creating a basic block pointing to a random block of the function
             BasicBlock dead1 = new BasicBlock(bb.parent);
 
+            bb.parent.BasicBlocks.Remove(dead1);
+            dead1.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
+            bb.parent.BasicBlocks.Add(dead1);
+
             // And making it dead
             dead1.dead = true;
 
@@ -129,16 +133,13 @@ namespace Obfuscator
             // Now including the third one, with the basicblock splitter
             BasicBlock dead3 = dead2.SplitAfterInstruction(dead2.Instructions.Last());
 
+            dead3.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
+
             // And making it dead too
             dead3.dead = true;
 
-            dead3.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
-
             // Now creating the conditional jump
             Randomizer.GenerateConditionalJumpInstruction(dead1.Instructions.Last(), Instruction.ConditionType.Random, dead3);
-
-            // And finally we link the remaining blocks
-            dead2.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
 
         }
 
@@ -308,8 +309,12 @@ namespace Obfuscator
             Parser.ConditionalJumpInstruction(bb.Instructions.Last(), out var, out C, out relop, out truesucc, out falsesucc);
 
             List<Cond> condlist = GenetateCondList(C, relop);
-            
+
+            truesucc.Validate();
+            falsesucc.Validate();
+
             List<BasicBlock> generatedblocks = GenerateBlocks(bb, var, truesucc, falsesucc, condlist);
+            bb.parent.BasicBlocks.AddRange(generatedblocks);
             
             /// TODO:   Create the polyRequired clones and the jumps to them
         }
@@ -331,12 +336,20 @@ namespace Obfuscator
             }
 
 
+
             bb.Instructions.Remove(bb.Instructions.Last());
             bb.Instructions.Add(new Instruction(bb));
             bb.Instructions.Last().MakeUnconditionalJump(bblist.First());
             
+            /// Creating the polyRequired list
+            List<BasicBlock> truelist = new List<BasicBlock>();
+            truelist.Add(truelane);
+            List<BasicBlock> falselist = new List<BasicBlock>();
+            falselist.Add(falselane);
+
             for (int i = 0; i < condlist.Count(); i++)
             {
+
                 switch (condlist[i].JumpType)
                 {
                     case Cond.BlockJumpType.True:
@@ -344,25 +357,40 @@ namespace Obfuscator
                         if (i != condlist.Count() - 1)
                             bblist[i].LinkToSuccessor(bblist[i + 1], true);
                         else
-                            bblist[i].LinkToSuccessor(falselane, true);
-                        bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, truelane);
+                            bblist[i].LinkToSuccessor(Randomizer.GeneratePolyRequJumpTarget(falselist), true);
+                        bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, Randomizer.GeneratePolyRequJumpTarget(truelist));
                         break;
                     case Cond.BlockJumpType.False:
                         if (i != condlist.Count() - 1)
                             bblist[i].LinkToSuccessor(bblist[i + 1], true);
                         else
-                            bblist[i].LinkToSuccessor(falselane, true);
-                        bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, falselane);
+                            bblist[i].LinkToSuccessor(Randomizer.GeneratePolyRequJumpTarget(falselist), true);
+                        bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, Randomizer.GeneratePolyRequJumpTarget(falselist));
                         break;
                     case Cond.BlockJumpType.Ambigious:
-                        bblist[i].LinkToSuccessor(falselane, true);
+                        bblist[i].LinkToSuccessor(Randomizer.GeneratePolyRequJumpTarget(falselist), true);
                         bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, bblist[i + 1]);
                         break;
                     default:
                         break;
                 }
-            
             }
+
+            foreach (BasicBlock block in truelist)
+            {
+                block.Validate();
+            }
+            foreach (BasicBlock block in falselist)
+            {
+                block.Validate();
+            }
+
+            /// Checking if there is a jump to the original targets, and if there is not, we can delete that
+            /// BasicBlock, there must be a polyRequired clone of that.
+            if (falselane.getPredecessors.Count() == 0)
+                falselane.parent.BasicBlocks.Remove(falselane);
+            if (truelane.getPredecessors.Count() == 0)
+                truelane.parent.BasicBlocks.Remove(truelane);
 
             return bblist;
         }

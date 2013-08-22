@@ -24,10 +24,21 @@ namespace Obfuscator
             Integer = 4,
             Char = 1
         }
+
         /// <summary>
         /// The number of the fake conditions that are generated in the conditional meshing algorithm
         /// </summary>
         public static int ConditionalJumpMeshingNumber = 6;
+
+        /// <summary>
+        /// The enumeration for the chances of the jump generation
+        /// </summary>
+        public enum JumpGenerationChances
+        {
+            Original = 10,
+            Existing = 20,
+            New = 30
+        }
 
         /// <summary>
         /// Provides a full copy of original object

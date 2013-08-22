@@ -75,6 +75,37 @@ namespace Obfuscator
 
 
         /// <summary>
+        /// This function sets the target of a jump from a conditional jump
+        /// The result can be: the original target, one of the generated
+        /// polyRequired targets, or a new polyRequired target
+        /// </summary>
+        /// <param name="targetlist">The already existing list, with the original jump target at its first position</param>
+        /// <returns>The target of the jump, based on some parameters in the Common static class</returns>
+        public static BasicBlock GeneratePolyRequJumpTarget(List<BasicBlock> targetlist)
+        {
+            if (targetlist.Count() == 1) return targetlist.First();
+            int result = SingleNumber(0, (int)Common.JumpGenerationChances.Original + (int)Common.JumpGenerationChances.Existing + (int)Common.JumpGenerationChances.New);
+            if (result < (int)Common.JumpGenerationChances.Original)
+            {
+                return targetlist.First();
+            }
+            else if (result < (int)Common.JumpGenerationChances.Original + (int)Common.JumpGenerationChances.Existing)
+            {
+                if (targetlist.Count() == 1) return targetlist.First();
+                return targetlist[SingleNumber(1, targetlist.Count() - 1)];
+            }
+            else
+            {
+                targetlist.Add(new BasicBlock(targetlist.First(), targetlist.First().getSuccessors));
+                targetlist.Last().Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
+                return targetlist.Last();
+            }
+
+
+        }
+
+
+        /// <summary>
         /// Shuffles the order of elements in a generic list
         /// </summary>
         /// <typeparam name="T">Type of list elements</typeparam>
