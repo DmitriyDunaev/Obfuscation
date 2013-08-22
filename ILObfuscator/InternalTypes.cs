@@ -187,10 +187,11 @@ namespace Internal
         /// <param name="newSuccessors">List of new successors</param>
         public BasicBlock(BasicBlock original, List<BasicBlock> newSuccessors)
         {            
-            this._ID = new IDManager();
+            _ID = new IDManager();
             this.dead = original.dead;
             this.parent = original.parent;
-            this.Instructions = Common.DeepClone(original.Instructions) as List<Instruction>;
+            Instructions = Common.DeepClone(original.Instructions) as List<Instruction>;
+            Instructions.ForEach(x => x.ResetID());
             Instructions.ForEach(x => x.parent = this);
             newSuccessors.ForEach(x => LinkToSuccessor(x));
             parent.BasicBlocks.Add(this);
@@ -399,26 +400,6 @@ namespace Internal
             }
         }
 
-        /// <summary>
-        /// Copy constructor with adjustable parent
-        /// </summary>
-        /// <param name="ins">The instruction to copy</param>
-        /// <param name="par">The new parent of the instuction. By default, it is the parent of the instruction</param>
-        //public Instruction(Instruction ins, BasicBlock par = null)
-        //{
-        //    if (par == null) parent = ins.parent;
-        //    else parent = par;
-        //    _ID = new IDManager();
-        //    statementType = ins.statementType;
-        //    TACtext = ins.TACtext;
-        //    isFake = false;
-        //    polyRequired = false;
-        //    RefVariables = ins.RefVariables;
-        //    DeadPointers = ins.DeadPointers;
-        //    DeadVariables = ins.DeadVariables;
-        //}
-
-
         public Instruction(BasicBlock parent)
         {
             _ID = new IDManager();
@@ -429,6 +410,10 @@ namespace Internal
             polyRequired = false;
         }
 
+        public void ResetID()
+        {
+            _ID = new IDManager();
+        }
 
         //Interface methods
         public int CompareTo(object obj)
