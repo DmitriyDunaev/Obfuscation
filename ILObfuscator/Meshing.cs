@@ -465,7 +465,7 @@ namespace Obfuscator
                 else if (i < -1) i--;
                 i *= -1;
             }
-            returnlist = Randomizer.ShuffleList<Cond>(returnlist);
+            returnlist.Shuffle<Cond>();
             RepositionLasts(returnlist);
             return returnlist;
         }

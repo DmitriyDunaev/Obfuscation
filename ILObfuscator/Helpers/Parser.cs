@@ -20,7 +20,7 @@ namespace Obfuscator
         /// <param name="relop">Relational operator in the condition</param>
         /// <param name="true_bb">Basic block the control flow is transfered to if the condition returns TRUE</param>
         /// <param name="false_bb">Basic block the control flow is transfered to if the condition returns FALSE</param>
-        public static void ConditionalJumpInstruction(Instruction inst, out Variable left_value, out int right_value,  out Instruction.RelationalOperationType relop,  out BasicBlock true_bb,  out BasicBlock false_bb)
+        public static void ConditionalJumpInstruction(this Instruction inst, out Variable left_value, out int right_value,  out Instruction.RelationalOperationType relop,  out BasicBlock true_bb,  out BasicBlock false_bb)
         {
             if (inst.statementType != ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump)
                 throw new ObfuscatorException("Instruction's statement type does not comply with parser. Instruction: " + inst.ID);
@@ -29,7 +29,7 @@ namespace Obfuscator
                 throw new ObfuscatorException("Instruction's 'parent' or 'parent.parent' or 'parent.parent.parent' property is invalid. Instruction: " + inst.ID);
             if (inst.RefVariables.Count != 1)
                 throw new ObfuscatorException("Only conditional jumps with single referenced variable can be parsed.");
-
+            
             // Searching for the left value in Function.LocalVariables list
             left_value = inst.parent.parent.LocalVariables.Find(x => x.ID == inst.RefVariables[0].ID);
             // Searching for the left value in Routine.GlobalVariables list

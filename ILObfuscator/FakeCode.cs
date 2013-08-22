@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Internal;
 using ExchangeFormat;
+using System.Text.RegularExpressions;
 
 namespace Obfuscator
 {
@@ -14,9 +15,9 @@ namespace Obfuscator
         /// Describes the probability of generating a conditional jump in percents.
         /// </summary>
         private static int prob_of_cond_jump = 30;
-        private static int FPO = 1;
-        private static int fake_padding = 0;
-        private static int fake_padding_variability = 0;
+        private static int FPO = 2;
+        private static int fake_padding = 2;
+        private static int fake_padding_variability = 1;
 
         /// <summary>
         /// Function to change the nop's in the function to actual fake code.
@@ -323,6 +324,8 @@ namespace Obfuscator
             }
         }
 
+
+
         public static void GenerateNoOperations(Function func_orig)
         {
             foreach (BasicBlock bb in func_orig.BasicBlocks)
@@ -332,21 +335,24 @@ namespace Obfuscator
                     continue;
 
                 List<Instruction> insts = Common.DeepClone(bb.Instructions) as List<Instruction>;
-                foreach (Instruction inst in insts)
+                foreach (Instruction original in insts)
                 {
-                    if (!inst.isFake)
+                    if (!original.isFake)
                     {
-                        int fakes_orig = FPO + 1;
-                        int original_place = Randomizer.SingleNumber(0, fakes_orig);
-                        if (inst.statementType == StatementTypeType.EnumValues.eConditionalJump || inst.statementType == StatementTypeType.EnumValues.eUnconditionalJump)
-                            original_place = fakes_orig;
-                        for (int i = 0; i < fakes_orig; i++)
-                        {
-                            if (i < original_place)
-                                bb.Instructions.Insert(bb.Instructions.BinarySearch(inst), new Instruction(bb));
-                            else if (i > original_place)
-                                bb.Instructions.Insert(bb.Instructions.BinarySearch(inst) + 1, new Instruction(bb));
-                        }
+                        List<Instruction> nops_and_original = new List<Instruction>();
+                        for (int i = 0; i < FPO; i++)
+                            nops_and_original.Add(new Instruction(bb));
+                        // Now we have a list of FPO number of fake NoOperation instructions
+
+                        if (original.statementType == StatementTypeType.EnumValues.eConditionalJump ||
+                            original.statementType == StatementTypeType.EnumValues.eUnconditionalJump ||
+                            (original.statementType == StatementTypeType.EnumValues.eProcedural && Regex.IsMatch(original.TACtext, @"^return ", RegexOptions.None)))
+                            nops_and_original.Add(original);
+                        else
+                            nops_and_original.Insert(Randomizer.SingleNumber(0, FPO - 1), original);
+                        int original_position = bb.Instructions.BinarySearch(original);
+                        bb.Instructions.InsertRange(original_position, nops_and_original);
+                        bb.Instructions.RemoveAt(original_position + nops_and_original.Count);
                     }
                 }
                 if (bb.Instructions.Count < fake_padding)
