@@ -32,7 +32,7 @@ namespace Internal
             }
             foreach (Function func in this.Functions)
             {
-                if (!func.parent.Equals(this))
+                if (func.parent != this)
                     throw new ValidatorException("Function's 'parent' property is incorrect. Function: " + func.ID);
                 func.Validate();
             }
@@ -280,6 +280,7 @@ namespace Internal
             }
         }
     }
+
 
     public partial class Variable
     {

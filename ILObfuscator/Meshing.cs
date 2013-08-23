@@ -451,10 +451,10 @@ namespace Obfuscator
         /// </summary>
         /// <param name="originalconstant">The actual constant which is the base of the generation</param>
         /// <param name="originalrelop">The original relational operator</param>
-        /// <returns>The litst of the generated CondConstants</returns>
+        /// <returns>The list of generated CondConstants</returns>
         private static List<Cond> GenetateCondList(int originalconstant, Instruction.RelationalOperationType originalrelop)
         {
-            int num = Common.ConditionalJumpMeshingNumber;
+            int num = Common.ConditionalJumpReplacementFactor;
             List<Cond> returnlist = new List<Cond>();
             for (int i = -1, n = 0; n < num; n++)
             {

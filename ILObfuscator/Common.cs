@@ -9,14 +9,8 @@ namespace Obfuscator
 {
     public static class Common
     {
-        /// <summary>
-        /// Maximal number used in fake code generation (e.g. in conditional statements) 
-        /// </summary>
-        public static int GlobalMaxNumber = 1000;
-        /// <summary>
-        /// Minimal number used in fake code generation (e.g. in conditional statements) 
-        /// </summary>
-        public static int GlobalMinNumber = 10;
+        // **** General Section ****
+        
         /// <summary>
         /// Memory region sizes for supported types
         /// </summary>
@@ -26,11 +20,35 @@ namespace Obfuscator
             Char = 1
         }
 
+        // **** Fake Code Generation Section ****
+        
         /// <summary>
-        /// The number of the fake conditions that are generated in the conditional meshing algorithm
+        /// Maximal number used in fake code generation (e.g. in conditional statements) 
         /// </summary>
-        public static int ConditionalJumpMeshingNumber = 6;
+        public static int GlobalMaxNumber = 1000;
+        /// <summary>
+        /// Minimal number used in fake code generation (e.g. in conditional statements) 
+        /// </summary>
+        public static int GlobalMinNumber = 10;
+        /// <summary>
+        /// Number of fake instructions to be generated per single original 
+        /// </summary>
+        public static int FPO = 5;
+        /// <summary>
+        /// Minimal number of instructions in a basic block
+        /// </summary>
+        public static int FakePadding = 20;
+        /// <summary>
+        /// Variability of fake_padding
+        /// </summary>
+        public static int FakePaddingVariance = 5;
 
+        // **** Meshing Algorithm Section ****
+
+        /// <summary>
+        /// Number of the fake conditions that are generated in the conditional meshing algorithm
+        /// </summary>
+        public static int ConditionalJumpReplacementFactor = 6;
         /// <summary>
         /// The enumeration for the chances of the jump generation
         /// </summary>
@@ -40,6 +58,9 @@ namespace Obfuscator
             Existing = 20,
             New = 30
         }
+        
+
+        // **** Common Methods ****
 
         /// <summary>
         /// Provides a full copy of original object

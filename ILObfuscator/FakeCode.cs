@@ -15,9 +15,6 @@ namespace Obfuscator
         /// Describes the probability of generating a conditional jump in percents.
         /// </summary>
         private static int prob_of_cond_jump = 30;
-        private static int FPO = 5;
-        private static int fake_padding = 20;
-        private static int fake_padding_variability = 5;
 
         /// <summary>
         /// Function to change the nop's in the function to actual fake code.
@@ -347,7 +344,7 @@ namespace Obfuscator
                     // If the instruction is original, generate FPO number of NOPs
                     else
                     {
-                        for (int i = 0; i < FPO; i++)
+                        for (int i = 0; i < Common.FPO; i++)
                             nops_and_original.Add(new Instruction(bb));
 
                         if (inst.statementType == StatementTypeType.EnumValues.eConditionalJump ||
@@ -355,14 +352,14 @@ namespace Obfuscator
                             (inst.statementType == StatementTypeType.EnumValues.eProcedural && Regex.IsMatch(inst.TACtext, @"^return ", RegexOptions.None)))
                             nops_and_original.Add(inst);  // Add original to the tail
                         else
-                            nops_and_original.Insert(Randomizer.SingleNumber(0, FPO), inst);    // Mesh original between the NOPs
+                            nops_and_original.Insert(Randomizer.SingleNumber(0, Common.FPO), inst);    // Mesh original between the NOPs
                     }
                     new_list.AddRange(nops_and_original);
                 }
                 bb.Instructions = new_list;
-                if (bb.Instructions.Count < fake_padding)
+                if (bb.Instructions.Count < Common.FakePadding)
                 {
-                    int fakes = Math.Abs(Randomizer.SingleNumber(fake_padding - fake_padding_variability, fake_padding + fake_padding_variability) - bb.Instructions.Count);
+                    int fakes = Math.Abs(Randomizer.SingleNumber(Common.FakePadding - Common.FakePaddingVariance, Common.FakePadding + Common.FakePaddingVariance) - bb.Instructions.Count);
                     for (int i = 0; i < fakes; i++)
                         bb.Instructions.Insert(0, new Instruction(bb));
                 }
