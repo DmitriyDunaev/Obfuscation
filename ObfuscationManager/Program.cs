@@ -8,40 +8,32 @@ namespace ObfuscationManager
 {
     class Manager
     {
-        protected static void Example()
+        protected static void Run()
         {
-            // Getting input from InputProvider
-            XmlDocument doc = new XmlDocument();
-            InputProvider ip = new InputProvider();
-            doc = ip.Read(InputType.PseudoCode, PlatformType.x86);
-
-            // Validating XML by Schema
+            XmlDocument doc;    // XML Document used for data exchange between modules
+            Exchange exch;      // Exchange type
             try
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine("\n\tIMPORTING ROUTINE\n");
                 Console.ResetColor();
                 Console.Write("Loading XML, checking complience with Exchange.xsd");
-                Internal.Validator.ValidateXML(doc);
+                doc = ExportImport.ImportRoutineXML(InputType.PseudoCode, PlatformType.x86);
+                exch = ExportImport.XmlToExchange(doc);
             }
             catch (Obfuscator.ValidatorException exc)
             {
-                Console.WriteLine(exc.Message);
                 if (exc.InnerException != null)
                     throw exc.InnerException;
                 else throw exc;
             }
             Obfuscator.ILObfuscator.PrintSuccess();
-            
-            // Converting XML to Exchange
-            Exchange exch = Exchange.LoadFromString(doc.InnerXml);
 
             // For debugging
-            exch.SaveToFile("Exchange1.xml", true);
+            exch.SaveToFile("Import.xml", true);
 
             // Sending Exchange format to obfuscator
-            Obfuscator.ILObfuscator.Obfuscate(exch);
-
+            Obfuscator.ILObfuscator.Obfuscate(ref exch);
 
 
             // Validating XML by Schema
@@ -51,29 +43,17 @@ namespace ObfuscationManager
                 Console.WriteLine("\n\tEXPORTING ROUTINE\n");
                 Console.ResetColor();
                 Console.Write("Generating XML, checking complience with Exchange.xsd");
+                doc = ExportImport.ExchangeToXml(exch);
+                ExportImport.ExportRoutineXML(doc, PlatformType.x86);
                 Console.WriteLine(" . COMING SOON");
             }
             catch (Obfuscator.ValidatorException exc)
             {
-                Console.WriteLine(exc.Message);
                 if (exc.InnerException != null)
                     throw exc.InnerException;
                 else throw exc;
             }
             //Obfuscator.ILObfuscator.PrintSuccess();
-
-
-
-            //   ...
-            //   doc.SaveToFile("Exchange1.xml", true);
-            //
-            // Example code to load and save a structure:
-            //   Exchange.Exchange2 doc = Exchange.Exchange2.LoadFromFile("Exchange1.xml");
-            //   Exchange.VariableType root = doc.Variable.First;
-            //   ...
-            //   doc.SaveToFile("Exchange1.xml", true);
-
-            
         }
 
         [STAThread]
@@ -81,7 +61,7 @@ namespace ObfuscationManager
         {
             try
             {
-                Example();
+                Run();
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Program has finished successfully.\n");
                 Console.ResetColor();

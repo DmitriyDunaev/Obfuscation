@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E6F8F62D-CA13-4740-82EB-26E8A1639285}</ProjectGuid>
+    <ProjectGuid>{9C336C5B-D5C9-4B08-A40A-FB90C56A20AD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Module_x86</RootNamespace>
-    <AssemblyName>Module x86</AssemblyName>
+    <RootNamespace>Platform_x86</RootNamespace>
+    <AssemblyName>Platform x86</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Module x86")]
+[assembly: AssemblyTitle("Platform x86")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Module x86")]
+[assembly: AssemblyProduct("Platform x86")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f98f96f1-0958-4400-b236-b8ba7d33a5d2")]
+[assembly: Guid("cf29d117-a505-4e96-9f3c-d59c92efd5a8")]
 
 // Version information for an assembly consists of the following four values:
 //

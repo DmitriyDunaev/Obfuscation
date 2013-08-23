@@ -1,14 +1,9 @@
-﻿using ExchangeFormat;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Linq;
-using System.Xml.Schema;
 using Obfuscator;
+using ExchangeFormat;
 
 namespace Internal
 {
@@ -295,31 +290,4 @@ namespace Internal
         }
     }
 
-
-
-    public static class Validator
-    {
-
-        /// <summary>
-        /// Validates an XML document against the Exchange.xsd schema
-        /// </summary>
-        /// <param name="doc2validate">XML document to be validated</param>
-        public static void ValidateXML(XmlDocument doc2validate)
-        {
-            System.Xml.Schema.XmlSchemaSet schemas = new System.Xml.Schema.XmlSchemaSet();
-            schemas.Add(null, @"Schemas\Exchange.xsd");
-            try
-            {
-                XDocument doc = XDocument.Parse(doc2validate.InnerXml);
-                doc.Validate(schemas, (o, e) =>
-                {
-                    throw new ValidatorException(e.Message);
-                });
-            }
-            catch (Exception ex)
-            {
-                throw new ValidatorException("XML could not be validated! It is not well-formed or does not comply with XSD.", ex);
-            }
-        }
-    }
 }

@@ -10,14 +10,14 @@ namespace Obfuscator
 {
     public static class ILObfuscator
     {
-        public static void Obfuscate(Exchange exch)
+        public static void Obfuscate(ref Exchange exch)
         {
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("\tINTERMEDIATE LEVEL OBFUSCATION\n");
             Console.ResetColor();
 
-            Console.Write("Parsing XML data to Routine class");
-            Routine routine = new Routine(exch);
+            Console.Write("Converting Exchange to Routine class");
+            Routine routine = (Routine)exch;
             PrintSuccess();
 
             Console.Write("First validation of the routine");
@@ -61,10 +61,14 @@ namespace Obfuscator
             PrintSuccess();
 
             Console.Write("Generation of fake instructions from NoOperation");
-            Console.WriteLine(". . . . COMING SOON");
+            Console.WriteLine(". . . . COMING SOON\n");
             // Call algorithm here
             //routine.Validate();
             //PrintSuccess();
+
+            Console.Write("Converting Routine to Exchange class");
+            exch = (Exchange)routine;
+            Console.WriteLine(". . . . . . . . . . COMING SOON\n");
         }
 
 
