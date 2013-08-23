@@ -60,7 +60,7 @@ namespace Internal
 
             foreach (BasicBlock bb in this.BasicBlocks)
             {
-                if (!bb.parent.Equals(this))
+                if (bb.parent != this)
                     throw new ValidatorException("Basic block's 'parent' property is incorrect. Basic block: " + bb.ID);
                 bb.Validate();
             }
@@ -140,7 +140,7 @@ namespace Internal
 
             foreach (Instruction inst in this.Instructions)
             {
-                if (!inst.parent.Equals(this))
+                if (inst.parent != this)
                     throw new ValidatorException("Instruction's 'parent' property is incorrect. Instruction: " + inst.ID);
                 inst.Validate();
             }
