@@ -11,18 +11,31 @@ namespace Obfuscator
 {
     public static class FakeCode
     {
+        /*
+         * At a certain probability we generate a Conditional Jump, which condition
+         * depends on a parameter value, and happens to be always false.
+         * We use these jumps to make the control flow irreducible.
+         * However we must not choose this if we have only one basic block
+         * apart from the "fake exit block". So we must have at least 3 BBs.
+         * 
+         * At the remaining probability we generate instructions that are
+         * using the dead variables present at the point of the actual nop.
+         * However we must not choose this if we have no dead variables
+         * available for using as a left value present.
+         */
+
         /// <summary>
         /// Describes the probability of generating a conditional jump in percents.
         /// </summary>
         private static int prob_of_cond_jump = 30;
 
         /// <summary>
-        /// Function to change the nop's in the function to actual fake code.
+        /// Returns a list of all nops present in the function.
         /// </summary>
-        /// <param name="func">The function to work on.</param>
-        public static void Generate (Function func)
+        /// <param name="func">The actual function.</param>
+        /// <returns>A list of nops.</returns>
+        private static List<Instruction> GetAllNops(Function func)
         {
-            /* We have to go through all the nop's in the function. */
             List<Instruction> nops = new List<Instruction>();
             foreach (BasicBlock bb in func.BasicBlocks)
             {
@@ -32,56 +45,50 @@ namespace Obfuscator
                         nops.Add(ins);
                 }
             }
+            return nops;
+        }
+
+        /// <summary>
+        /// Function to change the nop's in the function to actual fake instructons.
+        /// </summary>
+        /// <param name="func">The function to work on.</param>
+        public static void GenerateFakeInstructions(Function func)
+        {
+            /* We have to go through all the nop's in the function. */
+            List<Instruction> nops = GetAllNops(func);
             
             foreach (Instruction ins in nops)
-            {
-                if (ins.statementType == StatementTypeType.EnumValues.eNoOperation)
+            { 
+                if (( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) ||
+                    ( !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null )                                   )
+                    continue;
+
+                /* If a conditional jump cnnot be made here, or we didn't choose it, we generate a fake instruction. */
+                if (func.BasicBlocks.Count < 3 || Randomizer.SingleNumber(0, 99) >= prob_of_cond_jump)
                 {
-                    /*
-                        * Now we found a nop, so we have to decide what to do with it.
-                        * 
-                        * At a certain probability we generate a Conditional Jump, which condition
-                        * depends on a parameter value, and happens to be always false.
-                        * We use these jumps to make the control flow irreducible.
-                        * However we must not choose this if we have only one basic block
-                        * apart from the "fake exit block". So we must have at least 3 BBs.
-                        * 
-                        * At the remaining probability we generate instructions that are
-                        * using the dead variables present at the point of the actual nop.
-                        * However we must not choose this if we have no dead variables
-                        * available for using as a left value present.
-                        */
-                    if ( func.BasicBlocks.Count < 3                                                                                                            &&
-                        (( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) ||
-                        ( !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null ))                                  )
-                        continue;
-
-                    if (/*Randomizer.SingleNumber(0, 99) < prob_of_cond_jump*/ false)
-                    {
-                        if (func.BasicBlocks.Count < 3)
-                        {
-                            /* Though randomizer said we should do this, we unfortunately cannot. */
-                            GenerateFakeInstruction(ins);
-                        }
-                        /* This is where we generate a conditional jump.*/
-                        GenerateConditionalJump(ins);
-                    }
-                    else
-                    {
-                        if  (( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) ||
-                            (  !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null )                                  )
-                        {
-                            /* Though randomizer said we should do this, we unfortunately cannot. */
-                            //GenerateConditionalJump(ins);
-                            continue;
-                        }
-                        /* This is where we generate instructions with dead variables. */
-                        GenerateFakeInstruction(ins);
-                    }
-
+                    _GenerateFakeInstruction(ins);
+                       
                     /* The instruction is made, so we have to refresh the states of the dead variables. */
                     ins.RefreshNext();
-                }
+                }   
+            }
+        }
+
+        /// <summary>
+        /// Function to change the remaining nop's in the function to conditional jumps.
+        /// </summary>
+        /// <param name="func">The function to work on.</param>
+        public static void GenerateConditionalJumps(Function func)
+        {
+            /* We have to go through all the nop's in the function. */
+            List<Instruction> nops = GetAllNops(func);
+
+            foreach (Instruction ins in nops)
+            {
+                if (func.BasicBlocks.Count < 3)
+                    continue;
+
+                _GenerateConditionalJump(ins);
             }
         }
 
@@ -89,7 +96,7 @@ namespace Obfuscator
         /// Function to make a Conditional Jump out of a Nop.
         /// </summary>
         /// <param name="ins">The nop we want to work on.</param>
-        private static void GenerateConditionalJump(Instruction ins)
+        private static void _GenerateConditionalJump(Instruction ins)
         {
             /* 
              * Before doing anything, we have to split the basic block holding this
@@ -158,7 +165,7 @@ namespace Obfuscator
         /// Function to make an actual fake instruction out of a Nop.
         /// </summary>
         /// <param name="ins">The nop we want to work on.</param>
-        private static void GenerateFakeInstruction(Instruction ins)
+        private static void _GenerateFakeInstruction(Instruction ins)
         {
             /* First we get a left value. */
             Variable leftvalue;
