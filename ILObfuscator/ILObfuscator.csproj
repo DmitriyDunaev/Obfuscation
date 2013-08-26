@@ -47,6 +47,7 @@
     <Compile Include="Helpers\Logging.cs" />
     <Compile Include="Helpers\Parser.cs" />
     <Compile Include="Helpers\ToString.cs" />
+    <Compile Include="InternalCast.cs" />
     <Compile Include="MakeFakeInstructions.cs" />
     <Compile Include="InternalMethods.cs" />
     <Compile Include="Meshing.cs" />
