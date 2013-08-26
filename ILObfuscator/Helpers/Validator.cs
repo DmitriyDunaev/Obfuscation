@@ -61,18 +61,10 @@ namespace Internal
                 bb.Validate();
             }
 
-            /* We shouldn't have the same Instructions referenced multiple times. */
-            List<Instruction> inslist = new List<Instruction>();
-            HashSet<Instruction> inshash = new HashSet<Instruction>();
-            foreach (BasicBlock bb in BasicBlocks)
-            {
-                foreach (Instruction ins in bb.Instructions)
-                {
-                    inslist.Add(ins);
-                    inshash.Add(ins);
-                }
-            }
-            if (inslist.Count != inshash.Count)
+            /* Instructions are unique, so they can be referenced only once within a function */
+            List<Instruction> all_instructions = new List<Instruction>();
+            BasicBlocks.ForEach(x => all_instructions.AddRange(x.Instructions));
+            if (all_instructions.Count != all_instructions.Distinct().Count())
                 throw new ValidatorException("Multiple references to the same instruction.");
         }
     }
