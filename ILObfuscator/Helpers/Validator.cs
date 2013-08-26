@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Obfuscator;
 using ExchangeFormat;
+using System.Collections.Generic;
 
 namespace Internal
 {
@@ -59,6 +60,20 @@ namespace Internal
                     throw new ValidatorException("Basic block's 'parent' property is incorrect. Basic block: " + bb.ID);
                 bb.Validate();
             }
+
+            /* We shouldn't have the same Instructions referenced multiple times. */
+            List<Instruction> inslist = new List<Instruction>();
+            HashSet<Instruction> inshash = new HashSet<Instruction>();
+            foreach (BasicBlock bb in BasicBlocks)
+            {
+                foreach (Instruction ins in bb.Instructions)
+                {
+                    inslist.Add(ins);
+                    inshash.Add(ins);
+                }
+            }
+            if (inslist.Count != inshash.Count)
+                throw new ValidatorException("Multiple references to the same instruction.");
         }
     }
 
