@@ -305,18 +305,12 @@ namespace Obfuscator
             int C = 0;
             BasicBlock truesucc = null;
             BasicBlock falsesucc = null;
-
             Parser.ConditionalJumpInstruction(bb.Instructions.Last(), out var, out C, out relop, out truesucc, out falsesucc);
-
             List<Cond> condlist = GenetateCondList(C, relop);
-
             truesucc.Validate();
             falsesucc.Validate();
 
             List<BasicBlock> generatedblocks = GenerateBlocks(bb, var, truesucc, falsesucc, condlist);
-            bb.parent.BasicBlocks.AddRange(generatedblocks);
-            
-            /// TODO:   Create the polyRequired clones and the jumps to them
         }
 
         /// <summary>
@@ -334,8 +328,6 @@ namespace Obfuscator
             {
                 bblist.Add(new BasicBlock(bb.parent));
             }
-
-
 
             bb.Instructions.Remove(bb.Instructions.Last());
             bb.Instructions.Add(new Instruction(bb));
@@ -374,15 +366,6 @@ namespace Obfuscator
                     default:
                         break;
                 }
-            }
-
-            foreach (BasicBlock block in truelist)
-            {
-                block.Validate();
-            }
-            foreach (BasicBlock block in falselist)
-            {
-                block.Validate();
             }
 
             /// Checking if there is a jump to the original targets, and if there is not, we can delete that
