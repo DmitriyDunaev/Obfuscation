@@ -14,42 +14,65 @@ namespace ObfuscationManager
 {
     public static class ExportImport
     {
-        public static XmlDocument ImportRoutineXML(InputType input, PlatformType platform)
+
+        /// <summary>
+        /// Imports routine data from low-level a platform-dependent module
+        /// </summary>
+        /// <param name="input">Input type</param>
+        /// <param name="platform">Platform type</param>
+        /// <returns>XML document</returns>
+        public static XmlDocument ImportXml(InputType input, PlatformType platform)
         {
             XmlDocument doc = new XmlDocument();
             InputProvider ip = new InputProvider();
             doc = ip.Read(input, platform);
-            ValidateExchangeXML(doc);
+            ValidateXml(doc);
             return doc;
         }
 
 
+        /// <summary>
+        /// Converts XML document to Exchange type
+        /// </summary>
+        /// <param name="doc">XML document to be converted</param>
+        /// <returns>Exchange type</returns>
         public static Exchange XmlToExchange(XmlDocument doc)
         {
             return Exchange.LoadFromString(doc.InnerXml);
         }
 
 
+        /// <summary>
+        /// Converts Exchange type to XML document
+        /// </summary>
+        /// <param name="exch">Exchange type</param>
+        /// <returns>XML documnet</returns>
         public static XmlDocument ExchangeToXml(Exchange exch)
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(exch.SaveToString(true));
+            doc.Save("export.xml");
+            ValidateXml(doc);
             return doc;
         }
 
 
-        public static void ExportRoutineXML(XmlDocument doc, PlatformType platform)
+        /// <summary>
+        /// Converts XML document to a low-level platform-dependent Assembly instruction set
+        /// </summary>
+        /// <param name="doc">XML document</param>
+        /// <param name="platform">Platform type</param>
+        public static void XmlToAsm(XmlDocument doc, PlatformType platform)
         {
-            doc.Save("export.xml");
-            ValidateExchangeXML(doc);
-            //TODO: Send XML to Common Module for conversion to assembly
+            //TODO: Convert XML document to low-level Assembly instruction set
         }
 
+
         /// <summary>
-        /// Validates an XML document against the Exchange.xsd schema
+        /// Validates an XML document against Exchange.xsd schema
         /// </summary>
         /// <param name="doc2validate">XML document to be validated</param>
-        private static void ValidateExchangeXML(XmlDocument doc2validate)
+        private static void ValidateXml(XmlDocument doc2validate)
         {
             System.Xml.Schema.XmlSchemaSet schemas = new System.Xml.Schema.XmlSchemaSet();
             schemas.Add(null, @"Schemas\Exchange.xsd");
