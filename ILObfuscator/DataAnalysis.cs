@@ -16,12 +16,12 @@ namespace Obfuscator
         /// <summary>
         /// Holds the ID's of the basic blocks we have already dealt with.
         /// </summary>
-        private static List<string> done_ids = new List<string>();
+        private static List<string> DoneIDs = new List<string>();
 
         /// <summary>
         /// A list of unsafe variables (pointer to pointer) that will not be processed as dead
         /// </summary>
-        private static List<Variable> unsafe_vars = new List<Variable>();
+        private static List<Variable> UnsafeVariables = new List<Variable>();
 
         /*
          * This is a wrapper function around the real algorithm.
@@ -43,10 +43,10 @@ namespace Obfuscator
             foreach (BasicBlock bb in func.BasicBlocks)
             {
                 foreach (Instruction ins in bb.Instructions)
-                    unsafe_vars.AddRange(ins.GetUnsafeVariables());
+                    UnsafeVariables.AddRange(ins.GetUnsafeVariables());
             }
             /* Remove duplications. */
-            unsafe_vars = unsafe_vars.Distinct().ToList();
+            UnsafeVariables = UnsafeVariables.Distinct().ToList();
 
             /* First we clear all the DeadVariables lists. */
             func.BasicBlocks.ForEach(delegate(BasicBlock bb) { bb.Instructions.ForEach(delegate(Instruction inst) { inst.DeadVariables.Clear(); }); });
@@ -64,7 +64,7 @@ namespace Obfuscator
                 foreach (Instruction ins in bb.Instructions)
                 {
                     /* First we remove the unsafe variables. */
-                    foreach (Variable var in unsafe_vars)
+                    foreach (Variable var in UnsafeVariables)
                     {
                         if (ins.DeadVariables.ContainsKey(var) && ins.DeadVariables[var] != Variable.State.Not_Initialized)
                             ins.DeadVariables.Remove(var);
@@ -113,7 +113,7 @@ namespace Obfuscator
              * In the end we clear the done_ids list, so it won't influence the algorithm's
              * future runs (if these will exist).
              */
-            done_ids.Clear();
+            DoneIDs.Clear();
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace Obfuscator
                 if (/*ins.isFake == false*/ true)
                 {
                     foreach (Variable var in ins.RefVariables)
-                        deal_with_var(var, ins, state);
+                        DealWithVariable(var, ins, state);
                 }
             }
 
@@ -146,7 +146,7 @@ namespace Obfuscator
              * We have finished the task with this basic block, and we should not
              * come back here anymore, so we save its ID into the done_ids list.
              */
-            done_ids.Add(actual.ID);
+            DoneIDs.Add(actual.ID);
 
             /*
              * Now that this basic block is finished we should do the same things
@@ -156,7 +156,7 @@ namespace Obfuscator
             List<BasicBlock> bblist = (state == Variable.State.Free) ? actual.getPredecessors : actual.getSuccessors;
             foreach (BasicBlock block in bblist)
             {
-                if (!done_ids.Contains(block.ID))
+                if (!DoneIDs.Contains(block.ID))
                     recursive(block, state);
             }
         }
@@ -166,7 +166,7 @@ namespace Obfuscator
         /// </summary>
         /// <param name="var">the Variable we are dealing with</param>
         /// <param name="ins">Actual Instruction</param>
-        private static void deal_with_var(Variable var, Instruction ins, Variable.State state)
+        private static void DealWithVariable(Variable var, Instruction ins, Variable.State state)
         {
             /* 
              * This variable is used somewhere after this instruction, so it is alive here.
@@ -197,7 +197,7 @@ namespace Obfuscator
                  * that we have dealt with this instruction.
                  */
                 if (i.DeadVariables.ContainsKey(var) && i.DeadVariables[var] == state)
-                    deal_with_var(var, i, state);
+                    DealWithVariable(var, i, state);
             }
         }
 
@@ -213,10 +213,6 @@ namespace Obfuscator
                 {
                     foreach (Variable var in func.LocalVariables)
                     {
-                        /* 
-                         * QUESTION: do we want the variables used for constant recalculation
-                         * to be used as dead variables as the original ones?
-                         */
                         if (/*!var.fake && */!inst.DeadVariables.ContainsKey(var))
                             inst.DeadVariables.Add(var, state);
                     }
@@ -229,7 +225,7 @@ namespace Obfuscator
         /// List to hold the id's of the basic blocks we already reached.
         /// Used by the isLoopBody function.
         /// </summary>
-        private static List<string> found_ids = new List<string>();
+        private static List<string> FoundIDs = new List<string>();
 
         /// <summary>
         /// Used in the
@@ -262,19 +258,19 @@ namespace Obfuscator
              * We clear the former found_ids list, because we don't want the previous run of
              * the algorithm to influence the present one.
              */
-            found_ids.Clear();
+            FoundIDs.Clear();
 
             if (!directed)
                 id = bb.ID;
 
             foreach (BasicBlock item in bb.getSuccessors)
-                reachable_from(item, directed);
+                ReachableFrom(item, directed);
 
             /*
              * If and only if we have got to this basic block during the algorithm,
              * then it is inside a loop.
              */
-            if (found_ids.Contains(bb.ID))
+            if (FoundIDs.Contains(bb.ID))
                 return true;
             else
                 return false;
@@ -284,16 +280,16 @@ namespace Obfuscator
         /// Adds this basic block to the found_ids list, and calls itself for all the BB's successors.
         /// </summary>
         /// <param name="actual">Actual BasicBlock</param>
-        private static void reachable_from(BasicBlock actual, bool directed)
+        private static void ReachableFrom(BasicBlock actual, bool directed)
         {
             /*
              * First we check whether the actual basic block has been already
              * found. If yes, we have nothing to do left.
              */
-            if (!found_ids.Contains(actual.ID))
+            if (!FoundIDs.Contains(actual.ID))
             {
                 /* We add the actual basic block's ID to the found_ids list. */
-                found_ids.Add(actual.ID);
+                FoundIDs.Add(actual.ID);
 
                 /* Then we continue with all the basic blocks reachable from here. */
                 List<BasicBlock> reachable = new List<BasicBlock>();
@@ -308,7 +304,7 @@ namespace Obfuscator
                     }
                 }
                 foreach (BasicBlock item in reachable)
-                    reachable_from(item, directed);
+                    ReachableFrom(item, directed);
             }
         }
 

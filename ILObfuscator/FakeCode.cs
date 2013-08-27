@@ -68,8 +68,9 @@ namespace Obfuscator
                 {
                     _GenerateFakeInstruction(ins);
                        
-                    /* The instruction is made, so we have to refresh the states of the dead variables. */
-                    ins.RefreshNext();
+                    /* If the instruction is made, then we have to refresh the states of the dead variables. */
+                    if (ins.statementType != StatementTypeType.EnumValues.eNoOperation)
+                        ins.RefreshNext();
                 }   
             }
         }

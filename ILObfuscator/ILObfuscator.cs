@@ -24,6 +24,10 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
 
+            routine.Functions[0].NewFakeInputParameter(11, 55);
+            routine.Functions[0].NewFakeInputParameter(22, 155);
+            routine.Functions[0].NewFakeInputParameter(33, 545);
+
             Logging.WriteRoutine(routine, "Before");
             routine.Functions[1].NewFakeInputParameter(11, 55);
             routine.Functions[1].NewFakeInputParameter(22, 155);
@@ -63,12 +67,12 @@ namespace Obfuscator
             Console.Write("Generation of fake instructions from NoOperation");
             Console.WriteLine(". . . . COMING SOON\n");
             //foreach (Function func in routine.Functions)
-            //    FakeCode.GenerateFakeInstructions(func);
-            //Logging.WriteRoutine(routine, "FakeIns");
+                FakeCode.GenerateFakeInstructions(routine.Functions[1]);
+            Logging.WriteRoutine(routine, "FakeIns");
             //foreach (Function func in routine.Functions)
-            //FakeCode.GenerateConditionalJumps(func);
-            //Logging.WriteRoutine(routine, "CondJumps");
-            //routine.Validate();
+                FakeCode.GenerateConditionalJumps(routine.Functions[1]);
+            Logging.WriteRoutine(routine, "CondJumps");
+            routine.Validate();
             //PrintSuccess();
 
             Console.Write("Converting Routine to Exchange class");
