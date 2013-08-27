@@ -114,23 +114,18 @@ namespace Internal
             {
                 if (Instructions.Last().statementType != StatementTypeType.EnumValues.eConditionalJump)
                     throw new ValidatorException("To have 2 successors, the last instruction of a basic block must be a ConditionalJump. Basic block: " + ID);
-                string resultString = null;
-                //bool found = false;
-                resultString = Regex.Match(Instructions.Last().TACtext, @"\bID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b").Value;
-                //foreach (BasicBlock bb in Successors)
-                //{
-                //    if (resultString.Equals(bb.ID))
-                //        found = true;
-                //}
-                //if (!found)
+                string resultString = Regex.Match(Instructions.Last().TACtext, @"\bID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b").Value;
                 if(!resultString.Equals(Successors[0].ID))
                     throw new ValidatorException("The first successor ID does not match the GOTO instruction. Basic block: " + ID);
-                    //throw new ValidatorException("The successors' IDs do not match last GOTO instruction. Basic block: " + ID);
             }
-            //if (Predecessors.Count == 1 && Predecessors[0].Instructions.Last().statementType == StatementTypeType.EnumValues.eUnconditionalJump)
-            //{
-            //    throw new ValidatorException("Basic block has one single predecessor with unconditional jump to it. The last GOTO instruction of predecessor can be deleted. Basic block: " + ID);
-            //}
+            if (Predecessors.Count > 1)
+            {
+                int preds_goto = Predecessors.Count(x =>
+                    x.Instructions.Last().statementType == StatementTypeType.EnumValues.eConditionalJump ||
+                    x.Instructions.Last().statementType == StatementTypeType.EnumValues.eUnconditionalJump);
+                if (Predecessors.Count - preds_goto > 1)
+                    throw new ValidatorException("Basic block has more that one direct predecessor (without GOTO). Basic block: " + ID);
+            }
 
             // Checking Successor-Predecessor links
             foreach (BasicBlock succ in Successors)
