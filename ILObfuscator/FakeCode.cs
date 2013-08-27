@@ -64,7 +64,7 @@ namespace Obfuscator
                     continue;
 
                 /* If a conditional jump cannot be made here, or we didn't choose it, we generate a fake instruction. */
-                if (func.BasicBlocks.Count < 3 || Randomizer.SingleNumber(0, 99) >= prob_of_cond_jump)
+                if (func.BasicBlocks.Count < 2 || Randomizer.SingleNumber(0, 99) >= prob_of_cond_jump)
                 {
                     _GenerateFakeInstruction(ins);
                        
@@ -85,7 +85,7 @@ namespace Obfuscator
 
             foreach (Instruction ins in nops)
             {
-                if (func.BasicBlocks.Count < 3)
+                if (func.BasicBlocks.Count < 2)
                     continue;
 
                 _GenerateConditionalJump(ins);
