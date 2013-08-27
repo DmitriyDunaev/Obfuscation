@@ -41,31 +41,30 @@ namespace Obfuscator
             PrintSuccess();
 
 
-            Console.Write("Meshing algorithm - Unconditional Jumps");
+            Console.Write("Meshing algorithm: Unconditional Jumps");
             Meshing.MeshUnconditionals(routine);
             routine.Validate();
             PrintSuccess();
 
-            Console.Write("Meshing algorithm - Conditional Jumps");
+            Console.Write("Meshing algorithm: Conditional Jumps");
             Meshing.MeshConditionals(routine);
             routine.Validate();
             PrintSuccess();
 
-            Console.Write("Generation of fake NoOperation instructions");
+            Console.Write("Generation of fake NOP instructions");
             foreach (Function func in routine.Functions)
                 FakeCode.GenerateNoOperations(func);
             routine.Validate();
             PrintSuccess();
             Logging.WriteRoutine(routine, "NoOpersGeneration");
 
-            Console.Write("Dead variables algorithm");
+            Console.Write("Processing dead variables");
             foreach (Function func in routine.Functions)
                 DataAnalysis.DeadVarsAlgortihm(func);
             routine.Validate();
             PrintSuccess();
 
-            Console.Write("Generation of fake instructions from NoOperation");
-            Console.WriteLine(". . . . COMING SOON\n");
+            Console.Write("Generation of fake instructions from NOPs");
             //foreach (Function func in routine.Functions)
                 FakeCode.GenerateFakeInstructions(routine.Functions[1]);
             Logging.WriteRoutine(routine, "FakeIns");
@@ -73,12 +72,17 @@ namespace Obfuscator
                 FakeCode.GenerateConditionalJumps(routine.Functions[1]);
             Logging.WriteRoutine(routine, "CondJumps");
             routine.Validate();
-            //PrintSuccess();
+            PrintSuccess();
+
+            Console.Write("Collecting and writing statistics");
+            Logging.WriteStatistics(routine);
+            PrintSuccess();
 
             Console.Write("Converting Routine to Exchange class");
             exch = (Exchange)routine;
             PrintSuccess();
         }
+
 
 
         public static void PrintSuccess()

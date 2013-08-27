@@ -47,6 +47,46 @@ namespace Obfuscator
             string filename_routine = Path.Combine(pathToLog, string.Format("Obfuscation_Routine_{0}_{1:dd.MM.yyy}.log", filename_distinguisher, DateTime.Now));
             File.WriteAllText(filename_routine, sb.ToString());
         }
+
+
+        /// <summary>
+        /// Writes a routine to external textfile
+        /// </summary>
+        /// <param name="routine">Routine to be written</param>
+        /// <param name="filename_distinguisher">Filename distinguisher (e.g. algorithm abbreviation)</param>
+        public static void WriteStatistics(Routine routine)
+        {
+            if (!Directory.Exists(pathToLog))
+                Directory.CreateDirectory(pathToLog);
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(" *** STATISTICS ***");
+            sb.AppendLine("Generation date: " + DateTime.Now);
+            sb.AppendLine(" ******************");
+            sb.AppendLine();
+            sb.AppendLine("Routine description: " + routine.description);
+            sb.AppendLine("Total number of functions: " + routine.Functions.Count);
+            
+            int counter = 0;
+            routine.Functions.ForEach(x => counter += x.BasicBlocks.Count);
+            sb.AppendLine("Total number of basic blocks: " + counter);
+
+            counter = 0;
+            routine.Functions.ForEach(x => counter += x.BasicBlocks.Count(y => y.dead));
+            sb.AppendLine("   - out of them dead: " + counter);
+
+            int total_instructions = 0;
+            routine.Functions.ForEach(x => x.BasicBlocks.ForEach(y => total_instructions += y.Instructions.Count));
+            sb.AppendLine("Total number of instructions: " + total_instructions);
+
+            counter = 0;
+            routine.Functions.ForEach(x => x.BasicBlocks.ForEach(y => counter += y.Instructions.Count(z => z.isFake)));
+            sb.AppendLine("   - out of them fake: " + counter);
+            sb.AppendLine("   - FPO number in settings: " + Common.FPO);
+            sb.AppendLine("   - real FPO after obfuscation: " + Math.Round((double)total_instructions/(total_instructions-counter), 3));
+            
+            string filename_routine = Path.Combine(pathToLog, string.Format("Obfuscation_Statistics_{0:dd.MM.yyy}.log", DateTime.Now));
+            File.WriteAllText(filename_routine, sb.ToString());
+        }
     }
 }
 

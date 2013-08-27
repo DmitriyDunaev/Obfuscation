@@ -44,10 +44,9 @@ namespace Internal
     public partial class Routine : IValidate
     {
         // Attributes
-        private string description;
+        public string description { get; private set; }
         public List<Variable> GlobalVariables = new List<Variable>();
         public List<Function> Functions = new List<Function>();
-
     }
 
 
