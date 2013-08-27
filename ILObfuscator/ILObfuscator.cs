@@ -24,16 +24,16 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
 
+            Logging.WriteReadableTAC(routine.Functions[0]);
+
             routine.Functions[0].NewFakeInputParameter(11, 55);
             routine.Functions[0].NewFakeInputParameter(22, 155);
             routine.Functions[0].NewFakeInputParameter(33, 545);
 
-            Logging.WriteRoutine(routine, "Before");
             routine.Functions[1].NewFakeInputParameter(11, 55);
             routine.Functions[1].NewFakeInputParameter(22, 155);
             routine.Functions[1].NewFakeInputParameter(33, 545);
             Variable var = Randomizer.FakeInputParameter(routine.Functions[1]);
-            Logging.WriteRoutine(routine, "After");
 
             Console.Write("Constants covering algorithm");
             ConstCoverage.CoverConstants(routine);
