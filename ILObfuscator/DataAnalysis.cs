@@ -213,7 +213,12 @@ namespace Obfuscator
                 {
                     foreach (Variable var in func.LocalVariables)
                     {
-                        if (/*!var.fake && */!inst.DeadVariables.ContainsKey(var))
+                        /*
+                         * We add it in the list if:
+                         *  - it is not already there
+                         *  - it is not a fake input parameter.
+                         */
+                        if ( !( (var.kind == Variable.Kind.Input && var.fake) || inst.DeadVariables.ContainsKey(var) ) )
                             inst.DeadVariables.Add(var, state);
                     }
                 }
