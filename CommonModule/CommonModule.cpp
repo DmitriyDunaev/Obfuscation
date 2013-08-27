@@ -78,7 +78,7 @@ string CommonModule::Reader::DoStuff()
 #endif
 #ifdef SIMPLE
 
-	ss << " int sub_fnct(int a, int b)\n";
+	ss << " int sub_funct(int a, int b)\n";
 	ss << " {\n";
 	ss << " int tmp;\n";
 	ss << " if ( a * b > 100 )\n";
