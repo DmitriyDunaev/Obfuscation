@@ -262,7 +262,7 @@ namespace Internal
             string right = string.Empty, left = string.Empty;
             if (TACtext.Split('=').Length == 2)
             {
-                right = TACtext.Split('=')[0];
+                right = TACtext.Split('=')[1];
                 left = TACtext.Split('=')[0];
             }
             switch (statementType)
@@ -449,7 +449,7 @@ namespace Internal
                     if (states.Count() == 0)
                     {
                         /* Nothing has changed. */
-                        return;
+                        continue;
                     }
 
                     /* First we set the state of that used dead variable. */
