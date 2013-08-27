@@ -36,7 +36,7 @@ namespace Obfuscator
         /// <returns>A list of nops.</returns>
         private static List<Instruction> GetAllNops(Function func)
         {
-            HashSet<Instruction> nops = new HashSet<Instruction>();
+            List<Instruction> nops = new List<Instruction>();
             foreach (BasicBlock bb in func.BasicBlocks)
             {
                 foreach (Instruction ins in bb.Instructions)
@@ -45,7 +45,7 @@ namespace Obfuscator
                         nops.Add(ins);
                 }
             }
-            return nops.ToList();
+            return nops;
         }
 
         /// <summary>
@@ -106,62 +106,10 @@ namespace Obfuscator
             if ( !ins.Equals(ins.parent.Instructions.Last()) )
                 ins.parent.SplitAfterInstruction(ins);
 
+            /* We get a jump target. */
             BasicBlock jumptarget = Randomizer.JumpableBasicBlock(ins.parent.parent);
-            ///*
-            // * First we want to find a basic block that is inside a loop,
-            // * so that we can make a jump on it, making the control flow
-            // * irreducible this way.
-            // */
-            //List<BasicBlock> bodies = new List<BasicBlock>();
-            //foreach (BasicBlock bb in ins.parent.parent.BasicBlocks)
-            //{
-            //    if (DataAnalysis.isLoopBody(bb) && !bb.Equals(ins.parent))
-            //        bodies.Add(bb);
-            //}
-
-            ///* If there are such basic blocks. */
-            //if (bodies.Count() != 0)
-            //{
-            //    int num = Randomizer.SingleNumber(0, bodies.Count() - 1);
-            //    jumptarget = bodies[num];
-            //}
-
-            ///* If not: we choose a random one from all the basic blocks. */
-            //else
-            //{
-            //    List<BasicBlock> all_bbs = new List<BasicBlock>();
-            //    foreach (BasicBlock bb in ins.parent.parent.BasicBlocks)
-            //    {
-            //        /* 
-            //         * It shouldn't be neither the same basic block we start from,
-            //         * nor the one called "fake exit block".
-            //         */
-            //        if (!bb.Equals(ins.parent) && bb.getSuccessors.Count != 0)
-            //            all_bbs.Add(bb);
-            //    }
-
-            //    int num = Randomizer.SingleNumber(0, all_bbs.Count() - 1);
-            //    jumptarget = all_bbs[num];
-            //}
-
-            /* 
-             * At this point we have a perfectly chosen jumptarget, so we should
-             * split it into two pieces, so we can make a jump right in the middle
-             * of the basic block, making it harder to recognize the original control
-             * flow.
-             * However, we can make this only if the BB has at least two instructions,
-             * because if not, then we would make an empty basic block.
-             */
-            //if (jumptarget.Instructions.Count >= 2)
-            //{
-            //    Instruction splithere = jumptarget.Instructions[Randomizer.SingleNumber(0, jumptarget.Instructions.Count - 2)];
-            //    jumptarget = jumptarget.SplitAfterInstruction(splithere);
-            //}
-
-            /* 
-             * Now we have done every preparation, so we can make a random conditional
-             * jump here, which has to be always false.
-             */
+            
+            /* We make a random conditional jump here, which has to be always false. */
             Randomizer.GenerateConditionalJumpInstruction(ins, Instruction.ConditionType.AlwaysFalse, jumptarget);
         }
 
