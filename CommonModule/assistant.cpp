@@ -238,7 +238,7 @@ void Assistant::addinput(string str, string type, bool in)
 			t.erase( t.size() -1 );
 		rtn->back()->Vars[s.substr(type.size()) ]->sett(t);
 		rtn->back()->Vars[s.substr(type.size()) ]->setp(pointer);
-		if (in) rtn->back()->Vars[s.substr(14) ]->setuse(input);
+		if (in) rtn->back()->Vars[s.substr(type.size()) ]->setuse(input);
 	}
 }
 
@@ -424,8 +424,9 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
         {
             
 			string tmp2 = i->gets().substr(i->gets().find("sub"), i->gets().size());
-			tmp2.erase( tmp2.find( "(" ) );
+			
 			stringstream ss(tmp2.substr(tmp2.find("(")+1, tmp2.find(")")-1));
+			tmp2.erase( tmp2.find( "(" ) );
 			
 			rtn->push_back( new Function( l.getid(), tmp2 , l.getid()) );
 			cnt = rtn->back()->back();
