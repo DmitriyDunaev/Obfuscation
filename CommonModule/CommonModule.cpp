@@ -1,6 +1,8 @@
 // This is the main DLL file.
 
+//#define ORIGINAL
 //#define TEST
+#define SIMPLE
 
 using namespace std;
 
@@ -62,7 +64,8 @@ string CommonModule::Reader::DoStuff()
 //
 
 
-#ifndef TEST
+#ifdef ORIGINAL
+
 	ss << "int __cdecl sub_401334()\n{\n  sub_401980();\n  return sub_401368(777, 1);\n}\n";
 	ss << "int __cdecl sub_401368(int a1, int a2)\n{\n  char v3; // [sp+8h] [bp-38h]@1\n";
 	ss << "  int v4; // [sp+1Ch] [bp-24h]@1\n  char *v5; // [sp+30h] [bp-10h]@1\n";
@@ -71,7 +74,30 @@ string CommonModule::Reader::DoStuff()
 	ss << "  v9 = 3 * a2 + a1;\n  v8 = &v3;\n  v5 = &v3;\n  v7 = &v4;\n";
 	ss << "  for ( i = 1; i <= 4; ++i )\n  {\n    a2 += i;\n    *(_DWORD *)v8 = v9;\n";
 	ss << "    *(_DWORD *)v7 = a2;\n    v8 += 4;\n    ++v7;\n  }\n  return *(_DWORD *)v5;\n}\n";
-#else
+
+#endif
+#ifdef SIMPLE
+
+	ss << " int sub_fnct(int a, int b)\n";
+	ss << " {\n";
+	ss << " int tmp;\n";
+	ss << " if ( a * b > 100 )\n";
+	ss << " {\n";
+	ss << " tmp = a + b;\n";
+	ss << " }\n";
+	ss << " else\n";
+	ss << " {\n";
+	ss << " tmp = a * b;\n";
+	ss << " }\n";
+	ss << " return tmp;\n";
+	ss << " }\n";
+	ss << " int sub_otherfnct()\n";
+	ss << " {\n";
+	ss << " return sub_funct(6, 9);\n";
+	ss << " }\n";
+
+#endif
+#ifdef TEST
 
 	ss << " int sub_fnct(a, b)\n";
 	ss << " {\n";
@@ -83,6 +109,7 @@ string CommonModule::Reader::DoStuff()
 	ss << " }\n";
 	ss << " return ya;\n";
 	ss << " }\n";
+
 #endif
 
 #ifdef CIN
