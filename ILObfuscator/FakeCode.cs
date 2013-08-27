@@ -260,25 +260,14 @@ namespace Obfuscator
         {
             /* First we gather the variables with the proper state. */
             List<Variable> proper_vars = new List<Variable>();
-            foreach (Variable var in ins.DeadVariables.Keys)
-            {
-                if (ins.DeadVariables[var] == Variable.State.Free || ins.DeadVariables[var] == Variable.State.Filled)
-                    proper_vars.Add(var);
-            }
+            proper_vars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] == Variable.State.Free || ins.DeadVariables[x] == Variable.State.Filled);
 
             /* If we have less proper variables than needed: we return as many as we have. */
             if (proper_vars.Count <= amount)
                 return proper_vars;
-
             /* If we have more, then we pick randomly. */
             else
-            {
-                List<Variable> picked_vars = new List<Variable>();
-                List<int> picked_nums = Randomizer.MultipleNumbers(amount, 0, proper_vars.Count - 1, false, false);
-                foreach (int num in picked_nums)
-                    picked_vars.Add(proper_vars[num]);
-                return picked_vars;
-            }
+                return Randomizer.UniqueSelect<Variable>(proper_vars, amount).ToList();
         }
 
 

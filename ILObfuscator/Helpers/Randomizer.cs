@@ -255,6 +255,28 @@ namespace Obfuscator
             }
             nop.MakeConditionalJump(var, right_value, relop, target);
         }
+
+
+        /// <summary>
+        /// Randomly selects unique elements from a list
+        /// </summary>
+        /// <param name="arr">List with elements to be selected from</param>
+        /// <param name="m">Number of elements to be selected</param>
+        /// <returns>List with selected elements</returns>
+        public static IList<T> UniqueSelect<T>(IList<T> arr, int m)
+        {
+            T[] res = new T[m];
+            if (m > arr.Count())
+                throw new RandomizerException("Number of objects to be selected exceeds the list length.");
+            
+            for (int i = 0; i < arr.Count(); i++)
+            {
+                /* selecting m from remaining n-i */
+                if ((rnd.Next() % (arr.Count() - i)) < m)
+                    res[--m] = arr.ElementAt(i);
+            }
+            return res;
+        }
     }
 
 }
