@@ -73,7 +73,7 @@ namespace Obfuscator
 
             Console.Write("Converting Routine to Exchange class");
             exch = (Exchange)routine;
-            Console.WriteLine(". . . . . . . . . . COMING SOON\n");
+            PrintSuccess();
         }
 
 

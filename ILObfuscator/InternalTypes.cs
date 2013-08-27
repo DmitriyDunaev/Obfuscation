@@ -48,31 +48,6 @@ namespace Internal
         public List<Variable> GlobalVariables = new List<Variable>();
         public List<Function> Functions = new List<Function>();
 
-        
-        public static explicit operator Routine(Exchange doc)
-        {
-            Routine r = new Routine();
-            r.description = doc.Routine[0].Description.Value;
-            if (doc.Routine[0].Global.Exists)
-                foreach (VariableType var in doc.Routine[0].Global[0].Variable)
-                    r.GlobalVariables.Add(new Variable(var, Variable.Kind.Global));
-            foreach (FunctionType function in doc.Routine[0].Function)
-                r.Functions.Add(new Function(function, r));
-            return r;
-        }
-
-        public static explicit operator Exchange(Routine routine)
-        {
-            Exchange ex = Exchange.CreateDocument();
-            RoutineType root = ex.Routine.Append();
-            ex.SetSchemaLocation(@"Schemas\Exchange.xsd");
-            root.Description.Value = routine.description;
-
-            // TODO: continue writing the EXPORT
-
-            return ex;
-        }
-
     }
 
 
@@ -258,7 +233,7 @@ namespace Internal
         {
             get { return _ID.ToString(); }
         }
-        public int memoryUnitSize { get; private set; }
+        public int? memoryUnitSize { get; private set; }
         public bool pointer { get; private set; }
         public string name { get; private set; }
         public int memoryRegionSize { get; private set; }
@@ -276,7 +251,10 @@ namespace Internal
             _ID = new IDManager(var.ID.Value);
             name = var.Value;
             memoryRegionSize = Convert.ToInt32(var.MemoryRegionSize.Value);
-            memoryUnitSize = var.MemoryUnitSize.Exists() ? Convert.ToInt32(var.MemoryUnitSize.Value) : 1;
+            if (var.MemoryUnitSize.Exists())
+                memoryUnitSize = Convert.ToInt32(var.MemoryUnitSize.Value);
+            else
+                memoryUnitSize = null;
             pointer = var.Pointer.Value;
             fixedValue = var.FixedValue.Exists() ? var.FixedValue.Value : string.Empty;
             globalID = var.GlobalID.Exists() ? var.GlobalID.Value : string.Empty;

@@ -40,7 +40,8 @@ namespace ObfuscationManager
 
         public static void ExportRoutineXML(XmlDocument doc, PlatformType platform)
         {
-            //ValidateExchangeXML(doc);
+            doc.Save("export.xml");
+            ValidateExchangeXML(doc);
             //TODO: Send XML to Common Module for conversion to assembly
         }
 
