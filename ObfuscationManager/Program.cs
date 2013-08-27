@@ -18,7 +18,7 @@ namespace ObfuscationManager
                 Console.WriteLine("\n\tIMPORTING ROUTINE\n");
                 Console.ResetColor();
                 Console.Write("Loading XML, checking complience with Exchange.xsd");
-                doc = ExportImport.ImportRoutineXML(InputType.PseudoCode, PlatformType.x86);
+                doc = ExportImport.ImportXml(InputType.PseudoCode, PlatformType.x86);
                 exch = ExportImport.XmlToExchange(doc);
             }
             catch (Obfuscator.ValidatorException exc)
@@ -44,8 +44,10 @@ namespace ObfuscationManager
                 Console.ResetColor();
                 Console.Write("Generating XML, checking complience with Exchange.xsd");
                 doc = ExportImport.ExchangeToXml(exch);
-                ExportImport.ExportRoutineXML(doc, PlatformType.x86);
                 Obfuscator.ILObfuscator.PrintSuccess();
+                Console.Write("Converting XML to platform-dependent assembly");
+                ExportImport.XmlToAsm(doc, PlatformType.x86);
+                Console.WriteLine(" . . . . . COMING SOON\n");
             }
             catch (Obfuscator.ValidatorException exc)
             {
