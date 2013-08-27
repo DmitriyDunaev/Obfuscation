@@ -29,9 +29,11 @@ namespace Internal
             root.Description.Value = routine.description;
             
             // Exporting global variables
+            if (routine.GlobalVariables.Count > 0)
+                root.Global.Append();
             foreach (Variable global_var_orig in routine.GlobalVariables)
             {
-                VariableType var = root.Global.Last.Variable.Append();
+                VariableType var = root.Global.First.Variable.Append();
                 FillData(var, global_var_orig);
             }
 
@@ -45,79 +47,95 @@ namespace Internal
         }
 
 
-        private static void FillData(FunctionType function_export, Function function)
+        private static void FillData(FunctionType export, Function function)
         {
-            function_export.CalledFrom.EnumerationValue = function.calledFrom;
-            function_export.GlobalID.Value = function.globalID;
-            function_export.ID.Value = function.ID;
+            export.CalledFrom.EnumerationValue = function.calledFrom;
+            export.GlobalID.Value = function.globalID;
+            export.ID.Value = function.ID;
             List<string> input_vars_id = new List<string>();
             List<string> output_vars_id = new List<string>();
             function.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input).ForEach(x => input_vars_id.Add(x.ID));
             function.LocalVariables.FindAll(x => x.kind == Variable.Kind.Output).ForEach(x => output_vars_id.Add(x.ID));
             if (input_vars_id.Count > 0)
-                function_export.RefInputVars.Value = string.Join(" ", input_vars_id.ToArray());
+                export.RefInputVars.Value = string.Join(" ", input_vars_id.ToArray());
             if (output_vars_id.Count > 0)
-                function_export.RefOutputVars.Value = string.Join(" ", output_vars_id.ToArray());
+                export.RefOutputVars.Value = string.Join(" ", output_vars_id.ToArray());
 
             // Exporting local variables
             if (function.LocalVariables.Count > 0)
-                function_export.Local.Append();
+                export.Local.Append();
             foreach (Variable var_orig in function.LocalVariables)
             {
-                VariableType var = function_export.Local.First.Variable.Append();
+                VariableType var = export.Local.First.Variable.Append();
                 FillData(var, var_orig); 
             }
 
             // Exporting basic blocks
             foreach (BasicBlock bb_orig in function.BasicBlocks)
             {
-                BasicBlockType bb = function_export.BasicBlock.Append();
+                BasicBlockType bb = export.BasicBlock.Append();
                 FillData(bb, bb_orig);
             }
         }
 
 
-        private static void FillData(VariableType variable_export, Variable variable)
+        private static void FillData(VariableType export, Variable variable)
         {
             // Required attributes
-            variable_export.ID.Value = variable.ID;
-            variable_export.Pointer.Value = variable.pointer;
-            variable_export.MemoryRegionSize.Value = variable.memoryRegionSize;
-            variable_export.Value = variable.name;
+            export.ID.Value = variable.ID;
+            export.Pointer.Value = variable.pointer;
+            export.MemoryRegionSize.Value = variable.memoryRegionSize;
+            export.Value = variable.name;
 
             // Optional Attributes
-            variable_export.Fake.Value = variable.fake;
+            export.Fake.Value = variable.fake;
             if (!string.IsNullOrEmpty(variable.fixedValue))
-                variable_export.FixedValue.Value = variable.fixedValue;
+                export.FixedValue.Value = variable.fixedValue;
             if (!string.IsNullOrEmpty(variable.globalID))
-                variable_export.GlobalID.Value = variable.globalID;
+                export.GlobalID.Value = variable.globalID;
             if (variable.fixedMax.HasValue)
-                variable_export.MaxValue.Value = variable.fixedMax.Value;
+                export.MaxValue.Value = variable.fixedMax.Value;
             if (variable.fixedMin.HasValue)
-                variable_export.MinValue.Value = variable.fixedMin.Value;
+                export.MinValue.Value = variable.fixedMin.Value;
             if (variable.memoryUnitSize.HasValue)
-                variable_export.MemoryUnitSize.Value = variable.memoryUnitSize.Value;
+                export.MemoryUnitSize.Value = variable.memoryUnitSize.Value;
         }
 
 
-        private static void FillData(BasicBlockType bb_export, BasicBlock bb)
+        private static void FillData(BasicBlockType export, BasicBlock bb)
         {
-            bb_export.ID.Value = bb.ID;
+            export.ID.Value = bb.ID;
             List<string> predecessors = new List<string>();
             List<string> successors = new List<string>();
             bb.getPredecessors.ForEach(x => predecessors.Add(x.ID));
             bb.getSuccessors.ForEach(x => successors.Add(x.ID));
             if (predecessors.Count > 0)
-                bb_export.Predecessors.Value = string.Join(" ", predecessors.ToArray());
+                export.Predecessors.Value = string.Join(" ", predecessors.ToArray());
             if (successors.Count > 0)
-                bb_export.Successors.Value = string.Join(" ", successors.ToArray());
+                export.Successors.Value = string.Join(" ", successors.ToArray());
             // TODO: continue
             foreach (Instruction inst_original in bb.Instructions)
             {
-                InstructionType inst = bb_export.Instruction.Append();
-                // FillData(inst, inst_original);
+                InstructionType inst = export.Instruction.Append();
+                FillData(inst, inst_original);
             }
-            
+        }
+
+
+        private static void FillData(InstructionType export, Instruction inst)
+        {
+            // Required fields
+            export.ID.Value = inst.ID;
+            export.StatementType.EnumerationValue = inst.statementType;
+            export.Value = inst.TACtext;
+
+            // Optional values
+            if(inst.polyRequired)
+                export.PolyRequired.Value = inst.polyRequired;
+            List<string> refvars = new List<string>();
+            inst.RefVariables.ForEach(x => refvars.Add(x.ID));
+            if(refvars.Count > 0)
+                export.RefVars.Value = string.Join(" ", refvars.ToArray());
         }
     }
 }

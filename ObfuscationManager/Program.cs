@@ -45,7 +45,7 @@ namespace ObfuscationManager
                 Console.Write("Generating XML, checking complience with Exchange.xsd");
                 doc = ExportImport.ExchangeToXml(exch);
                 ExportImport.ExportRoutineXML(doc, PlatformType.x86);
-                Console.WriteLine(" . COMING SOON");
+                Obfuscator.ILObfuscator.PrintSuccess();
             }
             catch (Obfuscator.ValidatorException exc)
             {
