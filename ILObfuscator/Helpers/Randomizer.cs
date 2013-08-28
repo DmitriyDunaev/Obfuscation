@@ -83,25 +83,27 @@ namespace Obfuscator
         /// <returns>The target of the jump, based on some parameters in the Common static class</returns>
         public static BasicBlock GeneratePolyRequJumpTarget(List<BasicBlock> targetlist)
         {
+            
             if (targetlist.Count() == 1) return targetlist.First();
-            int result = SingleNumber(0, (int)Common.JumpGenerationChances.Original + (int)Common.JumpGenerationChances.Existing + (int)Common.JumpGenerationChances.New);
-            if (result < (int)Common.JumpGenerationChances.Original)
+            Common.JumpGenerationChances result = (Common.JumpGenerationChances) OneFromManyWithProbability(new int[3] { (int)Common.JumpGenerationChances.Original, (int)Common.JumpGenerationChances.Existing, (int)Common.JumpGenerationChances.New },
+                                                                               Common.JumpGenerationChances.Original, Common.JumpGenerationChances.Existing, Common.JumpGenerationChances.New);
+            if (result == Common.JumpGenerationChances.Original)
             {
                 return targetlist.First();
             }
-            else if (result < (int)Common.JumpGenerationChances.Original + (int)Common.JumpGenerationChances.Existing)
+            else if (result == Common.JumpGenerationChances.Existing)
             {
                 if (targetlist.Count() == 1) return targetlist.First();
                 return targetlist[SingleNumber(1, targetlist.Count() - 1)];
             }
-            else
+            else if (result == Common.JumpGenerationChances.New)
             {
                 targetlist.Add(new BasicBlock(targetlist.First(), targetlist.First().getSuccessors));
                 targetlist.Last().Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
                 return targetlist.Last();
             }
-
-
+            else
+                return null;
         }
 
 
