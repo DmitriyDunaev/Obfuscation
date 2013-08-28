@@ -143,7 +143,9 @@ namespace Obfuscator
 
             /* We random generate a statement type which we may not use according to the available right values. */
             StatementTypeType.EnumValues statementType =
-                (StatementTypeType.EnumValues) Randomizer.OneFromMany ( StatementTypeType.EnumValues.eCopy              ,
+                (StatementTypeType.EnumValues) Randomizer.OneFromManyWithProbability (
+                                                                        new int[3] { 20, 30, 50 }                       ,
+                                                                        StatementTypeType.EnumValues.eCopy              ,
                                                                         StatementTypeType.EnumValues.eUnaryAssignment   ,
                                                                         StatementTypeType.EnumValues.eFullAssignment    );
 
