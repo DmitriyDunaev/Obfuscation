@@ -97,13 +97,10 @@ namespace Obfuscator
             // Creating a clone of the original target in order to make the CFT more obfuscated
             BasicBlock polyrequtarget = new BasicBlock(originaltarget, originaltarget.getSuccessors);
             polyrequtarget.Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
-
             // And now setting the edges
             fake2.LinkToSuccessor(polyrequtarget, true);
-
             // And then converting its nop instruction into a ConditionalJump, and by that we create a new block
             Randomizer.GenerateConditionalJumpInstruction(fake1.Instructions.First(), Instruction.ConditionType.Random, fake3);
-
             // TODO: Test for mistakes in polyrequied cloning and linking
             
         }
