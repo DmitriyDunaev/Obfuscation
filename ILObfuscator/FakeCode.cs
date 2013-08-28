@@ -73,6 +73,13 @@ namespace Obfuscator
                         ins.RefreshNext();
                 }   
             }
+
+            /* Now we check for forbidden state collisions at every basic blocks' beginning. */
+            foreach (BasicBlock bb in func.BasicBlocks)
+            {
+                if (DataAnalysis.ForbiddenStateCollision(bb.Instructions.First()))
+                    throw new ObfuscatorException("Forbidden state collision: FILLED meets NOT_INITIALIZED.");
+            }
         }
 
         /// <summary>

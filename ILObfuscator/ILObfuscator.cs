@@ -65,11 +65,11 @@ namespace Obfuscator
             PrintSuccess();
 
             Console.Write("Generation of fake instructions from NOPs");
-            //foreach (Function func in routine.Functions)
-                FakeCode.GenerateFakeInstructions(routine.Functions[1]);
+            foreach (Function func in routine.Functions)
+                FakeCode.GenerateFakeInstructions(func);
             Logging.WriteRoutine(routine, "FakeIns");
-            //foreach (Function func in routine.Functions)
-                FakeCode.GenerateConditionalJumps(routine.Functions[1]);
+            foreach (Function func in routine.Functions)
+                FakeCode.GenerateConditionalJumps(func);
             Logging.WriteRoutine(routine, "CondJumps");
             routine.Validate();
             PrintSuccess();

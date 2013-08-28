@@ -316,15 +316,16 @@ namespace Obfuscator
         /* ----------- isLoopBody, isMainRoute algorithms end ------------ */
 
         /// <summary>
-        /// Function to check state collisions for the RefreshNext() method.
+        /// Gets the states for a variable from all the preceding instructions.
         /// </summary>
-        /// <param name="actual">The actual instruction.</param>
-        /// <param name="var">The actual variable.</param>
-        /// <param name="state">The state we want to refresh to.</param>
-        /// <returns>The state we should refresh to.</returns>
-        public static Variable.State CheckPrecedingStates(Instruction actual, Variable var, Variable.State state)
+        /// <param name="actual">Actual instruction.</param>
+        /// <param name="var">The variable.</param>
+        /// <returns>A list of the preceding states.</returns>
+        private static List<Variable.State> GetPrecedingStates(Instruction actual, Variable var)
         {
-            /* So we get all states from the preceding instructions. */
+            if (!actual.Equals(actual.parent.Instructions.First()))
+                throw new ObfuscatorException("Not the basic block's first instruction!");
+
             List<Variable.State> preceding_states = new List<Variable.State>();
             foreach (Instruction ins in actual.GetPrecedingInstructions())
             {
@@ -334,38 +335,74 @@ namespace Obfuscator
                     preceding_states.Add(ins.DeadPointers[var].State);
             }
 
-            /* We only have to do anything if there are more than one of those. */
-            if (preceding_states.Count() > 1)
-            {
-                switch (state)
-                {
-                    case Variable.State.Free:
-                        if (preceding_states.Contains(Variable.State.Not_Initialized))
-                        {
-                            /* FREE meets NOT_INITIALIZED */
-                            state = Variable.State.Not_Initialized;
-                        }
-                        else if (preceding_states.Contains(Variable.State.Filled))
-                        {
-                            /* FREE meets FILLED */
-                            state = Variable.State.Filled;
-                        }
-                        break;
+            return preceding_states;
+        }
 
-                    case Variable.State.Filled:
-                        if (preceding_states.Contains(Variable.State.Not_Initialized))
-                        {
-                            /* 
-                             * FILLED meets NOT_INITIALIZED
-                             * 
-                             * TODO: What should we do in these cases?
-                             */
-                            throw new ObfuscatorException("Unhandled state collision, do something!");
-                        }
-                        break;
+        /// <summary>
+        /// Function to check state collisions for the RefreshNext() method.
+        /// </summary>
+        /// <param name="actual">The actual instruction.</param>
+        /// <param name="var">The actual variable.</param>
+        /// <param name="state">The state we want to refresh to.</param>
+        /// <returns>The state we should refresh to.</returns>
+        public static Variable.State CheckPrecedingStates(Instruction actual, Variable var, Variable.State state)
+        {
+            /*
+             * We only have to do anything, if the instruction is on the beginning of
+             * a basic block, because at that point states can collide.
+             */
+            if (!actual.Equals(actual.parent.Instructions.First()))
+                return state;
+
+            /* So we get all states from the preceding instructions. */
+            List<Variable.State> preceding_states = GetPrecedingStates(actual, var);
+
+            /* We only have to do anything if there are more than one of those. */
+            if (preceding_states.Count() > 1 && state == Variable.State.Free)
+            {
+                if (preceding_states.Contains(Variable.State.Not_Initialized))
+                {
+                    /* FREE meets NOT_INITIALIZED */
+                    state = Variable.State.Not_Initialized;
+                }
+                else if (preceding_states.Contains(Variable.State.Filled))
+                {
+                    /* FREE meets FILLED */
+                    state = Variable.State.Filled;
                 }
             }
             return state;
+        }
+
+        /// <summary>
+        /// Checks whether at the point of an instruction collides FILLED with NOT_INITIALIZED.
+        /// </summary>
+        /// <param name="actual">The actual instruction.</param>
+        /// <returns>True if there's a forbidden collision, false if not.</returns>
+        public static bool ForbiddenStateCollision(Instruction actual)
+        {
+            /* States can collide only if we are on the beginning of a basic block. */
+            if (!actual.Equals(actual.parent.Instructions.First()))
+                return false;
+
+            /* We check for every dead variable present at the point of the instruction. */
+            foreach (Variable var in actual.DeadVariables.Keys)
+            {
+                List<Variable.State> preceding_states = GetPrecedingStates(actual, var);
+                if (preceding_states.Contains(Variable.State.Filled) && preceding_states.Contains(Variable.State.Not_Initialized))
+                    return true;
+            }
+            
+            /* And for every dead pointer. */
+            foreach (Variable var in actual.DeadPointers.Keys)
+            {
+                List<Variable.State> preceding_states = GetPrecedingStates(actual, var);
+                if (preceding_states.Contains(Variable.State.Filled) && preceding_states.Contains(Variable.State.Not_Initialized))
+                    return true;
+            }
+
+            /* If we haven't find a collision yet, then there isn't one. */
+            return false;
         }
     }
 }
