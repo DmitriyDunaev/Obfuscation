@@ -118,7 +118,7 @@ namespace Internal
                 if(!resultString.Equals(Successors[0].ID))
                     throw new ValidatorException("The first successor ID does not match the GOTO instruction. Basic block: " + ID);
             }
-            if (Predecessors.Count > 1 && Successors.Count() > 0)
+            if (Predecessors.Count > 1 && Successors.Count > 0)
             {
                 int preds_goto = Predecessors.Count(x =>
                     x.Instructions.Last().statementType == StatementTypeType.EnumValues.eConditionalJump ||
@@ -126,13 +126,15 @@ namespace Internal
                 if (Predecessors.Count - preds_goto > 1)
                     throw new ValidatorException("Basic block has more that one direct predecessor (without GOTO). Basic block: " + ID);
             }
-            if (Successors.Count() == 0)
+            if (Successors.Count == 0)
             {
                 int preds_proc = Predecessors.Count(x =>
                     x.Instructions.Last().statementType == StatementTypeType.EnumValues.eProcedural);
                 if (Predecessors.Count - preds_proc > 0)
-                    throw new ValidatorException("The 'fake exit block' can only have predecessors with returns at the end.");
+                    throw new ValidatorException("The 'fake exit block' can only have predecessors with last 'return' statement. Basic block: " + ID);
             }
+            if (Successors.Count == 1 && Successors.First().Predecessors.Count == 1 && Successors.First().Successors.Count != 0)
+                throw new ValidatorException("Found 2 basic blocks with a single predecessor-successor link. BB1: " + ID + ", BB2: " + Successors.First().ID);
 
             // Checking Successor-Predecessor links
             foreach (BasicBlock succ in Successors)
