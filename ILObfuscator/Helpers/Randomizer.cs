@@ -133,6 +133,30 @@ namespace Obfuscator
 
 
         /// <summary>
+        /// Randomly selects one value from many with fixed values probability
+        /// </summary>
+        /// <param name="probabilities">Probabilities in array</param>
+        /// <param name="many">Values one-by-one</param>
+        /// <returns>Random value, selected according to fixed probabilities</returns>
+        public static object OneFromManyWithProbability(int[] probabilities, params object[] many)
+        {
+            if (probabilities.Aggregate(0, (total, next) => total + next) != 100)
+                throw new RandomizerException("Overall probability must be 100%.");
+            if (probabilities.Count() != many.Count())
+                throw new RandomizerException("Total number of parameters must be equal to number of probabilities.");
+            int random_prob = SingleNumber(0, 100);
+            int accumulated_prob = 0;
+            for (int i = 0; i < probabilities.Count(); i++)
+            {
+                accumulated_prob += probabilities[i];
+                if (random_prob <= accumulated_prob)
+                    return many[i];
+            }
+            throw new RandomizerException("Internal randomizer exception occured: no value can be returned.");
+        }
+
+
+        /// <summary>
         /// Gets randomly one fake input parameter of a function. Throws exception if no such found.
         /// </summary>
         /// <param name="func">A function with parameters</param>
