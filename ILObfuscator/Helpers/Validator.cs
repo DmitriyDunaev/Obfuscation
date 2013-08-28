@@ -74,32 +74,13 @@ namespace Internal
     {
         public void Validate()
         {
-            // At first creation of BB
-            if (RefSuccessors.Count() > 0 && Successors.Count() == 0)
-            {
-                foreach (string id in RefSuccessors)
-                    foreach (BasicBlock bb in parent.BasicBlocks)
-                        if (bb.ID == id)
-                            Successors.Add(bb);
-                if (!RefSuccessors.Count.Equals(Successors.Count))
-                    throw new ValidatorException("Referenced basic block was not found. Referenced block:" + RefSuccessors[0]);
-                RefSuccessors.Clear();
-            }
-
+            if (RefSuccessors.Count > 0)
+                throw new ValidatorException("Basic block contains a reference to successors that could not be resolved. Basic block: " + ID);
+            if (RefPredecessors.Count > 0)
+                throw new ValidatorException("Basic block contains a reference to successors that could not be resolved. Basic block: " + ID);
+            
             if (Instructions.Last().statementType == StatementTypeType.EnumValues.eConditionalJump && Successors.Count != 2)
                 throw new ValidatorException("Basic block with ConditionalJump statement type must have exactly 2 successors.");
-            if (RefPredecessors.Count() > 0 && Predecessors.Count() == 0)
-            {
-                foreach (string id in RefPredecessors)
-                    foreach (BasicBlock bb in parent.BasicBlocks)
-                        if (bb.ID == id)
-                            Predecessors.Add(bb);
-                if (!RefPredecessors.Count.Equals(Predecessors.Count))
-                    throw new ValidatorException("Referenced basic block was not found. Referenced block:" + RefPredecessors[0]);
-                RefPredecessors.Clear();
-            }
-
-            // Actual validation
             if (Predecessors.Count == 0 && Successors.Count == 0)
                 throw new ValidatorException("No predecessors and no successors found for basic block " + ID);
             if (Instructions.Count == 0)

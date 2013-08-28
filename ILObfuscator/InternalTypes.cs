@@ -121,7 +121,6 @@ namespace Internal
         {
             get
             {
-                Validate();
                 return Predecessors;
             }
         }
@@ -130,7 +129,6 @@ namespace Internal
         {
             get
             {
-                Validate();
                 return Successors;
             }
         }
@@ -150,8 +148,64 @@ namespace Internal
             // Adding instructions to basic block
             foreach (InstructionType instr in bb.Instruction)
                 Instructions.Add(new Instruction(instr, this));
+
+            // Trying to link real successors to this basic block
+            switch (RefSuccessors.Count)
+            {
+                case 1:
+                    if (parent.BasicBlocks.ConvertAll(y => y.ID).Contains(RefSuccessors[0]))
+                    {
+                        Successors.Add(parent.BasicBlocks.Find(y => y.ID == RefSuccessors[0]));
+                        RefSuccessors.Clear();
+                    }
+                    break;
+                case 2:
+                    if (parent.BasicBlocks.ConvertAll(y => y.ID).Contains(RefSuccessors[0]))
+                        Successors.Insert(0, parent.BasicBlocks.Find(y => y.ID == RefSuccessors[0]));
+                    else if (parent.BasicBlocks.ConvertAll(y => y.ID).Contains(RefSuccessors[1]))
+                        Successors.Add(parent.BasicBlocks.Find(y => y.ID == RefSuccessors[1]));
+                    if (Successors.Count == 2)
+                        RefSuccessors.Clear();
+                    break;
+                default:
+                    break;
+            }
+
+            // Trying to link real predecessors to this basic block
+            if (RefPredecessors.Count() > 0)
+                RefPredecessors.ForEach(x => { parent.BasicBlocks.ForEach(y => { if (y.ID == x) Predecessors.Add(y); }); });
+            Predecessors.ForEach(x => RefPredecessors.Remove(x.ID));
+
+            // Trying to link this (new) basic block as predecessor/successor to other basic blocks of the function
+            foreach (BasicBlock block in parent.BasicBlocks)
+            {
+                if (block.RefPredecessors.Contains(ID))
+                {
+                    block.Predecessors.Add(this);
+                    block.RefPredecessors.Remove(ID);
+                }
+
+                if(block.RefSuccessors.Contains(ID))
+                    switch(block.RefSuccessors.Count)
+                    {
+                        case 1:
+                            block.Successors.Add(this);
+                            block.RefSuccessors.Clear();
+                            break;
+                        case 2:
+                            if(block.RefSuccessors[0] == ID)
+                                block.Successors.Insert(0, this);
+                            else
+                                block.Successors.Add(this);
+                            if (block.Successors.Count == 2)
+                                block.RefSuccessors.Clear();
+                            break;
+                        default:
+                            break;
+                    }
+            }
         }
-        
+
 
         /// <summary>
         /// Constructor for BasicBlock that contains one NoOperation instruction
