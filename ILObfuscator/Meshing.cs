@@ -47,10 +47,8 @@ namespace Obfuscator
                 List<BasicBlock> basicblocks = funct.BasicBlocks.FindAll(x => x.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump);
                 foreach (BasicBlock bb in basicblocks)
                 {
-                    InsertFakeLane(bb);
-                    bb.parent.Validate();
-                    InsertDeadLane(bb);
-                    bb.parent.Validate();
+                    bb.LinkToSuccessor(InsertFakeLane(bb), true);
+                    Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, InsertDeadLane(bb));
                 }
             }
         }
@@ -77,31 +75,42 @@ namespace Obfuscator
         /// Still in test phase, now it only has a not so smart condition in the conditional jump
         /// </summary>
         /// <param name="bb">The actual basic block with the unconditional jump</param>
-        private static void InsertFakeLane(BasicBlock bb)
+        private static BasicBlock InsertFakeLane(BasicBlock bb)
         {
             // Saving the original target of the jump
             BasicBlock originaltarget = bb.getSuccessors.First();
 
-            // Creating a new basic block after "bb"
-            BasicBlock fake1 = bb.SplitAfterInstruction(bb.Instructions.Last());
+            // Creating a new basic block
+            BasicBlock fake1 = new BasicBlock(bb.parent);
 
-            // Creating the second fake block, after fake1
-            BasicBlock fake2 = fake1.SplitAfterInstruction(fake1.Instructions.Last());
+            // Creating the second fake block
+            BasicBlock fake2 = new BasicBlock(bb.parent);
 
-            //Creating the third one, after fake2
-            BasicBlock fake3 = fake2.SplitAfterInstruction(fake2.Instructions.Last());
+            //Creating the third one
+            BasicBlock fake3 = new BasicBlock(bb.parent);
 
-            fake3.Instructions.Add(new Instruction(fake3));
+            // Starting the linking
             fake3.Instructions.Last().MakeUnconditionalJump(originaltarget);
 
             // Creating a clone of the original target in order to make the CFT more obfuscated
             BasicBlock polyrequtarget = new BasicBlock(originaltarget, originaltarget.getSuccessors);
             polyrequtarget.Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
+
             // And now setting the edges
             fake2.LinkToSuccessor(polyrequtarget, true);
-            // And then converting its nop instruction into a ConditionalJump, and by that we create a new block
+
+            
+
+            fake1.LinkToSuccessor(fake2);
+
+            bb.LinkToSuccessor(fake1);
+
+            // And then converting its nop instruction into a ConditionalJump
+
+            Randomizer.GenerateConditionalJumpInstruction(fake2.Instructions.First(), Instruction.ConditionType.Random, originaltarget);
             Randomizer.GenerateConditionalJumpInstruction(fake1.Instructions.First(), Instruction.ConditionType.Random, fake3);
-            // TODO: Test for mistakes in polyrequied cloning and linking
+
+            return fake1;
             
         }
 
@@ -110,42 +119,25 @@ namespace Obfuscator
         /// In thest phase -> condition not always false
         /// </summary>
         /// <param name="bb">The actual basic block with the unconditional jump</param>
-        private static void InsertDeadLane(BasicBlock bb)
+        private static BasicBlock InsertDeadLane(BasicBlock bb)
         {
 
             // First, creating a basic block pointing to a random block of the function
             BasicBlock dead1 = new BasicBlock(bb.parent);
 
-            // Random linking
-            bb.parent.BasicBlocks.Remove(dead1);
-            dead1.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
-            bb.parent.BasicBlocks.Add(dead1);
-
             // And making it dead
             dead1.dead = true;
 
-            // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always false
-            Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, dead1);
-
-            // Adding a GOTO instuction to its end
-            dead1.Instructions.Add(new Instruction(dead1));
-            dead1.Instructions.Last().MakeUnconditionalJump(dead1.getSuccessors.First());
-
-
             // Now including another one, with the basicblock splitter
-            BasicBlock dead2 = dead1.SplitAfterInstruction(dead1.Instructions.Last());
+            BasicBlock dead2 = new BasicBlock(bb.parent);
 
             // And making it dead too
             dead2.dead = true;
 
-            // Now including the third one, with the basicblock splitter
-            BasicBlock dead3 = dead2.SplitAfterInstruction(dead2.Instructions.Last());
+            dead1.LinkToSuccessor(dead2);
 
-            // Random linking. Some tricking needed, to be always valid
-            BasicBlock jumpable = Randomizer.JumpableBasicBlock(bb.parent);
-            dead3.Instructions.Add(new Instruction(dead3));
-            dead3.Instructions.Last().MakeUnconditionalJump(jumpable);
-            dead3.LinkToSuccessor(jumpable, true);
+            // Now including the third one, with the basicblock splitter
+            BasicBlock dead3 = new BasicBlock(bb.parent);
 
             // And making it dead too
             dead3.dead = true;
@@ -153,6 +145,11 @@ namespace Obfuscator
             // Now creating the conditional jump
             Randomizer.GenerateConditionalJumpInstruction(dead1.Instructions.Last(), Instruction.ConditionType.Random, dead3);
 
+            // Random linking
+            dead2.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
+            dead3.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
+
+            return dead1;
         }
 
         /// <summary>
@@ -319,10 +316,7 @@ namespace Obfuscator
             BasicBlock falsesucc = null;
             Parser.ConditionalJumpInstruction(bb.Instructions.Last(), out var, out C, out relop, out truesucc, out falsesucc);
             List<Cond> condlist = GenetateCondList(C, relop);
-            truesucc.Validate();
-            falsesucc.Validate();
-
-            List<BasicBlock> generatedblocks = GenerateBlocks(bb, var, truesucc, falsesucc, condlist);
+            GenerateBlocks(bb, var, truesucc, falsesucc, condlist);
         }
 
         /// <summary>
@@ -333,7 +327,7 @@ namespace Obfuscator
         /// <param name="falselane">The false successor</param>
         /// <param name="condlist">The condition list</param>
         /// <returns>The list of the generated BasicBlocks</returns>
-        private static List<BasicBlock> GenerateBlocks(BasicBlock bb, Variable var, BasicBlock truelane, BasicBlock falselane, List<Cond> condlist)
+        private static void GenerateBlocks(BasicBlock bb, Variable var, BasicBlock truelane, BasicBlock falselane, List<Cond> condlist)
         {
             List<BasicBlock> bblist = new List<BasicBlock>();
             foreach (Cond c in condlist)
@@ -343,8 +337,12 @@ namespace Obfuscator
 
             bb.Instructions.Remove(bb.Instructions.Last());
             bb.Instructions.Add(new Instruction(bb));
-            bb.Instructions.Last().MakeUnconditionalJump(bblist.First());
-            
+
+            /// Replacing the first one, with the original
+            bb.parent.BasicBlocks.Remove(bblist.First());
+            bblist.Remove(bblist.First());
+            bblist.Insert(0, bb);
+
             /// Creating the polyRequired list
             List<BasicBlock> truelist = new List<BasicBlock>();
             truelist.Add(truelane);
@@ -353,7 +351,6 @@ namespace Obfuscator
 
             for (int i = 0; i < condlist.Count(); i++)
             {
-
                 switch (condlist[i].JumpType)
                 {
                     case Cond.BlockJumpType.True:
@@ -362,18 +359,18 @@ namespace Obfuscator
                             bblist[i].LinkToSuccessor(bblist[i + 1], true);
                         else
                             bblist[i].LinkToSuccessor(Randomizer.GeneratePolyRequJumpTarget(falselist), true);
-                        bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, Randomizer.GeneratePolyRequJumpTarget(truelist));
+                        bblist[i].Instructions.Last().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, Randomizer.GeneratePolyRequJumpTarget(truelist));
                         break;
                     case Cond.BlockJumpType.False:
                         if (i != condlist.Count() - 1)
                             bblist[i].LinkToSuccessor(bblist[i + 1], true);
                         else
                             bblist[i].LinkToSuccessor(Randomizer.GeneratePolyRequJumpTarget(falselist), true);
-                        bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, Randomizer.GeneratePolyRequJumpTarget(falselist));
+                        bblist[i].Instructions.Last().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, Randomizer.GeneratePolyRequJumpTarget(falselist));
                         break;
                     case Cond.BlockJumpType.Ambigious:
                         bblist[i].LinkToSuccessor(Randomizer.GeneratePolyRequJumpTarget(falselist), true);
-                        bblist[i].Instructions.First().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, bblist[i + 1]);
+                        bblist[i].Instructions.Last().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, bblist[i + 1]);
                         break;
                     default:
                         break;
@@ -386,8 +383,6 @@ namespace Obfuscator
                 falselane.parent.BasicBlocks.Remove(falselane);
             if (truelane.getPredecessors.Count() == 0)
                 truelane.parent.BasicBlocks.Remove(truelane);
-
-            return bblist;
         }
 
         /// <summary>
