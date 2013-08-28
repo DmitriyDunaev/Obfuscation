@@ -27,7 +27,7 @@ namespace Obfuscator
         /// <summary>
         /// Describes the probability of generating a conditional jump in percents.
         /// </summary>
-        private static int prob_of_cond_jump = 30;
+        private static int prob_of_cond_jump = 20;
 
         /// <summary>
         /// Returns a list of all nops present in the function.
@@ -56,22 +56,23 @@ namespace Obfuscator
         {
             /* We have to go through all the nop's in the function. */
             List<Instruction> nops = GetAllNops(func);
-            
+
             foreach (Instruction ins in nops)
-            { 
-                if (( DataAnalysis.isMainRoute[ins.parent] && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) ||
-                    ( !DataAnalysis.isMainRoute[ins.parent] && Randomizer.DeadVariable(ins, Variable.State.Free) == null )                                   )
+            {
+                if ((DataAnalysis.isMainRoute[ins.parent] && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized, Variable.State.Filled) == null) ||
+                    (!DataAnalysis.isMainRoute[ins.parent] && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Filled) == null))
                     continue;
 
                 /* If a conditional jump cannot be made here, or we didn't choose it, we generate a fake instruction. */
-                if (func.BasicBlocks.Count < 2 || Randomizer.SingleNumber(0, 99) >= prob_of_cond_jump)
+                int i = Randomizer.SingleNumber(0, 99);
+                if (func.BasicBlocks.Count < 2 || i >= prob_of_cond_jump)
                 {
                     _GenerateFakeInstruction(ins);
-                       
+
                     /* If the instruction is made, then we have to refresh the states of the dead variables. */
                     if (ins.statementType != StatementTypeType.EnumValues.eNoOperation)
                         ins.RefreshNext();
-                }   
+                }
             }
 
             /* Now we check for forbidden state collisions at every basic blocks' beginning. */
@@ -131,11 +132,11 @@ namespace Obfuscator
             Variable leftvalue;
 
             if (DataAnalysis.isMainRoute[ins.parent])
-                leftvalue = Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized);
+                leftvalue = Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized, Variable.State.Filled);
 
             /* If we aren't in the main route, then we cannot use NOT_INITIALIZED ones as left value. */
             else
-                leftvalue = Randomizer.DeadVariable(ins, Variable.State.Free);
+                leftvalue = Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Filled);
 
             /* Then we check how many variables can we use as right value. */
             List<Variable> rightvalues = GetRandomRightValues(ins, 2);
@@ -167,10 +168,7 @@ namespace Obfuscator
             switch (rightvalues.Count)
             {
                 case 0:
-                    /* 
-                     * If we have no available right values, and we are in a loop, then we can't do anything.
-                     * ( maybe t = -t, but that isn't quite reasonable... )
-                     */
+                    /* If we have no available right values, and we are in a loop, then we can't do anything. */
                     if (DataAnalysis.isLoopBody[ins.parent])
                         return;
 
