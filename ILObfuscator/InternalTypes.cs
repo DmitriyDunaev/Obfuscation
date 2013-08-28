@@ -183,6 +183,13 @@ namespace Internal
             Instructions.ForEach(x => x.ResetID());
             Instructions.ForEach(x => x.parent = this);
             newSuccessors.ForEach(x => LinkToSuccessor(x));
+
+            if (newSuccessors.Count() == 1 && Instructions.Last().statementType != StatementTypeType.EnumValues.eUnconditionalJump)
+            {
+                Instructions.Add(new Instruction(this));
+                Instructions.Last().MakeUnconditionalJump(newSuccessors.First());
+            }
+
             parent.BasicBlocks.Add(this);
         }
 

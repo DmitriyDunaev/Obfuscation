@@ -48,7 +48,9 @@ namespace Obfuscator
                 foreach (BasicBlock bb in basicblocks)
                 {
                     InsertFakeLane(bb);
+                    bb.parent.Validate();
                     InsertDeadLane(bb);
+                    bb.parent.Validate();
                 }
             }
         }
@@ -89,6 +91,9 @@ namespace Obfuscator
             //Creating the third one, after fake2
             BasicBlock fake3 = fake2.SplitAfterInstruction(fake2.Instructions.Last());
 
+            fake3.Instructions.Add(new Instruction(fake3));
+            fake3.Instructions.Last().MakeUnconditionalJump(originaltarget);
+
             // Creating a clone of the original target in order to make the CFT more obfuscated
             BasicBlock polyrequtarget = new BasicBlock(originaltarget, originaltarget.getSuccessors);
             polyrequtarget.Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
@@ -114,6 +119,7 @@ namespace Obfuscator
             // First, creating a basic block pointing to a random block of the function
             BasicBlock dead1 = new BasicBlock(bb.parent);
 
+            // Random linking
             bb.parent.BasicBlocks.Remove(dead1);
             dead1.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
             bb.parent.BasicBlocks.Add(dead1);
@@ -124,6 +130,11 @@ namespace Obfuscator
             // Here comes the tricky part: changing the bb's unconditional jump to a conditional, which is always false
             Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, dead1);
 
+            // Adding a GOTO instuction to its end
+            dead1.Instructions.Add(new Instruction(dead1));
+            dead1.Instructions.Last().MakeUnconditionalJump(dead1.getSuccessors.First());
+
+
             // Now including another one, with the basicblock splitter
             BasicBlock dead2 = dead1.SplitAfterInstruction(dead1.Instructions.Last());
 
@@ -133,7 +144,11 @@ namespace Obfuscator
             // Now including the third one, with the basicblock splitter
             BasicBlock dead3 = dead2.SplitAfterInstruction(dead2.Instructions.Last());
 
-            dead3.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
+            // Random linking. Some tricking needed, to be always valid
+            BasicBlock jumpable = Randomizer.JumpableBasicBlock(bb.parent);
+            dead3.Instructions.Add(new Instruction(dead3));
+            dead3.Instructions.Last().MakeUnconditionalJump(jumpable);
+            dead3.LinkToSuccessor(jumpable, true);
 
             // And making it dead too
             dead3.dead = true;
