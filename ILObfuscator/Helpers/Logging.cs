@@ -83,6 +83,14 @@ namespace Obfuscator
             sb.AppendLine("   - out of them fake: " + counter);
             sb.AppendLine("   - FPO number in settings: " + Common.FPO);
             sb.AppendLine("   - real FPO after obfuscation: " + Math.Round((double)total_instructions/(total_instructions-counter), 3));
+
+            sb.AppendLine();
+            foreach (Function func in routine.Functions)
+            {
+                int sum = func.GetFakeExitBasicBlock().Instructions.First().DeadVariables.Count;
+                int filled = func.GetFakeExitBasicBlock().Instructions.First().DeadVariables.Count(x => x.Value == Variable.State.Filled);
+                sb.AppendLine("Dead variables at the end (all / filled): " + sum + " / " + filled);
+            }
             
             string filename_routine = Path.Combine(pathToLog, string.Format("Obfuscation_Statistics_{0:dd.MM.yyy}.log", DateTime.Now));
             File.WriteAllText(filename_routine, sb.ToString());
