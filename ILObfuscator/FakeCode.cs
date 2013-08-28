@@ -59,8 +59,8 @@ namespace Obfuscator
             
             foreach (Instruction ins in nops)
             { 
-                if (( DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) ||
-                    ( !DataAnalysis.isMainRoute(ins.parent) && Randomizer.DeadVariable(ins, Variable.State.Free) == null )                                   )
+                if (( DataAnalysis.isMainRoute[ins.parent] && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized) == null ) ||
+                    ( !DataAnalysis.isMainRoute[ins.parent] && Randomizer.DeadVariable(ins, Variable.State.Free) == null )                                   )
                     continue;
 
                 /* If a conditional jump cannot be made here, or we didn't choose it, we generate a fake instruction. */
@@ -130,7 +130,7 @@ namespace Obfuscator
             /* First we get a left value. */
             Variable leftvalue;
 
-            if (DataAnalysis.isMainRoute(ins.parent))
+            if (DataAnalysis.isMainRoute[ins.parent])
                 leftvalue = Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized);
 
             /* If we aren't in the main route, then we cannot use NOT_INITIALIZED ones as left value. */
@@ -171,7 +171,7 @@ namespace Obfuscator
                      * If we have no available right values, and we are in a loop, then we can't do anything.
                      * ( maybe t = -t, but that isn't quite reasonable... )
                      */
-                    if (DataAnalysis.isLoopBody(ins.parent))
+                    if (DataAnalysis.isLoopBody[ins.parent])
                         return;
 
                     /* We don't have any right values, so we have to copy a constant value. */
@@ -181,7 +181,7 @@ namespace Obfuscator
 
                 case 1:
                     /* We choose Full Assignment, or rightvalue is the same as leftvalue, or we are in a loop body. */
-                    if (DataAnalysis.isLoopBody(ins.parent) || leftvalue.Equals(rightvalues[0]) 
+                    if (DataAnalysis.isLoopBody[ins.parent] || leftvalue.Equals(rightvalues[0]) 
                                                             || statementType == StatementTypeType.EnumValues.eFullAssignment)
                     {
                         /* Here we random generate an operator. */
@@ -231,7 +231,7 @@ namespace Obfuscator
                      * If we are in a loop body, then we can only make a full assignment like that:
                      * t1 = t2 op t1
                      */
-                    if (DataAnalysis.isLoopBody(ins.parent) || statementType == StatementTypeType.EnumValues.eFullAssignment)
+                    if (DataAnalysis.isLoopBody[ins.parent] || statementType == StatementTypeType.EnumValues.eFullAssignment)
                     {
                         /* Here we random generate an operator: + or - */
                         /* TODO: (efficient) * and / */
@@ -239,7 +239,7 @@ namespace Obfuscator
                             (Instruction.ArithmeticOperationType)Randomizer.OneFromMany(Instruction.ArithmeticOperationType.Addition,
                                                                                         Instruction.ArithmeticOperationType.Subtraction);
 
-                        if (DataAnalysis.isLoopBody(ins.parent))
+                        if (DataAnalysis.isLoopBody[ins.parent])
                             ins.MakeFullAssignment(leftvalue, rightvalues[0], leftvalue, null, op);
 
                         else

@@ -9,6 +9,8 @@ namespace Obfuscator
 {
     public static class DataAnalysis
     {
+        /* ---------------- DeadVariables algorithm starts ----------------*/
+
         /* 
          * To make sure we don't deal with a basic block twice, we save the ID
          * of the basic blocks we have been to into a list.
@@ -224,7 +226,19 @@ namespace Obfuscator
                 }
         }
 
+        /* ----------------- DeadVariables algorithm end -----------------*/
+
         /* ---------- isLoopBody, isMainRoute algorithms start ----------- */
+
+        /// <summary>
+        /// Dictionary to store about every basic block whether it's in a loop body or not.
+        /// </summary>
+        public static Dictionary<BasicBlock, bool> isLoopBody = new Dictionary<BasicBlock, bool>();
+
+        /// <summary>
+        /// Dictionary to store about every basic block whether it's in the main thread of the control flow or not.
+        /// </summary>
+        public static Dictionary<BasicBlock, bool> isMainRoute = new Dictionary<BasicBlock, bool>();
 
         /// <summary>
         /// List to hold the id's of the basic blocks we already reached.
@@ -238,11 +252,24 @@ namespace Obfuscator
         private static string id = string.Empty;
 
         /// <summary>
+        /// Gathers info (isLoopBody, isMainRoute) about the basic blocks in the function.
+        /// </summary>
+        /// <param name="func">The actual function.</param>
+        public static void GatherBasicBlockInfo(Function func)
+        {
+            foreach (BasicBlock bb in func.BasicBlocks)
+            {
+                isMainRoute.Add(bb, _isMainRoute(bb));
+                isLoopBody.Add(bb, _isLoopBody(bb));
+            }
+        }
+
+        /// <summary>
         /// Function to find out whether a basic block is in a loop body, or not.
         /// </summary>
         /// <param name="actual">The questioned basic block.</param>
         /// <returns>True if the basic block is in a loop, False if not.</returns>
-        public static bool isLoopBody(BasicBlock bb)
+        private static bool _isLoopBody(BasicBlock bb)
         {
             return StartFromBB(bb, true);
         }
@@ -252,7 +279,7 @@ namespace Obfuscator
         /// </summary>
         /// <param name="bb">The questioned basic block.</param>
         /// <returns>True if the basic block is in the main Control Flow, False if not.</returns>
-        public static bool isMainRoute(BasicBlock bb)
+        private static bool _isMainRoute(BasicBlock bb)
         {
             return !StartFromBB(bb, false);
         }
@@ -314,6 +341,8 @@ namespace Obfuscator
         }
 
         /* ----------- isLoopBody, isMainRoute algorithms end ------------ */
+
+        /* --- CkeckPrecedingStates, ForbiddenCollision algorithms start --- */
 
         /// <summary>
         /// Gets the states for a variable from all the preceding instructions.
@@ -404,5 +433,7 @@ namespace Obfuscator
             /* If we haven't find a collision yet, then there isn't one. */
             return false;
         }
+
+        /* ---- CkeckPrecedingStates, ForbiddenCollision algorithms end ---- */
     }
 }

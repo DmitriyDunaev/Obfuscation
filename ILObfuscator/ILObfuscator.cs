@@ -60,7 +60,10 @@ namespace Obfuscator
 
             Console.Write("Processing dead variables");
             foreach (Function func in routine.Functions)
+            {
                 DataAnalysis.DeadVarsAlgortihm(func);
+                DataAnalysis.GatherBasicBlockInfo(func);
+            }
             routine.Validate();
             PrintSuccess();
 
