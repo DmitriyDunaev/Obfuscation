@@ -58,7 +58,7 @@ namespace Obfuscator
             PrintSuccess();
             Logging.WriteRoutine(routine, "NoOpersGeneration");
 
-            Console.Write("Processing dead variables");
+            Console.Write("Running data analysis");
             foreach (Function func in routine.Functions)
             {
                 DataAnalysis.DeadVarsAlgortihm(func);
