@@ -24,8 +24,7 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
 
-            Logging.WriteReadableTAC(routine.Functions[0]);
-
+            
             routine.Functions[0].NewFakeInputParameter(11, 55);
             routine.Functions[0].NewFakeInputParameter(22, 155);
             routine.Functions[0].NewFakeInputParameter(33, 545);
@@ -76,6 +75,8 @@ namespace Obfuscator
             Logging.WriteRoutine(routine, "CondJumps");
             routine.Validate();
             PrintSuccess();
+
+            Logging.WriteReadableTAC(routine);
 
             Console.Write("Collecting and writing statistics");
             Logging.WriteStatistics(routine);

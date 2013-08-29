@@ -335,6 +335,7 @@ namespace Obfuscator
             foreach (Cond c in condlist)
             {
                 bblist.Add(new BasicBlock(bb.parent));
+                bblist.Last().Instructions.Add(new Instruction(bblist.Last()));
             }
 
             bb.Instructions.Remove(bb.Instructions.Last());
