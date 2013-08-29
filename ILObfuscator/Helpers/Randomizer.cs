@@ -85,8 +85,12 @@ namespace Obfuscator
         {
             
             if (targetlist.Count() == 1) return targetlist.First();
-            Common.JumpGenerationChances result = (Common.JumpGenerationChances) OneFromManyWithProbability(new int[3] { (int)Common.JumpGenerationChances.Original, (int)Common.JumpGenerationChances.Existing, (int)Common.JumpGenerationChances.New },
-                                                                               Common.JumpGenerationChances.Original, Common.JumpGenerationChances.Existing, Common.JumpGenerationChances.New);
+            Common.JumpGenerationChances result = (Common.JumpGenerationChances) OneFromManyWithProbability(new int[3] {    (int)Common.JumpGenerationChances.Original,
+                                                                                                                            (int)Common.JumpGenerationChances.Existing,
+                                                                                                                            (int)Common.JumpGenerationChances.New },
+                                                                                                            Common.JumpGenerationChances.Original,
+                                                                                                            Common.JumpGenerationChances.Existing,
+                                                                                                            Common.JumpGenerationChances.New);
             if (result == Common.JumpGenerationChances.Original)
             {
                 return targetlist.First();

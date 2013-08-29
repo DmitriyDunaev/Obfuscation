@@ -146,8 +146,10 @@ namespace Obfuscator
             Randomizer.GenerateConditionalJumpInstruction(dead1.Instructions.Last(), Instruction.ConditionType.Random, dead3);
 
             // Random linking
-            dead2.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
-            dead3.LinkToSuccessor(Randomizer.JumpableBasicBlock(bb.parent), true);
+            dead2.Instructions.Add(new Instruction( dead2 ));
+            dead2.Instructions.Last().MakeUnconditionalJump(Randomizer.JumpableBasicBlock(bb.parent));
+            dead3.Instructions.Add(new Instruction( dead3 ));
+            dead3.Instructions.Last().MakeUnconditionalJump(Randomizer.JumpableBasicBlock(bb.parent));
 
             return dead1;
         }

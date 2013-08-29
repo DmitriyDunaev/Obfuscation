@@ -1,8 +1,8 @@
 // This is the main DLL file.
 
-//#define ORIGINAL
+#define ORIGINAL
 //#define TEST
-#define SIMPLE
+//#define SIMPLE
 
 using namespace std;
 
