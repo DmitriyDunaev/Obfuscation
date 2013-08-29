@@ -80,11 +80,14 @@ namespace Obfuscator
         /// polyRequired targets, or a new polyRequired target
         /// </summary>
         /// <param name="targetlist">The already existing list, with the original jump target at its first position</param>
+        /// <param name="generatenew">If thue, dispite the chances we generate a new target</param>
         /// <returns>The target of the jump, based on some parameters in the Common static class</returns>
         public static BasicBlock GeneratePolyRequJumpTarget(List<BasicBlock> targetlist)
         {
-            
-            if (targetlist.Count() == 1) return targetlist.First();
+            if (targetlist.First().Instructions.Last().statementType != ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
+            {
+                return targetlist.First();
+            }
             Common.JumpGenerationChances result = (Common.JumpGenerationChances) OneFromManyWithProbability(new int[3] {    (int)Common.JumpGenerationChances.Original,
                                                                                                                             (int)Common.JumpGenerationChances.Existing,
                                                                                                                             (int)Common.JumpGenerationChances.New },
