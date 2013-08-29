@@ -24,7 +24,8 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
 
-            
+            Logging.WriteReadableTAC(routine);
+
             routine.Functions[0].NewFakeInputParameter(11, 55);
             routine.Functions[0].NewFakeInputParameter(22, 155);
             routine.Functions[0].NewFakeInputParameter(33, 545);
@@ -38,7 +39,6 @@ namespace Obfuscator
             ConstCoverage.CoverConstants(routine);
             routine.Validate();
             PrintSuccess();
-
 
             Console.Write("Meshing algorithm: Unconditional Jumps");
             Meshing.MeshUnconditionals(routine);
@@ -76,7 +76,7 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
 
-            Logging.WriteReadableTAC(routine);
+            //Logging.WriteReadableTAC(routine);
 
             Console.Write("Collecting and writing statistics");
             Logging.WriteStatistics(routine);

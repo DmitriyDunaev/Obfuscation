@@ -12,64 +12,137 @@ namespace Obfuscator
 {
     public static class Traversal
     {
+        private static List<List<BasicBlock>> lists = new List<List<BasicBlock>>();
+
         /// <summary>
-        /// It holds the new order of the basic blocks.
+        /// Tells us whether the basic block is already contained somewhere.
         /// </summary>
-        private static List<BasicBlock> newList = new List<BasicBlock>();
-
-        public static void ReorderBasicBlocks (Function func)
+        /// <param name="bb">The basic block to check (can be null).</param>
+        /// <returns>The list containing it, or null if no such exists.</returns>
+        private static List<BasicBlock> ContainsAlready(BasicBlock bb)
         {
-            /* Compulsory cleanup before doing anything. */
-            newList.Clear();
+            if (bb == null)
+                return null;
 
-            /* 
-             * We start from the first basic block which is (by convention) also
-             * the first in the function's BasicBlocks list.
-             */
-            DealWithBasicBlock(func.BasicBlocks.First());
+            foreach (List<BasicBlock> l in lists)
+            {
+                if (l.Contains(bb))
+                    return l;
+            }
+            return null;
         }
 
-        private static void DealWithBasicBlock(BasicBlock bb)
+        /// <summary>
+        /// Returns the direct predecessor of a basic block if such exists.
+        /// </summary>
+        /// <param name="actual">The actual basic block.</param>
+        /// <returns>The direct predecessor, or null, if no such exists.</returns>
+        private static BasicBlock GetDirectPredecessor(BasicBlock actual)
         {
-            /* We check whether we have already dealt with this basic block. */
-            if (newList.Contains(bb))
-                return;
+            /* The "fake exit block" does not have any direct predecessors. */
+            if (actual.getSuccessors.Count == 0)
+                return null;
 
-            /* We put this basic block in the new list. */
-            newList.Add(bb);
+            foreach (BasicBlock bb in actual.getPredecessors)
+            {
+                switch (bb.getSuccessors.Count)
+                {
+                    case 0:
+                        break;
 
+                    case 1:
+                        if (bb.Instructions.Last().statementType != StatementTypeType.EnumValues.eUnconditionalJump)
+                            return bb;
+                        break;
+
+                    case 2:
+                        return bb;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the direct successor of a basic block if such exists.
+        /// </summary>
+        /// <param name="actual">The actual basic block.</param>
+        /// <returns>The direct successor, or null, if no such exists.</returns>
+        private static BasicBlock GetDirectSuccessor(BasicBlock actual)
+        {
             /* 
-             *  We deal with this basic block's direct successor, which is:
+             *  A basic block has direct successor, only if it is:
              * 
-             *  - the only one, if the basic block does not end with a jump.
+             *  - the only one, and the basic block does not end with a jump,
+             *    and that successor isn't the "fake exit block".
              *  
              *  - the second one (the false lane) if the basic block ends with
-             *    a conditional jump.
+             *    a conditional jump (so it has 2 successors).
              */
-            switch (bb.getSuccessors.Count)
+            switch (actual.getSuccessors.Count)
             {
                 case 0:
                     /* Fake exit block: the end of the control flow. */
-                    return;
+                    break;
 
                 case 1:
-                    if (bb.Instructions.Last().statementType != StatementTypeType.EnumValues.eUnconditionalJump)
-                    {
-                        if (newList.Contains(bb.getSuccessors.First()))
-                            throw new ObfuscatorException("Cannot place before direct successor.");
-                        DealWithBasicBlock(bb.getSuccessors.First());
-                    }
+                    /* If the successor is the "fake exit block", then it's not direct. */
+                    if (actual.getSuccessors.First().getSuccessors.Count == 0)
+                        return null;
+
+                    if (actual.Instructions.Last().statementType != StatementTypeType.EnumValues.eUnconditionalJump)
+                        return actual.getSuccessors.First();
                     break;
 
                 case 2:
-                    if (newList.Contains(bb.getSuccessors.Last()))
-                        throw new ObfuscatorException("Cannot place before direct successor.");
-                    DealWithBasicBlock(bb.getSuccessors.Last());
-                    break;
-
-                default:
-                    throw new ObfuscatorException("A basic block can only have 0, 1 or 2 successors.");
+                    return actual.getSuccessors.Last();
             }
+
+            return null;
+        }       
+
+        /// <summary>
+        /// Algorithm to reorder the basic blocks in a function.
+        /// </summary>
+        /// <param name="func">The function.</param>
+        public static void ReorderBasicBlocks (Function func)
+        {
+            lists.Clear();
+
+            /* We put all the basic blocks in a list. */
+            foreach (BasicBlock bb in func.BasicBlocks)
+            {
+                List<BasicBlock> succlist = ContainsAlready(GetDirectSuccessor(bb));
+                List<BasicBlock> predlist = ContainsAlready(GetDirectPredecessor(bb));
+
+                /* We have it's direct succesor and it's direct predecessor already in the lists. */
+                if (succlist != null && predlist != null)
+                {
+                    predlist.Add(bb);
+                    predlist.AddRange(succlist);
+                    lists.Remove(succlist);
+                }
+
+                /* We only have it's successor in the lists. */
+                else if (succlist != null)
+                    succlist.Insert(0, bb);
+
+                /* We only have it's predecessor in the lists. */
+                else if (predlist != null)
+                    predlist.Add(bb);
+
+                /* Neither it's predecessor, nor it's successor are in the lists. */
+                else
+                {
+                    List<BasicBlock> tmp = new List<BasicBlock>();
+                    tmp.Add(bb);
+                    lists.Add(tmp);
+                }
+            }
+
+            /* Now we make the reordered BasicBlocks list for the Function. */
+            func.BasicBlocks.Clear();
+            foreach (List<BasicBlock> bblist in lists)
+                func.BasicBlocks.AddRange(bblist);
         }
 
 #if DIMA        

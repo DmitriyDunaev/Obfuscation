@@ -134,6 +134,8 @@ namespace Obfuscator
 
                 StringBuilder sb_instructions = new StringBuilder();
 
+                Traversal.ReorderBasicBlocks(func);
+
 
                 // ** GRAPH TRAVERSAL does not work correctly yet!  **//
                 //Stack<BasicBlock> s = new Stack<BasicBlock>();
@@ -178,6 +180,10 @@ namespace Obfuscator
 
                 foreach (BasicBlock bb in func.BasicBlocks)
                 {
+                    /* The "fake exit block" should not be written. */
+                    if (bb.getSuccessors.Count == 0)
+                        continue;
+
                     if (bb.getPredecessors.Count() > 1 || ( bb.getPredecessors.Count() == 1 && 
                         (bb.getPredecessors.First().Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump ||
                          bb.getPredecessors.First().Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump) ) )
