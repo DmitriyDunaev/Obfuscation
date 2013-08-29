@@ -391,9 +391,21 @@ namespace Obfuscator
             /// Checking if there is a jump to the original targets, and if there is not, we can delete that
             /// BasicBlock, there must be a polyRequired clone of that.
             if (falselane.getPredecessors.Count() == 0)
+            {
+                foreach (BasicBlock succ in falselane.getSuccessors)
+                {
+                    succ.getPredecessors.Remove(falselane);
+                }
                 falselane.parent.BasicBlocks.Remove(falselane);
+            }
             if (truelane.getPredecessors.Count() == 0)
+            {
+                foreach (BasicBlock succ in truelane.getSuccessors)
+                {
+                    succ.getPredecessors.Remove(truelane);
+                }
                 truelane.parent.BasicBlocks.Remove(truelane);
+            }
         }
 
         /// <summary>
