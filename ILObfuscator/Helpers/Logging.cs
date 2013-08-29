@@ -98,95 +98,102 @@ namespace Obfuscator
 
 
         /// <summary>
-        /// Writes a 'readable' function (TAC text) to a log file
+        /// Writes a 'readable' routine (TAC text) to a log file
         /// </summary>
-        /// <param name="func">Function to be logged</param>
-        public static void WriteReadableTAC(Function func)
+        /// <param name="routine">Routine to be logged</param>
+        public static void WriteReadableTAC(Routine routine)
         {
             if (!Directory.Exists(pathToLog))
                 Directory.CreateDirectory(pathToLog);
             StringBuilder sb = new StringBuilder();
-            
-            Dictionary<string, string> ReadableVariables = new Dictionary<string, string>();
-            Dictionary<string, string> ReadableBBLabels = new Dictionary<string, string>();
-            int counter = 0;
-            func.LocalVariables.ForEach(x => ReadableVariables.Add(x.ID, string.Concat(counter++)));
-            counter = 0;
-            func.BasicBlocks.ForEach(x => ReadableBBLabels.Add(x.ID, string.Concat("LABEL_", counter++)));
-
-            sb.AppendLine("FUNCTION:");
-            sb.AppendLine("  - Global ID: " + func.globalID);
-            
-            sb.AppendLine("  - Input parameters: " + func.LocalVariables.Count(x => x.kind == Variable.Kind.Input));
-            func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input).ConvertAll(x => x.ID).ForEach
-                (x => sb.AppendLine(string.Concat("\t", "x_" + ReadableVariables[x], "\t", x)));
-            
-            sb.AppendLine("  - Output parameters: " + func.LocalVariables.Count(x => x.kind == Variable.Kind.Output));
-            func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Output).ConvertAll(x => x.ID).ForEach
-                (x => sb.AppendLine(string.Concat("\t", "x_" + ReadableVariables[x], "\t", x)));
-           
-            sb.AppendLine("  - Local parameters: " + func.LocalVariables.Count(x => x.kind == Variable.Kind.Local));
-            func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Local).ConvertAll(x => x.ID).ForEach
-               (x => sb.AppendLine(string.Concat("\t", "x_" + ReadableVariables[x], "\t", x)));
-
-            sb.AppendLine("\n*****************************************************************************************\n");
-
-            StringBuilder sb_instructions = new StringBuilder();
-
-
-            // ** GRAPH TRAVERSAL does not work correctly yet!  **//
-            Stack<BasicBlock> s = new Stack<BasicBlock>();
-            HashSet<BasicBlock> processed = new HashSet<BasicBlock>();
-            BasicBlock root = func.BasicBlocks[0];
-            s.Push(root);
-            processed.Add(root);
-            while (s.Count > 0)
+            foreach (Function func in routine.Functions)
             {
-                var n = s.Pop();
-                // Do Action
-                sb_instructions.AppendLine(ReadableBBLabels[n.ID] + ":");
-                n.Instructions.ForEach(x => sb_instructions.AppendLine("\t" + x.TACtext));
+                Dictionary<string, string> ReadableVariables = new Dictionary<string, string>();
+                Dictionary<string, string> ReadableBBLabels = new Dictionary<string, string>();
+                int counter = 0;
+                func.LocalVariables.ForEach(x => ReadableVariables.Add(x.ID, string.Concat(counter++)));
+                counter = 0;
+                func.BasicBlocks.ForEach(x => ReadableBBLabels.Add(x.ID, string.Concat("LABEL_", counter++)));
 
-                if (n.getSuccessors.Count > 0)
+                sb.AppendLine("FUNCTION:");
+                sb.AppendLine("  - Global ID: " + func.globalID);
+
+                sb.AppendLine("  - Input parameters: " + func.LocalVariables.Count(x => x.kind == Variable.Kind.Input));
+                func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input).ConvertAll(x => x.ID).ForEach
+                    (x => sb.AppendLine(string.Concat("\t", "x_" + ReadableVariables[x], "\t", x)));
+
+                sb.AppendLine("  - Output parameters: " + func.LocalVariables.Count(x => x.kind == Variable.Kind.Output));
+                func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Output).ConvertAll(x => x.ID).ForEach
+                    (x => sb.AppendLine(string.Concat("\t", "x_" + ReadableVariables[x], "\t", x)));
+
+                sb.AppendLine("  - Local parameters: " + func.LocalVariables.Count(x => x.kind == Variable.Kind.Local));
+                func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Local).ConvertAll(x => x.ID).ForEach
+                   (x => sb.AppendLine(string.Concat("\t", "x_" + ReadableVariables[x], "\t", x)));
+
+                sb.AppendLine("\n*****************************************************************************************\n");
+
+                StringBuilder sb_instructions = new StringBuilder();
+
+
+                // ** GRAPH TRAVERSAL does not work correctly yet!  **//
+                //Stack<BasicBlock> s = new Stack<BasicBlock>();
+                //HashSet<BasicBlock> processed = new HashSet<BasicBlock>();
+                //BasicBlock root = func.BasicBlocks[0];
+                //s.Push(root);
+                //processed.Add(root);
+                //while (s.Count > 0)
+                //{
+                //    var n = s.Pop();
+                //    // Do Action
+                //    sb_instructions.AppendLine(ReadableBBLabels[n.ID] + ":");
+                //    n.Instructions.ForEach(x => sb_instructions.AppendLine("\t" + x.TACtext));
+
+                //    if (n.getSuccessors.Count > 0)
+                //    {
+                //        BasicBlock true_succ = n.getSuccessors.First();
+                //        BasicBlock false_succ = n.getSuccessors.Last();
+
+                //        if (!processed.Contains(true_succ))
+                //        {
+                //            s.Push(true_succ);
+                //            processed.Add(true_succ);
+                //        }
+                //        if (!true_succ.Equals(false_succ))
+                //            if (!processed.Contains(false_succ))
+                //            {
+                //                s.Push(false_succ);
+                //                processed.Add(false_succ);
+                //            }
+                //    }
+                //}
+
+
+
+                //Traversal.nonRecursivePostOrder(func.BasicBlocks[0], x => 
+                //{
+                //    sb_instructions.AppendLine(ReadableBBLabels[x.ID] + ":");
+                //    x.Instructions.ForEach(y => sb_instructions.AppendLine("\t" + y.TACtext));
+                //}
+                //);
+
+                foreach (BasicBlock bb in func.BasicBlocks)
                 {
-                    BasicBlock true_succ = n.getSuccessors.First();
-                    BasicBlock false_succ = n.getSuccessors.Last();
-
-                    if (!processed.Contains(true_succ))
+                    if (bb.getPredecessors.Count() > 1 || ( bb.getPredecessors.Count() == 1 && 
+                        (bb.getPredecessors.First().Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump ||
+                         bb.getPredecessors.First().Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump) ) )
                     {
-                        s.Push(true_succ);
-                        processed.Add(true_succ);
+                         sb_instructions.AppendLine(ReadableBBLabels[bb.ID] + ":");
                     }
-                    if (!true_succ.Equals(false_succ))
-                        if (!processed.Contains(false_succ))
-                        {
-                            s.Push(false_succ);
-                            processed.Add(false_succ);
-                        }
+                    bb.Instructions.ForEach(x => sb_instructions.AppendLine("\t" + x.TACtext));
                 }
+
+                ReadableVariables.Keys.ToList().ForEach(x => sb_instructions.Replace(x, ReadableVariables[x]));
+                ReadableBBLabels.Keys.ToList().ForEach(x => sb_instructions.Replace(x, ReadableBBLabels[x]));
+
+                sb.AppendLine();
+                sb.AppendLine(sb_instructions.ToString());
+                sb.AppendLine("\n*****************************************************************************************\n");
             }
-
-
-
-            //Traversal.nonRecursivePostOrder(func.BasicBlocks[0], x => 
-            //{
-            //    sb_instructions.AppendLine(ReadableBBLabels[x.ID] + ":");
-            //    x.Instructions.ForEach(y => sb_instructions.AppendLine("\t" + y.TACtext));
-            //}
-            //);
-
-            //foreach (BasicBlock bb in func.BasicBlocks)
-            //{
-            //    sb_instructions.AppendLine(ReadableBBLabels[bb.ID] + ":");
-            //    bb.Instructions.ForEach(x => sb_instructions.AppendLine("\t" + x.TACtext));
-            //}
-
-            ReadableVariables.Keys.ToList().ForEach(x => sb_instructions.Replace(x, ReadableVariables[x]));
-            ReadableBBLabels.Keys.ToList().ForEach(x => sb_instructions.Replace(x, ReadableBBLabels[x]));
-
-            sb.AppendLine();
-            sb.AppendLine(sb_instructions.ToString());
-            
 
             string filename_routine = Path.Combine(pathToLog, string.Format("Obfuscation_Readable_{0:dd.MM.yyy}.log", DateTime.Now));
             File.WriteAllText(filename_routine, sb.ToString());
