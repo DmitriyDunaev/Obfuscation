@@ -92,10 +92,16 @@ namespace Obfuscator
             // Starting the linking
             fake3.Instructions.Last().MakeUnconditionalJump(originaltarget);
 
-            // Creating a clone of the original target in order to make the CFT more obfuscated
-            BasicBlock polyrequtarget = new BasicBlock(originaltarget, originaltarget.getSuccessors);
-            polyrequtarget.Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
+            BasicBlock polyrequtarget = null;
 
+            // Creating a clone of the original target in order to make the CFT more obfuscated
+            if (originaltarget.Instructions.Last().statementType != ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
+            {
+                polyrequtarget = new BasicBlock(originaltarget, originaltarget.getSuccessors);
+                polyrequtarget.Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
+            }
+            else polyrequtarget = originaltarget;
+            
             // And now setting the edges
             fake2.LinkToSuccessor(polyrequtarget, true);
 
@@ -372,14 +378,16 @@ namespace Obfuscator
                         bblist[i].Instructions.Last().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, Randomizer.GeneratePolyRequJumpTarget(falselist));
                         break;
                     case Cond.BlockJumpType.Ambigious:
-                        bblist[i].LinkToSuccessor(Randomizer.GeneratePolyRequJumpTarget(falselist), true);
+                        BasicBlock ambhelper = new BasicBlock(bb.parent);
+                        bblist[i].LinkToSuccessor(ambhelper, true);
+                        ambhelper.Instructions.Add(new Instruction(ambhelper));
+                        ambhelper.Instructions.Last().MakeUnconditionalJump(Randomizer.GeneratePolyRequJumpTarget(truelist));
                         bblist[i].Instructions.Last().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, bblist[i + 1]);
                         break;
                     default:
                         break;
                 }
             }
-
             /// Checking if there is a jump to the original targets, and if there is not, we can delete that
             /// BasicBlock, there must be a polyRequired clone of that.
             if (falselane.getPredecessors.Count() == 0)

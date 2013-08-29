@@ -54,9 +54,9 @@ namespace Obfuscator
         /// </summary>
         public enum JumpGenerationChances
         {
-            Original = 10,
-            Existing = 20,
-            New = 30
+            Original = 20,
+            Existing = 30,
+            New = 50
         }
         
 
