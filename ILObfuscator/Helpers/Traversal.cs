@@ -79,10 +79,6 @@ namespace Obfuscator
              */
             switch (actual.getSuccessors.Count)
             {
-                case 0:
-                    /* Fake exit block: the end of the control flow. */
-                    break;
-
                 case 1:
                     /* If the successor is the "fake exit block", then it's not direct. */
                     if (actual.getSuccessors.First().getSuccessors.Count == 0)
@@ -108,13 +104,12 @@ namespace Obfuscator
             lists.Clear();
 
             /* We put all the basic blocks in a list. */
-            int i = 0, j = 0, k = 0, l = 0, m = 0;
             foreach (BasicBlock bb in func.BasicBlocks)
             {
-                i++;
                 List<BasicBlock> succlist = ContainsAlready(GetDirectSuccessor(bb));
                 if (succlist != null && !succlist.First().Equals(GetDirectSuccessor(bb)))
                     throw new ObfuscatorException("The direct successor should be the first in its list.");
+
                 List<BasicBlock> predlist = ContainsAlready(GetDirectPredecessor(bb));
                 if (predlist != null && !predlist.Last().Equals(GetDirectPredecessor(bb)))
                     throw new ObfuscatorException("The direct predecessor should be the last in its list.");
@@ -125,22 +120,15 @@ namespace Obfuscator
                     predlist.Add(bb);
                     predlist.AddRange(succlist);
                     lists.Remove(succlist);
-                    j++;
                 }
 
                 /* We only have it's successor in the lists. */
                 else if (succlist != null)
-                {
                     succlist.Insert(0, bb);
-                    k++;
-                }
 
                 /* We only have it's predecessor in the lists. */
                 else if (predlist != null)
-                {
                     predlist.Add(bb);
-                    l++;
-                }
 
                 /* Neither it's predecessor, nor it's successor are in the lists. */
                 else
@@ -148,23 +136,13 @@ namespace Obfuscator
                     List<BasicBlock> tmp = new List<BasicBlock>();
                     tmp.Add(bb);
                     lists.Add(tmp);
-                    m++;
-                }
-                if (i != CountAll())
-                {
-                    throw new ObfuscatorException("Not all the basic block are in the lists...");
                 }
             }
 
+            if (func.BasicBlocks.Count != CountAll())
+                throw new ObfuscatorException("Not all the basic block are in the lists...");
+
             /* Now we make the reordered BasicBlocks list for the Function. */
-            Console.WriteLine("{0}: {1} + {2} + {3} + {4} = {5}", i, j, k, l, m, j + k + l + m);
-            Console.WriteLine("{0}", CountAll()); 
-            int sum = CountAll();
-            //foreach (BasicBlock bb in func.BasicBlocks)
-            //{
-            //    if (ContainsAlready(bb) == null)
-            //        Console.WriteLine(bb.ID);
-            //}
             func.BasicBlocks.Clear();
             foreach (List<BasicBlock> bblist in lists)
                 func.BasicBlocks.AddRange(bblist);

@@ -76,7 +76,10 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
 
+            Console.Write("Writing readable TAC");
             Logging.WriteReadableTAC(routine);
+            routine.Validate();
+            PrintSuccess();
 
             Console.Write("Collecting and writing statistics");
             Logging.WriteStatistics(routine);
