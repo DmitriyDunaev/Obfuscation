@@ -114,8 +114,8 @@ namespace Internal
                 if (Predecessors.Count - preds_proc > 0)
                     throw new ValidatorException("The 'fake exit block' can only have predecessors with last 'return' statement. Basic block: " + ID);
             }
-            if (Successors.Count == 1 && Successors.First().Predecessors.Count == 1 && Successors.First().Successors.Count != 0)
-                throw new ValidatorException("Found 2 basic blocks with a single predecessor-successor link. BB1: " + ID + ", BB2: " + Successors.First().ID);
+            //if (Successors.Count == 1 && Successors.First().Predecessors.Count == 1 && Successors.First().Successors.Count != 0)
+            //    throw new ValidatorException("Found 2 basic blocks with a single predecessor-successor link. BB1: " + ID + ", BB2: " + Successors.First().ID);
 
             // Checking Successor-Predecessor links
             foreach (BasicBlock succ in Successors)
