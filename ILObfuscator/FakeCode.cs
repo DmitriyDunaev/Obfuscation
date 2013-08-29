@@ -182,7 +182,8 @@ namespace Obfuscator
                 case 1:
                     /* We choose Full Assignment, or rightvalue is the same as leftvalue, or we are in a loop body. */
                     if (DataAnalysis.isLoopBody[ins.parent] || leftvalue.Equals(rightvalues[0]) 
-                                                            || statementType == StatementTypeType.EnumValues.eFullAssignment)
+                                                            || statementType == StatementTypeType.EnumValues.eFullAssignment
+                                                            || ins.DeadVariables[leftvalue] == Variable.State.Filled)
                     {
                         /* Here we random generate an operator. */
                         Instruction.ArithmeticOperationType op = 
@@ -231,7 +232,7 @@ namespace Obfuscator
                      * If we are in a loop body, then we can only make a full assignment like that:
                      * t1 = t2 op t1
                      */
-                    if (DataAnalysis.isLoopBody[ins.parent] || statementType == StatementTypeType.EnumValues.eFullAssignment)
+                    if (DataAnalysis.isLoopBody[ins.parent] || statementType == StatementTypeType.EnumValues.eFullAssignment || ins.DeadVariables[leftvalue] == Variable.State.Filled)
                     {
                         /* Here we random generate an operator: + or - */
                         /* TODO: (efficient) * and / */
@@ -239,7 +240,7 @@ namespace Obfuscator
                             (Instruction.ArithmeticOperationType)Randomizer.OneFromMany(Instruction.ArithmeticOperationType.Addition,
                                                                                         Instruction.ArithmeticOperationType.Subtraction);
 
-                        if (DataAnalysis.isLoopBody[ins.parent])
+                        if (DataAnalysis.isLoopBody[ins.parent] || ins.DeadVariables[leftvalue] == Variable.State.Filled)
                             ins.MakeFullAssignment(leftvalue, rightvalues[0], leftvalue, null, op);
 
                         else
