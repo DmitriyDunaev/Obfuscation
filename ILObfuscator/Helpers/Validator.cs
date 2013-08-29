@@ -102,8 +102,8 @@ namespace Internal
             if (Predecessors.Count > 1 && Successors.Count > 0)
             {
                 int preds_goto = Predecessors.Count(x =>
-                    x.Instructions.Last().statementType == StatementTypeType.EnumValues.eConditionalJump ||
-                    x.Instructions.Last().statementType == StatementTypeType.EnumValues.eUnconditionalJump);
+                    ( x.Instructions.Last().statementType == StatementTypeType.EnumValues.eConditionalJump && this.Equals(x.getSuccessors.First()) )
+                    || x.Instructions.Last().statementType == StatementTypeType.EnumValues.eUnconditionalJump);
                 if (Predecessors.Count - preds_goto > 1)
                     throw new ValidatorException("Basic block has more that one direct predecessor (without GOTO). Basic block: " + ID);
             }
