@@ -24,7 +24,7 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
 
-            //Logging.WriteReadableTAC(routine);
+            Logging.WriteReadableTAC(routine, "Imported");
 
             routine.Functions[0].NewFakeInputParameter(11, 55);
             routine.Functions[0].NewFakeInputParameter(22, 155);
@@ -40,15 +40,21 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
 
+            Logging.WriteReadableTAC(routine, "CONST");
+
             Console.Write("Meshing algorithm: Unconditional Jumps");
             Meshing.MeshUnconditionals(routine);
             routine.Validate();
             PrintSuccess();
 
+            Logging.WriteReadableTAC(routine, "MeshingUNC");
+
             Console.Write("Meshing algorithm: Conditional Jumps");
             Meshing.MeshConditionals(routine);
             routine.Validate();
             PrintSuccess();
+
+            Logging.WriteReadableTAC(routine, "MeshingCOND");
 
             Console.Write("Generation of fake NOP instructions");
             foreach (Function func in routine.Functions)
@@ -56,6 +62,8 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
             Logging.WriteRoutine(routine, "NoOpersGeneration");
+
+            Logging.WriteReadableTAC(routine, "FakeNOPs");
 
             Console.Write("Running data analysis");
             foreach (Function func in routine.Functions)
@@ -75,6 +83,8 @@ namespace Obfuscator
             Logging.WriteRoutine(routine, "CondJumps");
             routine.Validate();
             PrintSuccess();
+
+            Logging.WriteReadableTAC(routine, "FakeInstrFromNOPs");
 
             Console.Write("Writing readable TAC");
             Logging.WriteReadableTAC(routine);

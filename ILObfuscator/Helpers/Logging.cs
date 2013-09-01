@@ -101,7 +101,8 @@ namespace Obfuscator
         /// Writes a 'readable' routine (TAC text) to a log file
         /// </summary>
         /// <param name="routine">Routine to be logged</param>
-        public static void WriteReadableTAC(Routine routine)
+        /// <param name="filename_distinguisher">Filename distinguisher (e.g. last used algorithm abbreviation)</param>
+        public static void WriteReadableTAC(Routine routine, string filename_distinguisher = "")
         {
             if (!Directory.Exists(pathToLog))
                 Directory.CreateDirectory(pathToLog);
@@ -118,9 +119,16 @@ namespace Obfuscator
                 sb.AppendLine("FUNCTION:");
                 sb.AppendLine("  - Global ID: " + func.globalID);
 
-                sb.AppendLine("  - Input parameters: " + func.LocalVariables.Count(x => x.kind == Variable.Kind.Input));
-                func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input).ConvertAll(x => x.ID).ForEach
+                sb.AppendLine("  - Input parameters: " + func.LocalVariables.Count(x => x.kind == Variable.Kind.Input && !x.fake));
+                func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && !x.fake).ConvertAll(x => x.ID).ForEach
                     (x => sb.AppendLine(string.Concat("\t", "x_" + ReadableVariables[x], "\t", x)));
+                
+                sb.AppendLine("     - Fake: " + func.LocalVariables.Count(x => x.kind == Variable.Kind.Input && x.fake));
+                func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake).ForEach(
+                    (x => sb.AppendLine(string.Concat("\t", "x_" + ReadableVariables[x.ID], "\t", x.ID,
+                        " FixedMin: " + (x.fixedMin.HasValue ? x.fixedMin.Value.ToString() : "N/A") +
+                        " FixedMax: " + (x.fixedMax.HasValue ? x.fixedMax.Value.ToString() : "N/A") +
+                        " FixedValue: " + (string.IsNullOrEmpty(x.fixedValue) ? "N/A" : x.fixedValue)))));
 
                 sb.AppendLine("  - Output parameters: " + func.LocalVariables.Count(x => x.kind == Variable.Kind.Output));
                 func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Output).ConvertAll(x => x.ID).ForEach
@@ -201,7 +209,7 @@ namespace Obfuscator
                 sb.AppendLine("\n*****************************************************************************************\n");
             }
 
-            string filename_routine = Path.Combine(pathToLog, string.Format("Obfuscation_Readable_{0:dd.MM.yyy}.log", DateTime.Now));
+            string filename_routine = Path.Combine(pathToLog, string.Format("Obfuscation_Readable_{0}_{1:dd.MM.yyy}.log", filename_distinguisher, DateTime.Now));
             File.WriteAllText(filename_routine, sb.ToString());
         }
     }
