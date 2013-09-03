@@ -191,9 +191,11 @@ namespace Obfuscator
                                                                                          Instruction.ArithmeticOperationType.Division        ,
                                                                                          Instruction.ArithmeticOperationType.Multiplication  ,
                                                                                          Instruction.ArithmeticOperationType.Subtraction     );
+
+                        int num;
                         
                         if (op == Instruction.ArithmeticOperationType.Addition || op == Instruction.ArithmeticOperationType.Subtraction)
-                            ins.MakeFullAssignment(leftvalue, leftvalue, null, Randomizer.SingleNumber(Common.GlobalMinNumber, Common.GlobalMaxNumber), op);
+                            num = Randomizer.SingleNumber(Common.GlobalMinNumber, Common.GlobalMaxNumber);
 
                         else
                         {
@@ -204,10 +206,10 @@ namespace Obfuscator
                             int min = Convert.ToInt32(Math.Ceiling(Math.Log(Common.GlobalMinNumber, 2)));
                             int max = Convert.ToInt32(Math.Floor(Math.Log(Common.GlobalMaxNumber, 2)));
                             int pow = Randomizer.SingleNumber(min, max);
-                            int num = Convert.ToInt32(Math.Pow(2, pow));
-
-                            ins.MakeFullAssignment(leftvalue, leftvalue, null, num, op);
+                            num = Convert.ToInt32(Math.Pow(2, pow));
                         }
+
+                        ins.MakeFullAssignment(leftvalue, rightvalues.First(), null, num, op);
                     }
 
                     /* If we choose Unary Assignment. */
