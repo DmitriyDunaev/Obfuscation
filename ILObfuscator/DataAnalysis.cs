@@ -211,19 +211,24 @@ namespace Obfuscator
         private static void SetAllVariablesAsDead(Function func, Variable.State state)
         {
             foreach (BasicBlock bb in func.BasicBlocks)
+            {
                 foreach (Instruction inst in bb.Instructions)
                 {
                     foreach (Variable var in func.LocalVariables)
                     {
-                        /*
-                         * We add it in the list if:
-                         *  - it is not already there
-                         *  - it is not a fake input parameter.
-                         */
-                        if ( !( (var.kind == Variable.Kind.Input && var.fake) || inst.DeadVariables.ContainsKey(var) ) )
-                            inst.DeadVariables.Add(var, state);
+                        /* We add it in the list only if it is not already there. */
+                        if (!inst.DeadVariables.ContainsKey(var))
+                        {
+                            /* 
+                             *  If it's an input parameter we don't use it as NOT_INITIALIZED,
+                             *  and if it's a fake input parameter we don't use it at all.
+                             */
+                            if (var.kind != Variable.Kind.Input || (!var.fake && state != Variable.State.Not_Initialized))
+                                inst.DeadVariables.Add(var, state);        
+                        }
                     }
                 }
+            }
         }
 
         /* ----------------- DeadVariables algorithm end -----------------*/
@@ -242,14 +247,14 @@ namespace Obfuscator
 
         /// <summary>
         /// List to hold the id's of the basic blocks we already reached.
-        /// Used by the isLoopBody function.
+        /// Used by the isLoopBody and isMainRoute algorithms.
         /// </summary>
         private static List<string> FoundIDs = new List<string>();
 
         /// <summary>
-        /// Used in the
+        /// Used in the isMainRoute algorithm.
         /// </summary>
-        private static string id = string.Empty;
+        private static string StartID = string.Empty;
 
         /// <summary>
         /// Gathers info (isLoopBody, isMainRoute) about the basic blocks in the function.
@@ -291,9 +296,10 @@ namespace Obfuscator
              * the algorithm to influence the present one.
              */
             FoundIDs.Clear();
+            StartID = String.Empty;
 
             if (!directed)
-                id = bb.ID;
+                StartID = bb.ID;
 
             foreach (BasicBlock item in bb.getSuccessors)
                 ReachableFrom(item, directed);
@@ -325,16 +331,16 @@ namespace Obfuscator
 
                 /* Then we continue with all the basic blocks reachable from here. */
                 List<BasicBlock> reachable = new List<BasicBlock>();
-                foreach (BasicBlock item in actual.getSuccessors)
-                    reachable.Add(item);
+                
+                reachable.AddRange(actual.getSuccessors);
+                
                 if (!directed)
                 {
-                    foreach (BasicBlock item in actual.getPredecessors)
-                    {
-                        if (item.ID != id)
-                            reachable.Add(item);
-                    }
+                        reachable.AddRange(actual.getPredecessors.FindAll(x => x.ID != StartID));
                 }
+
+                reachable = reachable.Distinct().ToList();
+
                 foreach (BasicBlock item in reachable)
                     ReachableFrom(item, directed);
             }
