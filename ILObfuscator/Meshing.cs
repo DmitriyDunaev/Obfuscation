@@ -82,40 +82,33 @@ namespace Obfuscator
 
             // Creating a new basic block
             BasicBlock fake1 = new BasicBlock(bb.parent);
+            fake1.Instructions.Add(new Instruction(fake1));
 
             // Creating the second fake block
             BasicBlock fake2 = new BasicBlock(bb.parent);
-
-            //Creating the third one
-            BasicBlock fake3 = new BasicBlock(bb.parent);
+            fake2.Instructions.Add(new Instruction(fake2));
 
             // Starting the linking
-            fake3.Instructions.Last().MakeUnconditionalJump(originaltarget);
+            fake1.Instructions.Last().MakeUnconditionalJump(fake2);
 
             BasicBlock polyrequtarget = null;
 
             // Creating a clone of the original target in order to make the CFT more obfuscated
-            if (originaltarget.Instructions.Last().statementType != ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
+            if (originaltarget.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
             {
                 polyrequtarget = new BasicBlock(originaltarget, originaltarget.getSuccessors);
                 polyrequtarget.Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
             }
             else polyrequtarget = originaltarget;
-            
+
             // And now setting the edges
-            fake2.LinkToSuccessor(polyrequtarget, true);
-
-            
-
-            fake1.LinkToSuccessor(fake2);
-
-            bb.LinkToSuccessor(fake1);
+            fake2.Instructions.Last().MakeUnconditionalJump(polyrequtarget);
 
             // And then converting its nop instruction into a ConditionalJump
+            Randomizer.GenerateConditionalJumpInstruction(fake1.Instructions.Last(), Instruction.ConditionType.Random, originaltarget);
 
-            Randomizer.GenerateConditionalJumpInstruction(fake2.Instructions.First(), Instruction.ConditionType.Random, originaltarget);
-            Randomizer.GenerateConditionalJumpInstruction(fake1.Instructions.First(), Instruction.ConditionType.Random, fake3);
-
+            bb.LinkToSuccessor(fake1, true);
+            bb.parent.Validate();
             return fake1;
             
         }
