@@ -53,7 +53,7 @@ namespace Obfuscator
                         break;
 
                     case 2:
-                        if (bb.getSuccessors.Last().Equals(bb))
+                        if (bb.getSuccessors.Last().Equals(actual))
                             return bb;
                         break;
                 }
