@@ -16,6 +16,8 @@ namespace Platform_x86
         {
             StringBuilder sb = new StringBuilder();
 
+            Prologue(func, sb);
+
             Obfuscator.Traversal.ReorderBasicBlocks(func);
             foreach (BasicBlock bb in func.BasicBlocks)
             {
@@ -51,6 +53,8 @@ namespace Platform_x86
 
                 }
             }
+
+            Epilogue(func, sb);
 
             return sb.ToString();
         }
@@ -100,6 +104,39 @@ namespace Platform_x86
 
             return sb.ToString();
         }
+
+
+        private static void Prologue(Function func, StringBuilder sb)
+        {
+            sb.AppendLine(".ent " + func.globalID);
+            sb.AppendLine(func.globalID + ":");
+            sb.AppendLine("subu $sp, " + CalculateFramesize(func));
+
+        }
+
+
+        /// <summary>
+        /// Test version of the framesize calculator, now its calculation is based
+        /// on the local variables noly
+        /// </summary>
+        /// <param name="func">The function the calculation is based on</param>
+        /// <returns>The framesize in int</returns>
+        private static int CalculateFramesize(Function func)
+        {
+            int fs = 0;
+            foreach (Variable var in func.LocalVariables)
+            {
+                fs += var.memoryRegionSize;
+            }
+            return fs;
+        }
+
+
+        private static void Epilogue(Function func, StringBuilder sb)
+        {
+            sb.AppendLine("addu $sp, " + CalculateFramesize(func));
+        }
+
 
     }
 
