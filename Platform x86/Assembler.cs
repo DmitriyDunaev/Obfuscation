@@ -12,12 +12,14 @@ namespace Platform_x86
     public static class Assembler
     {
 
+        private static Dictionary<Variable, int> Offsets = new Dictionary<Variable, int>();
+
         public static string GetAssemblyFromTAC(Function func)
         {
             StringBuilder sb = new StringBuilder();
 
-            Dictionary<Variable, int> offsets = new Dictionary<Variable, int>();
-            int framestack = BuildStack(func, offsets);
+            
+            int framestack = BuildStack(func);
             sb.AppendLine(Prologue(func, framestack));
 
             Obfuscator.Traversal.ReorderBasicBlocks(func);
@@ -80,7 +82,7 @@ namespace Platform_x86
             inst.ConditionalJumpInstruction(out left, out right, out relop, out truebb, out falsebb);
             
             /* Now we build the assembly instructions. */
-            sb.AppendLine("MOV eax [ebp + " + /*offset[left]*/5 + "]");
+            sb.AppendLine("MOV eax [ebp + " + Offsets[left] + "]");
             sb.AppendLine("CMP eax " + right);
             switch (relop)
             {
@@ -128,12 +130,12 @@ namespace Platform_x86
             return sb.ToString();
         }
 
-        private static int BuildStack(Function func, Dictionary<Variable, int> offsets)
+        private static int BuildStack(Function func)
         {
             int fs = 0;
             foreach (Variable var in func.LocalVariables)
             {
-                offsets.Add(var, fs);
+                Offsets.Add(var, fs);
                 fs += var.memoryRegionSize;
             }
             return fs;
