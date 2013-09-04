@@ -32,6 +32,7 @@ namespace Platform_x86
                         case ExchangeFormat.StatementTypeType.EnumValues.eCopy:
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump:
+                            sb.AppendLine(UnconditionalJump(inst, inst.polyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump:
                             sb.AppendLine(ConditionalJump(inst, inst.polyRequired));
@@ -101,6 +102,16 @@ namespace Platform_x86
                     break;
             }
             sb.AppendLine(truebb.ID);
+
+            return sb.ToString();
+        }
+
+        private static string UnconditionalJump(Instruction inst, bool polyReq = false)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("jmp ");
+            sb.Append(inst.TACtext.Split(' ')[1]);
 
             return sb.ToString();
         }
