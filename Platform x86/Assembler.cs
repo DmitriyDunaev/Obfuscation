@@ -133,7 +133,7 @@ namespace Platform_x86
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(".ent " + func.globalID);
             sb.AppendLine(func.globalID + ":");
-            sb.AppendLine("subu $sp, " + framestack);
+            sb.AppendLine("SUB $sp, " + framestack);
             return sb.ToString();
         }
 
@@ -151,7 +151,7 @@ namespace Platform_x86
         private static string Epilogue(Function func, int framestack)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("addu $sp, " + framestack);
+            sb.AppendLine("ADD $sp, " + framestack);
             return sb.ToString();
         }
 
