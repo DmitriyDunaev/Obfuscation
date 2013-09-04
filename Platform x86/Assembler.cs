@@ -16,7 +16,9 @@ namespace Platform_x86
         {
             StringBuilder sb = new StringBuilder();
 
-            Prologue(func, sb);
+            Dictionary<Variable, int> offsets = new Dictionary<Variable, int>();
+            int framestack = BuildStack(func, offsets);
+            sb.AppendLine(Prologue(func, framestack));
 
             Obfuscator.Traversal.ReorderBasicBlocks(func);
             foreach (BasicBlock bb in func.BasicBlocks)
@@ -55,7 +57,7 @@ namespace Platform_x86
                 }
             }
 
-            Epilogue(func, sb);
+            sb.AppendLine(Epilogue(func, framestack));
 
             return sb.ToString();
         }
@@ -117,35 +119,31 @@ namespace Platform_x86
         }
 
 
-        private static void Prologue(Function func, StringBuilder sb)
+        private static string Prologue(Function func, int framestack)
         {
+            StringBuilder sb = new StringBuilder();
             sb.AppendLine(".ent " + func.globalID);
             sb.AppendLine(func.globalID + ":");
-            sb.AppendLine("subu $sp, " + CalculateFramesize(func));
-
+            sb.AppendLine("subu $sp, " + framestack);
+            return sb.ToString();
         }
 
-
-        /// <summary>
-        /// Test version of the framesize calculator, now its calculation is based
-        /// on the local variables noly
-        /// </summary>
-        /// <param name="func">The function the calculation is based on</param>
-        /// <returns>The framesize in int</returns>
-        private static int CalculateFramesize(Function func)
+        private static int BuildStack(Function func, Dictionary<Variable, int> offsets)
         {
             int fs = 0;
             foreach (Variable var in func.LocalVariables)
             {
+                offsets.Add(var, fs);
                 fs += var.memoryRegionSize;
             }
             return fs;
         }
 
-
-        private static void Epilogue(Function func, StringBuilder sb)
+        private static string Epilogue(Function func, int framestack)
         {
-            sb.AppendLine("addu $sp, " + CalculateFramesize(func));
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("addu $sp, " + framestack);
+            return sb.ToString();
         }
 
 
