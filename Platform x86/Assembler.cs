@@ -11,9 +11,16 @@ namespace Platform_x86
 {
     public static class Assembler
     {
-
+        /// <summary>
+        /// Dictionary to store the offsets of the variables on the stack.
+        /// </summary>
         private static Dictionary<Variable, int> Offsets = new Dictionary<Variable, int>();
 
+        /// <summary>
+        /// Method to generate the assembly code from the TAC instructions.
+        /// </summary>
+        /// <param name="func">The function in TAC.</param>
+        /// <returns>The assembly code.</returns>
         public static string GetAssemblyFromTAC(Function func)
         {
             StringBuilder sb = new StringBuilder();
@@ -114,7 +121,7 @@ namespace Platform_x86
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("jmp ");
+            sb.Append("JMP ");
             sb.Append(inst.TACtext.Split(' ')[1]);
 
             return sb.ToString();
