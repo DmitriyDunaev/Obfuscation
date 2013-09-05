@@ -1,5 +1,6 @@
 ﻿using CommonModule;
 using ExchangeFormat;
+using Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,6 +89,17 @@ namespace ObfuscationManager
             {
                 throw new Obfuscator.ValidatorException("XML could not be validated! It is not well-formed or does not comply with XSD.", ex);
             }
+        }
+
+        internal static string ExchangeToAsm(Exchange exch, PlatformType platformType)
+        {
+            Routine routine = (Routine)exch;
+            StringBuilder sb = new StringBuilder();
+            foreach (Function func in routine.Functions)
+            {
+                sb.AppendLine(Platform_x86.Assembler.GetAssemblyFromTAC(func));
+            }
+            return sb.ToString();
         }
     }
 }

@@ -88,6 +88,10 @@
       <Project>{7bbcfcfc-f998-41d8-846a-ee3ff0a3d7b6}</Project>
       <Name>ILObfuscator</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platform x86\Platform x86.csproj">
+      <Project>{9c336c5b-d5c9-4b08-a40a-fb90c56a20ad}</Project>
+      <Name>Platform x86</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Schemas\test.xml">

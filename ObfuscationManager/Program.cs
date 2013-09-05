@@ -45,9 +45,14 @@ namespace ObfuscationManager
                 Console.Write("Generating XML, checking complience with Exchange.xsd");
                 doc = ExportImport.ExchangeToXml(exch);
                 Obfuscator.ILObfuscator.PrintSuccess();
+                
                 Console.Write("Converting XML to platform-dependent assembly");
-                ExportImport.XmlToAsm(doc, PlatformType.x86);
-                Console.WriteLine(" . . . . . COMING SOON\n");
+                //ExportImport.XmlToAsm(doc, PlatformType.x86);
+                Console.WriteLine(" . . . . . CANCELLED\n");
+                
+                Console.Write("Converting Exchange to platform-dependent assembly");
+                ExportImport.ExchangeToAsm(exch, PlatformType.x86);
+                Console.WriteLine(". . . IMPLEMENTING\n");
             }
             catch (Obfuscator.ValidatorException exc)
             {
