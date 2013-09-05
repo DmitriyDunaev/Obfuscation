@@ -89,7 +89,7 @@ namespace Platform_x86
             int right;
             Instruction.RelationalOperationType relop;
             BasicBlock truebb, falsebb;
-            inst.ConditionalJumpInstruction(out left, out right, out relop, out truebb, out falsebb);
+            Parser.ConditionalJump(inst, out left, out right, out relop, out truebb, out falsebb); 
             
             /* Now we build the assembly instructions. */
             sb.AppendLine("MOV eax [ebp + " + Offsets[left] + "]");

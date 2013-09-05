@@ -315,7 +315,7 @@ namespace Obfuscator
             int C = 0;
             BasicBlock truesucc = null;
             BasicBlock falsesucc = null;
-            Parser.ConditionalJumpInstruction(bb.Instructions.Last(), out var, out C, out relop, out truesucc, out falsesucc);
+            Parser.ConditionalJump(bb.Instructions.Last(), out var, out C, out relop, out truesucc, out falsesucc);
             List<Cond> condlist = GenetateCondList(C, relop);
             GenerateBlocks(bb, var, truesucc, falsesucc, condlist);
         }
