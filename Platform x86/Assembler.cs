@@ -92,8 +92,8 @@ namespace Platform_x86
             Parser.ConditionalJump(inst, out left, out right, out relop, out truebb, out falsebb); 
             
             /* Now we build the assembly instructions. */
-            sb.AppendLine("MOV eax [ebp + " + Offsets[left] + "]");
-            sb.AppendLine("CMP eax " + right);
+            sb.AppendLine("MOV eax, [ebp + " + Offsets[left] + "]");
+            sb.AppendLine("CMP eax, " + right);
             switch (relop)
             {
                 case Instruction.RelationalOperationType.Equals:
@@ -124,8 +124,10 @@ namespace Platform_x86
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("JMP ");
-            sb.Append(inst.TACtext.Split(' ')[1]);
+            BasicBlock jumptarget;
+            Parser.UnconditionalJump(inst, out jumptarget);
+
+            sb.AppendLine("JMP " + jumptarget.ID);
 
             return sb.ToString();
         }
@@ -137,7 +139,7 @@ namespace Platform_x86
             ///* Parsing... */
             //Variable leftvalue, right_var;
             //int? right_const;
-            //inst.CopyInstruction(out leftvalue, out right_var, out right_const);
+            //Parser.Copy(inst, out leftvalue, out right_var, out right_const);
 
             ///* We copy a variable's value to another. */
             //if (right_var != null && right_const == null)
@@ -165,7 +167,7 @@ namespace Platform_x86
             ///* Parsing... */
             //Variable leftvalue, rightvalue;
             //Instruction.UnaryOperationType op;
-            //inst.UnaryAssignmentInstruction(out leftvalue, out rightvalue, out op);
+            //Parser.UnaryAssignment(inst, out leftvalue, out rightvalue, out op);
 
             ///* Building the assembly... */
             //sb.AppendLine("MOV eax, [ebp + " + Offsets[rightvalue] + "]");
@@ -185,6 +187,80 @@ namespace Platform_x86
         {
             StringBuilder sb = new StringBuilder();
 
+            ///* Parsing... */
+            //Variable leftvalue, right1, right2_var;
+            //int? right2_const;
+            //Instruction.ArithmeticOperationType op;
+            //Parser.FullAssignment(inst, out leftvalue, out right1, out right2_var, out right2_const, out op);
+
+            ///* Building the assembly... */
+            //sb.AppendLine("MOV eax, [ebp + " + Offsets[right1] + "]");
+
+            //if (right2_var != null && right2_const == null)
+            //    sb.AppendLine("MOV ebx, [ebp + " + Offsets[right2_var] + "]");
+
+            //if (op == Instruction.ArithmeticOperationType.Addition || op == Instruction.ArithmeticOperationType.Subtraction)
+            //{
+            //    if (op == Instruction.ArithmeticOperationType.Addition)
+            //        sb.Append("ADD ");
+            //    else
+            //        sb.Append("SUB ");
+
+            //    sb.Append("eax, ");
+
+            //    if (right2_var != null && right2_const == null)
+            //        sb.Append("ebx");
+            //    else
+            //        sb.Append(right2_const);
+
+            //    sb.AppendLine();
+            //}
+
+            //else
+            //{
+            //    /* We check if there is a constant value that is a power of 2. */
+            //    bool shift_available = false;
+            //    int pow;
+            //    if (right2_const != null && right2_var == null)
+            //    {
+            //        pow = Convert.ToInt32(Math.Log((int)right2_const, 2));
+            //        int tmp = Convert.ToInt32(Math.Pow(2, pow));
+            //        shift_available = (tmp == right2_const);
+            //    }
+
+            //    /* It is, so we can use shifts instead of multiplication and division. */
+            //    if (shift_available)
+            //    {
+            //        if (op == Instruction.ArithmeticOperationType.Multiplication)
+            //            sb.Append("SAL eax, ");
+            //        else
+            //            sb.Append("SAR eax, ");
+
+            //        sb.AppendLine(pow.ToString());
+            //    }
+
+            //    /* 
+            //     * We are not using a contant which is a power of 2, or we are not using
+            //     * a constant at all, so we have to use multiplication or division.
+            //     */
+            //    else
+            //    {
+            //        if (op == Instruction.ArithmeticOperationType.Multiplication)
+            //            sb.Append("MUL eax, ");
+            //        else
+            //            sb.Append("DIV eax, ");
+
+            //        if (right2_var != null && right2_const == null)
+            //            sb.Append("ebx");
+            //        else
+            //            sb.Append(right2_const);
+
+            //        sb.AppendLine();
+            //    }
+            //}
+
+            //sb.AppendLine("MOV [ebp + " + Offsets[leftvalue] + "], eax");
+
             return sb.ToString();
         }
 
@@ -193,7 +269,7 @@ namespace Platform_x86
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(".ent " + func.globalID);
             sb.AppendLine(func.globalID + ":");
-            sb.AppendLine("SUB $sp, " + framestack);
+            sb.AppendLine("SUB esp, " + framestack);
             return sb.ToString();
         }
 
@@ -211,7 +287,7 @@ namespace Platform_x86
         private static string Epilogue(Function func, int framestack)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("ADD $sp, " + framestack);
+            sb.AppendLine("ADD esp, " + framestack);
             return sb.ToString();
         }
 
