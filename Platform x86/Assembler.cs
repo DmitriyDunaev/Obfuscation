@@ -152,12 +152,31 @@ namespace Platform_x86
             //    sb.AppendLine("MOV [ebp + " + Offsets[leftvalue] + "], " + right_const);
             //}
 
+            //else
+            //    throw new ObfuscatorException("Not valid copy instruction: both right variable and constant.");
+
             return sb.ToString();
         }
 
         private static string UnaryAssignment(Instruction inst, bool polyReq = false)
         {
             StringBuilder sb = new StringBuilder();
+
+            ///* Parsing... */
+            //Variable leftvalue, rightvalue;
+            //Instruction.UnaryOperationType op;
+            //inst.UnaryAssignmentInstruction(out leftvalue, out rightvalue, out op);
+
+            ///* Building the assembly... */
+            //sb.AppendLine("MOV eax, [ebp + " + Offsets[rightvalue] + "]");
+
+            //if (op == Instruction.UnaryOperationType.ArithmeticNegation)
+            //    sb.AppendLine("NEG eax");
+
+            //else
+            //    sb.AppendLine("NOT eax");
+
+            //sb.AppendLine("MOV [ebp + " + Offsets[leftvalue] + "], eax");
 
             return sb.ToString();
         }
