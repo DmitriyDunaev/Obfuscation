@@ -37,10 +37,13 @@ namespace Platform_x86
                     switch (inst.statementType)
                     {
                         case ExchangeFormat.StatementTypeType.EnumValues.eFullAssignment:
+                            sb.AppendLine(FullAssignment(inst, inst.polyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eUnaryAssignment:
+                            sb.AppendLine(UnaryAssignment(inst, inst.polyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eCopy:
+                            sb.AppendLine(Copy(inst, inst.polyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump:
                             sb.AppendLine(UnconditionalJump(inst, inst.polyRequired));
@@ -127,6 +130,44 @@ namespace Platform_x86
             return sb.ToString();
         }
 
+        private static string Copy(Instruction inst, bool polyReq = false)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            ///* Parsing... */
+            //Variable leftvalue, right_var;
+            //int? right_const;
+            //inst.CopyInstruction(out leftvalue, out right_var, out right_const);
+
+            ///* We copy a variable's value to another. */
+            //if (right_var != null && right_const == null)
+            //{
+            //    sb.AppendLine("MOV eax, [ebp + " + Offsets[right_var] + "]");
+            //    sb.AppendLine("MOV [ebp + " + Offsets[leftvalue] + "], eax");
+            //}
+
+            ///* We copy a constant value to a variable. */
+            //else if (right_var == null && right_const != null)
+            //{
+            //    sb.AppendLine("MOV [ebp + " + Offsets[leftvalue] + "], " + right_const);
+            //}
+
+            return sb.ToString();
+        }
+
+        private static string UnaryAssignment(Instruction inst, bool polyReq = false)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            return sb.ToString();
+        }
+
+        private static string FullAssignment(Instruction inst, bool polyReq = false)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            return sb.ToString();
+        }
 
         private static string Prologue(Function func, int framestack)
         {
