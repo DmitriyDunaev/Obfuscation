@@ -374,12 +374,28 @@ namespace Internal
     [Serializable]
     public partial class Instruction : IComparable, IValidate
     {
+        public enum ProceduralType
+        {
+            Param = 0,
+            Call = 1,
+            Return = 2,
+            Retrieve = 3
+        }
+
         public enum ArithmeticOperationType
         {
             Addition = 0,
             Subtraction = 1,
             Multiplication = 2,
             Division = 3
+        }
+
+        public enum PoinerType
+        {
+            AddressOfObjectAssignedToVariable = 0,
+            PointedObjectAssignedToVariable = 1,
+            VariableAssignedToPointedObject = 2,
+            NumericValueAssignedToPoinetdObject = 3
         }
 
         public enum UnaryOperationType
