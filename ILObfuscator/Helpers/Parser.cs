@@ -72,6 +72,60 @@ namespace Obfuscator
         }
 
 
+        public static void FullAssignment(Instruction inst, out Variable left_value, out Variable right_value1, out Variable right_value2, out int? right_value_int, out Instruction.ArithmeticOperationType operation)
+        {
+            Validate(inst, ExchangeFormat.StatementTypeType.EnumValues.eFullAssignment);
+            System.Collections.Specialized.StringCollection refvarIDs = new System.Collections.Specialized.StringCollection();
+            Match matchResult = Regex.Match(inst.TACtext, "ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}", RegexOptions.None);
+            while (matchResult.Success)
+            {
+                refvarIDs.Add(matchResult.Value);
+                matchResult = matchResult.NextMatch();
+            }
+
+            left_value = inst.RefVariables.Find(x => x.ID == refvarIDs[0]);
+            right_value1 = inst.RefVariables.Find(x => x.ID == refvarIDs[1]);
+            if (refvarIDs.Count == 3)
+            {
+                right_value2 = inst.RefVariables.Find(x => x.ID == refvarIDs[2]);
+                right_value_int = null;
+            }
+            else
+            {
+                right_value_int = Convert.ToInt32(inst.TACtext.Split(' ')[4]);
+                right_value2 = null;
+            }
+            switch (inst.TACtext.Split(' ')[3])
+            {
+                case "+":
+                    operation = Instruction.ArithmeticOperationType.Addition;
+                    break;
+                case "-":
+                    operation = Instruction.ArithmeticOperationType.Subtraction;
+                    break;
+                case "*":
+                    operation = Instruction.ArithmeticOperationType.Multiplication;
+                    break;
+                case @"/":
+                    operation = Instruction.ArithmeticOperationType.Division;
+                    break;
+                default:
+                    throw new ObfuscatorException("Unsupported arithmetic operation type.");
+            }
+        }
+
+
+        public static void UnaryAssignment(Variable left_value, Variable right_value, Instruction.UnaryOperationType operation)
+        {
+
+        }
+
+
+
+
+
+
+
         private static void Validate(Instruction inst, ExchangeFormat.StatementTypeType.EnumValues statement)
         {
             if (inst.statementType != statement)
@@ -80,5 +134,8 @@ namespace Obfuscator
             if (inst.parent == null || inst.parent.parent == null || inst.parent.parent.parent == null)
                 throw new ParserException("Instruction's 'parent' or 'parent.parent' or 'parent.parent.parent' property is invalid. Instruction: " + inst.ID);
         }
+
+
+        
     }
 }
