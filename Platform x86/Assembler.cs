@@ -75,6 +75,21 @@ namespace Platform_x86
             return sb.ToString();
         }
 
+        private static string StackPointerOfVariable(Variable var)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("[ebp ");
+
+            if (Offsets[var] >= 0)
+                sb.Append("+ ");
+            else
+                sb.Append("- ");
+
+            sb.Append(Math.Abs(Offsets[var]) + "]");
+
+            return sb.ToString();
+        }
 
         private static string NoOperation(Instruction inst, bool polyReq = false)
         {
@@ -93,7 +108,7 @@ namespace Platform_x86
             Parser.ConditionalJump(inst, out left, out right, out relop, out truebb, out falsebb); 
             
             /* Now we build the assembly instructions. */
-            sb.AppendLine("MOV eax, [ebp + " + Offsets[left] + "]");
+            sb.AppendLine("MOV eax, " + StackPointerOfVariable(left));
             sb.AppendLine("CMP eax, " + right);
             switch (relop)
             {
@@ -145,14 +160,14 @@ namespace Platform_x86
             /* We copy a variable's value to another. */
             if (right_var != null && right_const == null)
             {
-                sb.AppendLine("MOV eax, [ebp + " + Offsets[right_var] + "]");
-                sb.AppendLine("MOV [ebp + " + Offsets[leftvalue] + "], eax");
+                sb.AppendLine("MOV eax, " + StackPointerOfVariable(right_var));
+                sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", eax");
             }
 
             /* We copy a constant value to a variable. */
             else if (right_var == null && right_const != null)
             {
-                sb.AppendLine("MOV [ebp + " + Offsets[leftvalue] + "], " + right_const);
+                sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", " + right_const);
             }
 
             else
@@ -171,7 +186,7 @@ namespace Platform_x86
             Parser.UnaryAssignment(inst, out leftvalue, out rightvalue, out op);
 
             /* Building the assembly... */
-            sb.AppendLine("MOV eax, [ebp + " + Offsets[rightvalue] + "]");
+            sb.AppendLine("MOV eax, " + StackPointerOfVariable(rightvalue));
 
             if (op == Instruction.UnaryOperationType.ArithmeticNegation)
                 sb.AppendLine("NEG eax");
@@ -179,7 +194,7 @@ namespace Platform_x86
             else
                 sb.AppendLine("NOT eax");
 
-            sb.AppendLine("MOV [ebp + " + Offsets[leftvalue] + "], eax");
+            sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", eax");
 
             return sb.ToString();
         }
@@ -195,10 +210,10 @@ namespace Platform_x86
             Parser.FullAssignment(inst, out leftvalue, out right1, out right2_var, out right2_const, out op);
 
             /* Building the assembly... */
-            sb.AppendLine("MOV eax, [ebp + " + Offsets[right1] + "]");
+            sb.AppendLine("MOV eax, " + StackPointerOfVariable(right1));
 
             if (right2_var != null && right2_const == null)
-                sb.AppendLine("MOV ebx, [ebp + " + Offsets[right2_var] + "]");
+                sb.AppendLine("MOV ebx, " + StackPointerOfVariable(right2_var));
 
             if (op == Instruction.ArithmeticOperationType.Addition || op == Instruction.ArithmeticOperationType.Subtraction)
             {
@@ -259,7 +274,7 @@ namespace Platform_x86
                 }
             }
 
-            sb.AppendLine("MOV [ebp + " + Offsets[leftvalue] + "], eax");
+            sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", eax");
 
             return sb.ToString();
         }
@@ -282,15 +297,15 @@ namespace Platform_x86
                     sb.AppendLine("CALL " + called_func.globalID);
                     break;
                 case Instruction.ProceduralType.Param:
-                    sb.AppendLine("PUSH [ebp + " + Offsets[var] + "], eax");
+                    sb.AppendLine("PUSH " + StackPointerOfVariable(var));
                     break;
                 case Instruction.ProceduralType.Retrieve:
-                    sb.AppendLine("MOV [ebp + " + Offsets[var] + "], eax");
+                    sb.AppendLine("MOV " + StackPointerOfVariable(var) + ", eax");
                     break;
                 case Instruction.ProceduralType.Return:
                     sb.Append("MOV eax, ");
                     if (var != null && num == null)
-                        sb.Append("[ebp + " + Offsets[var] + "]");
+                        sb.Append(StackPointerOfVariable(var));
                     else
                         sb.Append(num);
                     sb.AppendLine();
