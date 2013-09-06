@@ -32,6 +32,10 @@ namespace Platform_x86
             Obfuscator.Traversal.ReorderBasicBlocks(func);
             foreach (BasicBlock bb in func.BasicBlocks)
             {
+                /* We shouldn't write the "fake exit block". */
+                if (bb.getSuccessors.Count == 0)
+                    continue;
+
                 foreach (Instruction inst in bb.Instructions)
                 {
                     switch (inst.statementType)
@@ -297,18 +301,26 @@ namespace Platform_x86
                     sb.AppendLine("CALL " + called_func.globalID);
                     break;
                 case Instruction.ProceduralType.Param:
-                    sb.AppendLine("PUSH " + StackPointerOfVariable(var));
+                    sb.Append("PUSH ");
+                    if (var != null && num == null)
+                        sb.Append(StackPointerOfVariable(var));
+                    else
+                        sb.Append(num);
                     break;
                 case Instruction.ProceduralType.Retrieve:
                     sb.AppendLine("MOV " + StackPointerOfVariable(var) + ", eax");
                     break;
                 case Instruction.ProceduralType.Return:
-                    sb.Append("MOV eax, ");
-                    if (var != null && num == null)
-                        sb.Append(StackPointerOfVariable(var));
-                    else
-                        sb.Append(num);
-                    sb.AppendLine();
+                    if (var != null || num != null)
+                    {
+                        sb.Append("MOV eax, ");
+                        if (var != null && num == null)
+                            sb.Append(StackPointerOfVariable(var));
+                        else
+                            sb.Append(num);
+                        sb.AppendLine();
+                    }
+                    sb.AppendLine("RET");
                     break;
             }
 
@@ -320,7 +332,7 @@ namespace Platform_x86
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(".ent " + func.globalID);
             sb.AppendLine(func.globalID + ":");
-            sb.AppendLine("PUSH ebx\nSUB esp, " + framestack);
+            sb.AppendLine("PUSH ebx\nSUB esp, " + Math.Abs(framestack));
             return sb.ToString();
         }
 
@@ -344,7 +356,7 @@ namespace Platform_x86
         private static string Epilogue(Function func, int framestack)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("ADD esp, " + framestack);
+            sb.AppendLine("ADD esp, " + Math.Abs(framestack));
             return sb.ToString();
         }
 
