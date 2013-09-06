@@ -303,17 +303,23 @@ namespace Platform_x86
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(".ent " + func.globalID);
             sb.AppendLine(func.globalID + ":");
-            sb.AppendLine("SUB esp, " + framestack);
+            sb.AppendLine("PUSH ebx\nSUB esp, " + framestack);
             return sb.ToString();
         }
 
         private static int BuildStack(Function func)
         {
-            int fs = 0;
-            foreach (Variable var in func.LocalVariables)
+            int fs = -4, ps = 4;
+            foreach (Variable var in func.LocalVariables.FindAll(x => x.kind != Variable.Kind.Input))
             {
                 Offsets.Add(var, fs);
-                fs += var.memoryRegionSize;
+                fs -= var.memoryRegionSize;
+            }
+            func.LocalVariables.Reverse();
+            foreach (Variable var in func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input))
+            {
+                Offsets.Add(var, ps);
+                ps += var.memoryRegionSize;
             }
             return fs;
         }
