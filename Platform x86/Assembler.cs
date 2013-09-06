@@ -279,8 +279,10 @@ namespace Platform_x86
             switch (type)
             {
                 case Instruction.ProceduralType.Call:
+                    sb.AppendLine("CALL " + called_func.globalID);
                     break;
                 case Instruction.ProceduralType.Param:
+                    sb.AppendLine("PUSH [ebp + " + Offsets[var] + "], eax");
                     break;
                 case Instruction.ProceduralType.Retrieve:
                     sb.AppendLine("MOV [ebp + " + Offsets[var] + "], eax");
