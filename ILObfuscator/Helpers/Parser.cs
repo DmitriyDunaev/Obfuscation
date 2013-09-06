@@ -171,7 +171,7 @@ namespace Obfuscator
         /// <param name="left_value">Left value of the copy (copy to)</param>
         /// <param name="right_value">Right value of the copy (copy from), variable</param>
         /// <param name="right_value_int">Right value of the copy (copy from), number</param>
-        public static void Copy(Instruction inst, Variable left_value, Variable right_value, int? right_value_int)
+        public static void Copy(Instruction inst, out Variable left_value, out Variable right_value, out int? right_value_int)
         {
             Validate(inst, ExchangeFormat.StatementTypeType.EnumValues.eCopy);
             System.Collections.Specialized.StringCollection refvarIDs = new System.Collections.Specialized.StringCollection();
