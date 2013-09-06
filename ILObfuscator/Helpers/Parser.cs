@@ -130,7 +130,7 @@ namespace Obfuscator
 
 
         /// <summary>
-        /// Parses an unary assignment instruction
+        /// Parses a unary assignment instruction
         /// </summary>
         /// <param name="inst">Instruction to be parsed</param>
         /// <param name="left_value">Left value of the assignment (variable only)</param>
@@ -184,12 +184,12 @@ namespace Obfuscator
             left_value = inst.RefVariables.Find(x => x.ID == refvarIDs[0]);
             if (refvarIDs.Count == 2)
             {
-                left_value = inst.RefVariables.Find(x => x.ID == refvarIDs[0]);
+                right_value = inst.RefVariables.Find(x => x.ID == refvarIDs[1]);
                 right_value_int = null;
             }
             else
             {
-                left_value = null;
+                right_value = null;
                 right_value_int = Convert.ToInt32(inst.TACtext.Split(' ')[2]);
             }
         }
@@ -238,7 +238,7 @@ namespace Obfuscator
                     var = inst.RefVariables.Find(x => x.ID == Regex.Match(inst.TACtext, "ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}", RegexOptions.None).Value);
                     break;
                 default:
-                    throw new ParserException("Cannot parse TAC text in procedural instruction " + inst.ID);
+                    throw new ParserException("Failed to parse TAC text in procedural instruction " + inst.ID);
             }
 
         }
@@ -251,14 +251,39 @@ namespace Obfuscator
         /// <param name="left_value">Left value of the assignment (assign to)</param>
         /// <param name="right_value">Right value of the assignment, variable</param>
         /// <param name="right_value_int">Right value of the assignment, number</param>
-        /// <param name="operation"></param>
-        public static void PointerAssignment(Instruction inst, out Variable left_value, out Variable right_value, out int? right_value_num, out Instruction.PoinerType operation)
+        /// <param name="operation">Pointer operation type</param>
+        public static void PointerAssignment(Instruction inst, out Variable left_value, out Variable right_value, out int? right_value_int, out Instruction.PoinerType operation)
         {
-            throw new NotImplementedException("Parser.PointerAssignment is not implemented yet!");
+            Validate(inst, ExchangeFormat.StatementTypeType.EnumValues.ePointerAssignment);
+            System.Collections.Specialized.StringCollection refvarIDs = new System.Collections.Specialized.StringCollection();
+            Match matchResult = Regex.Match(inst.TACtext, "ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}", RegexOptions.None);
+            while (matchResult.Success)
+            {
+                refvarIDs.Add(matchResult.Value);
+                matchResult = matchResult.NextMatch();
+            }
+            left_value = inst.RefVariables.Find(x => x.ID == refvarIDs[0]);
+            if (refvarIDs.Count == 2)
+            {
+                right_value = inst.RefVariables.Find(x => x.ID == refvarIDs[0]);
+                right_value_int = null;
+            }
+            else
+            {
+                right_value = null;
+                right_value_int = Convert.ToInt32(inst.TACtext.Split(' ')[3]);
+            }
+            if (inst.TACtext.Split(' ').Contains("&"))
+                operation = Instruction.PoinerType.Variable_EQ_AddressOfObject;
+            else if (inst.TACtext.IndexOf('*') > inst.TACtext.IndexOf('='))
+                operation = Instruction.PoinerType.Variable_EQ_PointedObject;
+            else if (refvarIDs.Count == 2)
+                operation = Instruction.PoinerType.PointedObject_EQ_Variable;
+            else
+                operation = Instruction.PoinerType.PointedObject_EQ_Number;
         }
 
-        
-        
+
         private static void Validate(Instruction inst, ExchangeFormat.StatementTypeType.EnumValues statement)
         {
             if (inst.statementType != statement)
@@ -267,8 +292,5 @@ namespace Obfuscator
             if (inst.parent == null || inst.parent.parent == null || inst.parent.parent.parent == null)
                 throw new ParserException("Instruction's 'parent' or 'parent.parent' or 'parent.parent.parent' property is invalid. Instruction: " + inst.ID);
         }
-
-
-        
     }
 }

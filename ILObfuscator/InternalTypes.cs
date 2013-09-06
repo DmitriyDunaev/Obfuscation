@@ -392,10 +392,10 @@ namespace Internal
 
         public enum PoinerType
         {
-            AddressOfObjectAssignedToVariable = 0,
-            PointedObjectAssignedToVariable = 1,
-            VariableAssignedToPointedObject = 2,
-            NumericValueAssignedToPoinetdObject = 3
+            Variable_EQ_AddressOfObject = 0,
+            Variable_EQ_PointedObject = 1,
+            PointedObject_EQ_Variable = 2,
+            PointedObject_EQ_Number = 3
         }
 
         public enum UnaryOperationType
