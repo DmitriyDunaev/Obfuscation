@@ -240,7 +240,7 @@ namespace Internal
                 string resultString = Regex.Match(TACtext, @"& [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$").Value;
                 if (string.IsNullOrEmpty(resultString))
                     return unsafeVar;
-                resultString = Regex.Match(TACtext, @"[vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$").Value;
+                resultString = Regex.Match(TACtext, @"ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$").Value;
                 unsafeVar.Add(this.parent.parent.LocalVariables.Find(x => x.ID == resultString));
             }
             return unsafeVar;
