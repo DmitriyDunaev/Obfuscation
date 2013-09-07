@@ -48,37 +48,37 @@ namespace Platform_x86
                     switch (inst.statementType)
                     {
                         case ExchangeFormat.StatementTypeType.EnumValues.eFullAssignment:
-                            sb.AppendLine(FullAssignment(inst, inst.polyRequired));
+                            sb.Append(FullAssignment(inst, inst.polyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eUnaryAssignment:
-                            sb.AppendLine(UnaryAssignment(inst, inst.polyRequired));
+                            sb.Append(UnaryAssignment(inst, inst.polyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eCopy:
-                            sb.AppendLine(Copy(inst, inst.polyRequired));
+                            sb.Append(Copy(inst, inst.polyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump:
-                            sb.AppendLine(UnconditionalJump(inst, inst.polyRequired));
+                            sb.Append(UnconditionalJump(inst, inst.polyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump:
-                            sb.AppendLine(ConditionalJump(inst, inst.polyRequired));
+                            sb.Append(ConditionalJump(inst, inst.polyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eProcedural:
-                            sb.AppendLine(Procedural(inst, inst.polyRequired));
+                            sb.Append(Procedural(inst, inst.polyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eIndexedAssignment:
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.ePointerAssignment:
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eNoOperation:
-                            sb.AppendLine(NoOperation(inst, inst.polyRequired));
+                            sb.Append(NoOperation(inst, inst.polyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.Invalid:
                             break;
                         default:
                             throw new AssemblerException("Statement type is not supported by Assembler.");
                     }
-
                 }
+                sb.AppendLine();
                 prev = bb;
             }
 
