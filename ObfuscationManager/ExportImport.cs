@@ -98,6 +98,8 @@ namespace ObfuscationManager
             foreach (Function func in routine.Functions)
             {
                 sb.AppendLine(Platform_x86.Assembler.GetAssemblyFromTAC(func));
+                Console.WriteLine(sb.ToString());
+                sb.Clear();
             }
             return sb.ToString();
         }

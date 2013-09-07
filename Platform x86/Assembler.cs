@@ -30,11 +30,18 @@ namespace Platform_x86
             sb.AppendLine(Prologue(func, framestack));
 
             Obfuscator.Traversal.ReorderBasicBlocks(func);
+            BasicBlock prev = func.BasicBlocks.First();
             foreach (BasicBlock bb in func.BasicBlocks)
             {
                 /* We shouldn't write the "fake exit block". */
                 if (bb.getSuccessors.Count == 0)
                     continue;
+
+                if (bb.getPredecessors.Count() > 1 || (bb.getPredecessors.Count() == 1 &&
+                        bb.getPredecessors.First() != prev))
+                {
+                    sb.AppendLine(bb.ID + ":");
+                }
 
                 foreach (Instruction inst in bb.Instructions)
                 {
@@ -72,6 +79,7 @@ namespace Platform_x86
                     }
 
                 }
+                prev = bb;
             }
 
             sb.AppendLine(Epilogue(func, framestack));
@@ -330,7 +338,6 @@ namespace Platform_x86
         private static string Prologue(Function func, int framestack)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(".ent " + func.globalID);
             sb.AppendLine(func.globalID + ":");
             sb.AppendLine("PUSH ebx\nSUB esp, " + Math.Abs(framestack));
             return sb.ToString();

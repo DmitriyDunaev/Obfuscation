@@ -169,6 +169,8 @@ void Parser::make_tac()
                 }
                 else if (*i == "=-")
                     cont.push_back (new Equation(arr, true));
+				else if (*i == "=&")
+                    cont.push_back (new Equation(arr, false, true));
                 else if (*i == "=")
                     cont.push_back (new Equation(arr));
                 else

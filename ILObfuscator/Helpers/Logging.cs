@@ -185,7 +185,7 @@ namespace Obfuscator
                 //    x.Instructions.ForEach(y => sb_instructions.AppendLine("\t" + y.TACtext));
                 //}
                 //);
-
+                BasicBlock prev = func.BasicBlocks.First();
                 foreach (BasicBlock bb in func.BasicBlocks)
                 {
                     /* The "fake exit block" should not be written. */
@@ -193,12 +193,12 @@ namespace Obfuscator
                         continue;
 
                     if (bb.getPredecessors.Count() > 1 || ( bb.getPredecessors.Count() == 1 && 
-                        (bb.getPredecessors.First().Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump ||
-                         bb.getPredecessors.First().Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump) ) )
+                        bb.getPredecessors.First() != prev ) )
                     {
                          sb_instructions.AppendLine(ReadableBBLabels[bb.ID] + ":");
                     }
                     bb.Instructions.ForEach(x => sb_instructions.AppendLine("\t" + x.TACtext));
+                    prev = bb;
                 }
 
                 ReadableVariables.Keys.ToList().ForEach(x => sb_instructions.Replace(x, ReadableVariables[x]));

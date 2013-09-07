@@ -8,9 +8,10 @@ class Equation : public CThreeAdressInstruction
 {
     COperand* ops[2];
     bool neg;
+	bool adress;
 
 public:
-    Equation (COperand**, bool neg = false);
+    Equation (COperand**, bool neg = false, bool adress = false);
     virtual ~Equation() {}
 
     void print(stringstream& s);
