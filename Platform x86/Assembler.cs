@@ -77,8 +77,8 @@ namespace Platform_x86
                         default:
                             throw new AssemblerException("Statement type is not supported by Assembler.");
                     }
+                    sb.AppendLine();
                 }
-                sb.AppendLine();
                 prev = bb;
             }
 
@@ -306,9 +306,9 @@ namespace Platform_x86
             switch (type)
             {
                 case Instruction.ProceduralType.Call:
-                    if (called_func == null)
-                        throw new ObfuscatorException("Called function can't be null");
-                    sb.AppendLine("CALL " + called_func.globalID);
+                    //if (called_func == null)
+                    //    throw new ObfuscatorException("Called function can't be null");
+                    //sb.AppendLine("CALL " + called_func.globalID);
                     break;
                 case Instruction.ProceduralType.Param:
                     sb.Append("PUSH ");
@@ -316,6 +316,7 @@ namespace Platform_x86
                         sb.Append(StackPointerOfVariable(var));
                     else
                         sb.Append(num);
+                    sb.AppendLine();
                     break;
                 case Instruction.ProceduralType.Retrieve:
                     sb.AppendLine("MOV " + StackPointerOfVariable(var) + ", eax");
@@ -341,7 +342,7 @@ namespace Platform_x86
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(func.globalID + ":");
-            sb.AppendLine("PUSH ebx\nSUB esp, " + Math.Abs(framestack));
+            sb.AppendLine("PUSH ebp\nSUB esp, " + Math.Abs(framestack));
             return sb.ToString();
         }
 
