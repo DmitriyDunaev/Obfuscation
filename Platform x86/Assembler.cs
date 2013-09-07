@@ -68,6 +68,7 @@ namespace Platform_x86
                         case ExchangeFormat.StatementTypeType.EnumValues.eIndexedAssignment:
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.ePointerAssignment:
+                            sb.Append(PointerAssignment(inst, inst.polyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eNoOperation:
                             sb.Append(NoOperation(inst, inst.polyRequired));
@@ -106,6 +107,41 @@ namespace Platform_x86
         private static string NoOperation(Instruction inst, bool polyReq = false)
         {
             return "NOP";
+        }
+
+        private static string PointerAssignment(Instruction inst, bool polyReq = false)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            /* Parsing... */
+            Variable leftvalue, right_var;
+            int? right_const;
+            Instruction.PoinerType operation;
+            Parser.PointerAssignment(inst, out leftvalue, out right_var, out right_const, out operation);
+
+            switch (operation)
+            {
+                case Instruction.PoinerType.Variable_EQ_AddressOfObject:
+                    sb.AppendLine("LEA eax, " + StackPointerOfVariable(right_var));
+                    sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", eax");
+                    break;
+                case Instruction.PoinerType.Variable_EQ_PointedObject:
+                    sb.AppendLine("MOV eax, " + StackPointerOfVariable(right_var));
+                    sb.AppendLine("MOV ebx, [eax]");
+                    sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", ebx");
+                    break;
+                case Instruction.PoinerType.PointedObject_EQ_Variable:
+                    sb.AppendLine("MOV eax, " + StackPointerOfVariable(leftvalue));
+                    sb.AppendLine("MOV ebx, " + StackPointerOfVariable(right_var));
+                    sb.AppendLine("MOV [eax], ebx");
+                    break;
+                case Instruction.PoinerType.PointedObject_EQ_Number:
+                    sb.AppendLine("MOV eax, " + StackPointerOfVariable(leftvalue));
+                    sb.AppendLine("MOV [eax], " + right_const);
+                    break;
+            }
+
+            return sb.ToString();
         }
 
         private static string ConditionalJump(Instruction inst, bool polyReq = false)

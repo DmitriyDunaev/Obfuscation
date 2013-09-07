@@ -71,7 +71,7 @@ string CommonModule::Reader::DoStuff()
 	ss << "  int v4; // [sp+1Ch] [bp-24h]@1\n  char *v5; // [sp+30h] [bp-10h]@1\n";
 	ss << "  int i; // [sp+34h] [bp-Ch]@1\n  int *v7; // [sp+38h] [bp-8h]@1\n";
 	ss << "  char *v8; // [sp+3Ch] [bp-4h]@1\n  int v9; // [sp+48h] [bp+8h]@1\n\n";
-	ss << "  v9 = 3 * a2 + a1;\n  *v8 = v3;\n  v5 = &v3;\n  v7 = &v4;\n";
+	ss << "  v9 = 3 * a2 + a1;\n  v8 = &v3;\n  v5 = &v3;\n  v7 = &v4;\n";
 	ss << "  for ( i = 1; i <= 4; ++i )\n  {\n    a2 += i;\n    *(_DWORD *)v8 = v9;\n";
 	ss << "    *(_DWORD *)v7 = a2;\n    v8 += 4;\n    ++v7;\n  }\n  return *(_DWORD *)v5;\n}\n";
 
