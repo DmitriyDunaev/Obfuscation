@@ -265,7 +265,7 @@ namespace Obfuscator
             left_value = inst.RefVariables.Find(x => x.ID == refvarIDs[0]);
             if (refvarIDs.Count == 2)
             {
-                right_value = inst.RefVariables.Find(x => x.ID == refvarIDs[0]);
+                right_value = inst.RefVariables.Find(x => x.ID == refvarIDs[1]);
                 right_value_int = null;
             }
             else

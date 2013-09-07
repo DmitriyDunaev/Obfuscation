@@ -343,7 +343,7 @@ namespace Platform_x86
             switch (type)
             {
                 case Instruction.ProceduralType.Call:
-                    sb.AppendLine("CALL ");
+                    sb.Append("CALL ");
                     if (called_func == null)
                         sb.AppendLine(inst.TACtext.Split(' ')[1]);
                     else
@@ -382,7 +382,8 @@ namespace Platform_x86
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(func.globalID + ":");
-            sb.AppendLine("PUSH ebp\nSUB esp, " + Math.Abs(framestack));
+            sb.AppendLine("PUSH ebp");
+            sb.AppendLine("SUB esp, " + Math.Abs(framestack));
             return sb.ToString();
         }
 
