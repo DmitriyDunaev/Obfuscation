@@ -21,9 +21,9 @@ namespace ObfuscationManager
                 doc = ExportImport.ImportXml(InputType.PseudoCode, PlatformType.x86);
                 exch = ExportImport.XmlToExchange(doc);
 
-                Console.Write("Converting Exchange to platform-dependent assembly");
-                ExportImport.ExchangeToAsm(exch, PlatformType.x86);
-                Console.WriteLine(". . . IMPLEMENTING\n");
+                //Console.Write("Converting Exchange to platform-dependent assembly");
+                //ExportImport.ExchangeToAsm(exch, PlatformType.x86);
+                //Console.WriteLine(". . . IMPLEMENTING\n");
             }
             catch (Obfuscator.ValidatorException exc)
             {

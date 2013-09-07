@@ -16,6 +16,8 @@ namespace Platform_x86
         /// </summary>
         private static Dictionary<Variable, int> Offsets = new Dictionary<Variable, int>();
 
+        private static int framestack;
+
         /// <summary>
         /// Method to generate the assembly code from the TAC instructions.
         /// </summary>
@@ -25,8 +27,7 @@ namespace Platform_x86
         {
             StringBuilder sb = new StringBuilder();
 
-            
-            int framestack = BuildStack(func);
+            framestack = BuildStack(func);
             sb.AppendLine(Prologue(func, framestack));
 
             Obfuscator.Traversal.ReorderBasicBlocks(func);
@@ -83,7 +84,7 @@ namespace Platform_x86
                 prev = bb;
             }
 
-            sb.AppendLine(Epilogue(func, framestack));
+            //sb.AppendLine(Epilogue(func, framestack));
 
             return sb.ToString();
         }
@@ -369,6 +370,7 @@ namespace Platform_x86
                             sb.Append(num);
                         sb.AppendLine();
                     }
+                    sb.Append(Epilogue(inst.parent.parent, framestack));
                     sb.AppendLine("RET");
                     break;
             }
