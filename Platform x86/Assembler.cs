@@ -306,9 +306,11 @@ namespace Platform_x86
             switch (type)
             {
                 case Instruction.ProceduralType.Call:
-                    //if (called_func == null)
-                    //    throw new ObfuscatorException("Called function can't be null");
-                    //sb.AppendLine("CALL " + called_func.globalID);
+                    sb.AppendLine("CALL ");
+                    if (called_func == null)
+                        sb.AppendLine(inst.TACtext.Split(' ')[1]);
+                    else
+                        sb.AppendLine(called_func.globalID);
                     break;
                 case Instruction.ProceduralType.Param:
                     sb.Append("PUSH ");
