@@ -306,6 +306,8 @@ namespace Platform_x86
             switch (type)
             {
                 case Instruction.ProceduralType.Call:
+                    if (called_func == null)
+                        throw new ObfuscatorException("Called function can't be null");
                     sb.AppendLine("CALL " + called_func.globalID);
                     break;
                 case Instruction.ProceduralType.Param:

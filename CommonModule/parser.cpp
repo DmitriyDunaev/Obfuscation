@@ -247,7 +247,7 @@ OwnTokenType Parser::type (string token)
     /* some kind of equation*/
     if (token == "=" || token == "+=" || token == "-=" || token == "*=" || token == "/=" ||
         token == ">" || token == "<"  || token == "<=" || token == ">=" || token == "==" ||
-        token == "=-")
+        token == "=-"|| token == "=&")
         return equ;
 
     /* an operator */

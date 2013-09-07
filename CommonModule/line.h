@@ -11,7 +11,13 @@ class Line : public CThreeAdressInstruction
 public:
     Line(string s):name(s) {}
     string gets() { return name; }
-    void repl(size_t f) { name.replace(f, 3, "=- "); }
+    void repl(size_t f, bool address=false) 
+	{ 
+		if (address) 
+			name.replace(f+1, 3, "=& "); 
+		else 
+			name.replace(f+1, 3, "=- "); 
+	}
     void ins(size_t f) { name.insert(f, " "); }
     void ersbeg() { name.erase(0, 1); }
     void ersmid(size_t from, int i) { name.erase( from, i); }

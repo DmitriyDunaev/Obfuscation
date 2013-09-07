@@ -180,6 +180,18 @@ void Assistant::preproc()
 			if((i->gets())[i->gets().size()-1] == ';') i->ersend();
 		}
     }
+	for (list<Line>::iterator i = lines->begin(); i != lines->end(); ++i)
+    {
+        if ( !i->gets().empty() )
+		{
+			size_t found = i->gets().find(" = &");
+			if (found != string::npos)
+			{
+				i->repl(found, true);
+			}
+
+		}
+    }
 
 	list<Line>::iterator k = lines->begin();
 	while ( k != lines->end())
