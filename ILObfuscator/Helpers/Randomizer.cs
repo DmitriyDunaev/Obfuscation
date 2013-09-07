@@ -218,9 +218,9 @@ namespace Obfuscator
                 throw new RandomizerException("The instruction and the basic block should be contained in the same function.");
 
             Variable var = FakeInputParameter(nop.parent.parent);
-            if (var.fixedMax.HasValue && var.fixedMax.Value > Common.GlobalMaxNumber)
+            if (var.fixedMax.HasValue && var.fixedMax.Value > Common.GlobalMaxValue)
                 throw new RandomizerException("The fixedMax value is greated then the globally accepted maximum.");
-            if (var.fixedMin.HasValue && var.fixedMin.Value < Common.GlobalMinNumber)
+            if (var.fixedMin.HasValue && var.fixedMin.Value < Common.GlobalMinValue)
                 throw new RandomizerException("The fixedMin value is smaller then the globally accepted minimum.");
             int right_value = 0;
             Instruction.RelationalOperationType relop = Instruction.RelationalOperationType.Equals;
@@ -233,7 +233,7 @@ namespace Obfuscator
        
             if (use_min_limit)  // FixedMin will be used
             {
-                right_value = SingleNumber(Common.GlobalMinNumber, var.fixedMin.Value);
+                right_value = SingleNumber(Common.GlobalMinValue, var.fixedMin.Value);
                 switch (condition)
                 {
                     case Instruction.ConditionType.AlwaysTrue:
@@ -261,7 +261,7 @@ namespace Obfuscator
 
             if (!use_min_limit)     // FixedMax will be used
             {
-                right_value = SingleNumber(var.fixedMax.Value, Common.GlobalMaxNumber);
+                right_value = SingleNumber(var.fixedMax.Value, Common.GlobalMaxValue);
                 switch (condition)
                 {
                     case Instruction.ConditionType.AlwaysTrue:

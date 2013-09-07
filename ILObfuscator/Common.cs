@@ -25,11 +25,11 @@ namespace Obfuscator
         /// <summary>
         /// Maximal number used in fake code generation (e.g. in conditional statements) 
         /// </summary>
-        public static int GlobalMaxNumber = 1000;
+        public static int GlobalMaxValue = 1000;
         /// <summary>
         /// Minimal number used in fake code generation (e.g. in conditional statements) 
         /// </summary>
-        public static int GlobalMinNumber = 10;
+        public static int GlobalMinValue = 10;
         /// <summary>
         /// Number of fake instructions to be generated per single original 
         /// </summary>

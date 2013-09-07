@@ -176,7 +176,7 @@ namespace Obfuscator
 
                     /* We don't have any right values, so we have to copy a constant value. */
                     else
-                        ins.MakeCopy(leftvalue, null, Randomizer.SingleNumber(Common.GlobalMinNumber, Common.GlobalMaxNumber));
+                        ins.MakeCopy(leftvalue, null, Randomizer.SingleNumber(Common.GlobalMinValue, Common.GlobalMaxValue));
                     break;
 
                 case 1:
@@ -195,7 +195,7 @@ namespace Obfuscator
                         int num;
                         
                         if (op == Instruction.ArithmeticOperationType.Addition || op == Instruction.ArithmeticOperationType.Subtraction)
-                            num = Randomizer.SingleNumber(Common.GlobalMinNumber, Common.GlobalMaxNumber);
+                            num = Randomizer.SingleNumber(Common.GlobalMinValue, Common.GlobalMaxValue);
 
                         else
                         {
@@ -203,8 +203,8 @@ namespace Obfuscator
                              * Here we generate an integer number which is the power of 2, and is
                              * within the boundaries of GlobalMinNumber and GlobalMaxNumber.
                              */
-                            int min = Convert.ToInt32(Math.Ceiling(Math.Log(Common.GlobalMinNumber, 2)));
-                            int max = Convert.ToInt32(Math.Floor(Math.Log(Common.GlobalMaxNumber, 2)));
+                            int min = Convert.ToInt32(Math.Ceiling(Math.Log(Common.GlobalMinValue, 2)));
+                            int max = Convert.ToInt32(Math.Floor(Math.Log(Common.GlobalMaxValue, 2)));
                             int pow = Randomizer.SingleNumber(min, max);
                             num = Convert.ToInt32(Math.Pow(2, pow));
                         }

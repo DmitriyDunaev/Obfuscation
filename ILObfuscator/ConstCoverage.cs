@@ -72,7 +72,7 @@ namespace Obfuscator
             // We assume that we need 4 bytes for each constant.
             Variable t1 = const_inst.parent.parent.NewLocalVariable(Variable.Purpose.ConstRecalculation, Common.MemoryRegionSize.Integer);
             Variable t2 = const_inst.parent.parent.NewLocalVariable(Variable.Purpose.ConstRecalculation, Common.MemoryRegionSize.Integer);
-            int first_number = Randomizer.SingleNumber(Common.GlobalMinNumber, Common.GlobalMaxNumber);
+            int first_number = Randomizer.SingleNumber(Common.GlobalMinValue, Common.GlobalMaxValue);
             Instruction.ArithmeticOperationType op = first_number < const_value ? Instruction.ArithmeticOperationType.Addition : Instruction.ArithmeticOperationType.Subtraction;
             int second_number = Math.Abs(first_number - const_value);
             nop1.MakeCopy(t2, null, first_number);

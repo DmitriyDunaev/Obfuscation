@@ -71,6 +71,19 @@ namespace Internal
                 throw new ObfuscatorException("At present time only positive integer FixedMin and FixedMax are supported.");
             Variable fake_input = new Variable(Variable.Kind.Input, Variable.Purpose.Fake, Common.MemoryRegionSize.Integer, min_value, max_value);
             LocalVariables.Add(fake_input);
+            //Modifying all CALLs according to a new parameter
+            if (calledFrom == ExchangeFormat.CalledFromType.EnumValues.eBoth || calledFrom == ExchangeFormat.CalledFromType.EnumValues.eInternalOnly)
+                foreach (Function func in parent.Functions)
+                    foreach (BasicBlock bb in func.BasicBlocks)
+                    {
+                        int call = bb.Instructions.FindIndex(x => x.TACtext.Contains(this.ID));
+                        if (call != -1)
+                        {
+                            Instruction nop = new Instruction(bb);
+                            nop.MakeParam(Randomizer.SingleNumber(min_value.HasValue ? min_value.Value : Common.GlobalMinValue, max_value.HasValue ? max_value.Value : Common.GlobalMaxValue));
+                            bb.Instructions.Insert(call, nop);
+                        }
+                    }
             return fake_input;
         }
     }

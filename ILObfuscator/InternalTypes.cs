@@ -479,6 +479,7 @@ namespace Internal
             polyRequired = false;
         }
 
+        
         public void ResetID()
         {
             _ID = new IDManager();

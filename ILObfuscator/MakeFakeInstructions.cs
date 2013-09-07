@@ -202,5 +202,21 @@ namespace Internal
             TACtext = string.Join(" ", "goto", target.ID);
             parent.LinkToSuccessor(target, true);
         }
+
+
+        /// <summary>
+        /// Makes 'param' procedural instruction type
+        /// </summary>
+        /// <param name="value">Parameter value</param>
+        public void MakeParam(int value)
+        {
+            if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
+                throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");
+
+            isFake = true;
+            statementType = ExchangeFormat.StatementTypeType.EnumValues.eProcedural;
+            TACtext = string.Join(" ", "param", value.ToString());
+        }
+        
     }
 }
