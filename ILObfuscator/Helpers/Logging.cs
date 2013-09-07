@@ -143,48 +143,7 @@ namespace Obfuscator
                 StringBuilder sb_instructions = new StringBuilder();
 
                 Traversal.ReorderBasicBlocks(func);
-
-
-                // ** GRAPH TRAVERSAL does not work correctly yet!  **//
-                //Stack<BasicBlock> s = new Stack<BasicBlock>();
-                //HashSet<BasicBlock> processed = new HashSet<BasicBlock>();
-                //BasicBlock root = func.BasicBlocks[0];
-                //s.Push(root);
-                //processed.Add(root);
-                //while (s.Count > 0)
-                //{
-                //    var n = s.Pop();
-                //    // Do Action
-                //    sb_instructions.AppendLine(ReadableBBLabels[n.ID] + ":");
-                //    n.Instructions.ForEach(x => sb_instructions.AppendLine("\t" + x.TACtext));
-
-                //    if (n.getSuccessors.Count > 0)
-                //    {
-                //        BasicBlock true_succ = n.getSuccessors.First();
-                //        BasicBlock false_succ = n.getSuccessors.Last();
-
-                //        if (!processed.Contains(true_succ))
-                //        {
-                //            s.Push(true_succ);
-                //            processed.Add(true_succ);
-                //        }
-                //        if (!true_succ.Equals(false_succ))
-                //            if (!processed.Contains(false_succ))
-                //            {
-                //                s.Push(false_succ);
-                //                processed.Add(false_succ);
-                //            }
-                //    }
-                //}
-
-
-
-                //Traversal.nonRecursivePostOrder(func.BasicBlocks[0], x => 
-                //{
-                //    sb_instructions.AppendLine(ReadableBBLabels[x.ID] + ":");
-                //    x.Instructions.ForEach(y => sb_instructions.AppendLine("\t" + y.TACtext));
-                //}
-                //);
+          
                 BasicBlock prev = func.BasicBlocks.First();
                 foreach (BasicBlock bb in func.BasicBlocks)
                 {
@@ -212,6 +171,21 @@ namespace Obfuscator
             string filename_routine = Path.Combine(pathToLog, string.Format("Obfuscation_Readable_{0}_{1:dd.MM.yyy}.log", filename_distinguisher, DateTime.Now));
             File.WriteAllText(filename_routine, sb.ToString());
         }
+
+
+        /// <summary>
+        /// Writes the content of string variable to a log file
+        /// </summary>
+        /// <param name="content">String variable with content to be logged</param>
+        /// <param name="filename_distinguisher">Filename distinguisher (e.g. last used algorithm abbreviation)</param>
+        public static void WriteTextFile(string content, string filename_distinguisher = "")
+        {
+            if (!Directory.Exists(pathToLog))
+                Directory.CreateDirectory(pathToLog);
+            string filename_routine = Path.Combine(pathToLog, string.Format("Obfuscation_Text_{0}_{1:dd.MM.yyy}.log", filename_distinguisher, DateTime.Now));
+            File.WriteAllText(filename_routine, content);
+        }
+
     }
 }
 

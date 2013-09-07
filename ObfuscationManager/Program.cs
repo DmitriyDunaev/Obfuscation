@@ -55,7 +55,8 @@ namespace ObfuscationManager
                 Console.WriteLine(" . . . . . CANCELLED\n");
                 
                 //Console.Write("Converting Exchange to platform-dependent assembly");
-                //ExportImport.ExchangeToAsm(exch, PlatformType.x86);
+                //string asm = ExportImport.ExchangeToAsm(exch, PlatformType.x86);
+                //Obfuscator.Logging.WriteTextFile(asm, "ASM");
                 //Console.WriteLine(". . . IMPLEMENTING\n");
             }
             catch (Obfuscator.ValidatorException exc)
