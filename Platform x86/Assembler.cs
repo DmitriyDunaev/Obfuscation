@@ -383,6 +383,7 @@ namespace Platform_x86
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(func.globalID + ":");
             sb.AppendLine("PUSH ebp");
+            sb.AppendLine("MOV ebp, esp");
             sb.AppendLine("SUB esp, " + Math.Abs(framestack));
             return sb.ToString();
         }
