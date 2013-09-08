@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Internal;
 using Obfuscator;
+using System.Text.RegularExpressions;
 
 
 namespace Platform_x86
@@ -121,8 +122,8 @@ namespace Platform_x86
             }
 
             sb.AppendLine(Epilogue(func));
-
-            return sb.ToString();
+            string optimizedAssembly = Optimize(sb.ToString());
+            return optimizedAssembly;
         }
 
         private static string StackPointerOfVariable(Variable var)
@@ -464,6 +465,21 @@ namespace Platform_x86
             return sb.ToString();
         }
 
+
+        private static string Optimize(string funcASM)
+        {
+            System.Collections.Specialized.StringCollection movmov = new System.Collections.Specialized.StringCollection();
+            funcASM = funcASM.Replace("\r\n\r\n", "\r\n");
+            Match matchResult = Regex.Match(funcASM, @"mov (.*), (.*)\r\nmov (\2), (\1)", RegexOptions.IgnoreCase);
+            while (matchResult.Success)
+            {
+                movmov.Add(matchResult.Value);
+                matchResult = matchResult.NextMatch();
+            }
+            foreach (string item in movmov)
+                funcASM = funcASM.Replace(item, string.Empty);
+            return funcASM;
+        }
 
     }
 

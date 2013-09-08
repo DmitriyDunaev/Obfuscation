@@ -1,0 +1,16 @@
+int __cdecl sub_401362()
+{
+  sub_401940();
+  return sub_401334(6, 9);
+}
+
+int __cdecl sub_401334(int a1, int a2)
+{
+  int v3; // [sp+Ch] [bp-4h]@2
+
+  if ( a2 * a1 <= 100 )
+    v3 = a2 * a1;
+  else
+    v3 = a1 + a2;
+  return v3;
+}
