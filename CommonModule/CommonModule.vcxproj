@@ -119,9 +119,6 @@
     <ClCompile Include="variables.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Pseudocode.txt">
-      <DeploymentContent>true</DeploymentContent>
-    </Text>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
