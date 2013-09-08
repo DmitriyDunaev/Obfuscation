@@ -127,6 +127,7 @@ CInstructionsContainer* Function::findjump( int lab )
 {
     for ( list<CInstructionsContainer*>::iterator i = blocks.begin(); i != blocks.end(); ++i)
     {
+		if ( (*i)->empty() ) continue;
         if ( (*i)->back()->geti() == lab && !(*i)->back()->islabel())
             return *i;
     }

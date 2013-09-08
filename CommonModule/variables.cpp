@@ -52,7 +52,7 @@ void CVariables::dump(stringstream &s)
 	{
 		tmp.erase( tmp.size() -1);
 		s << "RefOutputVars=\"" << tmp << "\">\n";
-	}
+	} else s << ">\n";
 	s << "	<Local>\n";
     for (std::map<std::string, COperand*>::iterator i = variables.begin(); i != variables.end(); ++i)
     {

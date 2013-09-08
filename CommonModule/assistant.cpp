@@ -167,6 +167,16 @@ void Assistant::preproc()
 
     for (list<Line>::iterator i = lines->begin(); i != lines->end(); ++i)
     {
+        size_t found = i->gets().find("_cdecl ");
+        while (found != string::npos)
+        {
+            i->ersmid(found, 7);
+            found = i->gets().find("_cdecl ");
+        }
+    }
+
+    for (list<Line>::iterator i = lines->begin(); i != lines->end(); ++i)
+    {
 		while((i->gets()).c_str()[0] == ' ') i->ersbeg();
 		while((i->gets()).c_str()[i->gets().size()-1] == ' ') i->ersend();
 
@@ -230,7 +240,7 @@ void Assistant::setiters(list<Line>::iterator* a, list<Line>::iterator* b, list<
         *a=(*i);
         ++(*i);
         *b=(*i);
-        if (inc) --(*i);
+        //if (inc) --(*i);
     }
 }
 

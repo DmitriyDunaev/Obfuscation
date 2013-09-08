@@ -2,7 +2,7 @@
 
 //#define ORIGINAL
 //#define TEST
-#define SIMPLE
+//#define SIMPLE
 
 using namespace std;
 
@@ -38,92 +38,31 @@ string CommonModule::Reader::DoStuff()
 
     Routine c;
 
-#ifdef DEB
-
-    //Parser p("( v5 + 0x70 ) == 16", c);
-    Parser p("2 = b + c", c.back(), c.getVars());
-    //Parser p("cumo - 4 * ( 3 + 12 ) >= a + b * c + d", c);
-    //Parser p("a + b >= c - 12", c);
-    p.work();
-    std::cout << "STR: " << p.str() << std::endl;
-    p.print();
-    c.dump();
-
-	// Random.
-
-    return 0;
-
-#else
-
-    std::string out, in;
+    std::string out;
+	char in[1000];
     list<Line> lines;
 
     stringstream ss;
-   /* ss << "for ( i = 0; i; ++i )\n{\n*(_DWORD *)v6 = dword_405008;\n*v5 = dword_402000;\nv6";
-    ss << " += 4;\n}\nreturn *(_DWORD *)v3;";*/
-//
-
-
-#ifdef ORIGINAL
-
-	ss << "int __cdecl sub_401334()\n{\n  sub_401980();\n  return sub_401368(777, 1);\n}\n";
-	ss << "int __cdecl sub_401368(int a1, int a2)\n{\n  char v3; // [sp+8h] [bp-38h]@1\n";
-	ss << "  int v4; // [sp+1Ch] [bp-24h]@1\n  char *v5; // [sp+30h] [bp-10h]@1\n";
-	ss << "  int i; // [sp+34h] [bp-Ch]@1\n  int *v7; // [sp+38h] [bp-8h]@1\n";
-	ss << "  char *v8; // [sp+3Ch] [bp-4h]@1\n  int v9; // [sp+48h] [bp+8h]@1\n\n";
-	ss << "  v9 = 3 * a2 + a1;\n  v8 = &v3;\n  v5 = &v3;\n  v7 = &v4;\n";
-	ss << "  for ( i = 1; i <= 4; ++i )\n  {\n    a2 += i;\n    *(_DWORD *)v8 = v9;\n";
-	ss << "    *(_DWORD *)v7 = a2;\n    v8 += 4;\n    ++v7;\n  }\n  return *(_DWORD *)v5;\n}\n";
-
-#endif
-#ifdef SIMPLE
-
-	ss << " int sub_funct(int a, int b)\n";
-	ss << " {\n";
-	ss << " int tmp;\n";
-	ss << " if ( a * b > 100 )\n";
-	ss << " {\n";
-	ss << " tmp = a + b;\n";
-	ss << " }\n";
-	ss << " else\n";
-	ss << " {\n";
-	ss << " tmp = a * b;\n";
-	ss << " }\n";
-	ss << " return tmp;\n";
-	ss << " }\n";
-	ss << " int sub_otherfnct()\n";
-	ss << " {\n";
-	ss << " return sub_funct(6, 9);\n";
-	ss << " }\n";
-
-#endif
-#ifdef TEST
-
-	ss << " int sub_fnct(a, b)\n";
-	ss << " {\n";
-	ss << " if ( a > 70 )\n";
-	ss << " a = 5;\n";
-	ss << " else\n";
-	ss << " {\n";
-	ss << " a = 9;\n";
-	ss << " }\n";
-	ss << " return ya;\n";
-	ss << " }\n";
-
-#endif
+	fstream fin;
+	fin.open("Pseudocode.txt", fstream::in );
+	if( !fin.is_open() )
+		cout << "File not found!" << endl;
 
 #ifdef CIN
     while (!cin.eof())
     {
         getline(cin, in);
 #else
-    while (!ss.eof())
+	while (!fin.eof())
     {
-        getline(ss, in);
+        fin.getline(in, 1000);
+		string s(in);
 #endif
-        lines.push_back(in);
+        lines.push_back(s);
     }
 	
+	fin.close();
+
     Assistant Reader(&lines, &c);
 
     Reader.preproc();
@@ -145,6 +84,5 @@ string CommonModule::Reader::DoStuff()
 	return s.str();
 
 
-#endif
 
 }
