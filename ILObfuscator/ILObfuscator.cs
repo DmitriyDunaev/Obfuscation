@@ -78,9 +78,9 @@ namespace Obfuscator
             foreach (Function func in routine.Functions)
                 FakeCode.GenerateFakeInstructions(func);
             Logging.WriteRoutine(routine, "FakeIns");
-            //foreach (Function func in routine.Functions)
-            //    FakeCode.GenerateConditionalJumps(func);
-            //Logging.WriteRoutine(routine, "CondJumps");
+            foreach (Function func in routine.Functions)
+                FakeCode.GenerateConditionalJumps(func);
+            Logging.WriteRoutine(routine, "CondJumps");
             routine.Validate();
             PrintSuccess();
 

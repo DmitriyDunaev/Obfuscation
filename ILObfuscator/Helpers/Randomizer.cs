@@ -267,12 +267,12 @@ namespace Obfuscator
                     case Instruction.ConditionType.AlwaysTrue:
                         relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Smaller,
                                                                                     Instruction.RelationalOperationType.SmallerOrEquals,
-                                                                                    Instruction.RelationalOperationType.Equals);
+                                                                                    Instruction.RelationalOperationType.NotEquals);
                         break;
                     case Instruction.ConditionType.AlwaysFalse:
                         relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Greater,
                                                                                     Instruction.RelationalOperationType.GreaterOrEquals,
-                                                                                    Instruction.RelationalOperationType.NotEquals);
+                                                                                    Instruction.RelationalOperationType.Equals);
                         break;
                     case Instruction.ConditionType.Random:
                         relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Smaller,
