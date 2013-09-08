@@ -137,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="Pseudocode.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
