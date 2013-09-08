@@ -35,19 +35,19 @@ namespace Obfuscator
             routine.Functions[1].NewFakeInputParameter(33, 545);
             Variable var = Randomizer.FakeInputParameter(routine.Functions[1]);
 
-            //Console.Write("Constants covering algorithm");
-            //ConstCoverage.CoverConstants(routine);
-            //routine.Validate();
-            //PrintSuccess();
+            Console.Write("Constants covering algorithm");
+            ConstCoverage.CoverConstants(routine);
+            routine.Validate();
+            PrintSuccess();
 
-            //Logging.WriteReadableTAC(routine, "CONST");
+            Logging.WriteReadableTAC(routine, "CONST");
 
-            //Console.Write("Meshing algorithm: Unconditional Jumps");
-            //Meshing.MeshUnconditionals(routine);
-            //routine.Validate();
-            //PrintSuccess();
+            Console.Write("Meshing algorithm: Unconditional Jumps");
+            Meshing.MeshUnconditionals(routine);
+            routine.Validate();
+            PrintSuccess();
 
-            //Logging.WriteReadableTAC(routine, "MeshingUNC");
+            Logging.WriteReadableTAC(routine, "MeshingUNC");
 
             //Console.Write("Meshing algorithm: Conditional Jumps");
             //Meshing.MeshConditionals(routine);
@@ -93,7 +93,7 @@ namespace Obfuscator
 
             //Console.Write("Collecting and writing statistics");
             //Logging.WriteStatistics(routine);
-            //PrintSuccess();
+            PrintSuccess();
 
             Console.Write("Converting Routine to Exchange class");
             exch = (Exchange)routine;

@@ -16,6 +16,9 @@ namespace Platform_x86
         /// </summary>
         private static Dictionary<Variable, int> Offsets = new Dictionary<Variable, int>();
 
+        private static Dictionary<string, string> ReadableBBLabels = new Dictionary<string, string>();
+        private static int counter = 0;
+
         private static int framestack;
 
         public static string GetAssemblyFromTAC(Routine routine)
@@ -28,6 +31,9 @@ namespace Platform_x86
             sb.AppendLine(".code");
             sb.AppendLine();
             sb.AppendLine("start:");
+            sb.AppendLine("CALL sub_otherfnct");
+            sb.AppendLine("RET");
+            sb.AppendLine();
 
             foreach (Function func in routine.Functions)
             {
@@ -49,6 +55,8 @@ namespace Platform_x86
         {
             StringBuilder sb = new StringBuilder();
 
+            ReadableBBLabels.Clear();
+            func.BasicBlocks.ForEach(x => ReadableBBLabels.Add(x.ID, string.Concat("LABEL_", counter++)));
             framestack = BuildStack(func);
             sb.AppendLine(Prologue(func));
 
@@ -60,10 +68,12 @@ namespace Platform_x86
                 if (bb.getSuccessors.Count == 0)
                     continue;
 
-                if (bb.getPredecessors.Count() > 1 || (bb.getPredecessors.Count() == 1 &&
-                        bb.getPredecessors.First() != prev))
+                if (true || bb.getPredecessors.Count() > 1 || (bb.getPredecessors.Count() == 1 &&
+                        bb.getPredecessors.First() != prev) || (bb.getPredecessors.Count() == 1 &&
+                        bb.getPredecessors.First().Instructions.Last().statementType == 
+                        ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump))
                 {
-                    sb.AppendLine(bb.ID + ":");
+                    sb.AppendLine(ReadableBBLabels[bb.ID] + ":");
                 }
 
                 foreach (Instruction inst in bb.Instructions)
@@ -202,7 +212,7 @@ namespace Platform_x86
                     sb.Append("JLE ");
                     break;
             }
-            sb.AppendLine(truebb.ID);
+            sb.AppendLine(ReadableBBLabels[truebb.ID]);
 
             return sb.ToString();
         }
@@ -214,7 +224,7 @@ namespace Platform_x86
             BasicBlock jumptarget;
             Parser.UnconditionalJump(inst, out jumptarget);
 
-            sb.AppendLine("JMP " + jumptarget.ID);
+            sb.AppendLine("JMP " + ReadableBBLabels[jumptarget.ID]);
 
             return sb.ToString();
         }
@@ -238,7 +248,8 @@ namespace Platform_x86
             /* We copy a constant value to a variable. */
             else if (right_var == null && right_const != null)
             {
-                sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", " + right_const);
+                sb.AppendLine("MOV eax, " + right_const);
+                sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", eax");
             }
 
             else
