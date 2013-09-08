@@ -28,5 +28,7 @@ string CThreeAdressInstruction::getid()
 	tmp.width(2);
 	tmp  << (int)id.Data4[7];
 	string ret = tmp.str();
+	if (ret.empty())
+		cout << "Empty GUID";
 	return ret;
 }

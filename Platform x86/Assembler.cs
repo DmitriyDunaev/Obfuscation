@@ -31,7 +31,11 @@ namespace Platform_x86
             sb.AppendLine(".code");
             sb.AppendLine();
             sb.AppendLine("start:");
-            sb.AppendLine("CALL sub_otherfnct");
+            sb.AppendLine("PUSH 50");
+            sb.AppendLine("PUSH 50");
+            sb.AppendLine("PUSH 50");
+            sb.AppendLine("CALL sub_401362");
+            sb.AppendLine("ADD esp, 12");
             sb.AppendLine("RET");
             sb.AppendLine();
 
@@ -376,11 +380,10 @@ namespace Platform_x86
             switch (type)
             {
                 case Instruction.ProceduralType.Call:
-                    sb.Append("CALL ");
                     if (called_func == null)
-                        sb.AppendLine(inst.TACtext.Split(' ')[1]);
+                        sb.AppendLine(";CALL " + inst.TACtext.Split(' ')[1]);
                     else
-                        sb.AppendLine(called_func.globalID);
+                        sb.AppendLine("CALL " + called_func.globalID);
                     break;
                 case Instruction.ProceduralType.Param:
                     sb.Append("PUSH ");

@@ -18,7 +18,7 @@ public:
     bool islabel() {return true;}
     void print(stringstream& s)
     {
-        s  << "		<Instruction Type=\"original\" Label=\"" << label << i << "\"></Instruction><!-- LABEL -->" << endl;
+        //s  << "		<Instruction Type=\"original\" Label=\"" << label << i << "\"></Instruction><!-- LABEL -->" << endl;
     }
 };
 

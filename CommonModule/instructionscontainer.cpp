@@ -38,6 +38,11 @@ void CInstructionsContainer::push_back (CThreeAdressInstruction* inst)
     InstructionList.push_back(inst);
 }
 
+void CInstructionsContainer::push_front (CThreeAdressInstruction* inst)
+{
+	InstructionList.push_front(inst);
+}
+
 void CInstructionsContainer::clear ()
 {
     for (list<CThreeAdressInstruction*>::iterator i = InstructionList.begin();

@@ -21,15 +21,17 @@ class CInstructionsContainer
     UUID id;
 
     std::list<CThreeAdressInstruction*> InstructionList;
+public:
     std::vector<CInstructionsContainer*> predecessors;
 
     std::vector<CInstructionsContainer*> successors;
 
-public:
+
     CInstructionsContainer(UUID i) : id(i) {}
     ~CInstructionsContainer();
     void clear ();
     void push_back (CThreeAdressInstruction*);
+	void push_front (CThreeAdressInstruction*);
 
     CThreeAdressInstruction* front() { return InstructionList.front(); }
 	CThreeAdressInstruction* frontplus()
@@ -47,6 +49,14 @@ public:
     {
         return InstructionList.empty();
     }
+
+	bool onlylabel()
+	{
+		if (InstructionList.back()->islabel() && InstructionList.size() == 1)
+			return true;
+		return false;
+	}
+
     CThreeAdressInstruction* back() { return InstructionList.back(); }
 
 	void succpush_back(CInstructionsContainer* c) { successors.push_back(c); }

@@ -33,6 +33,21 @@ void Function::setconnections(LabelGenerator* l)
 
 	list<CInstructionsContainer*>::iterator i = blocks.begin();
 
+	while ( i != blocks.end() )
+	{
+		if ( (*i)->onlylabel() )
+		{
+			list<CInstructionsContainer*>::iterator j = i;
+			++i;
+			(*i)->push_front( (*j)->front() );
+			blocks.remove( (*j) );
+		}
+		else
+			++i;
+	}
+
+	i = blocks.begin();
+
     while (  i != blocks.end())
     {
 		if ( !(*i)->empty() ) {
@@ -120,6 +135,23 @@ void Function::setjumps()
 		} else
 			++i;
 	}
+
+	/*i = blocks.begin();
+
+	while ( i != blocks.end() )
+	{
+		if ( (*i)->empty() )
+		{
+			for (int k = 0; k < (*i)->predecessors.size(); k++)
+			{
+				(*i)->predecessors[k]->successors.clear();
+				(*i)->predpush_back((*i)->successors[0]);
+			}
+			(*i)->successors[0]->successors = (*i)->successors;
+		}
+		else
+			++i;
+	}*/
 
 }
 
