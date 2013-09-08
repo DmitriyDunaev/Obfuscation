@@ -240,7 +240,7 @@ void Assistant::setiters(list<Line>::iterator* a, list<Line>::iterator* b, list<
         *a=(*i);
         ++(*i);
         *b=(*i);
-        //if (inc) --(*i);
+        if (inc) --(*i);
     }
 }
 
@@ -338,7 +338,7 @@ void Assistant::work(list<Line>::iterator beg, list<Line>::iterator en)
             {
                 ++i;
                 list<Line>::iterator c, d;
-                setiters(&c, &d, &i, false);
+                setiters(&c, &d, &i);
                 work(c, d);
                 ++i;
             }
