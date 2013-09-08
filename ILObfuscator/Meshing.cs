@@ -374,7 +374,7 @@ namespace Obfuscator
                         BasicBlock ambhelper = new BasicBlock(bb.parent);
                         bblist[i].LinkToSuccessor(ambhelper, true);
                         ambhelper.Instructions.Add(new Instruction(ambhelper));
-                        ambhelper.Instructions.Last().MakeUnconditionalJump(Randomizer.GeneratePolyRequJumpTarget(truelist));
+                        ambhelper.Instructions.Last().MakeUnconditionalJump(Randomizer.GeneratePolyRequJumpTarget(falselist));
                         bblist[i].Instructions.Last().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, bblist[i + 1]);
                         break;
                     default:

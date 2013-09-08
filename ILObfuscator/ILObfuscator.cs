@@ -42,12 +42,12 @@ namespace Obfuscator
 
             Logging.WriteReadableTAC(routine, "CONST");
 
-            Console.Write("Meshing algorithm: Unconditional Jumps");
-            Meshing.MeshUnconditionals(routine);
-            routine.Validate();
-            PrintSuccess();
+            //Console.Write("Meshing algorithm: Unconditional Jumps");
+            //Meshing.MeshUnconditionals(routine);
+            //routine.Validate();
+            //PrintSuccess();
 
-            Logging.WriteReadableTAC(routine, "MeshingUNC");
+            //Logging.WriteReadableTAC(routine, "MeshingUNC");
 
             //Console.Write("Meshing algorithm: Conditional Jumps");
             //Meshing.MeshConditionals(routine);
@@ -56,43 +56,43 @@ namespace Obfuscator
 
             //Logging.WriteReadableTAC(routine, "MeshingCOND");
 
-            //Console.Write("Generation of fake NOP instructions");
-            //foreach (Function func in routine.Functions)
-            //    FakeCode.GenerateNoOperations(func);
-            //routine.Validate();
-            //PrintSuccess();
-            //Logging.WriteRoutine(routine, "NoOpersGeneration");
+            Console.Write("Generation of fake NOP instructions");
+            foreach (Function func in routine.Functions)
+                FakeCode.GenerateNoOperations(func);
+            routine.Validate();
+            PrintSuccess();
+            Logging.WriteRoutine(routine, "NoOpersGeneration");
 
-            //Logging.WriteReadableTAC(routine, "FakeNOPs");
+            Logging.WriteReadableTAC(routine, "FakeNOPs");
 
-            //Console.Write("Running data analysis");
-            //foreach (Function func in routine.Functions)
-            //{
-            //    DataAnalysis.DeadVarsAlgortihm(func);
-            //    DataAnalysis.GatherBasicBlockInfo(func);
-            //}
-            //routine.Validate();
-            //PrintSuccess();
+            Console.Write("Running data analysis");
+            foreach (Function func in routine.Functions)
+            {
+                DataAnalysis.DeadVarsAlgortihm(func);
+                DataAnalysis.GatherBasicBlockInfo(func);
+            }
+            routine.Validate();
+            PrintSuccess();
 
-            //Console.Write("Generation of fake instructions from NOPs");
-            //foreach (Function func in routine.Functions)
-            //    FakeCode.GenerateFakeInstructions(func);
-            //Logging.WriteRoutine(routine, "FakeIns");
+            Console.Write("Generation of fake instructions from NOPs");
+            foreach (Function func in routine.Functions)
+                FakeCode.GenerateFakeInstructions(func);
+            Logging.WriteRoutine(routine, "FakeIns");
             //foreach (Function func in routine.Functions)
             //    FakeCode.GenerateConditionalJumps(func);
             //Logging.WriteRoutine(routine, "CondJumps");
-            //routine.Validate();
-            //PrintSuccess();
+            routine.Validate();
+            PrintSuccess();
 
-            //Logging.WriteReadableTAC(routine, "FakeInstrFromNOPs");
+            Logging.WriteReadableTAC(routine, "FakeInstrFromNOPs");
 
-            //Console.Write("Writing readable TAC");
-            //Logging.WriteReadableTAC(routine);
-            //routine.Validate();
-            //PrintSuccess();
+            Console.Write("Writing readable TAC");
+            Logging.WriteReadableTAC(routine);
+            routine.Validate();
+            PrintSuccess();
 
-            //Console.Write("Collecting and writing statistics");
-            //Logging.WriteStatistics(routine);
+            Console.Write("Collecting and writing statistics");
+            Logging.WriteStatistics(routine);
             PrintSuccess();
 
             Console.Write("Converting Routine to Exchange class");
