@@ -18,17 +18,39 @@ namespace Platform_x86
 
         private static int framestack;
 
+        public static string GetAssemblyFromTAC(Routine routine)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine(".386");
+            sb.AppendLine(".model flat, stdcall");
+            sb.AppendLine();
+            sb.AppendLine(".code");
+            sb.AppendLine();
+            sb.AppendLine("start:");
+
+            foreach (Function func in routine.Functions)
+            {
+                sb.AppendLine(GetAssemblyFromTAC(func));
+            }
+
+            sb.AppendLine();
+            sb.AppendLine("end start");
+
+            return sb.ToString();
+        }
+
         /// <summary>
         /// Method to generate the assembly code from the TAC instructions.
         /// </summary>
         /// <param name="func">The function in TAC.</param>
         /// <returns>The assembly code.</returns>
-        public static string GetAssemblyFromTAC(Function func)
+        private static string GetAssemblyFromTAC(Function func)
         {
             StringBuilder sb = new StringBuilder();
 
             framestack = BuildStack(func);
-            sb.AppendLine(Prologue(func, framestack));
+            sb.AppendLine(Prologue(func));
 
             Obfuscator.Traversal.ReorderBasicBlocks(func);
             BasicBlock prev = func.BasicBlocks.First();
@@ -84,7 +106,7 @@ namespace Platform_x86
                 prev = bb;
             }
 
-            //sb.AppendLine(Epilogue(func, framestack));
+            sb.AppendLine(Epilogue(func));
 
             return sb.ToString();
         }
@@ -310,9 +332,9 @@ namespace Platform_x86
                 if (!shift_available)
                 {
                     if (op == Instruction.ArithmeticOperationType.Multiplication)
-                        sb.Append("MUL eax, ");
+                        sb.Append("MUL ");
                     else
-                        sb.Append("DIV eax, ");
+                        sb.Append("DIV ");
 
                     if (right2_var != null && right2_const == null)
                         sb.Append("ebx");
@@ -356,6 +378,12 @@ namespace Platform_x86
                     else
                         sb.Append(num);
                     sb.AppendLine();
+
+                    if (var != null)
+                        framestack -= var.memoryRegionSize;
+                    else
+                        framestack -= 4;
+
                     break;
                 case Instruction.ProceduralType.Retrieve:
                     sb.AppendLine("MOV " + StackPointerOfVariable(var) + ", eax");
@@ -370,27 +398,35 @@ namespace Platform_x86
                             sb.Append(num);
                         sb.AppendLine();
                     }
-                    sb.Append(Epilogue(inst.parent.parent, framestack));
-                    sb.AppendLine("RET");
+                    sb.Append(ReturnFromFunction(inst.parent.parent));
                     break;
             }
 
             return sb.ToString();
         }
 
-        private static string Prologue(Function func, int framestack)
+        private static string Prologue(Function func)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(func.globalID + ":");
+            sb.AppendLine(func.globalID + " proc");
             sb.AppendLine("PUSH ebp");
             sb.AppendLine("MOV ebp, esp");
-            sb.AppendLine("SUB esp, " + Math.Abs(framestack));
+            sb.AppendLine("SUB esp, " + Math.Abs(framestack + 4));
+            return sb.ToString();
+        }
+
+        private static string Epilogue(Function func)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine(func.globalID + " endp");
+
             return sb.ToString();
         }
 
         private static int BuildStack(Function func)
         {
-            int fs = -4, ps = 4;
+            int fs = -4, ps = 8;
             foreach (Variable var in func.LocalVariables.FindAll(x => x.kind != Variable.Kind.Input))
             {
                 Offsets.Add(var, fs);
@@ -405,10 +441,12 @@ namespace Platform_x86
             return fs;
         }
 
-        private static string Epilogue(Function func, int framestack)
+        private static string ReturnFromFunction(Function func)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("ADD esp, " + Math.Abs(framestack));
+            sb.AppendLine("ADD esp, " + Math.Abs(framestack + 4));
+            sb.AppendLine("POP ebp");
+            sb.AppendLine("RET");
             return sb.ToString();
         }
 

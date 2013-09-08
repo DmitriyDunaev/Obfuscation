@@ -20,11 +20,6 @@ namespace ObfuscationManager
                 Console.Write("Loading XML, checking complience with Exchange.xsd");
                 doc = ExportImport.ImportXml(InputType.PseudoCode, PlatformType.x86);
                 exch = ExportImport.XmlToExchange(doc);
-
-                Console.Write("Converting Exchange to platform-dependent assembly");
-                string asm = ExportImport.ExchangeToAsm(exch, PlatformType.x86);
-                Obfuscator.Logging.WriteTextFile(asm, "ASM");
-                Console.WriteLine(". . . IMPLEMENTING\n");
             }
             catch (Obfuscator.ValidatorException exc)
             {
@@ -54,11 +49,11 @@ namespace ObfuscationManager
                 Console.Write("Converting XML to platform-dependent assembly");
                 //ExportImport.XmlToAsm(doc, PlatformType.x86);
                 Console.WriteLine(" . . . . . CANCELLED\n");
-                
-                //Console.Write("Converting Exchange to platform-dependent assembly");
-                //string asm = ExportImport.ExchangeToAsm(exch, PlatformType.x86);
-                //Obfuscator.Logging.WriteTextFile(asm, "ASM");
-                //Console.WriteLine(". . . IMPLEMENTING\n");
+
+                Console.Write("Converting Exchange to platform-dependent assembly");
+                string asm = ExportImport.ExchangeToAsm(exch, PlatformType.x86);
+                Obfuscator.Logging.WriteTextFile(asm, "ASM");
+                Console.WriteLine(". . . IMPLEMENTING\n");
             }
             catch (Obfuscator.ValidatorException exc)
             {

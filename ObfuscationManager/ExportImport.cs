@@ -94,12 +94,7 @@ namespace ObfuscationManager
         internal static string ExchangeToAsm(Exchange exch, PlatformType platformType)
         {
             Routine routine = (Routine)exch;
-            StringBuilder sb = new StringBuilder();
-            foreach (Function func in routine.Functions)
-            {
-                sb.AppendLine(Platform_x86.Assembler.GetAssemblyFromTAC(func));
-            }
-            return sb.ToString();
+            return Platform_x86.Assembler.GetAssemblyFromTAC(routine);
         }
     }
 }
