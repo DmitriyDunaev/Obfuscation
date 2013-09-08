@@ -265,6 +265,20 @@ namespace Internal
                 default:
                     break;
             }
+
+            // Test 3: RETRIEVE instruction must be preceeded by CALL
+            int num = parent.Instructions.BinarySearch(this);
+            if (Regex.IsMatch(TACtext, @"^retrieve [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$", RegexOptions.None))
+            {
+                if (num == 0)
+                    throw new ValidatorException("The first instruction in a basic block cannot be 'retrieve'. Instruction: " + ID);
+                else
+                    if (!(
+                        Regex.IsMatch(parent.Instructions[num - 1].TACtext, @"^call \w+ \d+$", RegexOptions.None) || 
+                        Regex.IsMatch(parent.Instructions[num - 1].TACtext, @"^call ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} \d+$", RegexOptions.None)
+                        ))
+                        throw new ValidatorException("Instruction 'retrieve' must be directly preceeded by instruction 'call'. Instruction: " + ID);
+            }
         }
     }
 

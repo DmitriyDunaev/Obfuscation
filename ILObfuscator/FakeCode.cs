@@ -306,10 +306,19 @@ namespace Obfuscator
                         for (int i = 0; i < Common.FPO; i++)
                             nops_and_original.Add(new Instruction(bb));
 
+                        // Add original to TAIL
                         if (inst.statementType == StatementTypeType.EnumValues.eConditionalJump ||
                             inst.statementType == StatementTypeType.EnumValues.eUnconditionalJump ||
-                            (inst.statementType == StatementTypeType.EnumValues.eProcedural && Regex.IsMatch(inst.TACtext, @"^return ", RegexOptions.None)))
-                            nops_and_original.Add(inst);  // Add original to the tail
+                            (inst.statementType == StatementTypeType.EnumValues.eProcedural &&
+                                    Regex.IsMatch(inst.TACtext, @"^return ", RegexOptions.None) ||
+                                    Regex.IsMatch(inst.TACtext, @"^call ", RegexOptions.None)
+                                    ))
+                            nops_and_original.Add(inst);
+                        // Add original to HEAD
+                        else if (inst.statementType == StatementTypeType.EnumValues.eProcedural &&
+                            Regex.IsMatch(inst.TACtext, @"^retrieve ", RegexOptions.None))
+                            nops_and_original.Insert(0, inst);
+                        // Mesh original between NOPs
                         else
                             nops_and_original.Insert(Randomizer.SingleNumber(0, Common.FPO), inst);    // Mesh original between the NOPs
                     }
