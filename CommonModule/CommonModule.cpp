@@ -9,7 +9,7 @@ using namespace std;
 #include <fstream>
 #include "CommonModule.h"
 
-Xml::XmlDocument^ CommonModule::InputProvider::Read (InputType it, PlatformType pt, string path_to_pseudocode)
+Xml::XmlDocument^ CommonModule::InputProvider::Read (InputType it, PlatformType pt, char* path_to_pseudocode)
 {
 	Xml::XmlDocument^ doc = gcnew Xml::XmlDocument;
 	Reader r1;
@@ -32,7 +32,7 @@ Xml::XmlDocument^ CommonModule::InputProvider::Read (InputType it, PlatformType 
 #include "assistant.h"
 #include "parser.h"
 
-string CommonModule::Reader::DoStuff(string path_to_pseudocode)
+string CommonModule::Reader::DoStuff(char* path_to_pseudocode)
 {
 
     Routine c;

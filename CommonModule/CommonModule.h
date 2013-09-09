@@ -23,13 +23,13 @@ namespace CommonModule {
 	public ref class Reader
 	{
 	public:
-		string DoStuff(string path_to_pseudocode);
+		string DoStuff(char* path_to_pseudocode);
 	};
 
 	public ref class InputProvider
 	{
 	public:
-		Xml::XmlDocument^ Read (InputType it, PlatformType pt, string path_to_pseudocode);
+		Xml::XmlDocument^ Read (InputType it, PlatformType pt, char* path_to_pseudocode);
 	private:
 		//XMLDocument
 	};
