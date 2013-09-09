@@ -13,11 +13,12 @@ extern "C"
 Xml::XmlDocument^ CommonModule::InputProvider::ReadChar (InputType it, PlatformType pt, const char^ path_to_pseudocode)
 {
 		Xml::XmlDocument^ doc = gcnew Xml::XmlDocument;
+
 	/*return ReadString2(it, pt, path_to_pseudocode);*/
 		return doc;
 }
 
-Xml::XmlDocument^ CommonModule::InputProvider::ReadString (InputType it, PlatformType pt, string path_to_pseudocode)
+Xml::XmlDocument^ CommonModule::InputProvider::ReadString (InputType it, PlatformType pt, String^ path_to_pseudocode)
 {
 	Xml::XmlDocument^ doc = gcnew Xml::XmlDocument;
 	//Reader r1;

@@ -30,14 +30,14 @@ namespace ObfuscationManager
         /// <param name="platform">Platform type</param>
         /// <param name="path2PC">Full path to pseudocode</param>
         /// <returns>XML document</returns>
-        public static XmlDocument ImportXml(InputType input, PlatformType platform, String path2PC)
+        public static XmlDocument ImportXml(InputType input, PlatformType platform, string path2PC)
         {
             
             StringBuilder sb = new StringBuilder();
             sb.Append(path2PC);
             XmlDocument doc = new XmlDocument();
             InputProvider ip = new InputProvider();
-            doc = ip.ReadChar(input, platform, Marshal.StringToHGlobalAuto(path2PC));
+            doc = ip.ReadString(input, platform, path2PC);
             ValidateXml(doc);
             return doc;
         }

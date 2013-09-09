@@ -30,7 +30,7 @@ namespace CommonModule {
 	{
 	public:
 		Xml::XmlDocument^ ReadChar (InputType it, PlatformType pt, const char^ path_to_pseudocode);
-		Xml::XmlDocument^ ReadString (InputType it, PlatformType pt, string path_to_pseudocode);
+		Xml::XmlDocument^ ReadString (InputType it, PlatformType pt, String^ path_to_pseudocode);
 	private:
 		//XMLDocument
 	};
