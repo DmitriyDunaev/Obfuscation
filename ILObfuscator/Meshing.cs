@@ -62,7 +62,8 @@ namespace Obfuscator
             /// Meshing of the conditional jumps
             foreach (Function funct in rtn.Functions)
             {
-                List<BasicBlock> basicblocks = funct.BasicBlocks.FindAll(x => x.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump);
+                List<BasicBlock> basicblocks = funct.BasicBlocks.FindAll(x => x.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump &&
+                                                                            x.Instructions.Last().RefVariables.Count() == 1);
                 foreach (BasicBlock bb in basicblocks)
                 {
                     InsertConditionals(bb);
