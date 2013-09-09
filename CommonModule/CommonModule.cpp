@@ -18,14 +18,23 @@ Xml::XmlDocument^ CommonModule::InputProvider::ReadChar (InputType it, PlatformT
 		return doc;
 }
 
+interior_ptr<unsigned char> GetAsciiString(System::String ^s)
+{
+    array<unsigned char> ^chars = System::Text::Encoding::ASCII->GetBytes(s);
+    return &chars[0];
+}
+
 Xml::XmlDocument^ CommonModule::InputProvider::ReadString (InputType it, PlatformType pt, String^ path_to_pseudocode)
 {
+	pin_ptr<unsigned char> pChars = GetAsciiString(path_to_pseudocode);
+	std:string std_str((char*)pChars); 
+
 	Xml::XmlDocument^ doc = gcnew Xml::XmlDocument;
-	//Reader r1;
-	//std::string str = r1.DoStuff(path_to_pseudocode);
-	//String ^ s = gcnew String(str.c_str());
-	//doc->LoadXml(s);
-	//cout << str.c_str() << endl;
+	Reader r1;
+	std::string str = r1.DoStuff(std_str);
+	String ^ s = gcnew String(str.c_str());
+	doc->LoadXml(s);
+	cout << str.c_str() << endl;
 	return doc;
 	
 }
