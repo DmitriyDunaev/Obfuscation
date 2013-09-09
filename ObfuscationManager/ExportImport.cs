@@ -21,12 +21,13 @@ namespace ObfuscationManager
         /// </summary>
         /// <param name="input">Input type</param>
         /// <param name="platform">Platform type</param>
+        /// <param name="path2PC">Full path to pseudocode</param>
         /// <returns>XML document</returns>
-        public static XmlDocument ImportXml(InputType input, PlatformType platform)
+        public static XmlDocument ImportXml(InputType input, PlatformType platform, string path2PC)
         {
             XmlDocument doc = new XmlDocument();
             InputProvider ip = new InputProvider();
-            doc = ip.Read(input, platform);
+            doc = ip.Read(input, platform, path2PC.ToCharArray());
             ValidateXml(doc);
             return doc;
         }
