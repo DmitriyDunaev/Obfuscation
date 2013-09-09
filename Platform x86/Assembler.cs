@@ -164,18 +164,19 @@ namespace Platform_x86
                     sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", eax");
                     break;
                 case Instruction.PoinerType.Variable_EQ_PointedObject:
-                    sb.AppendLine("MOV eax, " + StackPointerOfVariable(right_var));
+                    sb.AppendLine("LEA eax, " + StackPointerOfVariable(right_var));
                     sb.AppendLine("MOV ebx, [eax]");
                     sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", ebx");
                     break;
                 case Instruction.PoinerType.PointedObject_EQ_Variable:
-                    sb.AppendLine("MOV eax, " + StackPointerOfVariable(leftvalue));
+                    sb.AppendLine("LEA eax, " + StackPointerOfVariable(leftvalue));
                     sb.AppendLine("MOV ebx, " + StackPointerOfVariable(right_var));
                     sb.AppendLine("MOV [eax], ebx");
                     break;
                 case Instruction.PoinerType.PointedObject_EQ_Number:
-                    sb.AppendLine("MOV eax, " + StackPointerOfVariable(leftvalue));
-                    sb.AppendLine("MOV [eax], " + right_const);
+                    sb.AppendLine("LEA eax, " + StackPointerOfVariable(leftvalue));
+                    sb.AppendLine("MOV ebx, " + right_const);
+                    sb.AppendLine("MOV [eax], ebx");
                     break;
             }
 
