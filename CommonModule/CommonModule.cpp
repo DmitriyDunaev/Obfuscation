@@ -9,18 +9,21 @@ using namespace std;
 #include <fstream>
 #include "CommonModule.h"
 
-Xml::XmlDocument^ CommonModule::InputProvider::ReadChar (InputType it, PlatformType pt, char* path_to_pseudocode)
+extern "C"
+Xml::XmlDocument^ CommonModule::InputProvider::ReadChar (InputType it, PlatformType pt, const char^ path_to_pseudocode)
 {
-	ReadString(it, pt, path_to_pseudocode);
+		Xml::XmlDocument^ doc = gcnew Xml::XmlDocument;
+	/*return ReadString2(it, pt, path_to_pseudocode);*/
+		return doc;
 }
 
 Xml::XmlDocument^ CommonModule::InputProvider::ReadString (InputType it, PlatformType pt, string path_to_pseudocode)
 {
 	Xml::XmlDocument^ doc = gcnew Xml::XmlDocument;
-	Reader r1;
-	std::string str = r1.DoStuff(path_to_pseudocode);
-	String ^ s = gcnew String(str.c_str());
-	doc->LoadXml(s);
+	//Reader r1;
+	//std::string str = r1.DoStuff(path_to_pseudocode);
+	//String ^ s = gcnew String(str.c_str());
+	//doc->LoadXml(s);
 	//cout << str.c_str() << endl;
 	return doc;
 	

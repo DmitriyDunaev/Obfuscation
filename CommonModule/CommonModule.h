@@ -29,7 +29,7 @@ namespace CommonModule {
 	public ref class InputProvider
 	{
 	public:
-		Xml::XmlDocument^ ReadChar (InputType it, PlatformType pt, char* path_to_pseudocode);
+		Xml::XmlDocument^ ReadChar (InputType it, PlatformType pt, const char^ path_to_pseudocode);
 		Xml::XmlDocument^ ReadString (InputType it, PlatformType pt, string path_to_pseudocode);
 	private:
 		//XMLDocument

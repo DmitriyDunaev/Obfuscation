@@ -4,6 +4,7 @@ using Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -16,6 +17,12 @@ namespace ObfuscationManager
     public static class ExportImport
     {
 
+        [DllImport("CommonModule.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        public static extern XmlDocument ReadChar(string fileName, int memFlag, long defaultN);
+
+        [MarshalAs(UnmanagedType.LPStr)]
+        private static string path;
+
         /// <summary>
         /// Imports routine data from low-level a platform-dependent module
         /// </summary>
@@ -23,11 +30,14 @@ namespace ObfuscationManager
         /// <param name="platform">Platform type</param>
         /// <param name="path2PC">Full path to pseudocode</param>
         /// <returns>XML document</returns>
-        public static XmlDocument ImportXml(InputType input, PlatformType platform, string path2PC)
+        public static XmlDocument ImportXml(InputType input, PlatformType platform, String path2PC)
         {
+            
+            StringBuilder sb = new StringBuilder();
+            sb.Append(path2PC);
             XmlDocument doc = new XmlDocument();
             InputProvider ip = new InputProvider();
-            doc = ip.Read(input, platform, path2PC.ToCharArray());
+            doc = ip.ReadChar(input, platform, Marshal.StringToHGlobalAuto(path2PC));
             ValidateXml(doc);
             return doc;
         }
