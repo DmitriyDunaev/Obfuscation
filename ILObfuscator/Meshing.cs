@@ -318,7 +318,7 @@ namespace Obfuscator
             BasicBlock falsesucc = null;
             Parser.ConditionalJump(bb.Instructions.Last(), out var, out C, out relop, out truesucc, out falsesucc);
             List<Cond> condlist = GenetateCondList(C, relop);
-            GenerateBlocks(bb, var, truesucc, falsesucc, condlist);
+            GenerateBlocks(bb, var, truesucc, falsesucc, condlist, C);
         }
 
         /// <summary>
@@ -329,7 +329,7 @@ namespace Obfuscator
         /// <param name="falselane">The false successor</param>
         /// <param name="condlist">The condition list</param>
         /// <returns>The list of the generated BasicBlocks</returns>
-        private static void GenerateBlocks(BasicBlock bb, Variable var, BasicBlock truelane, BasicBlock falselane, List<Cond> condlist)
+        private static void GenerateBlocks(BasicBlock bb, Variable var, BasicBlock truelane, BasicBlock falselane, List<Cond> condlist, int originalconstant)
         {
             List<BasicBlock> bblist = new List<BasicBlock>();
             foreach (Cond c in condlist)
@@ -375,7 +375,13 @@ namespace Obfuscator
                         BasicBlock ambhelper = new BasicBlock(bb.parent);
                         bblist[i].LinkToSuccessor(ambhelper, true);
                         ambhelper.Instructions.Add(new Instruction(ambhelper));
-                        ambhelper.Instructions.Last().MakeUnconditionalJump(Randomizer.GeneratePolyRequJumpTarget(truelist));
+                        if ((originalconstant > condlist[i].value && (condlist[i].relop == Instruction.RelationalOperationType.Greater ||
+                                                                        condlist[i].relop == Instruction.RelationalOperationType.GreaterOrEquals)) ||
+                            (originalconstant < condlist[i].value && (condlist[i].relop == Instruction.RelationalOperationType.Smaller ||
+                                                                        condlist[i].relop == Instruction.RelationalOperationType.SmallerOrEquals)))
+                            ambhelper.Instructions.Last().MakeUnconditionalJump(Randomizer.GeneratePolyRequJumpTarget(falselist));
+                        else
+                            ambhelper.Instructions.Last().MakeUnconditionalJump(Randomizer.GeneratePolyRequJumpTarget(truelist));
                         bblist[i].Instructions.Last().MakeConditionalJump(var, condlist[i].value, condlist[i].relop, bblist[i + 1]);
                         break;
                     default:
