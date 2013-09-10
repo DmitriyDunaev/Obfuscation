@@ -311,14 +311,14 @@ namespace Obfuscator
         /// <param name="bb">The block containing the conditional jump to mesh up</param>
         private static void InsertConditionals(BasicBlock bb)
         {
-            Variable var = null;
+            Variable var = null, tmp;
             Instruction.RelationalOperationType relop = 0;
-            int C = 0;
+            int? C = 0;
             BasicBlock truesucc = null;
             BasicBlock falsesucc = null;
-            Parser.ConditionalJump(bb.Instructions.Last(), out var, out C, out relop, out truesucc, out falsesucc);
-            List<Cond> condlist = GenetateCondList(C, relop);
-            GenerateBlocks(bb, var, truesucc, falsesucc, condlist, C);
+            Parser.ConditionalJump(bb.Instructions.Last(), out var, out tmp, out C, out relop, out truesucc, out falsesucc);
+            List<Cond> condlist = GenetateCondList((int)C, relop);
+            GenerateBlocks(bb, var, truesucc, falsesucc, condlist, (int)C);
         }
 
         /// <summary>

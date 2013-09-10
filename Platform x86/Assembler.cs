@@ -188,15 +188,21 @@ namespace Platform_x86
             StringBuilder sb = new StringBuilder();
 
             /* We parse the conditional jump. */
-            Variable left;
-            int right;
+            Variable left, right_var;
+            int? right_const;
             Instruction.RelationalOperationType relop;
             BasicBlock truebb, falsebb;
-            Parser.ConditionalJump(inst, out left, out right, out relop, out truebb, out falsebb); 
+            Parser.ConditionalJump(inst, out left, out right_var, out right_const, out relop, out truebb, out falsebb); 
             
             /* Now we build the assembly instructions. */
             sb.AppendLine("MOV eax, " + StackPointerOfVariable(left));
-            sb.AppendLine("CMP eax, " + right);
+            if (right_var != null && right_const == null)
+            {
+                sb.AppendLine("MOV ebx, " + StackPointerOfVariable(right_var));
+                sb.AppendLine("CMP eax, ebx");
+            }
+            else
+                sb.AppendLine("CMP eax, " + right_const);
             switch (relop)
             {
                 case Instruction.RelationalOperationType.Equals:
