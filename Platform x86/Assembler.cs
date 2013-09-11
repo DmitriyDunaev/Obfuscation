@@ -35,7 +35,7 @@ namespace Platform_x86
             sb.AppendLine("PUSH 50");
             sb.AppendLine("PUSH 50");
             sb.AppendLine("PUSH 50");
-            sb.AppendLine("CALL sub_401362");
+            sb.AppendLine("CALL sub_401397");
             sb.AppendLine("ADD esp, 12");
             sb.AppendLine("RET");
             sb.AppendLine();
@@ -164,17 +164,17 @@ namespace Platform_x86
                     sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", eax");
                     break;
                 case Instruction.PoinerType.Variable_EQ_PointedObject:
-                    sb.AppendLine("LEA eax, " + StackPointerOfVariable(right_var));
+                    sb.AppendLine("MOV eax, " + StackPointerOfVariable(right_var));
                     sb.AppendLine("MOV ebx, [eax]");
                     sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", ebx");
                     break;
                 case Instruction.PoinerType.PointedObject_EQ_Variable:
-                    sb.AppendLine("LEA eax, " + StackPointerOfVariable(leftvalue));
+                    sb.AppendLine("MOV eax, " + StackPointerOfVariable(leftvalue));
                     sb.AppendLine("MOV ebx, " + StackPointerOfVariable(right_var));
                     sb.AppendLine("MOV [eax], ebx");
                     break;
                 case Instruction.PoinerType.PointedObject_EQ_Number:
-                    sb.AppendLine("LEA eax, " + StackPointerOfVariable(leftvalue));
+                    sb.AppendLine("MOV eax, " + StackPointerOfVariable(leftvalue));
                     sb.AppendLine("MOV ebx, " + right_const);
                     sb.AppendLine("MOV [eax], ebx");
                     break;
