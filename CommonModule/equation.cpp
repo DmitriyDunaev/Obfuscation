@@ -27,8 +27,8 @@ void Equation::print(stringstream& s)
 	if (ops[0]->getp() && !ops[1]->getp() && !adress) s << "* ";
 	s << ops[0]->getname() << " := ";
     if (neg) s << "-";
-	if (ops[0]->getp() && !ops[1]->getp() && adress) s << "&amp; ";
-	if (ops[1]->getp() && !ops[0]->getp()) s << "&amp; ";
+	if (adress) s << "&amp; ";
+	if (ops[1]->getp() && !ops[0]->getp() && !adress) s << "* ";
     s << ops[1]->getname();
     s << "</Instruction>"<< std::endl;
 }
