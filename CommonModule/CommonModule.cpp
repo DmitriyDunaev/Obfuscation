@@ -34,7 +34,6 @@ Xml::XmlDocument^ CommonModule::InputProvider::ReadString (InputType it, Platfor
 	std::string str = r1.DoStuff(std_str);
 	String ^ s = gcnew String(str.c_str());
 	doc->LoadXml(s);
-	cout << str.c_str() << endl;
 	return doc;
 	
 }

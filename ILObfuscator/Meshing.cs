@@ -318,7 +318,7 @@ namespace Obfuscator
             BasicBlock falsesucc = null;
             Parser.ConditionalJump(bb.Instructions.Last(), out var, out tmp, out C, out relop, out truesucc, out falsesucc);
             List<Cond> condlist = GenetateCondList((int)C, relop);
-            GenerateBlocks(bb, var, truesucc, falsesucc, condlist, (int)C);
+            GenerateBlocks(bb, var, truesucc, falsesucc, condlist, (int)C, relop);
         }
 
         /// <summary>
@@ -329,7 +329,7 @@ namespace Obfuscator
         /// <param name="falselane">The false successor</param>
         /// <param name="condlist">The condition list</param>
         /// <returns>The list of the generated BasicBlocks</returns>
-        private static void GenerateBlocks(BasicBlock bb, Variable var, BasicBlock truelane, BasicBlock falselane, List<Cond> condlist, int originalconstant)
+        private static void GenerateBlocks(BasicBlock bb, Variable var, BasicBlock truelane, BasicBlock falselane, List<Cond> condlist, int originalconstant, Instruction.RelationalOperationType originalrelop)
         {
             List<BasicBlock> bblist = new List<BasicBlock>();
             foreach (Cond c in condlist)
@@ -378,7 +378,13 @@ namespace Obfuscator
                         if ((originalconstant > condlist[i].value && (condlist[i].relop == Instruction.RelationalOperationType.Greater ||
                                                                         condlist[i].relop == Instruction.RelationalOperationType.GreaterOrEquals)) ||
                             (originalconstant < condlist[i].value && (condlist[i].relop == Instruction.RelationalOperationType.Smaller ||
-                                                                        condlist[i].relop == Instruction.RelationalOperationType.SmallerOrEquals)))
+                                                                        condlist[i].relop == Instruction.RelationalOperationType.SmallerOrEquals)) ||
+                            (originalconstant < condlist[i].value && (originalrelop == Instruction.RelationalOperationType.Smaller ||
+                                originalrelop == Instruction.RelationalOperationType.SmallerOrEquals) &&
+                                (condlist[i].relop == Instruction.RelationalOperationType.NotEquals)) ||
+                            (originalconstant > condlist[i].value && (originalrelop == Instruction.RelationalOperationType.Greater ||
+                                originalrelop == Instruction.RelationalOperationType.GreaterOrEquals) &&
+                                (condlist[i].relop == Instruction.RelationalOperationType.NotEquals)))
                             ambhelper.Instructions.Last().MakeUnconditionalJump(Randomizer.GeneratePolyRequJumpTarget(falselist));
                         else
                             ambhelper.Instructions.Last().MakeUnconditionalJump(Randomizer.GeneratePolyRequJumpTarget(truelist));
