@@ -29,6 +29,11 @@ namespace Platform_x86
             sb.AppendLine(".386");
             sb.AppendLine(".model flat, stdcall");
             sb.AppendLine();
+            sb.AppendLine("include \\masm32\\include\\msvcrt.inc");
+            sb.AppendLine("includelib  \\masm32\\lib\\msvcrt.lib");
+            sb.AppendLine();
+            sb.AppendLine(".data");
+            sb.AppendLine("msg    db      'Return = %d',0");
             sb.AppendLine(".code");
             sb.AppendLine();
             sb.AppendLine("start:");
@@ -37,6 +42,7 @@ namespace Platform_x86
             sb.AppendLine("PUSH 50");
             sb.AppendLine("CALL sub_401397");
             sb.AppendLine("ADD esp, 12");
+            sb.AppendLine("invoke  crt_printf,addr  msg,ebx");
             sb.AppendLine("RET");
             sb.AppendLine();
 
