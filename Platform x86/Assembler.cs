@@ -42,7 +42,7 @@ namespace Platform_x86
             sb.AppendLine("PUSH 50");
             sb.AppendLine("CALL sub_401397");
             sb.AppendLine("ADD esp, 12");
-            sb.AppendLine("invoke  crt_printf,addr  msg,ebx");
+            sb.AppendLine("invoke  crt_printf,addr  msg,eax");
             sb.AppendLine("RET");
             sb.AppendLine();
 
