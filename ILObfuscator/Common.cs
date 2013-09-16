@@ -10,6 +10,11 @@ namespace Obfuscator
     public static class Common
     {
         // **** General Section ****
+
+        /// <summary>
+        /// Determines the maximal number of retrys, before the user is asked.
+        /// </summary>
+        public static int MaxNumberOfRuns = 10;
         
         /// <summary>
         /// Memory region sizes for supported types
