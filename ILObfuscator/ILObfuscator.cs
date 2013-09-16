@@ -10,22 +10,8 @@ namespace Obfuscator
 {
     public static class ILObfuscator
     {
-        public static void Obfuscate(ref Exchange exch)
+        private static void Obfuscation(Routine routine)
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("\tINTERMEDIATE LEVEL OBFUSCATION\n");
-            Console.ResetColor();
-
-            Console.Write("Converting Exchange to Routine class");
-            Routine routine = (Routine)exch;
-            PrintSuccess();
-
-            Console.Write("First validation of the routine");
-            routine.Validate();
-            PrintSuccess();
-
-            Logging.WriteReadableTAC(routine, "Imported");
-
             routine.Functions[0].NewFakeInputParameter(11, 55);
             routine.Functions[0].NewFakeInputParameter(22, 155);
             routine.Functions[0].NewFakeInputParameter(33, 545);
@@ -33,7 +19,6 @@ namespace Obfuscator
             routine.Functions[1].NewFakeInputParameter(11, 55);
             routine.Functions[1].NewFakeInputParameter(22, 155);
             routine.Functions[1].NewFakeInputParameter(33, 545);
-            Variable var = Randomizer.FakeInputParameter(routine.Functions[1]);
 
             Console.Write("Constants covering algorithm");
             ConstCoverage.CoverConstants(routine);
@@ -67,10 +52,8 @@ namespace Obfuscator
 
             Console.Write("Running data analysis");
             foreach (Function func in routine.Functions)
-            {
                 DataAnalysis.DeadVarsAlgortihm(func);
-                DataAnalysis.GatherBasicBlockInfo(func);
-            }
+            DataAnalysis.GatherBasicBlockInfo(routine);
             routine.Validate();
             PrintSuccess();
 
@@ -85,6 +68,43 @@ namespace Obfuscator
             PrintSuccess();
 
             Logging.WriteReadableTAC(routine, "FakeInstrFromNOPs");
+        }
+
+        public static void Obfuscate(ref Exchange exch)
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("\tINTERMEDIATE LEVEL OBFUSCATION\n");
+            Console.ResetColor();
+
+            Console.Write("Converting Exchange to Routine class");
+            Routine routine = (Routine)exch;
+            PrintSuccess();
+
+            Console.Write("First validation of the routine");
+            routine.Validate();
+            PrintSuccess();
+
+            Logging.WriteReadableTAC(routine, "Imported");
+
+            int NumberOfRuns = 0;
+            bool Success;
+            do
+            {
+                Success = true;
+                try
+                {
+                    Obfuscation(routine);
+                }
+                catch (ObfuscatorException)
+                {
+                    Success = false;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(" . . . . . . . FAILED\n");
+                    Console.ResetColor();
+                    routine = (Routine)exch;
+                }
+                NumberOfRuns++;
+            } while (!Success && NumberOfRuns < Common.MaxNumberOfRuns);
 
             Console.Write("Writing readable TAC");
             Logging.WriteReadableTAC(routine);

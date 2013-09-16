@@ -42,6 +42,7 @@ namespace Obfuscator
              * We get all the unsafe variables in one list, so in the end we can
              * remove them from the DeadVariables and DeadPointers lists.
              */
+            UnsafeVariables.Clear();
             foreach (BasicBlock bb in func.BasicBlocks)
             {
                 foreach (Instruction ins in bb.Instructions)
@@ -257,15 +258,20 @@ namespace Obfuscator
         private static string StartID = string.Empty;
 
         /// <summary>
-        /// Gathers info (isLoopBody, isMainRoute) about the basic blocks in the function.
+        /// Gathers info (isLoopBody, isMainRoute) about the basic blocks in the routine.
         /// </summary>
-        /// <param name="func">The actual function.</param>
-        public static void GatherBasicBlockInfo(Function func)
+        /// <param name="routine">The actual routine.</param>
+        public static void GatherBasicBlockInfo(Routine routine)
         {
-            foreach (BasicBlock bb in func.BasicBlocks)
+            isLoopBody.Clear();
+            isMainRoute.Clear();
+            foreach (Function func in routine.Functions)
             {
-                isMainRoute.Add(bb, _isMainRoute(bb));
-                isLoopBody.Add(bb, _isLoopBody(bb));
+                foreach (BasicBlock bb in func.BasicBlocks)
+                {
+                    isMainRoute.Add(bb, _isMainRoute(bb));
+                    isLoopBody.Add(bb, _isLoopBody(bb));
+                }
             }
         }
 

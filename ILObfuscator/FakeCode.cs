@@ -49,18 +49,49 @@ namespace Obfuscator
         }
 
         /// <summary>
+        /// Returns a proper left value for the instruction, or null if no such exists.
+        /// </summary>
+        /// <param name="ins">The actual instruction.</param>
+        /// <returns>A proper variable, or null.</returns>
+        private static Variable GetLeftValueForInstruction(Instruction ins)
+        {
+            Variable left = Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized, Variable.State.Filled);
+            if (left == null || DataAnalysis.isMainRoute[ins.parent])
+                return left;
+
+            /* If we aren't in the main route, then we cannot use NOT_INITIALIZED ones as left value. */
+            else
+            {
+                if (ins.DeadVariables[left] == Variable.State.Not_Initialized)
+                    return Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Filled);
+                else
+                    return left;
+            }
+
+        }
+
+        /// <summary>
         /// Function to change the nop's in the function to actual fake instructons.
         /// </summary>
         /// <param name="func">The function to work on.</param>
         public static void GenerateFakeInstructions(Function func)
         {
+            //foreach (Variable var in DataAnalysis.UsableNotInit)
+            //{
+            //    Instruction ins = new Instruction(func.BasicBlocks[0]);
+            //    ins.DeadVariables = func.BasicBlocks[0].Instructions.First().DeadVariables;
+            //    ins.DeadPointers = func.BasicBlocks[0].Instructions.First().DeadPointers;
+            //    func.BasicBlocks[0].Instructions.Insert(0, ins);
+            //    ins.MakeCopy(var, null, 6969);
+            //    ins.RefreshNext();
+            //}
+
             /* We have to go through all the nop's in the function. */
             List<Instruction> nops = GetAllNops(func);
 
             foreach (Instruction ins in nops)
             {
-                if ((DataAnalysis.isMainRoute[ins.parent] && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized, Variable.State.Filled) == null) ||
-                    (!DataAnalysis.isMainRoute[ins.parent] && Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Filled) == null))
+                if (GetLeftValueForInstruction(ins) == null)
                     continue;
 
                 /* If a conditional jump cannot be made here, or we didn't choose it, we generate a fake instruction. */
@@ -129,14 +160,7 @@ namespace Obfuscator
         private static void _GenerateFakeInstruction(Instruction ins)
         {
             /* First we get a left value. */
-            Variable leftvalue;
-
-            if (DataAnalysis.isMainRoute[ins.parent])
-                leftvalue = Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized, Variable.State.Filled);
-
-            /* If we aren't in the main route, then we cannot use NOT_INITIALIZED ones as left value. */
-            else
-                leftvalue = Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Filled);
+            Variable leftvalue = GetLeftValueForInstruction(ins);
 
             /* Then we check how many variables can we use as right value. */
             List<Variable> rightvalues = GetRandomRightValues(ins, 2);
