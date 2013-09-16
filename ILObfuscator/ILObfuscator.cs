@@ -86,25 +86,56 @@ namespace Obfuscator
 
             Logging.WriteReadableTAC(routine, "Imported");
 
-            int NumberOfRuns = 0;
-            bool Success;
+            bool TryAgain;
             do
             {
-                Success = true;
-                try
+                int NumberOfRuns = 0;
+                bool Success;
+                do
                 {
-                    Obfuscation(routine);
-                }
-                catch (ObfuscatorException)
+                    Success = true;
+                    try
+                    {
+                        Obfuscation(routine);
+                    }
+                    catch (ObfuscatorException)
+                    {
+                        Success = false;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(" . . . . . . . FAILED\n");
+                        Console.ResetColor();
+                        routine = (Routine)exch;
+                    }
+                    NumberOfRuns++;
+                } while (!Success && NumberOfRuns < Common.MaxNumberOfRuns);
+                if (Success)
+                    TryAgain = false;
+                else
                 {
-                    Success = false;
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(" . . . . . . . FAILED\n");
-                    Console.ResetColor();
-                    routine = (Routine)exch;
+                    Console.WriteLine("Code generation without FILLED and NOT_INITIALIZED collision failed {0} times.", Common.MaxNumberOfRuns);
+                    Console.WriteLine("Do you want to try again? (y/n)");
+                    char answer = Convert.ToChar(Console.Read());
+                    switch (answer)
+                    {
+                        case 'y':
+                        case 'Y':
+                            Console.WriteLine("Trying again...");
+                            Console.WriteLine();
+                            TryAgain = true;
+                            break;
+
+                        case 'n':
+                        case 'N':
+                            Console.WriteLine("Using the code with collision...");
+                            Console.WriteLine();
+                            TryAgain = false;
+                            break;
+
+                        default:
+                            throw new Exception("Invalid answer!");
+                    }
                 }
-                NumberOfRuns++;
-            } while (!Success && NumberOfRuns < Common.MaxNumberOfRuns);
+            } while (TryAgain);
 
             Console.Write("Writing readable TAC");
             Logging.WriteReadableTAC(routine);
