@@ -52,11 +52,15 @@ namespace Platform_x86
             count = 1;
             foreach (Variable var in routine.Functions[1].LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true))
             {
-                sb.AppendLine("invoke  crt_printf,addr  f" + count);
-                sb.AppendLine("invoke  crt_scanf,addr inf,addr din");
-                sb.AppendLine("MOV eax, din");
-                sb.AppendLine("PUSH eax");
-                //sb.AppendLine("PUSH " + Randomizer.SingleNumber((int)var.fixedMin, (int)var.fixedMax)); <- The automatized version: no questions, random fakeparams
+                if (Common.RandomPushValues == false)
+                {
+                    sb.AppendLine("invoke  crt_printf,addr  f" + count);
+                    sb.AppendLine("invoke  crt_scanf,addr inf,addr din");
+                    sb.AppendLine("MOV eax, din");
+                    sb.AppendLine("PUSH eax");
+                }
+                else
+                    sb.AppendLine("PUSH " + Randomizer.SingleNumber((int)var.fixedMin, (int)var.fixedMax)); // <- The automatized version: no questions, random fakeparams
                 sizeoffakeparams += 4;
                 count++;
             }
