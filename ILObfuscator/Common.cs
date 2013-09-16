@@ -25,6 +25,19 @@ namespace Obfuscator
             Char = 1
         }
 
+
+        // **** Fake Parameters Section ****
+        /// <summary>
+        /// The minimum munber of fake input parameters to generate per function
+        /// </summary>
+        public static int FakeParamMin = 3;
+
+        /// <summary>
+        /// The maximum munber of fake input parameters to generate per function
+        /// </summary>
+        public static int FakeParamMax = 5;
+
+
         // **** Fake Code Generation Section ****
         
         /// <summary>

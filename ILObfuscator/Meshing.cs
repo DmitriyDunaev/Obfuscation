@@ -376,9 +376,13 @@ namespace Obfuscator
                         bblist[i].LinkToSuccessor(ambhelper, true);
                         ambhelper.Instructions.Add(new Instruction(ambhelper));
                         if ((originalconstant > condlist[i].value && (condlist[i].relop == Instruction.RelationalOperationType.Greater ||
-                                                                        condlist[i].relop == Instruction.RelationalOperationType.GreaterOrEquals)) ||
+                                                                        condlist[i].relop == Instruction.RelationalOperationType.GreaterOrEquals) &&
+                                                                        (originalrelop == Instruction.RelationalOperationType.Greater ||
+                                originalrelop == Instruction.RelationalOperationType.GreaterOrEquals)) ||
                             (originalconstant < condlist[i].value && (condlist[i].relop == Instruction.RelationalOperationType.Smaller ||
-                                                                        condlist[i].relop == Instruction.RelationalOperationType.SmallerOrEquals)) ||
+                                                                        condlist[i].relop == Instruction.RelationalOperationType.SmallerOrEquals) &&
+                                                                        (originalrelop == Instruction.RelationalOperationType.Smaller ||
+                                originalrelop == Instruction.RelationalOperationType.SmallerOrEquals)) ||
                             (originalconstant < condlist[i].value && (originalrelop == Instruction.RelationalOperationType.Smaller ||
                                 originalrelop == Instruction.RelationalOperationType.SmallerOrEquals) &&
                                 (condlist[i].relop == Instruction.RelationalOperationType.NotEquals)) ||

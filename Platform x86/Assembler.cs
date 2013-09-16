@@ -34,7 +34,12 @@ namespace Platform_x86
             sb.AppendLine();
             sb.AppendLine(".data");
             sb.AppendLine("msg db 'Return = %d',0");
-            sb.AppendLine("f   db 'Fake parameter: ',0");
+            int count = 1;
+            foreach (Variable var in routine.Functions[1].LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true))
+            {
+                sb.AppendLine("f" + count + "  db 'Fake parameter #" + count + " ( " + var.fixedMin + " - " + var.fixedMax + " ):" +"',0");
+                count++;
+            }
             sb.AppendLine("inf db '%d',0");
             sb.AppendLine();
             sb.AppendLine(".data?");
@@ -43,20 +48,20 @@ namespace Platform_x86
             sb.AppendLine(".code");
             sb.AppendLine();
             sb.AppendLine("start:");
-            sb.AppendLine("invoke  crt_printf,addr  f");
-            sb.AppendLine("invoke  crt_scanf,addr inf,addr din");
-            sb.AppendLine("MOV eax, din");
-            sb.AppendLine("PUSH eax");
-            sb.AppendLine("invoke  crt_printf,addr  f");
-            sb.AppendLine("invoke  crt_scanf,addr inf,addr din");
-            sb.AppendLine("MOV eax, din");
-            sb.AppendLine("PUSH eax");
-            sb.AppendLine("invoke  crt_printf,addr  f");
-            sb.AppendLine("invoke  crt_scanf,addr inf,addr din");
-            sb.AppendLine("MOV eax, din");
-            sb.AppendLine("PUSH eax");
-            sb.AppendLine("CALL sub_401397");
-            sb.AppendLine("ADD esp, 12");
+            int sizeoffakeparams = 0;
+            count = 1;
+            foreach (Variable var in routine.Functions[1].LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true))
+            {
+                sb.AppendLine("invoke  crt_printf,addr  f" + count);
+                sb.AppendLine("invoke  crt_scanf,addr inf,addr din");
+                sb.AppendLine("MOV eax, din");
+                sb.AppendLine("PUSH eax");
+                //sb.AppendLine("PUSH " + Randomizer.SingleNumber((int)var.fixedMin, (int)var.fixedMax)); <- The automatized version: no questions, random fakeparams
+                sizeoffakeparams += 4;
+                count++;
+            }
+            sb.AppendLine("CALL " + routine.Functions[1].globalID);
+            sb.AppendLine("ADD esp, " + sizeoffakeparams);
             sb.AppendLine("invoke  crt_printf,addr  msg,eax");
             sb.AppendLine("RET");
             sb.AppendLine();

@@ -12,13 +12,15 @@ namespace Obfuscator
     {
         private static void Obfuscation(Routine routine)
         {
-            routine.Functions[0].NewFakeInputParameter(11, 55);
-            routine.Functions[0].NewFakeInputParameter(22, 155);
-            routine.Functions[0].NewFakeInputParameter(33, 545);
-
-            routine.Functions[1].NewFakeInputParameter(11, 55);
-            routine.Functions[1].NewFakeInputParameter(22, 155);
-            routine.Functions[1].NewFakeInputParameter(33, 545);
+            foreach (Function func in routine.Functions)
+            {
+                int paramnumber = Randomizer.SingleNumber(Common.FakeParamMin, Common.FakeParamMax);
+                for (int i = 0; i < paramnumber; i++)
+                {
+                    List<int> borders = Randomizer.MultipleNumbers(2, Common.GlobalMinValue, Common.GlobalMaxValue, false, true);
+                    func.NewFakeInputParameter(borders.First(), borders.Last());
+                }
+            }
 
             Console.Write("Constants covering algorithm");
             ConstCoverage.CoverConstants(routine);
