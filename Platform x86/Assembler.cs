@@ -40,6 +40,7 @@ namespace Platform_x86
                 sb.AppendLine("f" + count + "  db 'Fake parameter #" + count + " ( " + var.fixedMin + " - " + var.fixedMax + " ):" +"',0");
                 count++;
             }
+            sb.AppendLine("orig db 'Original parameter:',0");
             sb.AppendLine("inf db '%d',0");
             sb.AppendLine();
             sb.AppendLine(".data?");
@@ -48,7 +49,11 @@ namespace Platform_x86
             sb.AppendLine(".code");
             sb.AppendLine();
             sb.AppendLine("start:");
-            int sizeoffakeparams = 0;
+            sb.AppendLine("invoke  crt_printf,addr orig");
+            sb.AppendLine("invoke  crt_scanf,addr inf,addr din");
+            sb.AppendLine("MOV eax, din");
+            sb.AppendLine("PUSH eax");
+            int sizeoffakeparams = 4;
             count = 1;
             foreach (Variable var in routine.Functions[1].LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true))
             {

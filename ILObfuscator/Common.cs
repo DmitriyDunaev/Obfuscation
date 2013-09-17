@@ -37,7 +37,7 @@ namespace Obfuscator
         /// </summary>
         public static int FakeParamMax = 5;
 
-        public static bool RandomPushValues = false;
+        public static bool RandomPushValues = true;
 
 
         // **** Fake Code Generation Section ****

@@ -29,8 +29,8 @@
   return result;
 }
 
-signed int __cdecl sub_401397()
+signed int __cdecl sub_401397(int a)
 {
   sub_401970();
-  return sub_401334(11);
+  return sub_401334(a);
 }
