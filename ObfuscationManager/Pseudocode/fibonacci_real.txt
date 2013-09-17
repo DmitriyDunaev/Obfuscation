@@ -16,8 +16,8 @@ signed int __cdecl sub_401334(signed int a1)
   return v5;
 }
 
-signed int __cdecl sub_401373()
+signed int __cdecl sub_401373(int a)
 {
   sub_401940();
-  return sub_401334(11);
+  return sub_401334(a);
 }

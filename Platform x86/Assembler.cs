@@ -40,7 +40,12 @@ namespace Platform_x86
                 sb.AppendLine("f" + count + "  db 'Fake parameter #" + count + " ( " + var.fixedMin + " - " + var.fixedMax + " ):" +"',0");
                 count++;
             }
-            sb.AppendLine("orig db 'Original parameter:',0");
+            count = 1;
+            foreach (Variable var in routine.Functions[1].LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == false))
+            {
+                sb.AppendLine("orig" + count + "  db 'Original parameter #" + count + ":" + "',0");
+                count++;
+            }
             sb.AppendLine("inf db '%d',0");
             sb.AppendLine();
             sb.AppendLine(".data?");
@@ -49,11 +54,15 @@ namespace Platform_x86
             sb.AppendLine(".code");
             sb.AppendLine();
             sb.AppendLine("start:");
-            sb.AppendLine("invoke  crt_printf,addr orig");
-            sb.AppendLine("invoke  crt_scanf,addr inf,addr din");
-            sb.AppendLine("MOV eax, din");
-            sb.AppendLine("PUSH eax");
-            int sizeoffakeparams = 4;
+            count = 1;
+            foreach (Variable var in routine.Functions[1].LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == false))
+            {
+                sb.AppendLine("invoke  crt_printf,addr orig" + count);
+                sb.AppendLine("invoke  crt_scanf,addr inf,addr din");
+                sb.AppendLine("MOV eax, din");
+                sb.AppendLine("PUSH eax");
+                count++;
+            }
             count = 1;
             foreach (Variable var in routine.Functions[1].LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true))
             {
@@ -66,11 +75,10 @@ namespace Platform_x86
                 }
                 else
                     sb.AppendLine("PUSH " + Randomizer.SingleNumber((int)var.fixedMin, (int)var.fixedMax)); // <- The automatized version: no questions, random fakeparams
-                sizeoffakeparams += 4;
                 count++;
             }
             sb.AppendLine("CALL " + routine.Functions[1].globalID);
-            sb.AppendLine("ADD esp, " + sizeoffakeparams);
+            sb.AppendLine("ADD esp, " + routine.Functions[1].LocalVariables.FindAll(x => x.kind == Variable.Kind.Input).Count * 4);
             sb.AppendLine("invoke  crt_printf,addr  msg,eax");
             sb.AppendLine("RET");
             sb.AppendLine();
