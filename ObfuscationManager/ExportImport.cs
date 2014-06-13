@@ -42,6 +42,15 @@ namespace ObfuscationManager
             return doc;
         }
 
+        public static XmlDocument ImportXmlNew(InputType input, PlatformType platform, string path2PC)
+        {
+            XmlDocument doc = new XmlDocument();
+            if (platform == PlatformType.x86 && input == InputType.PseudoCode)
+                doc = Platform_x86.PseudoCode.GetTAC(path2PC);
+            ValidateXml(doc);
+            return doc;
+        }
+
 
         /// <summary>
         /// Converts XML document to Exchange type
