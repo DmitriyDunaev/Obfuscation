@@ -149,11 +149,11 @@ namespace Platform_x86
             }
             else if (original[lineIndex].Contains("do"))
             {
-                //DoWhileInstruction(line);
+                lineIndex = DoWhileInstruction(lineIndex);
             }
             else if (original[lineIndex].Contains("while"))
             {
-                //WhileInstruction(line);
+                lineIndex = WhileInstruction(lineIndex);
             }
             else if (original[lineIndex].Contains("return"))
             {
@@ -522,13 +522,159 @@ namespace Platform_x86
 
             return lineIndex;
         }
-        private static void DoWhileInstruction(string line)
+        private static int DoWhileInstruction(int lineIndex)
         {
+            //The parameter lineIndex indicates which line we are in in the original code
+            int functionIndex = routine.Function.Count - 1;
+            int basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;            
+            BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
+            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+            basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            lineIndex = ProcessInnerScope(lineIndex); //Processing instructions between { } //Returns the new line index
+            lineIndex++;
 
+            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Conditional Jump
+            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+            newBasicBlock.Successors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value = string.Concat(
+                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value, string.Concat(
+                " ", newBasicBlock.ID.Value));
+            string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); //Extracting the control elements
+            aux = aux.Remove(aux.Length - 2);
+            string[] tokens = aux.Split(' ');
+            if (tokens.Length == 3)
+            {
+                CondJumpInstruction(string.Concat(tokens[0], string.Concat(" ", string.Concat(tokens[1],
+                string.Concat(" ", tokens[2])))));
+            }
+            else
+            {
+                string tempVariable1 = "";
+                string tempVariable2;
+                int i = 0;
+                while (i < tokens.Length && (tokens[i + 1].Equals("*") || tokens[i + 1].Equals("-") || tokens[i + 1].Equals("+") || tokens[i + 1].Equals("/")))
+                {
+                    if (tempVariable1.Length == 0)
+                    {
+                        tempVariable1 = string.Concat("t_", randNumbers.Next().ToString());
+                        CreateLocalVariable(string.Concat("int ", tempVariable1));
+                        FullAssignInstruction(string.Concat(tempVariable1, string.Concat(" = ", string.Concat(tokens[i],
+                            string.Concat(" ", string.Concat(tokens[i + 1], string.Concat(" ", tokens[i + 2])))))));
+                    }
+                    else
+                    {
+                        tempVariable2 = string.Concat("t_", randNumbers.Next().ToString());
+                        CreateLocalVariable(string.Concat("int ", tempVariable2));
+                        FullAssignInstruction(string.Concat(tempVariable2, string.Concat(" = ", string.Concat(tempVariable1,
+                            string.Concat(" ", string.Concat(tokens[i + 1], string.Concat(" ", tokens[i + 2])))))));
+                        tempVariable1 = tempVariable2;
+                    }
+                    i += 2;
+                }
+                CondJumpInstruction(string.Concat(tempVariable1, string.Concat(" ", string.Concat(tokens[i + 1],
+                string.Concat(" ", tokens[i + 2])))));
+            }
+            int instructionIndex = newBasicBlock.Instruction.Count - 1;
+            newBasicBlock.Instruction[instructionIndex].Value = string.Concat(newBasicBlock.Instruction[instructionIndex].Value,
+                routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value);
+            UncondJumpInstruction(basicBlockIndex, newBasicBlock.ID.Value);
+            basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+
+            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Unconditional Jump
+            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = string.Concat(
+                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value, string.Concat(
+                " ", newBasicBlock.ID.Value));
+            basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+
+            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the intructions after the For Loop
+            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+            UncondJumpInstruction(basicBlockIndex, newBasicBlock.ID.Value);
+
+            return lineIndex;
         }
-        private static void WhileInstruction(string line)
+        private static int WhileInstruction(int lineIndex)
         {
+            //The parameter lineIndex indicates which line we are in in the original code
+            int functionIndex = routine.Function.Count - 1;
+            int basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); //Extracting the control elements
+            aux = aux.Remove(aux.Length - 2);
+            string[] tokens = aux.Split(' ');
+            BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Conditional Jump
+            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+            if (tokens.Length == 3)
+            {
+                CondJumpInstruction(string.Concat(tokens[0], string.Concat(" ", string.Concat(tokens[1],
+                string.Concat(" ", tokens[2])))));
+            }
+            else
+            {
+                string tempVariable1 = "";
+                string tempVariable2;
+                int i = 0;
+                while (i < tokens.Length && (tokens[i + 1].Equals("*") || tokens[i + 1].Equals("-") || tokens[i + 1].Equals("+") || tokens[i + 1].Equals("/")))
+                {
+                    if (tempVariable1.Length == 0)
+                    {
+                        tempVariable1 = string.Concat("t_", randNumbers.Next().ToString());
+                        CreateLocalVariable(string.Concat("int ", tempVariable1));
+                        FullAssignInstruction(string.Concat(tempVariable1, string.Concat(" = ", string.Concat(tokens[i],
+                            string.Concat(" ", string.Concat(tokens[i + 1], string.Concat(" ", tokens[i + 2])))))));
+                    }
+                    else
+                    {
+                        tempVariable2 = string.Concat("t_", randNumbers.Next().ToString());
+                        CreateLocalVariable(string.Concat("int ", tempVariable2));
+                        FullAssignInstruction(string.Concat(tempVariable2, string.Concat(" = ", string.Concat(tempVariable1,
+                            string.Concat(" ", string.Concat(tokens[i + 1], string.Concat(" ", tokens[i + 2])))))));
+                        tempVariable1 = tempVariable2;
+                    }
+                    i += 2;
+                }
+                CondJumpInstruction(string.Concat(tempVariable1, string.Concat(" ", string.Concat(tokens[i + 1],
+                string.Concat(" ", tokens[i + 2])))));
+            }
+            basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
 
+            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
+            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            newBasicBlock.Successors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value = string.Concat(
+                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value, string.Concat(
+                " ", newBasicBlock.ID.Value));
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+            int instructionIndex = routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction.Count - 1;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value = string.Concat(
+                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value, newBasicBlock.ID.Value);
+            lineIndex = ProcessInnerScope(lineIndex); //Processing instructions between { } //Returns the new line index
+            UncondJumpInstruction(routine.Function[functionIndex].BasicBlock.Count - 1, routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value);
+
+            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Unconditional Jump
+            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = string.Concat(
+                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value, string.Concat(
+                " ", newBasicBlock.ID.Value));
+            basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+
+            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the intructions after the For Loop
+            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+            UncondJumpInstruction(basicBlockIndex, newBasicBlock.ID.Value);
+
+            return lineIndex;
         }
         private static void CondJumpInstruction(string line)
         {
