@@ -31,8 +31,6 @@ namespace Platform_x86
         }
         private static void PreProc()
         {
-            string[] operatorsPC = { "==", ">", "<", ">=", "<=" }; //Array of pseudo code operators
-            string[] operatorsTAC = { "==", "&gt;", "&lt;", "&gt;=", "&lt;=" }; //Array of TAC operators
             string[] toReplacePC = { "_cdecl ", "*(_BYTE *)", "*(_DWORD *)", ",", ";", "signed ", "unsigned ", "(signed ", "(unsigned " }; //Array of unnecessary elements
             string[] toReplaceTAC = { "", "", "", "", "", "", "", "(", "(" };
             for (int i = 0; i < original.Length; i++)
@@ -41,12 +39,7 @@ namespace Platform_x86
                 {
                     if (original[i].Contains(toReplacePC[j]))
                         original[i] = original[i].Replace(toReplacePC[j], toReplaceTAC[j]);
-                }
-                for (int j = 0; j < operatorsPC.Length; j++) //Replacing operators
-                {
-                    if (original[i].Contains(operatorsPC[j]))
-                        original[i] = original[i].Replace(operatorsPC[j], operatorsTAC[j]);
-                }
+                }                
                 if (original[i].Contains("//")) //Removing comments
                     original[i] = original[i].Remove(original[i].IndexOf("//"));
                 original[i] = original[i].TrimStart();
@@ -207,6 +200,7 @@ namespace Platform_x86
                 if (!GetIDVariable(tokens[1]).Equals(tokens[1]))
                     newInstruction.RefVars.Value = GetIDVariable(tokens[1]); //Adding "v3" to RefVars
                 newInstruction.Value = string.Concat("return ", GetValueVariable(tokens[1]));
+                routine.Function[indexFunction].RefOutputVars.Value = GetIDVariable(tokens[1]);
             }
             else //Fake return
                 newInstruction.Value = "return";
@@ -344,13 +338,11 @@ namespace Platform_x86
                 refVars = GetIDVariable(tokens[0]); //Adding v3
             if (!GetIDVariable(tokens[2]).Equals(tokens[2]))
                 if (refVars.Length != 0)
-                    if (!refVars.Contains(GetIDVariable(tokens[2])))
-                        refVars = string.Concat(refVars, string.Concat(" ", GetIDVariable(tokens[2]))); //Adding a2
+                    refVars = string.Concat(refVars, string.Concat(" ", GetIDVariable(tokens[2]))); //Adding a2
                 else
                     refVars = GetIDVariable(tokens[2]); //Adding v3
             if (!GetIDVariable(tokens[4]).Equals(tokens[4]))
                 if (refVars.Length != 0)
-                    if (!refVars.Contains(GetIDVariable(tokens[4])))
                     refVars = string.Concat(refVars, string.Concat(" ", GetIDVariable(tokens[4]))); //Adding a1
                 else
                     refVars = GetIDVariable(tokens[4]); //Adding v3
@@ -389,7 +381,7 @@ namespace Platform_x86
             string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); //Extracting the control elements
             aux = aux.Remove(aux.Length - 2);
             string[] tokens = aux.Split(' ');
-            if (tokens.Length == 3)
+            if (tokens.Length == 3) //aux is something similar to "i &lt; 100"
             {
                 CondJumpInstruction(string.Concat(tokens[0], string.Concat(" ", string.Concat(tokens[1],
                 string.Concat(" ", tokens[2])))));
