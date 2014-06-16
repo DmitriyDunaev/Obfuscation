@@ -422,14 +422,14 @@ namespace Platform_x86
                 string.Concat(" ", tokens[i+2])))));
             }
 
-            BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
-            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            newBasicBlock.Successors.Value = ""; //Initialization
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+            BasicBlockType trueBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
+            trueBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            trueBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            trueBasicBlock.Successors.Value = ""; //Initialization
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = trueBasicBlock.ID.Value;
             int instructionIndex = routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction.Count - 1;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value = string.Concat(
-                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value, newBasicBlock.ID.Value);
+                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value, trueBasicBlock.ID.Value);
             int trueBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;          
             
             lineIndex = ProcessInnerScope(lineIndex); //Processing instructions between { } //Returns the new line index            
@@ -438,18 +438,18 @@ namespace Platform_x86
             int falseBasicBlockIndex = -1;
             if (original[lineIndex].Contains("else"))
             {
-                newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
-                newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-                newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-                newBasicBlock.Successors.Value = ""; //Initialization
+                BasicBlockType falseBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
+                falseBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+                falseBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+                falseBasicBlock.Successors.Value = ""; //Initialization
                 routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = string.Concat(
                     routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value,string.Concat(
-                    " ",newBasicBlock.ID.Value));
+                    " ", falseBasicBlock.ID.Value));
                 falseBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
                 lineIndex = ProcessInnerScope(lineIndex); //Processing instructions between { } //Returns the new line index
             }
 
-            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the intructions after the IF
+            BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the intructions after the IF
             newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             if (falseBasicBlockIndex != -1)
             {
@@ -484,37 +484,37 @@ namespace Platform_x86
             string[] tokens = aux.Split(' ');
             CopyInstruction(string.Concat(tokens[0],string.Concat(" ",string.Concat(tokens[1],string.Concat(" ",tokens[2]))))); // i = 2
             
-            BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Conditional Jump
-            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+            BasicBlockType condJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Conditional Jump
+            condJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            condJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = condJumpBasicBlock.ID.Value;
             CondJumpInstruction(string.Concat(tokens[3],string.Concat(" ",string.Concat(tokens[4],
                 string.Concat(" ",tokens[5])))));
             basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
 
-            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
-            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            newBasicBlock.Successors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            BasicBlockType innerScopeBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
+            innerScopeBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            innerScopeBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            innerScopeBasicBlock.Successors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value = string.Concat(
                 routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value,string.Concat(
-                " ",newBasicBlock.ID.Value));
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+                " ", innerScopeBasicBlock.ID.Value));
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = innerScopeBasicBlock.ID.Value;
             int instructionIndex = routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction.Count - 1;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value = string.Concat(
-                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value,newBasicBlock.ID.Value);
+                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value, innerScopeBasicBlock.ID.Value);
             lineIndex = ProcessInnerScope(lineIndex, tokens[6]); //Processing instructions between { } //Returns the new line index
             UncondJumpInstruction(routine.Function[functionIndex].BasicBlock.Count - 1,routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value);
-            
-            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Unconditional Jump
-            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+
+            BasicBlockType uncondJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Unconditional Jump
+            uncondJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            uncondJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = string.Concat(
                 routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value,string.Concat(
-                " ",newBasicBlock.ID.Value));
+                " ", uncondJumpBasicBlock.ID.Value));
             basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
-            
-            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the intructions after the For Loop
+
+            BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the intructions after the For Loop
             newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
@@ -527,22 +527,22 @@ namespace Platform_x86
             //The parameter lineIndex indicates which line we are in in the original code
             int functionIndex = routine.Function.Count - 1;
             int basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;            
-            BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
-            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+            BasicBlockType innerScopeBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
+            innerScopeBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            innerScopeBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = innerScopeBasicBlock.ID.Value;
             basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
             lineIndex = ProcessInnerScope(lineIndex); //Processing instructions between { } //Returns the new line index
             lineIndex++;
 
-            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Conditional Jump
-            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
-            newBasicBlock.Successors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            BasicBlockType condJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Conditional Jump
+            condJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            condJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = condJumpBasicBlock.ID.Value;
+            condJumpBasicBlock.Successors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value = string.Concat(
                 routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value, string.Concat(
-                " ", newBasicBlock.ID.Value));
+                " ", condJumpBasicBlock.ID.Value));
             string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); //Extracting the control elements
             aux = aux.Remove(aux.Length - 2);
             string[] tokens = aux.Split(' ');
@@ -578,21 +578,21 @@ namespace Platform_x86
                 CondJumpInstruction(string.Concat(tempVariable1, string.Concat(" ", string.Concat(tokens[i + 1],
                 string.Concat(" ", tokens[i + 2])))));
             }
-            int instructionIndex = newBasicBlock.Instruction.Count - 1;
-            newBasicBlock.Instruction[instructionIndex].Value = string.Concat(newBasicBlock.Instruction[instructionIndex].Value,
+            int instructionIndex = condJumpBasicBlock.Instruction.Count - 1;
+            condJumpBasicBlock.Instruction[instructionIndex].Value = string.Concat(condJumpBasicBlock.Instruction[instructionIndex].Value,
                 routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value);
-            UncondJumpInstruction(basicBlockIndex, newBasicBlock.ID.Value);
+            UncondJumpInstruction(basicBlockIndex, condJumpBasicBlock.ID.Value);
             basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
 
-            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Unconditional Jump
-            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            BasicBlockType uncondJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Unconditional Jump
+            uncondJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            uncondJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = string.Concat(
                 routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value, string.Concat(
-                " ", newBasicBlock.ID.Value));
+                " ", uncondJumpBasicBlock.ID.Value));
             basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
 
-            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the intructions after the For Loop
+            BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the intructions after the Do While Loop
             newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
@@ -608,10 +608,10 @@ namespace Platform_x86
             string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); //Extracting the control elements
             aux = aux.Remove(aux.Length - 2);
             string[] tokens = aux.Split(' ');
-            BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Conditional Jump
-            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+            BasicBlockType condJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Conditional Jump
+            condJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            condJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = condJumpBasicBlock.ID.Value;
             if (tokens.Length == 3)
             {
                 CondJumpInstruction(string.Concat(tokens[0], string.Concat(" ", string.Concat(tokens[1],
@@ -646,29 +646,29 @@ namespace Platform_x86
             }
             basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
 
-            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
-            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            newBasicBlock.Successors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            BasicBlockType innerScopeBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
+            innerScopeBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            innerScopeBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            innerScopeBasicBlock.Successors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value = string.Concat(
                 routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value, string.Concat(
-                " ", newBasicBlock.ID.Value));
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+                " ", innerScopeBasicBlock.ID.Value));
+            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = innerScopeBasicBlock.ID.Value;
             int instructionIndex = routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction.Count - 1;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value = string.Concat(
-                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value, newBasicBlock.ID.Value);
+                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value, innerScopeBasicBlock.ID.Value);
             lineIndex = ProcessInnerScope(lineIndex); //Processing instructions between { } //Returns the new line index
             UncondJumpInstruction(routine.Function[functionIndex].BasicBlock.Count - 1, routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value);
 
-            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Unconditional Jump
-            newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
+            BasicBlockType uncondJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Unconditional Jump
+            uncondJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            uncondJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = string.Concat(
                 routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value, string.Concat(
-                " ", newBasicBlock.ID.Value));
+                " ", uncondJumpBasicBlock.ID.Value));
             basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
 
-            newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the intructions after the For Loop
+            BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the intructions after the While Loop
             newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
