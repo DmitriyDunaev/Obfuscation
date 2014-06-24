@@ -402,20 +402,30 @@ namespace Internal
         /// <returns>The extracted variable</returns>
         public Instruction.RelationalOperationType GetRelopFromCondition()
         {
-            // TODO;
+            Variable leftVar = null, rightVar;
+            Instruction.RelationalOperationType relop = 0;
+            int? constant = 0;
+            BasicBlock truesucc = null;
+            BasicBlock falsesucc = null;
+            Parser.ConditionalJump(this, out leftVar, out rightVar, out constant, out relop, out truesucc, out falsesucc);
 
-            return Instruction.RelationalOperationType.Equals;
+            return relop;
         }
 
         /// <summary>
         /// Extracts the constant from a condition
         /// </summary>
         /// <returns>The extracted variable</returns>
-        public int GetConstFromCondition()
+        public int? GetConstFromCondition()
         {
-            // TODO;
+            Variable leftVar = null, rightVar;
+            Instruction.RelationalOperationType relop = 0;
+            int? constant = 0;
+            BasicBlock truesucc = null;
+            BasicBlock falsesucc = null;
+            Parser.ConditionalJump(this, out leftVar, out rightVar, out constant, out relop, out truesucc, out falsesucc);
 
-            return 100;
+            return constant;
         }
 
         /// <summary>

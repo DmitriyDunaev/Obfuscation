@@ -14,7 +14,7 @@ namespace Obfuscator
         /// <summary>
         /// Determines the maximal number of retrys, before the user is asked.
         /// </summary>
-        public static int MaxNumberOfRuns = 10;
+        public static int MaxNumberOfRuns = 1;
         
         /// <summary>
         /// Memory region sizes for supported types
@@ -30,12 +30,12 @@ namespace Obfuscator
         /// <summary>
         /// The minimum munber of fake input parameters to generate per function
         /// </summary>
-        public static int FakeParamMin = 3;
+        public static int FakeParamMin = 1;
 
         /// <summary>
         /// The maximum munber of fake input parameters to generate per function
         /// </summary>
-        public static int FakeParamMax = 5;
+        public static int FakeParamMax = 1;
 
         public static bool RandomPushValues = true;
 
@@ -45,23 +45,23 @@ namespace Obfuscator
         /// <summary>
         /// Maximal number used in fake code generation (e.g. in conditional statements) 
         /// </summary>
-        public static int GlobalMaxValue = 1000;
+        public static int GlobalMaxValue = 500;
         /// <summary>
         /// Minimal number used in fake code generation (e.g. in conditional statements) 
         /// </summary>
-        public static int GlobalMinValue = 10;
+        public static int GlobalMinValue = 100;
         /// <summary>
         /// Number of fake instructions to be generated per single original 
         /// </summary>
-        public static int FPO = 5;
+        public static int FPO = 1;
         /// <summary>
         /// Minimal number of instructions in a basic block
         /// </summary>
-        public static int FakePadding = 20;
+        public static int FakePadding = 1;
         /// <summary>
         /// Variability of fake_padding
         /// </summary>
-        public static int FakePaddingVariance = 5;
+        public static int FakePaddingVariance = 1;
 
         // **** Meshing Algorithm Section ****
 
@@ -78,6 +78,10 @@ namespace Obfuscator
             Existing = 30,
             New = 50
         }
+        /// <summary>
+        /// Maximal range between the numbers used to define Loop conditional jumps (It should be at least 1)
+        /// </summary>
+        public static int LoopConditionalJumpMaxRange = 4;
         
 
         // **** Common Methods ****

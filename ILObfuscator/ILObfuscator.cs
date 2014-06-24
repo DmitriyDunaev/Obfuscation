@@ -29,12 +29,14 @@ namespace Obfuscator
 
             Logging.WriteReadableTAC(routine, "CONST");
 
+
             Console.Write("Meshing algorithm: Unconditional Jumps");
             Meshing.MeshUnconditionals(routine);
             routine.Validate();
             PrintSuccess();
 
             Logging.WriteReadableTAC(routine, "MeshingUNC");
+            
 
             Console.Write("Meshing algorithm: Conditional Jumps");
             Meshing.MeshConditionals(routine);
@@ -42,6 +44,7 @@ namespace Obfuscator
             PrintSuccess();
 
             Logging.WriteReadableTAC(routine, "MeshingCOND");
+            
 
             Console.Write("Generation of fake NOP instructions");
             foreach (Function func in routine.Functions)

@@ -96,7 +96,7 @@ namespace Platform_x86
                 aux = tokens[1].Replace(")", "");
                 CreateLocalVariable(aux); //Creating variables for the parameters
                 tokens = aux.Split(' ');
-                string inputVars = "";
+                string inputVars = string.Empty;
                 for (int i = 1; i < tokens.Length; i += 2) //Creating string of Input Variables
                 {
                     if (inputVars.Length != 0)
@@ -108,7 +108,7 @@ namespace Platform_x86
             }
             BasicBlockType newBasicBlock = newFunction.BasicBlock.Append();
             newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Successors.Value = "";
+            newBasicBlock.Successors.Value = string.Empty;
         }
         private static void CreateLocalVariable(string line)
         {
@@ -184,7 +184,7 @@ namespace Platform_x86
             }
             else if (aux.Contains("+") || aux.Contains("-") || aux.Contains("*") || aux.Contains("/")) //aux is something like "return a1 + v5"
             {
-                string tempVariable1 = "";
+                string tempVariable1 = string.Empty;
                 string tempVariable2;
                 string[] tokens = aux.Split(' ');
                 int i = 1;
@@ -367,7 +367,7 @@ namespace Platform_x86
             newInstruction.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eFullAssignment;
             newInstruction.PolyRequired.Value = false;
-            string refVars = "";
+            string refVars = string.Empty;
             if (!GetIDVariable(tokens[0]).Equals(tokens[0]))
                 refVars = GetIDVariable(tokens[0]); //Adding v3
             if (!GetIDVariable(tokens[2]).Equals(tokens[2]))
@@ -420,7 +420,7 @@ namespace Platform_x86
                 forPointers[1] = "& ";
                 tokens[2] = tokens[2].Remove(tokens[2].IndexOf('&'), 1);
             }
-            string refVars = "";
+            string refVars = string.Empty;
             if (!GetIDVariable(tokens[0]).Equals(tokens[0]))
                     refVars = GetIDVariable(tokens[0]);
             if (!GetIDVariable(tokens[2]).Equals(tokens[2]))
@@ -447,7 +447,7 @@ namespace Platform_x86
             }
             else
             {
-                string tempVariable1 = "";
+                string tempVariable1 = string.Empty;
                 string tempVariable2;
                 int i = 0;
                 while (i < tokens.Length && (tokens[i + 1].Equals("*") || tokens[i + 1].Equals("-") || tokens[i + 1].Equals("+") || tokens[i + 1].Equals("/")))
@@ -476,7 +476,7 @@ namespace Platform_x86
             BasicBlockType trueBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
             trueBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             trueBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            trueBasicBlock.Successors.Value = ""; //Initialization
+            trueBasicBlock.Successors.Value = string.Empty;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = trueBasicBlock.ID.Value;
             int instructionIndex = routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction.Count - 1;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value = string.Concat(
@@ -491,7 +491,7 @@ namespace Platform_x86
                 BasicBlockType falseBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the Inner Scope
                 falseBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
                 falseBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-                falseBasicBlock.Successors.Value = ""; //Initialization
+                falseBasicBlock.Successors.Value = string.Empty;
                 routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = string.Concat(
                     routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value,string.Concat(
                     " ", falseBasicBlock.ID.Value));
@@ -501,7 +501,7 @@ namespace Platform_x86
 
             BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the intructions after the IF
             newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Successors.Value = "";
+            newBasicBlock.Successors.Value = string.Empty;
             if (lastFalseBasicBlockIndex != -1)
             {
                 newBasicBlock.Predecessors.Value = string.Concat(routine.Function[functionIndex].BasicBlock[lastInnerTrueBasicBlockIndex].ID.Value,
@@ -567,7 +567,7 @@ namespace Platform_x86
             BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); //New Basic Block for the intructions after the For Loop
             newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            newBasicBlock.Successors.Value = "";
+            newBasicBlock.Successors.Value = string.Empty;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
             UncondJumpInstruction(basicBlockIndex,newBasicBlock.ID.Value);
 
@@ -582,7 +582,7 @@ namespace Platform_x86
             innerScopeBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             innerScopeBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = innerScopeBasicBlock.ID.Value;
-            innerScopeBasicBlock.Successors.Value = "";
+            innerScopeBasicBlock.Successors.Value = string.Empty;
             int innerBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
             lineIndex = ProcessInnerScope(lineIndex); //Processing instructions between { } //Returns the new line index
             lineIndex++;
@@ -606,7 +606,7 @@ namespace Platform_x86
             }
             else
             {
-                string tempVariable1 = "";
+                string tempVariable1 = string.Empty;
                 string tempVariable2;
                 int i = 0;
                 while (i < tokens.Length && (tokens[i + 1].Equals("*") || tokens[i + 1].Equals("-") || tokens[i + 1].Equals("+") || tokens[i + 1].Equals("/")))
@@ -657,7 +657,7 @@ namespace Platform_x86
             condJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             condJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = condJumpBasicBlock.ID.Value;
-            condJumpBasicBlock.Successors.Value = "";
+            condJumpBasicBlock.Successors.Value = string.Empty;
             if (tokens.Length == 3)
             {
                 CondJumpInstruction(string.Concat(tokens[0], string.Concat(" ", string.Concat(tokens[1],
@@ -665,7 +665,7 @@ namespace Platform_x86
             }
             else
             {
-                string tempVariable1 = "";
+                string tempVariable1 = string.Empty;
                 string tempVariable2;
                 int i = 0;
                 while (i < tokens.Length && (tokens[i + 1].Equals("*") || tokens[i + 1].Equals("-") || tokens[i + 1].Equals("+") || tokens[i + 1].Equals("/")))
@@ -732,7 +732,7 @@ namespace Platform_x86
             newInstruction.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eConditionalJump;
             newInstruction.PolyRequired.Value = false;
-            string refVars = "";
+            string refVars = string.Empty;
             if (!GetIDVariable(tokens[0]).Equals(tokens[0]))
                 refVars = string.Concat(refVars, GetIDVariable(tokens[0])); //Adding i
             if (!GetIDVariable(tokens[2]).Equals(tokens[2]))
