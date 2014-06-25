@@ -42,21 +42,21 @@ namespace Obfuscator
         public static void MeshUnconditionals(Routine rtn)
         {
             /// Meshing of the unconditional jumps
-            /*BasicBlock extraFake1;
-            BasicBlock mainLaneBB;*/
+            BasicBlock extraFake1;
+            BasicBlock mainLaneBB;
             foreach (Function funct in rtn.Functions)
             {
                 List<BasicBlock> basicblocks = funct.BasicBlocks.FindAll(x => x.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump);
                 foreach (BasicBlock bb in basicblocks)
                 {
-                    //mainLaneBB = bb.getSuccessors.First();
+                    mainLaneBB = bb.getSuccessors.First();
                     bb.LinkToSuccessor(InsertFakeLane(bb), true);
-                    Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, InsertDeadLane(bb));
-                    /*extraFake1 = new BasicBlock(bb.parent);
+                    //Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, InsertDeadLane(bb));
+                    extraFake1 = new BasicBlock(bb.parent);
                     extraFake1.Instructions.Add(new Instruction(extraFake1));
                     extraFake1.dead = true;
                     Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, extraFake1);
-                    ExpandExtraFakeLane(extraFake1, mainLaneBB);*/
+                    ExpandExtraFakeLane(extraFake1, mainLaneBB);
                 }
             }
         }
