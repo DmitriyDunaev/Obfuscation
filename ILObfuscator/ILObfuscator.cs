@@ -12,6 +12,7 @@ namespace Obfuscator
     {
         private static void Obfuscation(Routine routine)
         {
+            //Creating fake input parameters
             foreach (Function func in routine.Functions)
             {
                 int paramnumber = Randomizer.SingleNumber(Common.FakeParamMin, Common.FakeParamMax);
@@ -22,12 +23,19 @@ namespace Obfuscator
                 }
             }
 
+            //Updating all CALLs according to the new number of parameters
+            foreach (Function func in routine.Functions)
+            {
+                func.UpdateAllCalls();
+            }
+
             Console.Write("Constants covering algorithm");
             ConstCoverage.CoverConstants(routine);
             routine.Validate();
             PrintSuccess();
 
             Logging.WriteReadableTAC(routine, "CONST");
+            Logging.DrawCFG(routine, "CONST");
 
 
             Console.Write("Meshing algorithm: Unconditional Jumps");
@@ -36,6 +44,7 @@ namespace Obfuscator
             PrintSuccess();
 
             Logging.WriteReadableTAC(routine, "MeshingUNC");
+            Logging.DrawCFG(routine, "MeshingUNC");
             
 
             Console.Write("Meshing algorithm: Conditional Jumps");
@@ -44,6 +53,7 @@ namespace Obfuscator
             PrintSuccess();
 
             Logging.WriteReadableTAC(routine, "MeshingCOND");
+            Logging.DrawCFG(routine, "MeshingCOND");
             
 
             Console.Write("Generation of fake NOP instructions");
@@ -69,6 +79,7 @@ namespace Obfuscator
             foreach (Function func in routine.Functions)
                 FakeCode.GenerateConditionalJumps(func);
             Logging.WriteRoutine(routine, "CondJumps");
+            Logging.DrawCFG(routine, "CondJumps");
             routine.Validate();
             PrintSuccess();
 

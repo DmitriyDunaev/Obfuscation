@@ -51,12 +51,10 @@ namespace Obfuscator
                 {
                     mainLaneBB = bb.getSuccessors.First();
                     bb.LinkToSuccessor(InsertFakeLane(bb), true);
-                    //Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, InsertDeadLane(bb));
                     extraFake1 = new BasicBlock(bb.parent);
-                    extraFake1.Instructions.Add(new Instruction(extraFake1));
                     extraFake1.dead = true;
                     Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, extraFake1);
-                    ExpandExtraFakeLane(extraFake1, mainLaneBB);
+                    ExpandExtraFakeLane(extraFake1, mainLaneBB, false);
                 }
             }
         }
@@ -126,24 +124,36 @@ namespace Obfuscator
         /// Expands the extra fake lane into the CFT and creates the conditional jumps for both Loop and Extra Fake code
         /// </summary>
         /// <param name="extraFake1">The first basic block of the Extra Fake Lane</param>
-        private static void ExpandExtraFakeLane(BasicBlock extraFake1, BasicBlock mainLaneBB)
+        /// <param name="mainLaneBB">The basic block we should go in case of no-loop</param>
+        /// <param name="atFakeCodeGeneration">Wheter we are or not at the fake code generation phase</param>
+        public static void ExpandExtraFakeLane(BasicBlock extraFake1, BasicBlock mainLaneBB, bool atFakeCodeGeneration)
         {
             //Creating extraFake2 to hold the next Loop condition
             BasicBlock extraFake2 = new BasicBlock(extraFake1.parent);
-            extraFake2.Instructions.Add(new Instruction(extraFake2));
             extraFake2.dead = true;
 
             //Creating extraFake3 to hold the extra fake code in case of No-Loop
             BasicBlock extraFake3 = new BasicBlock(extraFake1.parent);
-            extraFake3.Instructions.Add(new Instruction(extraFake3));
-            extraFake3.dead = true;            
+            extraFake3.Involve = BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly;
+            extraFake3.dead = true;
 
-            //Linking extraFake3 to extraFake1
-            extraFake1.LinkToSuccessor(extraFake3);
+            //Creating the extraFake3 unconditional jump back to the Main Lane
+            extraFake3.Instructions.Last().MakeUnconditionalJump(mainLaneBB);
 
             //Linking extraFake3 to extraFake2
             extraFake2.LinkToSuccessor(extraFake3);
-            
+
+            //Creating extraFake4 to hold the extra fake code in case of No-Loop
+            BasicBlock extraFake4 = new BasicBlock(extraFake1.parent);
+            extraFake4.Involve = BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly;
+            extraFake4.dead = true;
+
+            //Creating the extraFake4 unconditional jump back to the Main Lane
+            extraFake4.Instructions.Last().MakeUnconditionalJump(mainLaneBB);
+
+            //Linking extraFake4 to extraFake1
+            extraFake1.LinkToSuccessor(extraFake4);
+
             //Fetching the Conditional Jump (AlwaysFalse) created in the Main Lane
             Instruction originalInstruction = extraFake1.getPredecessors.First().Instructions.Last();
 
@@ -154,51 +164,46 @@ namespace Obfuscator
                                                                             Instruction.RelationalOperationType.Greater,
                                                                             Instruction.RelationalOperationType.GreaterOrEquals);
 
-            //Defining the range for the extraFake2 conditional jump constant
-            //This definition is made here because the range value will be used to define the constant for the extraFake1 conditional jump.
-            //The reason for that is explained there.
-            int range = Randomizer.SingleNumber(1, Common.LoopConditionalJumpMaxRange);
-            
             //Defining the constant for the extraFake1 conditional jump
-            //The range is used conviniently here to avoid problems when the constant of the original instruction
-            //has the GlobalMaxValue or GlobalMinValue. As we need a upperbound for the SingleNumber method greater than the lowerbound
-            //this simple solution was chosen.
             int rightValueEF1 = 0;
             if (originalInstruction.GetConstFromCondition() >= originalInstruction.GetVarFromCondition().fixedMax.Value)
-                rightValueEF1 = Randomizer.SingleNumber((int)originalInstruction.GetConstFromCondition() + 1, Common.GlobalMaxValue + range);
+                rightValueEF1 = Randomizer.SingleNumber((int)originalInstruction.GetConstFromCondition(), Common.GlobalMaxValue);
             else
-                rightValueEF1 = Randomizer.SingleNumber(Common.GlobalMinValue - range, (int)originalInstruction.GetConstFromCondition() - 1);
-
-            //Creating a new nop instruction on extraFake1
-            extraFake1.Instructions.Add(new Instruction(extraFake1));
+                rightValueEF1 = Randomizer.SingleNumber(Common.GlobalMinValue, (int)originalInstruction.GetConstFromCondition());
 
             //Creating the extraFake1 conditional jump
             Variable var = originalInstruction.GetVarFromCondition();
             extraFake1.Instructions.Last().MakeConditionalJump(var, rightValueEF1, relationalOperationEF1, extraFake2);
 
-            //Creating the extraFake3 unconditional jump back to the Main Lane
-            extraFake3.Instructions.Last().MakeUnconditionalJump(mainLaneBB);
+            //Defining the range for the extraFake2 conditional jump constant
+            int range = Randomizer.SingleNumber(0, Common.LoopConditionalJumpMaxRange);
 
             //Defining relational operation for the extraFake2 conditional jump based on the extraFake1 condtional jump relational operation and the range
-            ///The range is taken into consideration in order to work with an interval, making the condition believable.
-            ///If the range is smaller than 3, the extraFake2 conditional jump should work only with the relational operation Equals.
             Instruction.RelationalOperationType relationalOperationEF2 = Instruction.RelationalOperationType.Equals;
             switch (relationalOperationEF1)
             {
                 case Instruction.RelationalOperationType.Smaller:
                 case Instruction.RelationalOperationType.SmallerOrEquals:
-                    if (range < 3)
+                    if (range <= 1)
                         relationalOperationEF2 = Instruction.RelationalOperationType.Equals;
+                    else if (range == 2)
+                        relationalOperationEF2 = (Instruction.RelationalOperationType)
+                                                        Randomizer.OneFromMany(Instruction.RelationalOperationType.GreaterOrEquals,
+                                                                            Instruction.RelationalOperationType.Equals);
                     else
                         relationalOperationEF2 = (Instruction.RelationalOperationType)
-                                                    Randomizer.OneFromMany(Instruction.RelationalOperationType.Greater,
-                                                                        Instruction.RelationalOperationType.GreaterOrEquals,
-                                                                        Instruction.RelationalOperationType.Equals);
+                                                        Randomizer.OneFromMany(Instruction.RelationalOperationType.Greater,
+                                                                            Instruction.RelationalOperationType.GreaterOrEquals,
+                                                                            Instruction.RelationalOperationType.Equals);
                     break;
                 case Instruction.RelationalOperationType.Greater:
                 case Instruction.RelationalOperationType.GreaterOrEquals:
-                    if (range < 3)
+                    if (range <= 1)
                         relationalOperationEF2 = Instruction.RelationalOperationType.Equals;
+                    else if (range == 2)
+                        relationalOperationEF2 = (Instruction.RelationalOperationType)
+                                                        Randomizer.OneFromMany(Instruction.RelationalOperationType.SmallerOrEquals,
+                                                                            Instruction.RelationalOperationType.Equals);
                     else
                         relationalOperationEF2 = (Instruction.RelationalOperationType)
                                                 Randomizer.OneFromMany(Instruction.RelationalOperationType.Smaller,
@@ -208,85 +213,69 @@ namespace Obfuscator
             }
 
             //Defining the constant for the extraFake2 conditional jump
-            ///The numbers added to righValueEF1 are needed in order to work with an interval, making the condition believable.
-            ///Otherwise, we could have something like: 
-            ///extraFake1 conditional jump: x > 103
-            ///extraFake2 conditional jump: x < 105
-            ///Any "real programmer" would replace these two jumps for x == 104
             int rightValueEF2 = 0;
-            switch (relationalOperationEF2)
+            if (rightValueEF1 == Common.GlobalMinValue || rightValueEF1 == Common.GlobalMaxValue)
+                rightValueEF2 = rightValueEF1;
+            else
             {
-                case Instruction.RelationalOperationType.Smaller:
-                    rightValueEF2 = Randomizer.SingleNumber(rightValueEF1 + 3, rightValueEF1 + range);
-                    break;
-                case Instruction.RelationalOperationType.SmallerOrEquals:
-                    rightValueEF2 = Randomizer.SingleNumber(rightValueEF1 + 2, rightValueEF1 + range);
-                    break;
-                case Instruction.RelationalOperationType.Greater:
-                    rightValueEF2 = Randomizer.SingleNumber(rightValueEF1 - range, rightValueEF1 - 3);
-                    break;
-                case Instruction.RelationalOperationType.GreaterOrEquals:
-                    rightValueEF2 = Randomizer.SingleNumber(rightValueEF1 - range, rightValueEF1 - 2);
-                    break;
-                case Instruction.RelationalOperationType.Equals:
-                    {
-                        switch (relationalOperationEF1)
+                switch (relationalOperationEF2)
+                {
+                    case Instruction.RelationalOperationType.Smaller:
+                    case Instruction.RelationalOperationType.SmallerOrEquals:
+                        if (rightValueEF1 + range > Common.GlobalMaxValue)
+                            rightValueEF2 = Randomizer.SingleNumber(rightValueEF1, Common.GlobalMaxValue);
+                        else
+                            rightValueEF2 = Randomizer.SingleNumber(rightValueEF1, rightValueEF1 + range);
+                        break;
+                    case Instruction.RelationalOperationType.Greater:
+                    case Instruction.RelationalOperationType.GreaterOrEquals:
+                        if (rightValueEF1 - range < Common.GlobalMinValue)
+                            rightValueEF2 = Randomizer.SingleNumber(Common.GlobalMinValue, rightValueEF1);
+                        else
+                            rightValueEF2 = Randomizer.SingleNumber(rightValueEF1 - range, rightValueEF1);
+                        break;
+                    case Instruction.RelationalOperationType.Equals:
                         {
-                            case Instruction.RelationalOperationType.Smaller:
-                            case Instruction.RelationalOperationType.SmallerOrEquals:
-                                rightValueEF2 = Randomizer.SingleNumber(rightValueEF1 - 1, rightValueEF1 - range);
-                                break;
-                            case Instruction.RelationalOperationType.Greater:
-                            case Instruction.RelationalOperationType.GreaterOrEquals:
-                                rightValueEF2 = Randomizer.SingleNumber(rightValueEF1 + 1, rightValueEF1 + range);
-                                break;
+                            switch (relationalOperationEF1)
+                            {
+                                case Instruction.RelationalOperationType.Smaller:
+                                case Instruction.RelationalOperationType.SmallerOrEquals:
+                                    if (rightValueEF1 - range < Common.GlobalMinValue)
+                                        rightValueEF2 = Randomizer.SingleNumber(Common.GlobalMinValue, rightValueEF1);
+                                    else
+                                        rightValueEF2 = Randomizer.SingleNumber(rightValueEF1 - range, rightValueEF1);
+                                    break;
+                                case Instruction.RelationalOperationType.Greater:
+                                case Instruction.RelationalOperationType.GreaterOrEquals:
+                                    if (rightValueEF1 + range > Common.GlobalMaxValue)
+                                        rightValueEF2 = Randomizer.SingleNumber(rightValueEF1, Common.GlobalMaxValue);
+                                    else
+                                        rightValueEF2 = Randomizer.SingleNumber(rightValueEF1, rightValueEF1 + range);
+                                    break;
+                            }
+                            break;
                         }
-                    break;
-                    }
+                }
             }
 
-            //Creating the extraFake2 conditional jump to a random target (Loop)
-            extraFake2.Instructions.Last().MakeConditionalJump(var, rightValueEF2, relationalOperationEF2, Randomizer.JumpableBasicBlock(extraFake1.parent));
-        }
+            //Selecting the target for extraFake2 in order to create a loop
+            List<BasicBlock> reacheableBasicBlocks = DataAnalysis.GetReachableBasicBlocks(extraFake2, Common.Direction.Up);
+            //In case we are at fake code generation, we should choose reachable basic blocks in a loop body
+            //in order to make the CFG irreducible
+            if (atFakeCodeGeneration)
+            {
+                reacheableBasicBlocks = reacheableBasicBlocks.FindAll(x => DataAnalysis.isLoopBody.Keys.Contains(x) 
+                    && DataAnalysis.isLoopBody[x] == true);
+            }
+            BasicBlock loopTarget = null;
+            //In case we don't have basic blocks that fulfill our requirements, we get a random one
+            if (reacheableBasicBlocks.Count == 0)
+                loopTarget = Randomizer.JumpableBasicBlock(extraFake2.parent);
+            else
+                loopTarget = (BasicBlock) Randomizer.OneFromMany(reacheableBasicBlocks.ToArray());
 
-        /// <summary>
-        /// Inserts the dead lane into the CFT and also changing the original unconditional jump into a conditional
-        /// In thest phase -> condition not always false
-        /// </summary>
-        /// <param name="bb">The actual basic block with the unconditional jump</param>
-        private static BasicBlock InsertDeadLane(BasicBlock bb)
-        {
-
-            // First, creating a basic block pointing to a random block of the function
-            BasicBlock dead1 = new BasicBlock(bb.parent);
-
-            // And making it dead
-            dead1.dead = true;
-
-            // Now including another one, with the basicblock splitter
-            BasicBlock dead2 = new BasicBlock(bb.parent);
-
-            // And making it dead too
-            dead2.dead = true;
-
-            dead1.LinkToSuccessor(dead2);
-
-            // Now including the third one, with the basicblock splitter
-            BasicBlock dead3 = new BasicBlock(bb.parent);
-
-            // And making it dead too
-            dead3.dead = true;
-
-            // Now creating the conditional jump
-            Randomizer.GenerateConditionalJumpInstruction(dead1.Instructions.Last(), Instruction.ConditionType.Random, dead3);
-
-            // Random linking
-            dead2.Instructions.Add(new Instruction(dead2));
-            dead2.Instructions.Last().MakeUnconditionalJump(Randomizer.JumpableBasicBlock(bb.parent));
-            dead3.Instructions.Add(new Instruction(dead3));
-            dead3.Instructions.Last().MakeUnconditionalJump(Randomizer.JumpableBasicBlock(bb.parent));
-
-            return dead1;
+            //Creating the extraFake2 conditional jump to the loop target
+            extraFake2.Instructions.Last().MakeConditionalJump(var, rightValueEF2, relationalOperationEF2, loopTarget);
         }
 
         /// <summary>
@@ -612,7 +601,7 @@ namespace Obfuscator
         /// <returns>The list of generated CondConstants</returns>
         private static List<Cond> GenetateCondList(int originalconstant, Instruction.RelationalOperationType originalrelop)
         {
-            int num = Common.ConditionalJumpReplacementFactor;
+            int num = Common.ConditionalJumpRadius;
             List<Cond> returnlist = new List<Cond>();
             for (int i = -1, n = 0; n < num; n++)
             {

@@ -14,7 +14,7 @@ namespace Obfuscator
         /// <summary>
         /// Determines the maximal number of retrys, before the user is asked.
         /// </summary>
-        public static int MaxNumberOfRuns = 1;
+        public static int MaxNumberOfRuns = 10;
         
         /// <summary>
         /// Memory region sizes for supported types
@@ -37,7 +37,7 @@ namespace Obfuscator
         /// </summary>
         public static int FakeParamMax = 1;
 
-        public static bool RandomPushValues = true;
+        public static bool RandomPushValues = false;
 
 
         // **** Fake Code Generation Section ****
@@ -53,22 +53,22 @@ namespace Obfuscator
         /// <summary>
         /// Number of fake instructions to be generated per single original 
         /// </summary>
-        public static int FPO = 1;
+        public static int FPO = 5;
         /// <summary>
         /// Minimal number of instructions in a basic block
         /// </summary>
-        public static int FakePadding = 1;
+        public static int FakePadding = 10;
         /// <summary>
         /// Variability of fake_padding
         /// </summary>
-        public static int FakePaddingVariance = 1;
+        public static int FakePaddingVariance = 5;
 
         // **** Meshing Algorithm Section ****
 
         /// <summary>
         /// Number of the fake conditions that are generated in the conditional meshing algorithm
         /// </summary>
-        public static int ConditionalJumpReplacementFactor = 6;
+        public static int ConditionalJumpRadius = 3;
         /// <summary>
         /// The enumeration for the chances of the jump generation
         /// </summary>
@@ -79,9 +79,17 @@ namespace Obfuscator
             New = 50
         }
         /// <summary>
-        /// Maximal range between the numbers used to define Loop conditional jumps (It should be at least 1)
+        /// The direction at graph traversal
         /// </summary>
-        public static int LoopConditionalJumpMaxRange = 4;
+        public enum Direction
+        {
+            Up = 0,
+            Down = 1
+        }
+        /// <summary>
+        /// Maximal range between the numbers used to define Loop conditional jumps
+        /// </summary>
+        public static int LoopConditionalJumpMaxRange = 10;
         
 
         // **** Common Methods ****

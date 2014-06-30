@@ -70,21 +70,54 @@ namespace Internal
             if ((min_value.HasValue && min_value.Value < 0) || (max_value.HasValue && max_value.Value < 0))
                 throw new ObfuscatorException("At present time only positive integer FixedMin and FixedMax are supported.");
             Variable fake_input = new Variable(Variable.Kind.Input, Variable.Purpose.Fake, Common.MemoryRegionSize.Integer, min_value, max_value);
-            LocalVariables.Add(fake_input);
-            //Modifying all CALLs according to a new parameter
-            if (calledFrom == ExchangeFormat.CalledFromType.EnumValues.eBoth || calledFrom == ExchangeFormat.CalledFromType.EnumValues.eInternalOnly)
-                foreach (Function func in parent.Functions)
-                    foreach (BasicBlock bb in func.BasicBlocks)
+            LocalVariables.Add(fake_input);            
+            return fake_input;
+        }
+        /// <summary>
+        /// Updates all CALLs according to the number of parameters
+        /// </summary>
+        public void UpdateAllCalls()
+        {
+            //Collecting all calls in the actual function with their indexes
+            Dictionary<Instruction,int> allCalls = new Dictionary<Instruction,int>();
+            List<Instruction> bbCalls = new List<Instruction>();
+            foreach (BasicBlock bb in this.BasicBlocks)
+            {
+                bbCalls = bb.Instructions.FindAll(x => x.TACtext.Contains("call"));
+                foreach (Instruction ins in bbCalls)
+                {
+                    allCalls.Add(ins, bb.Instructions.IndexOf(ins));
+                }
+            }
+
+            
+            if (allCalls.Count > 0)
+            {
+                foreach (Instruction call in allCalls.Keys)
+                {
+                    string[]  tokens = call.TACtext.Split(' ');
+                    if (this.parent.Functions.Exists(x => x.ID == tokens[1]))
                     {
-                        int call = bb.Instructions.FindIndex(x => x.TACtext.Contains(this.ID));
-                        if (call != -1)
+                        int numParams = int.Parse(tokens[2]);
+                        Function calledFunc = this.parent.Functions.Find(x => x.ID == tokens[1]);
+                        List<Variable> fakeInputsParams = calledFunc.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true);
+                        if (fakeInputsParams.Count > 0)
                         {
-                            Instruction nop = new Instruction(bb);
-                            nop.MakeParam(Randomizer.SingleNumber(min_value.HasValue ? min_value.Value : Common.GlobalMinValue, max_value.HasValue ? max_value.Value : Common.GlobalMaxValue));
-                            bb.Instructions.Insert(call, nop);
+                            int i;
+                            for (i = 0; i < fakeInputsParams.Count; i++)
+                            {
+                                Variable paramVariable = NewFakeInputParameter(fakeInputsParams[i].fixedMin, fakeInputsParams[i].fixedMax);
+                                Instruction nop = new Instruction(call.parent);
+                                nop.MakeParam(paramVariable, null);
+                                call.parent.Instructions.Insert(allCalls[call] + i, nop);
+                                numParams++;
+                            }
+                            call.parent.Instructions[allCalls[call] + i].TACtext = string.Join(" ", "call", calledFunc.ID,
+                                numParams);
                         }
                     }
-            return fake_input;
+                }
+            }            
         }
     }
 
@@ -250,7 +283,7 @@ namespace Internal
             List<Variable> unsafeVar = new List<Variable>();
             if (statementType == ExchangeFormat.StatementTypeType.EnumValues.ePointerAssignment)
             {
-                string resultString = Regex.Match(TACtext, @"& [vtcfd]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$").Value;
+                string resultString = Regex.Match(TACtext, @"& [vtcfp]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$").Value;
                 if (string.IsNullOrEmpty(resultString))
                     return unsafeVar;
                 resultString = Regex.Match(TACtext, @"ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}$").Value;

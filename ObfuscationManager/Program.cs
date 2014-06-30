@@ -19,7 +19,6 @@ namespace ObfuscationManager
                 Console.ResetColor();
                 Console.Write("Loading XML, checking complience with Exchange.xsd");
                 string pathToPC = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Pseudocode", System.Configuration.ConfigurationManager.AppSettings["pseudocode"]);
-                //doc = ExportImport.ImportXml(InputType.PseudoCode, PlatformType.x86, pathToPC);
                 doc = ExportImport.ImportXmlNew(InputType.PseudoCode, PlatformType.x86, pathToPC);
                 exch = ExportImport.XmlToExchange(doc);
             }

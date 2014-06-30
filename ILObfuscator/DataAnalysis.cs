@@ -9,6 +9,55 @@ namespace Obfuscator
 {
     public static class DataAnalysis
     {
+        /// <summary>
+        /// Function to get all the reachable basic blocks by the actual basic block.
+        /// </summary>
+        /// <param name="actual">Actual BasicBlock to start from (exclusive)</param>
+        /// <param name="direction">The direction to go to while collecting reachable basic blocks</param>
+        public static List<BasicBlock> GetReachableBasicBlocks(BasicBlock actual, Common.Direction direction)
+        {
+            /*
+             * Cleaning the done_ids and reachable_basic_blocks lists, so they won't be influenced by the algorithm's
+             * previous runs (if these exist).
+             */
+            DoneIDs.Clear();
+            ReachableBasicBlocks.Clear();
+            /*
+             * Populating the list
+             */
+            recursive(actual, direction);
+            ReachableBasicBlocks = ReachableBasicBlocks.Distinct().ToList();
+            ReachableBasicBlocks.Remove(actual);
+            /*
+             * In the end we clear the done_ids list, so it won't influence the algorithm's
+             * future runs (if these will exist).
+             */
+            DoneIDs.Clear();
+            return ReachableBasicBlocks;
+        }
+        /// <summary>
+        /// Recursive function to populate the reachable basic blocks list.
+        /// </summary>
+        /// <param name="actual">Actual BasicBlock to start from (exclusive)</param>
+        /// <param name="direction">The direction to go to while collecting reachable basic blocks</param>
+        private static void recursive(BasicBlock actual, Common.Direction direction)
+        {
+            DoneIDs.Add(actual.ID);
+            ReachableBasicBlocks.Add(actual);            
+
+            List<BasicBlock> bblist = (direction == Common.Direction.Up) ? actual.getPredecessors : actual.getSuccessors;
+            foreach (BasicBlock block in bblist)
+            {
+                if (!DoneIDs.Contains(block.ID))
+                    recursive(block, direction);
+            }
+        }
+
+        /// <summary>
+        /// Holds the reachable basic blocks
+        /// </summary>
+        private static List<BasicBlock> ReachableBasicBlocks = new List<BasicBlock>();
+
         /* ---------------- DeadVariables algorithm starts ----------------*/
 
         /* 

@@ -55,19 +55,39 @@ namespace Obfuscator
         /// <returns>A proper variable, or null.</returns>
         private static Variable GetLeftValueForInstruction(Instruction ins)
         {
-            Variable left = Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized, Variable.State.Filled);
-            if (left == null || DataAnalysis.isMainRoute[ins.parent])
-                return left;
-
-            /* If we aren't in the main route, then we cannot use NOT_INITIALIZED ones as left value. */
-            else
+            Variable left = null;
+            Variable[] originalVars;
+            switch (ins.parent.Involve)
             {
-                if (ins.DeadVariables[left] == Variable.State.Not_Initialized)
-                    return Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Filled);
-                else
-                    return left;
+                case BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly:
+                    originalVars = ins.parent.parent.LocalVariables.FindAll(x => x.fake == false && !ins.DeadVariables.Keys.Contains(x)).ToArray();
+                    return (Variable)Randomizer.OneFromMany(originalVars);             
+                
+                case BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly:
+                    left = Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized, Variable.State.Filled);
+                    break;                    
+                case BasicBlock.InvolveInFakeCodeGeneration.Both:
+                    Variable fake = Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized, Variable.State.Filled);
+                    originalVars = ins.parent.parent.LocalVariables.FindAll(x => x.fake == false && !ins.DeadVariables.Keys.Contains(x)).ToArray();
+                    Variable original = (Variable)Randomizer.OneFromMany(originalVars);
+                    left = (Variable)Randomizer.OneFromMany(original,fake);                
+                    break;
             }
+            if (left != null && ins.parent.Involve != BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly)
+            {
+                if (DataAnalysis.isMainRoute[ins.parent])
+                    return left;
 
+                        /* If we aren't in the main route, then we cannot use NOT_INITIALIZED ones as left value. */
+                else
+                {
+                    if (ins.DeadVariables[left] == Variable.State.Not_Initialized)
+                        return Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Filled);
+                    else
+                        return left;
+                }
+            }
+            return left;
         }
 
         /// <summary>
@@ -147,10 +167,12 @@ namespace Obfuscator
                 ins.parent.SplitAfterInstruction(ins);
 
             /* We get a jump target. */
-            BasicBlock jumptarget = Randomizer.JumpableBasicBlock(ins.parent.parent);
+            BasicBlock jumptarget = new BasicBlock(ins.parent.parent);
             
             /* We make a random conditional jump here, which has to be always false. */
             Randomizer.GenerateConditionalJumpInstruction(ins, Instruction.ConditionType.AlwaysFalse, jumptarget);
+
+            Meshing.ExpandExtraFakeLane(jumptarget, ins.parent.getSuccessors.Last(), true);
         }
 
         /// <summary>
@@ -168,7 +190,7 @@ namespace Obfuscator
             /* We random generate a statement type which we may not use according to the available right values. */
             StatementTypeType.EnumValues statementType =
                 (StatementTypeType.EnumValues) Randomizer.OneFromManyWithProbability (
-                                                                        new int[3] { 15, 15, 70 }                       ,
+                                                                        new int[3] { 25, 15, 60 }                       ,
                                                                         StatementTypeType.EnumValues.eCopy              ,
                                                                         StatementTypeType.EnumValues.eUnaryAssignment   ,
                                                                         StatementTypeType.EnumValues.eFullAssignment    );
@@ -207,7 +229,8 @@ namespace Obfuscator
                     /* We choose Full Assignment, or rightvalue is the same as leftvalue, or we are in a loop body. */
                     if (DataAnalysis.isLoopBody[ins.parent] || leftvalue.Equals(rightvalues[0]) 
                                                             || statementType == StatementTypeType.EnumValues.eFullAssignment
-                                                            || ins.DeadVariables[leftvalue] == Variable.State.Filled)
+                                                            || (ins.parent.Involve != BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly 
+                                                            && ins.DeadVariables[leftvalue] == Variable.State.Filled))
                     {
                         /* Here we random generate an operator. */
                         Instruction.ArithmeticOperationType op = 
@@ -258,7 +281,9 @@ namespace Obfuscator
                      * If we are in a loop body, then we can only make a full assignment like that:
                      * t1 = t2 op t1
                      */
-                    if (DataAnalysis.isLoopBody[ins.parent] || statementType == StatementTypeType.EnumValues.eFullAssignment || ins.DeadVariables[leftvalue] == Variable.State.Filled)
+                    if (DataAnalysis.isLoopBody[ins.parent] || statementType == StatementTypeType.EnumValues.eFullAssignment
+                        || (ins.parent.Involve != BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly 
+                        && ins.DeadVariables[leftvalue] == Variable.State.Filled))
                     {
                         /* Here we random generate an operator: + or - */
                         /* TODO: (efficient) * and / */
@@ -266,7 +291,9 @@ namespace Obfuscator
                             (Instruction.ArithmeticOperationType)Randomizer.OneFromMany(Instruction.ArithmeticOperationType.Addition,
                                                                                         Instruction.ArithmeticOperationType.Subtraction);
 
-                        if (DataAnalysis.isLoopBody[ins.parent] || ins.DeadVariables[leftvalue] == Variable.State.Filled)
+                        if (DataAnalysis.isLoopBody[ins.parent]
+                            || (ins.parent.Involve != BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly 
+                            && ins.DeadVariables[leftvalue] == Variable.State.Filled))
                             ins.MakeFullAssignment(leftvalue, rightvalues[0], leftvalue, null, op);
 
                         else
@@ -294,8 +321,19 @@ namespace Obfuscator
         {
             /* First we gather the variables with the proper state. */
             List<Variable> proper_vars = new List<Variable>();
-            proper_vars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] == Variable.State.Free || ins.DeadVariables[x] == Variable.State.Filled);
-
+            switch(ins.parent.Involve)
+            {
+                case BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly:
+                    proper_vars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] == Variable.State.Free || ins.DeadVariables[x] == Variable.State.Filled);
+                    break;
+                case BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly:
+                    proper_vars = ins.parent.parent.LocalVariables.FindAll(x => (x.fake == false && !ins.DeadVariables.Keys.Contains(x)));
+                    break;
+                case BasicBlock.InvolveInFakeCodeGeneration.Both:
+                    proper_vars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] == Variable.State.Free || ins.DeadVariables[x] == Variable.State.Filled);
+                    proper_vars.Concat(ins.parent.parent.LocalVariables.FindAll(x => x.fake == false && !ins.DeadVariables.Keys.Contains(x)));
+                    break;
+            }
             /* If we have less proper variables than needed: we return as many as we have. */
             if (proper_vars.Count <= amount)
                 return proper_vars;

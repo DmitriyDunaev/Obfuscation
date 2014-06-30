@@ -103,6 +103,14 @@ namespace Internal
     [Serializable]
     public partial class BasicBlock : IValidate
     {
+        // Enumerations
+        public enum InvolveInFakeCodeGeneration
+        {
+            FakeVariablesOnly = 0,
+            OriginalVariablesOnly = 1,
+            Both = 2
+        }
+
         //Attributes
         private IDManager _ID;
         public string ID
@@ -111,7 +119,7 @@ namespace Internal
         }
         public Function parent { get; private set; }
         public bool dead = false;
-
+        public InvolveInFakeCodeGeneration Involve = InvolveInFakeCodeGeneration.FakeVariablesOnly;
 
         private List<string> RefPredecessors = new List<string>();
         private List<string> RefSuccessors = new List<string>();
@@ -233,6 +241,7 @@ namespace Internal
             _ID = new IDManager();
             this.dead = original.dead;
             this.parent = original.parent;
+            this.Involve = original.Involve;
             Instructions = Common.DeepClone(original.Instructions) as List<Instruction>;
             Instructions.ForEach(x => x.ResetID());
             Instructions.ForEach(x => x.parent = this);
@@ -284,7 +293,8 @@ namespace Internal
             Original = 1,
             Temporary = 2,
             Fake = 3,
-            ConstRecalculation = 4
+            ConstRecalculation = 4,
+            Parameter = 5
         }
 
         // Attributes
@@ -347,6 +357,9 @@ namespace Internal
                 case Purpose.ConstRecalculation:
                     name = string.Concat("c_", ID);
                     break;
+                case Purpose.Parameter:
+                    name = string.Concat("p_", ID);
+                    break;
                 default:
                     throw new ObfuscatorException("Unsupported Variable.Purpose value.");
             }
@@ -356,6 +369,7 @@ namespace Internal
             fixedMin = min_value;
             fixedMax = max_value;
             this.kind = kind;
+            
         }
 
 

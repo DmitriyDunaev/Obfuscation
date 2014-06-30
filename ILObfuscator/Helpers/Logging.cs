@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Obfuscator
 {
@@ -13,7 +14,129 @@ namespace Obfuscator
         private static object sync = new object();
         private static string pathToLog = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Log");
         private static string filename_log = Path.Combine(pathToLog, string.Format("Obfuscation_Exception_{0:dd.MM.yyy}.log", DateTime.Now));
-        
+        private static string pathToCFG = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CFG");
+        private static Dictionary<BasicBlock, String> basicBlocksCFG_Attributes = new Dictionary<BasicBlock, String>();
+
+        /// <summary>
+        /// Draws the current routine CFG
+        /// </summary>
+        /// <param name="routine">Routine to be written</param>
+        public static void DrawCFG(Routine routine, string obfuscationPoint = "")
+        {
+            if (!Directory.Exists(pathToCFG))
+                Directory.CreateDirectory(pathToCFG);
+            StringBuilder sb = new StringBuilder();
+            string filename_cfg = string.Empty;
+            string basicBlockID = string.Empty;
+            string variableID = string.Empty;
+            string relOperator = string.Empty;
+            string successorID = string.Empty;
+            string edgeAttributes = string.Empty;
+            foreach (Function func in routine.Functions)
+            {
+                filename_cfg = Path.Combine(pathToCFG, string.Format(string.Concat(func.globalID, "_CFG_{0}_{1:dd.MM.yyy}.cfg"), obfuscationPoint, DateTime.Now));
+                sb.AppendLine("digraph{");
+                foreach (BasicBlock bb in func.BasicBlocks)
+                {
+                    basicBlockID = string.Concat("\"", string.Concat(bb.ID.ToString().Substring(bb.ID.ToString().IndexOf('_') + 1, 8), "\""));
+                    
+                    //Defining the attributes for the actual basic block
+                    if (!basicBlocksCFG_Attributes.ContainsKey(bb))
+                    {
+                        string bbAttribute = string.Empty;
+                        if (bb.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump)
+                        {
+                            bbAttribute = string.Concat(basicBlockID, " [ shape=diamond");
+                            switch (obfuscationPoint)
+                            {
+                                case "CONST":
+                                    bbAttribute = string.Concat(bbAttribute, ", fillcolor=yellow, style=filled ];");
+                                    break;
+                                case "MeshingUNC":
+                                    bbAttribute = string.Concat(bbAttribute, ", fillcolor=aquamarine, style=filled ];");
+                                    break;
+                                case "MeshingCOND":
+                                    bbAttribute = string.Concat(bbAttribute, ", fillcolor=green, style=filled ];");
+                                    break;
+                                case "CondJumps":
+                                    bbAttribute = string.Concat(bbAttribute, " ];");
+                                    break;
+                            }
+                        }
+                        else if (bb.Involve == BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly)
+                            bbAttribute = string.Concat(basicBlockID, " [ fillcolor=red, style=filled ];");
+                        else
+                        {
+                            switch (obfuscationPoint)
+                            {
+                                case "CONST":
+                                    bbAttribute = string.Concat(basicBlockID, " [ fillcolor=yellow, style=filled ];");
+                                    break;
+                                case "MeshingUNC":
+                                    bbAttribute = string.Concat(basicBlockID, " [ fillcolor=aquamarine, style=filled ];");
+                                    break;
+                                case "MeshingCOND":
+                                    bbAttribute = string.Concat(basicBlockID, " [ fillcolor=green, style=filled ];");
+                                    break;
+                            }
+                        }
+                        basicBlocksCFG_Attributes.Add(bb, bbAttribute);
+                    }
+                    else
+                    {
+                        //Updating the shape of conditional jumps created during Meshing using basic blocks analyzed previously
+                        if (bb.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump
+                            && !basicBlocksCFG_Attributes[bb].Contains("diamond"))
+                            basicBlocksCFG_Attributes[bb] = basicBlocksCFG_Attributes[bb].Replace(" [", " [ shape=diamond,");
+
+                    }
+
+                    //Creating the edges
+                    foreach (BasicBlock successor in bb.getSuccessors)
+                    {
+                        successorID = string.Concat("\"", string.Concat(successor.ID.ToString().Substring(successor.ID.ToString().IndexOf('_') + 1, 8), "\""));
+                        if (bb.getSuccessors.Count > 1)
+                        {
+                            variableID = bb.Instructions.Last().GetVarFromCondition().ID.Substring(
+                                bb.Instructions.Last().GetVarFromCondition().ID.IndexOf('_') + 1, 3);
+                            switch (bb.Instructions.Last().GetRelopFromCondition())
+                            {
+                                case Instruction.RelationalOperationType.Smaller:
+                                    relOperator = " < ";
+                                    break;
+                                case Instruction.RelationalOperationType.SmallerOrEquals:
+                                    relOperator = " <= ";
+                                    break;
+                                case Instruction.RelationalOperationType.Greater:
+                                    relOperator = " > ";
+                                    break;
+                                case Instruction.RelationalOperationType.GreaterOrEquals:
+                                    relOperator = " >= ";
+                                    break;
+                                case Instruction.RelationalOperationType.Equals:
+                                    relOperator = " == ";
+                                    break;
+                                case Instruction.RelationalOperationType.NotEquals:
+                                    relOperator = " != ";
+                                    break;
+                            }
+                            if (successor == bb.getSuccessors.First())
+                                edgeAttributes = string.Concat("[label=\"true - ",string.Concat(variableID,string.Concat(relOperator,
+                                    string.Concat(bb.Instructions.Last().GetConstFromCondition().ToString(),"\"]"))));
+                            else
+                                edgeAttributes = "[label=\"false\"]";
+                        }
+                        sb.AppendLine(string.Concat(basicBlockID,string.Concat(" -> ",string.Concat(successorID,string.Concat(
+                            edgeAttributes,";")))));
+                        edgeAttributes = string.Empty;
+                    }
+                    sb.AppendLine(basicBlocksCFG_Attributes[bb]);
+                }
+                sb.AppendLine("}");
+                File.WriteAllText(filename_cfg, sb.ToString());
+                sb.Clear();
+            }
+        }
         
         /// <summary>
         /// Writes an exception to external textfile

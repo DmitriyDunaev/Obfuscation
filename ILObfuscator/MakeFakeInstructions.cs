@@ -208,14 +208,25 @@ namespace Internal
         /// Makes 'param' procedural instruction type
         /// </summary>
         /// <param name="value">Parameter value</param>
-        public void MakeParam(int value)
+        public void MakeParam(Variable var, int? value)
         {
             if (statementType != ExchangeFormat.StatementTypeType.EnumValues.eNoOperation)
                 throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");
 
+            if ((var == null && !value.HasValue) || (var != null && value.HasValue))
+                throw new ObfuscatorException("Wrong parameter passing.");
+
             isFake = true;
             statementType = ExchangeFormat.StatementTypeType.EnumValues.eProcedural;
-            TACtext = string.Join(" ", "param", value.ToString());
+            if (value.HasValue)
+            {
+                TACtext = string.Join(" ", "param", value.Value.ToString());
+            }
+            else
+            {
+                RefVariables.Add(var);
+                TACtext = string.Join(" ", "param", var.name);
+            }
         }
         
     }
