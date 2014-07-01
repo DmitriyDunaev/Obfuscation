@@ -117,7 +117,7 @@ namespace Platform_x86
                     continue;
 
                 // true ||
-                if (bb.getPredecessors.Count() > 1 || (bb.getPredecessors.Count() == 1 &&
+                if (true || bb.getPredecessors.Count() > 1 || (bb.getPredecessors.Count() == 1 &&
                         bb.getPredecessors.First() != prev))
                 //|| (bb.getPredecessors.Count() == 1 &&
                 //   bb.getPredecessors.First().Instructions.Last().statementType == 

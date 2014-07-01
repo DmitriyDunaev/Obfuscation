@@ -13,13 +13,37 @@ namespace Obfuscator
         private static void Obfuscation(Routine routine)
         {
             //Creating fake input parameters
-            foreach (Function func in routine.Functions)
+            int funcIndex = 0, i = 0;
+            //In case the number of fake parameters is greater or equals to the number of functions, all fake parameters will be
+            //created here
+            while(i < Common.NumFakeInputParam)
             {
-                int paramnumber = Randomizer.SingleNumber(Common.FakeParamMin, Common.FakeParamMax);
-                for (int i = 0; i < paramnumber; i++)
+                //In case we have more fake parameters than functions, we need to check whether we have reached the last function
+                //If we did then we start from the begining giving one more parameter until we reach the required number of fake
+                //parameters
+                if (funcIndex < routine.Functions.Count)
                 {
                     List<int> borders = Randomizer.MultipleNumbers(2, Common.GlobalMinValue, Common.GlobalMaxValue, false, true);
-                    func.NewFakeInputParameter(borders.First(), borders.Last());
+                    routine.Functions[funcIndex].NewFakeInputParameter(borders.First(), borders.Last());
+                    funcIndex++;
+                    i++;
+                }
+                else
+                    funcIndex = 0;
+            }
+            //In case we have less fake parameters than functions, we make a copy of the last one to all remaining functions
+            if (Common.NumFakeInputParam < routine.Functions.Count)
+            {
+                //Index of the last function with fake parameter will be equals to the number of fake input parameters
+                funcIndex = Common.NumFakeInputParam; 
+                while (funcIndex < routine.Functions.Count)
+                {
+                    //We fetch the last fake parameter created and uses the same interval for the new one
+                    //We need to do that in order to be able to use only one fake input as valid parameter 
+                    //for more than one function in the future
+                    Variable prevFakeInput = routine.Functions[funcIndex - 1].LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true).Last();
+                    routine.Functions[funcIndex].NewFakeInputParameter(prevFakeInput.fixedMin, prevFakeInput.fixedMax);
+                    funcIndex++;
                 }
             }
 

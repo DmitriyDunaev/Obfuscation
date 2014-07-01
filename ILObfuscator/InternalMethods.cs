@@ -74,44 +74,64 @@ namespace Internal
             return fake_input;
         }
         /// <summary>
-        /// Updates all CALLs according to the number of parameters
+        /// Updates all CALLs according to the number of fake and original parameters of the called functions
         /// </summary>
         public void UpdateAllCalls()
         {
-            //Collecting all calls in the actual function with their indexes
+            //We use a dictionary to store the "call" instruction and its index inside the basic block
             Dictionary<Instruction,int> allCalls = new Dictionary<Instruction,int>();
             List<Instruction> bbCalls = new List<Instruction>();
             foreach (BasicBlock bb in this.BasicBlocks)
             {
+                //We collect all "call" instructions in this basic block
                 bbCalls = bb.Instructions.FindAll(x => x.TACtext.Contains("call"));
                 foreach (Instruction ins in bbCalls)
                 {
+                    //Storing all "call" instructions in the actual basic block with their indexes
                     allCalls.Add(ins, bb.Instructions.IndexOf(ins));
                 }
             }
 
-            
+            //We check wheter we have any "call" instruction in this function
             if (allCalls.Count > 0)
             {
                 foreach (Instruction call in allCalls.Keys)
                 {
+                    //Splitting the call in tokens - tokens[0] = "call", tokens[1] = "function_ID", tokens[2] = "numParams"
                     string[]  tokens = call.TACtext.Split(' ');
+                    //Checking wheter if the called function is present in our routine (internal function)
                     if (this.parent.Functions.Exists(x => x.ID == tokens[1]))
                     {
+                        //Getting the number of parameters to update it later
                         int numParams = int.Parse(tokens[2]);
+                        //Fetching the called function
                         Function calledFunc = this.parent.Functions.Find(x => x.ID == tokens[1]);
+                        //Fetching the called function's fake input parameters
                         List<Variable> fakeInputsParams = calledFunc.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true);
+                        //Checking whether we have any fake input parameter
                         if (fakeInputsParams.Count > 0)
                         {
                             int i;
                             for (i = 0; i < fakeInputsParams.Count; i++)
                             {
-                                Variable paramVariable = NewFakeInputParameter(fakeInputsParams[i].fixedMin, fakeInputsParams[i].fixedMax);
+                                Variable paramVariable;
+                                //Checking whether we have reached the number of fake input parameters setted by the user
+                                if (this.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true).Count < Common.NumFakeInputParam)
+                                    //If we didn't, then a new fake input parameter is created
+                                    paramVariable = NewFakeInputParameter(fakeInputsParams[i].fixedMin, fakeInputsParams[i].fixedMax);
+                                else
+                                    //If we did, then we use the last fake input parameter created
+                                    //We will fall in this case when the number of fake input parameters is less than the number of functions,
+                                    //following the logics used during the creation of fake input parameters in ILObfuscator.cs
+                                    paramVariable = this.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true).Last();
                                 Instruction nop = new Instruction(call.parent);
                                 nop.MakeParam(paramVariable, null);
+                                //Inserting the "param" instruction right before the "call" instruction
                                 call.parent.Instructions.Insert(allCalls[call] + i, nop);
+                                //Updating the number of parameters for this call
                                 numParams++;
                             }
+                            //Updating the TAC text of the call with the new number of parameters
                             call.parent.Instructions[allCalls[call] + i].TACtext = string.Join(" ", "call", calledFunc.ID,
                                 numParams);
                         }

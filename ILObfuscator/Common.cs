@@ -28,14 +28,9 @@ namespace Obfuscator
 
         // **** Fake Parameters Section ****
         /// <summary>
-        /// The minimum munber of fake input parameters to generate per function
+        /// Number of fake input parameters to generate
         /// </summary>
-        public static int FakeParamMin = 1;
-
-        /// <summary>
-        /// The maximum munber of fake input parameters to generate per function
-        /// </summary>
-        public static int FakeParamMax = 1;
+        public static int NumFakeInputParam = 1;
 
         public static bool RandomPushValues = false;
 
