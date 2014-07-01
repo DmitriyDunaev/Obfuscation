@@ -116,10 +116,12 @@ namespace Platform_x86
                 if (bb.getSuccessors.Count == 0)
                     continue;
 
-                if (true || bb.getPredecessors.Count() > 1 || (bb.getPredecessors.Count() == 1 &&
-                        bb.getPredecessors.First() != prev) || (bb.getPredecessors.Count() == 1 &&
-                        bb.getPredecessors.First().Instructions.Last().statementType == 
-                        ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump))
+                // true ||
+                if (bb.getPredecessors.Count() > 1 || (bb.getPredecessors.Count() == 1 &&
+                        bb.getPredecessors.First() != prev))
+                //|| (bb.getPredecessors.Count() == 1 &&
+                //   bb.getPredecessors.First().Instructions.Last().statementType == 
+                //   ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
                 {
                     sb.AppendLine(ReadableBBLabels[bb.ID] + ":");
                 }

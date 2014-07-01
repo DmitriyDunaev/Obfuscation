@@ -115,7 +115,7 @@ namespace Obfuscator
             Randomizer.GenerateConditionalJumpInstruction(fake1.Instructions.Last(), Instruction.ConditionType.Random, originaltarget);
 
             bb.LinkToSuccessor(fake1, true);
-            bb.parent.Validate();
+//            bb.parent.Validate();
             return fake1;
             
         }
