@@ -50,16 +50,16 @@ namespace Obfuscator
                             switch (obfuscationPoint)
                             {
                                 case "CONST":
-                                    bbAttribute = string.Concat(bbAttribute, ", fillcolor=yellow, style=filled ];");
+                                    bbAttribute = string.Concat(bbAttribute, ", fillcolor=green2, style=filled ];");
                                     break;
                                 case "MeshingUNC":
-                                    bbAttribute = string.Concat(bbAttribute, ", fillcolor=aquamarine, style=filled ];");
+                                    bbAttribute = string.Concat(bbAttribute, ", fillcolor=cyan2, style=filled ];");
                                     break;
                                 case "MeshingCOND":
-                                    bbAttribute = string.Concat(bbAttribute, ", fillcolor=green, style=filled ];");
+                                    bbAttribute = string.Concat(bbAttribute, ", fillcolor=yellow2, style=filled ];");
                                     break;
                                 case "CondJumps":
-                                    bbAttribute = string.Concat(bbAttribute, " ];");
+                                    bbAttribute = string.Concat(bbAttribute, ", fillcolor=gray33, style=filled ];");
                                     break;
                             }
                         }
@@ -70,13 +70,16 @@ namespace Obfuscator
                             switch (obfuscationPoint)
                             {
                                 case "CONST":
-                                    bbAttribute = string.Concat(basicBlockID, " [ fillcolor=yellow, style=filled ];");
+                                    bbAttribute = string.Concat(basicBlockID, " [ fillcolor=green2, style=filled ];");
                                     break;
                                 case "MeshingUNC":
-                                    bbAttribute = string.Concat(basicBlockID, " [ fillcolor=aquamarine, style=filled ];");
+                                    bbAttribute = string.Concat(basicBlockID, " [ fillcolor=cyan2, style=filled ];");
                                     break;
                                 case "MeshingCOND":
-                                    bbAttribute = string.Concat(basicBlockID, " [ fillcolor=green, style=filled ];");
+                                    bbAttribute = string.Concat(basicBlockID, " [ fillcolor=yellow2, style=filled ];");
+                                    break;
+                                case "CondJumps":
+                                    bbAttribute = string.Concat(basicBlockID, " [ fillcolor=gray33, style=filled ];");
                                     break;
                             }
                         }
@@ -121,7 +124,7 @@ namespace Obfuscator
                                     break;
                             }
                             if (successor == bb.getSuccessors.First())
-                                edgeAttributes = string.Concat("[label=\"true - ",string.Concat(variableID,string.Concat(relOperator,
+                                edgeAttributes = string.Concat("[label=\"",string.Concat(variableID,string.Concat(relOperator,
                                     string.Concat(bb.Instructions.Last().GetConstFromCondition().ToString(),"\"]"))));
                             else
                                 edgeAttributes = "[label=\"false\"]";

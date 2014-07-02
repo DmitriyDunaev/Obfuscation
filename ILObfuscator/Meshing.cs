@@ -93,14 +93,30 @@ namespace Obfuscator
             int rightValue = 0;
             if (originalInstruction.GetConstFromCondition() >= originalInstruction.GetVarFromCondition().fixedMax.Value)
             {
-                rightValue = Randomizer.SingleNumber(Common.GlobalMinValue, originalInstruction.GetVarFromCondition().fixedMin.Value);
+                //If the variable's fixed minimun is diferent from the global min plus the maximun loop range, we should try
+                //to get a value different from the variable's fixed minimun in order to have a more belieavable code
+                do
+                {
+                    rightValue = Randomizer.SingleNumber(Common.GlobalMinValue + Common.LoopConditionalJumpMaxRange,
+                        originalInstruction.GetVarFromCondition().fixedMin.Value);
+                } while (rightValue == originalInstruction.GetVarFromCondition().fixedMin.Value &&
+                originalInstruction.GetVarFromCondition().fixedMin.Value != Common.GlobalMinValue + Common.LoopConditionalJumpMaxRange);
+
                 relationalOperation = (Instruction.RelationalOperationType)
                                                         Randomizer.OneFromMany(Instruction.RelationalOperationType.Smaller,
                                                                             Instruction.RelationalOperationType.SmallerOrEquals);
             }
             else
             {
-                rightValue = Randomizer.SingleNumber(originalInstruction.GetVarFromCondition().fixedMax.Value, Common.GlobalMaxValue);
+                //If the variable's fixed maximun is diferent from the global max minus the maximun loop range, we should try
+                //to get a value different from the variable's fixed maximun in order to have a more belieavable code
+                do
+                {
+                    rightValue = Randomizer.SingleNumber(originalInstruction.GetVarFromCondition().fixedMax.Value,
+                        Common.GlobalMaxValue - Common.LoopConditionalJumpMaxRange);
+                } while (rightValue == originalInstruction.GetVarFromCondition().fixedMax.Value &&
+                originalInstruction.GetVarFromCondition().fixedMax.Value != Common.GlobalMaxValue - Common.LoopConditionalJumpMaxRange);
+
                 relationalOperation = (Instruction.RelationalOperationType)
                                                         Randomizer.OneFromMany(Instruction.RelationalOperationType.Greater,
                                                                             Instruction.RelationalOperationType.GreaterOrEquals);
@@ -206,10 +222,27 @@ namespace Obfuscator
             //Defining the constant for the extraFake1 conditional jump
             int rightValueEF1 = 0;
             if (originalInstruction.GetConstFromCondition() >= originalInstruction.GetVarFromCondition().fixedMax.Value)
-                rightValueEF1 = Randomizer.SingleNumber((int)originalInstruction.GetConstFromCondition(), Common.GlobalMaxValue);
+            {
+                //If the original instruction's contant is diferent from the global max minus the max loop range, we should try
+                //to get a value different from the original instruction's constant in order to have a more belieavable code
+                do
+                {
+                    rightValueEF1 = Randomizer.SingleNumber((int)originalInstruction.GetConstFromCondition(),
+                        Common.GlobalMaxValue - Common.LoopConditionalJumpMaxRange);
+                } while (rightValueEF1 == (int)originalInstruction.GetConstFromCondition() &&
+                (int)originalInstruction.GetConstFromCondition() != Common.GlobalMaxValue - Common.LoopConditionalJumpMaxRange);
+            }
             else
-                rightValueEF1 = Randomizer.SingleNumber(Common.GlobalMinValue, (int)originalInstruction.GetConstFromCondition());
-
+            {
+                //If the original instruction's contant is diferent from the global min plus the max loop range, we should try
+                //to get a value different from the original instruction's constant in order to have a more belieavable code
+                do
+                {
+                    rightValueEF1 = Randomizer.SingleNumber(Common.GlobalMinValue + Common.LoopConditionalJumpMaxRange,
+                        (int)originalInstruction.GetConstFromCondition());
+                } while (rightValueEF1 == (int)originalInstruction.GetConstFromCondition() &&
+                 (int)originalInstruction.GetConstFromCondition() != Common.GlobalMinValue + Common.LoopConditionalJumpMaxRange);
+            }
             //Creating the extraFake1 conditional jump
             Variable var = originalInstruction.GetVarFromCondition();
             extraFake1.Instructions.Last().MakeConditionalJump(var, rightValueEF1, relationalOperationEF1, extraFake2);

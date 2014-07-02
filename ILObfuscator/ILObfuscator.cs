@@ -23,7 +23,8 @@ namespace Obfuscator
                 //parameters
                 if (funcIndex < routine.Functions.Count)
                 {
-                    List<int> borders = Randomizer.MultipleNumbers(2, Common.GlobalMinValue, Common.GlobalMaxValue, false, true);
+                    List<int> borders = Randomizer.MultipleNumbers(2, Common.GlobalMinValue + Common.LoopConditionalJumpMaxRange, 
+                        Common.GlobalMaxValue - Common.LoopConditionalJumpMaxRange, false, true);
                     routine.Functions[funcIndex].NewFakeInputParameter(borders.First(), borders.Last());
                     funcIndex++;
                     i++;
@@ -100,8 +101,8 @@ namespace Obfuscator
             foreach (Function func in routine.Functions)
                 FakeCode.GenerateFakeInstructions(func);
             Logging.WriteRoutine(routine, "FakeIns");
-            foreach (Function func in routine.Functions)
-                FakeCode.GenerateConditionalJumps(func);
+            /*foreach (Function func in routine.Functions)
+                FakeCode.GenerateConditionalJumps(func);*/
             Logging.WriteRoutine(routine, "CondJumps");
             Logging.DrawCFG(routine, "CondJumps");
             routine.Validate();

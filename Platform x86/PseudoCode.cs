@@ -505,6 +505,7 @@ namespace Platform_x86
 
             //New Basic Block for the True Lane
             BasicBlockType trueBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
+            int trueBasickBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
             trueBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             trueBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             trueBasicBlock.Successors.Value = string.Empty;
@@ -513,7 +514,7 @@ namespace Platform_x86
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value = string.Concat(
                 routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value, trueBasicBlock.ID.Value);
             //Processing instructions between { } //Returns the new line index            
-            lineIndex = ProcessInnerScope(lineIndex); 
+            lineIndex = ProcessInnerScope(lineIndex);
             lineIndex++;
             int lastInnerTrueBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
 
@@ -555,7 +556,10 @@ namespace Platform_x86
                     newBasicBlock.ID.Value, routine.Function[functionIndex].BasicBlock[lastInnerTrueBasicBlockIndex].Successors.Value);
             else
                 routine.Function[functionIndex].BasicBlock[lastInnerTrueBasicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
-            
+
+            //Adding a fake unconditional jump that will be used later during unconditional meshing
+            if (trueBasicBlock.Instruction.Last.StatementType.EnumerationValue != StatementTypeType.EnumValues.eConditionalJump)
+                UncondJumpInstruction(trueBasickBlockIndex, trueBasicBlock.Successors.Value);
 
             return lineIndex;
         }
