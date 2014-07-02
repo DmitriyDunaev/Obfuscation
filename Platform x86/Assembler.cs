@@ -167,8 +167,7 @@ namespace Platform_x86
             }
 
             sb.AppendLine(Epilogue(func));
-            string optimizedAssembly = Optimize(sb.ToString());
-            return optimizedAssembly;
+            return Optimize(sb).ToString();
         }
 
         private static string StackPointerOfVariable(Variable var)
@@ -518,11 +517,12 @@ namespace Platform_x86
         }
 
 
-        private static string Optimize(string funcASM)
+        private static StringBuilder Optimize(StringBuilder funcASM)
         {
+            
+            // Remove unnecessary instructions like "MOV a,b; MOV b,a;"
             System.Collections.Specialized.StringCollection movmov = new System.Collections.Specialized.StringCollection();
-            funcASM = funcASM.Replace("\r\n\r\n", "\r\n");
-            Match matchResult = Regex.Match(funcASM, @"mov (.*), (.*)\r\nmov (\2), (\1)", RegexOptions.IgnoreCase);
+            Match matchResult = Regex.Match(funcASM.ToString(), @"mov (.*), (.*)(\r\n)+mov (\2), (\1)", RegexOptions.IgnoreCase);
             while (matchResult.Success)
             {
                 movmov.Add(matchResult.Value);
@@ -530,6 +530,28 @@ namespace Platform_x86
             }
             foreach (string item in movmov)
                 funcASM = funcASM.Replace(item, string.Empty);
+
+            // Remove unnecessary Labels that are not used for jumping
+            List<string> labels = new List<string>();
+            matchResult = Regex.Match(funcASM.ToString(), @"LABEL_\d+", RegexOptions.IgnoreCase);
+            while (matchResult.Success)
+            {
+                labels.Add(matchResult.Value);
+                matchResult = matchResult.NextMatch();
+            }
+            List<string> lbl_wrong = new List<string>();
+            lbl_wrong = labels.Where(x => labels.IndexOf(x) == labels.LastIndexOf(x)).ToList();
+            foreach (string lbl in labels.Where(x => labels.IndexOf(x)==labels.LastIndexOf(x)))
+                funcASM = funcASM.Replace(string.Concat(lbl, ":"), string.Empty);
+
+            // Remove repeating \r\n CRLF characters
+            matchResult = Regex.Match(funcASM.ToString(), @"(\r\n){2,}", RegexOptions.IgnoreCase);
+            while (matchResult.Success)
+            {
+                funcASM = funcASM.Replace(matchResult.Value, "\r\n");
+                matchResult = Regex.Match(funcASM.ToString(), @"(\r\n){2,}", RegexOptions.IgnoreCase);
+            }
+
             return funcASM;
         }
 
