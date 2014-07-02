@@ -146,25 +146,26 @@ namespace Obfuscator
                         Console.ResetColor();
                         routine = (Routine)exch;
                     }
-                    catch (ValidatorException ex)
-                    {
-                        if (ex.Message.EndsWith("has a single direct predecessor with unconditional GOTO."))
-                        {
-                            Success = false;
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine(". . . . . . . . . . FAILED\n");
-                            Console.ResetColor();
-                            routine = (Routine)exch;
-                        }
-                        else throw ex;
-                    }
+                    //catch (ValidatorException ex)
+                    //{
+                    //    if (ex.Message.EndsWith("has a single direct predecessor with unconditional GOTO."))
+                    //    {
+                    //        Success = false;
+                    //        Console.ForegroundColor = ConsoleColor.Red;
+                    //        Console.WriteLine(". . . . . . . . . . FAILED\n");
+                    //        Console.ResetColor();
+                    //        routine = (Routine)exch;
+                    //    }
+                    //    else throw ex;
+                    //}
                     NumberOfRuns++;
                 } while (!Success && NumberOfRuns < Common.MaxNumberOfRuns);
                 if (Success)
                     TryAgain = false;
                 else
                 {
-                    Console.WriteLine("Obfuscation failed {0} times. Possible problems: (1) FILLED and NOT_INITIALIZED collision; (2) basic blocks with single GOTO predecessor. Consequence: weaker result.", Common.MaxNumberOfRuns);
+                    //Console.WriteLine("Obfuscation failed {0} times. Possible problems: (1) FILLED and NOT_INITIALIZED collision; (2) basic blocks with single GOTO predecessor. Consequence: weaker result.", Common.MaxNumberOfRuns);
+                    Console.WriteLine("Obfuscation failed {0} times. Possible problem: FILLED and NOT_INITIALIZED collision. Consequence: weaker result.", Common.MaxNumberOfRuns);
                     Console.WriteLine("Do you want to try again? (y/n)");
                     char answer = Convert.ToChar(Console.Read());
                     switch (answer)

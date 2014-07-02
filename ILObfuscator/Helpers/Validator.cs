@@ -118,8 +118,8 @@ namespace Internal
             //    throw new ValidatorException("Found 2 basic blocks with a single predecessor-successor link. BB1: " + ID + ", BB2: " + Successors.First().ID);
 
             // If a basic block has one predecessor, then it should be a direct predecessor without goto
-            if(Predecessors.Count==1 && Predecessors[0].Instructions.Last().statementType == StatementTypeType.EnumValues.eUnconditionalJump)
-                throw new ValidatorException("A basic block: " + ID + " has a single direct predecessor with unconditional GOTO.");
+            //if(Predecessors.Count==1 && Predecessors[0].Instructions.Last().statementType == StatementTypeType.EnumValues.eUnconditionalJump)
+            //    throw new ValidatorException("A basic block: " + ID + " has a single direct predecessor with unconditional GOTO.");
 
             // Checking Successor-Predecessor links
             foreach (BasicBlock succ in Successors)

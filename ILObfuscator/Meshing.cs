@@ -42,19 +42,19 @@ namespace Obfuscator
         public static void MeshUnconditionals(Routine rtn)
         {
             /// Meshing of the unconditional jumps
-            BasicBlock extraFake1;
-            BasicBlock mainLaneBB;
             foreach (Function funct in rtn.Functions)
             {
                 List<BasicBlock> basicblocks = funct.BasicBlocks.FindAll(x => x.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump);
                 foreach (BasicBlock bb in basicblocks)
                 {
-                    mainLaneBB = bb.getSuccessors.First();
-                    bb.LinkToSuccessor(InsertFakeLane(bb), true);
-                    extraFake1 = new BasicBlock(bb.parent);
-                    extraFake1.dead = true;
-                    Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, extraFake1);
-                    ExpandExtraFakeLane(extraFake1, mainLaneBB, false);
+                    BasicBlock mainRouteBB = bb.getSuccessors.First();
+                    BasicBlock fake = new BasicBlock(bb.parent);
+                    BasicBlock extraFake = new BasicBlock(bb.parent);
+                    extraFake.dead = true;
+                    bb.LinkToSuccessor(fake, true);
+                    Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, extraFake);
+                    ExpandFakeLane(fake, mainRouteBB, false);
+                    ExpandExtraFakeLane(extraFake, mainRouteBB, false);
                 }
             }
         }
@@ -78,15 +78,54 @@ namespace Obfuscator
         }
 
         /// <summary>
-        /// Inserts the fake lane into the CFT
-        /// Still in test phase, now it only has a not so smart condition in the conditional jump
+        /// Expands the fake lane into the CFT and creates the conditional jumps for both Main Routa and Extra Fake code
         /// </summary>
-        /// <param name="bb">The actual basic block with the unconditional jump</param>
-        private static BasicBlock InsertFakeLane(BasicBlock bb)
+        /// <param name="fake1">The first basic block of the Fake Lane</param>
+        /// <param name="mainLaneBB">The basic block we should go to be back in the Main Route</param>
+        /// <param name="atFakeCodeGeneration">Wheter we are or not at the fake code generation phase</param>
+        private static void ExpandFakeLane(BasicBlock fake1, BasicBlock mainRouteBB, bool atFakeCodeGeneration)
         {
-            // Saving the original target of the jump
-            BasicBlock originaltarget = bb.getSuccessors.First();
+            //Fetching the Conditional Jump (AlwaysFalse) created in the previous basic block
+            Instruction originalInstruction = fake1.getPredecessors.First().Instructions.Last();
 
+            //Defining the constant and relational operator for the fake1 conditional jump 
+            Instruction.RelationalOperationType relationalOperation;
+            int rightValue = 0;
+            if (originalInstruction.GetConstFromCondition() >= originalInstruction.GetVarFromCondition().fixedMax.Value)
+            {
+                rightValue = Randomizer.SingleNumber(Common.GlobalMinValue, originalInstruction.GetVarFromCondition().fixedMin.Value);
+                relationalOperation = (Instruction.RelationalOperationType)
+                                                        Randomizer.OneFromMany(Instruction.RelationalOperationType.Smaller,
+                                                                            Instruction.RelationalOperationType.SmallerOrEquals);
+            }
+            else
+            {
+                rightValue = Randomizer.SingleNumber(originalInstruction.GetVarFromCondition().fixedMax.Value, Common.GlobalMaxValue);
+                relationalOperation = (Instruction.RelationalOperationType)
+                                                        Randomizer.OneFromMany(Instruction.RelationalOperationType.Greater,
+                                                                            Instruction.RelationalOperationType.GreaterOrEquals);
+            }
+
+            //Creating the false lane for the conditional jump that goes back to the Main Route
+            fake1.LinkToSuccessor(ExpandFakeLane(fake1, mainRouteBB), true);
+
+            //Creating fake2 to hold the true lane for the conditional jump
+            BasicBlock fake2 = new BasicBlock(fake1.parent);
+
+            //Creating the fake1 conditional jump
+            Variable var = originalInstruction.GetVarFromCondition();
+            fake1.Instructions.Last().MakeConditionalJump(var, rightValue, relationalOperation, fake2);
+            //Expanding the extra fake lane
+            ExpandExtraFakeLane(fake2, mainRouteBB, atFakeCodeGeneration);            
+        }
+
+        /// <summary>
+        /// Expands the fake lane into the CFT that goes back to the Main Route
+        /// </summary>
+        /// <param name="bb">The actual basic block that will hold the conditional jump</param>
+        /// <param name="originaltarget">The basic block we should go to be back in the Main Route</param>
+        private static BasicBlock ExpandFakeLane(BasicBlock bb, BasicBlock originaltarget)
+        {
             // Creating a new basic block
             BasicBlock fake1 = new BasicBlock(bb.parent);
             fake1.Instructions.Add(new Instruction(fake1));
@@ -114,10 +153,10 @@ namespace Obfuscator
             // And then converting its nop instruction into a ConditionalJump
             Randomizer.GenerateConditionalJumpInstruction(fake1.Instructions.Last(), Instruction.ConditionType.Random, originaltarget);
 
-            bb.LinkToSuccessor(fake1, true);
-//            bb.parent.Validate();
+            //bb.LinkToSuccessor(fake1, true);
+            //bb.parent.Validate();
             return fake1;
-            
+
         }
 
         /// <summary>
@@ -126,7 +165,7 @@ namespace Obfuscator
         /// <param name="extraFake1">The first basic block of the Extra Fake Lane</param>
         /// <param name="mainLaneBB">The basic block we should go in case of no-loop</param>
         /// <param name="atFakeCodeGeneration">Wheter we are or not at the fake code generation phase</param>
-        public static void ExpandExtraFakeLane(BasicBlock extraFake1, BasicBlock mainLaneBB, bool atFakeCodeGeneration)
+        public static void ExpandExtraFakeLane(BasicBlock extraFake1, BasicBlock mainRouteBB, bool atFakeCodeGeneration)
         {
             //Creating extraFake2 to hold the next Loop condition
             BasicBlock extraFake2 = new BasicBlock(extraFake1.parent);
@@ -138,7 +177,7 @@ namespace Obfuscator
             extraFake3.dead = true;
 
             //Creating the extraFake3 unconditional jump back to the Main Lane
-            extraFake3.Instructions.Last().MakeUnconditionalJump(mainLaneBB);
+            extraFake3.Instructions.Last().MakeUnconditionalJump(mainRouteBB);
 
             //Linking extraFake3 to extraFake2
             extraFake2.LinkToSuccessor(extraFake3);
@@ -149,12 +188,12 @@ namespace Obfuscator
             extraFake4.dead = true;
 
             //Creating the extraFake4 unconditional jump back to the Main Lane
-            extraFake4.Instructions.Last().MakeUnconditionalJump(mainLaneBB);
+            extraFake4.Instructions.Last().MakeUnconditionalJump(mainRouteBB);
 
             //Linking extraFake4 to extraFake1
             extraFake1.LinkToSuccessor(extraFake4);
 
-            //Fetching the Conditional Jump (AlwaysFalse) created in the Main Lane
+            //Fetching the Conditional Jump (AlwaysFalse) created in the previous basic block
             Instruction originalInstruction = extraFake1.getPredecessors.First().Instructions.Last();
 
             //Defining the relational operator for the extraFake1 conditional jump
@@ -224,13 +263,21 @@ namespace Obfuscator
                     case Instruction.RelationalOperationType.SmallerOrEquals:
                         if (rightValueEF1 + range > Common.GlobalMaxValue)
                             rightValueEF2 = Randomizer.SingleNumber(rightValueEF1, Common.GlobalMaxValue);
-                        else
+                        else if (rightValueEF1 + range > (int)originalInstruction.GetConstFromCondition() &&
+                            (originalInstruction.GetRelopFromCondition() == Instruction.RelationalOperationType.Smaller
+                            || originalInstruction.GetRelopFromCondition() == Instruction.RelationalOperationType.SmallerOrEquals))
+                            rightValueEF2 = Randomizer.SingleNumber(rightValueEF1, (int)originalInstruction.GetConstFromCondition());
+                        else 
                             rightValueEF2 = Randomizer.SingleNumber(rightValueEF1, rightValueEF1 + range);
                         break;
                     case Instruction.RelationalOperationType.Greater:
                     case Instruction.RelationalOperationType.GreaterOrEquals:
                         if (rightValueEF1 - range < Common.GlobalMinValue)
                             rightValueEF2 = Randomizer.SingleNumber(Common.GlobalMinValue, rightValueEF1);
+                        else if (rightValueEF1 - range < (int)originalInstruction.GetConstFromCondition()&&
+                            (originalInstruction.GetRelopFromCondition() == Instruction.RelationalOperationType.Greater
+                            || originalInstruction.GetRelopFromCondition() == Instruction.RelationalOperationType.GreaterOrEquals))
+                            rightValueEF2 = Randomizer.SingleNumber((int)originalInstruction.GetConstFromCondition(), rightValueEF1);
                         else
                             rightValueEF2 = Randomizer.SingleNumber(rightValueEF1 - range, rightValueEF1);
                         break;
@@ -242,6 +289,10 @@ namespace Obfuscator
                                 case Instruction.RelationalOperationType.SmallerOrEquals:
                                     if (rightValueEF1 - range < Common.GlobalMinValue)
                                         rightValueEF2 = Randomizer.SingleNumber(Common.GlobalMinValue, rightValueEF1);
+                                    else if (rightValueEF1 - range < (int)originalInstruction.GetConstFromCondition() &&
+                                        (originalInstruction.GetRelopFromCondition() == Instruction.RelationalOperationType.Greater
+                                        || originalInstruction.GetRelopFromCondition() == Instruction.RelationalOperationType.GreaterOrEquals))
+                                        rightValueEF2 = Randomizer.SingleNumber((int)originalInstruction.GetConstFromCondition(), rightValueEF1);
                                     else
                                         rightValueEF2 = Randomizer.SingleNumber(rightValueEF1 - range, rightValueEF1);
                                     break;
@@ -249,6 +300,10 @@ namespace Obfuscator
                                 case Instruction.RelationalOperationType.GreaterOrEquals:
                                     if (rightValueEF1 + range > Common.GlobalMaxValue)
                                         rightValueEF2 = Randomizer.SingleNumber(rightValueEF1, Common.GlobalMaxValue);
+                                    else if (rightValueEF1 + range > (int)originalInstruction.GetConstFromCondition() &&
+                                        (originalInstruction.GetRelopFromCondition() == Instruction.RelationalOperationType.Smaller
+                                        ||originalInstruction.GetRelopFromCondition() == Instruction.RelationalOperationType.SmallerOrEquals))
+                                        rightValueEF2 = Randomizer.SingleNumber(rightValueEF1, (int)originalInstruction.GetConstFromCondition());
                                     else
                                         rightValueEF2 = Randomizer.SingleNumber(rightValueEF1, rightValueEF1 + range);
                                     break;
