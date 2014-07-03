@@ -1,5 +1,6 @@
 ﻿using Internal;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -142,7 +143,7 @@ namespace Obfuscator
 
 
         /// <summary>
-        /// Randomly selects one value from many with fixed values probability
+        /// Randomly selects one value from many with fixed values probability using uniform distribution
         /// </summary>
         /// <param name="probabilities">Probabilities in array</param>
         /// <param name="many">Values one-by-one</param>
@@ -166,7 +167,20 @@ namespace Obfuscator
 
 
         /// <summary>
-        /// Gets randomly one fake input parameter of a function. Throws exception if no such found.
+        /// Randomly selects one value from one set using uniform distribution. The sets are chosen by given probability, the choice of element in the set is equiprobable.
+        /// </summary>
+        /// <param name="probabilities">Probabilities of chosing the respective sets</param>
+        /// <param name="sets">The sets with values</param>
+        /// <returns>One value from a set</returns>
+        public static object OneValueFromManySetsWithProbability(int[] probabilities, params IEnumerable<object>[] sets)
+        {
+            IEnumerable selected_set = (IEnumerable)OneFromManyWithProbability(probabilities, sets);
+            return OneFromMany(selected_set.Cast<object>().ToArray());
+        }
+
+
+        /// <summary>
+        /// Gets randomly (using uniform distribution) one fake input parameter of a function. Throws exception if no such found.
         /// </summary>
         /// <param name="func">A function with parameters</param>
         /// <returns>One random fake input parameter of a function</returns>
@@ -291,7 +305,7 @@ namespace Obfuscator
 
 
         /// <summary>
-        /// Randomly selects unique elements from a list
+        /// Randomly (using uniform distribution) selects unique elements from a list
         /// </summary>
         /// <param name="arr">List with elements to be selected from</param>
         /// <param name="m">Number of elements to be selected</param>
