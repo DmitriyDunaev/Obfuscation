@@ -57,6 +57,10 @@ namespace Obfuscator
         /// Variability of fake_padding
         /// </summary>
         public static int FakePaddingVariance = 5;
+        /// <summary>
+        /// Describes the probability of generating a conditional jump in percents.
+        /// </summary>
+        public static int prob_of_cond_jump = 10;
 
         // **** Meshing Algorithm Section ****
 

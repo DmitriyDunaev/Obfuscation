@@ -63,8 +63,8 @@ namespace Obfuscator
                                     break;
                             }
                         }
-                        else if (bb.Involve == BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly)
-                            bbAttribute = string.Concat(basicBlockID, " [ fillcolor=red, style=filled ];");
+                        //else if (bb.Involve == BasicBlock.InvolveInFakeCodeGeneration.Both)
+                        //    bbAttribute = string.Concat(basicBlockID, " [ fillcolor=red, style=filled ];");
                         else
                         {
                             switch (obfuscationPoint)
@@ -100,8 +100,7 @@ namespace Obfuscator
                         successorID = string.Concat("\"", string.Concat(successor.ID.ToString().Substring(successor.ID.ToString().IndexOf('_') + 1, 8), "\""));
                         if (bb.getSuccessors.Count > 1)
                         {
-                            variableID = bb.Instructions.Last().GetVarFromCondition().ID.Substring(
-                                bb.Instructions.Last().GetVarFromCondition().ID.IndexOf('_') + 1, 3);
+                            variableID = bb.Instructions.Last().GetVarFromCondition().ID.Substring(0, 6);
                             switch (bb.Instructions.Last().GetRelopFromCondition())
                             {
                                 case Instruction.RelationalOperationType.Smaller:

@@ -58,7 +58,6 @@ namespace Obfuscator
             ConstCoverage.CoverConstants(routine);
             routine.Validate();
             PrintSuccess();
-
             Logging.WriteReadableTAC(routine, "CONST");
             Logging.DrawCFG(routine, "CONST");
 
@@ -67,7 +66,6 @@ namespace Obfuscator
             Meshing.MeshUnconditionals(routine);
             routine.Validate();
             PrintSuccess();
-
             Logging.WriteReadableTAC(routine, "MeshingUNC");
             Logging.DrawCFG(routine, "MeshingUNC");
             
@@ -76,7 +74,6 @@ namespace Obfuscator
             Meshing.MeshConditionals(routine);
             routine.Validate();
             PrintSuccess();
-
             Logging.WriteReadableTAC(routine, "MeshingCOND");
             Logging.DrawCFG(routine, "MeshingCOND");
             
@@ -87,23 +84,30 @@ namespace Obfuscator
             routine.Validate();
             PrintSuccess();
             Logging.WriteRoutine(routine, "NoOpersGeneration");
-
             Logging.WriteReadableTAC(routine, "FakeNOPs");
+
+
+            Console.Write("Generation of fake conditional jumps from NOPs");
+            foreach (Function func in routine.Functions)
+                FakeCode.GenerateConditionalJumps(func);
+            Logging.WriteRoutine(routine, "CondJumps");
+            foreach (Function func in routine.Functions)
+                FakeCode.GenerateNoOperations(func);
+            routine.Validate();
+            PrintSuccess();
+
 
             Console.Write("Running data analysis");
             foreach (Function func in routine.Functions)
                 DataAnalysis.DeadVarsAlgortihm(func);
             DataAnalysis.GatherBasicBlockInfo(routine);
-            routine.Validate();
             PrintSuccess();
 
+            
             Console.Write("Generation of fake instructions from NOPs");
             foreach (Function func in routine.Functions)
                 FakeCode.GenerateFakeInstructions(func);
-            Logging.WriteRoutine(routine, "FakeIns");
-            /*foreach (Function func in routine.Functions)
-                FakeCode.GenerateConditionalJumps(func);*/
-            Logging.WriteRoutine(routine, "CondJumps");
+            Logging.WriteRoutine(routine, "FakeIns");            
             Logging.DrawCFG(routine, "CondJumps");
             routine.Validate();
             PrintSuccess();

@@ -24,10 +24,7 @@ namespace Obfuscator
          * available for using as a left value present.
          */
 
-        /// <summary>
-        /// Describes the probability of generating a conditional jump in percents.
-        /// </summary>
-        private static int prob_of_cond_jump = 20;
+        
 
         /// <summary>
         /// Returns a list of all nops present in the function.
@@ -56,38 +53,74 @@ namespace Obfuscator
         private static Variable GetLeftValueForInstruction(Instruction ins)
         {
             Variable left = null;
-            Variable[] originalVars;
             switch (ins.parent.Involve)
             {
-                case BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly:
-                    originalVars = ins.parent.parent.LocalVariables.FindAll(x => x.fake == false && !ins.DeadVariables.Keys.Contains(x)).ToArray();
-                    return (Variable)Randomizer.OneFromMany(originalVars);             
-                
                 case BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly:
                     left = Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized, Variable.State.Filled);
-                    break;                    
+                    break;
+
+                case BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly:
+                    List<Variable> originalVars = ins.parent.parent.LocalVariables.FindAll(x => x.fake == false && !ins.DeadVariables.Keys.Contains(x));
+                    if (originalVars.Count > 0)
+                        left = (Variable)Randomizer.OneFromMany(originalVars.ToArray());
+                    break;
                 case BasicBlock.InvolveInFakeCodeGeneration.Both:
-                    Variable fake = Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Not_Initialized, Variable.State.Filled);
-                    originalVars = ins.parent.parent.LocalVariables.FindAll(x => x.fake == false && !ins.DeadVariables.Keys.Contains(x)).ToArray();
-                    Variable original = (Variable)Randomizer.OneFromMany(originalVars);
-                    left = (Variable)Randomizer.OneFromMany(original,fake);                
+                    List<Variable> fakeVars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] != Variable.State.Used);
+                    List<Variable> origVars = ins.parent.parent.LocalVariables.FindAll(x => x.fake == false && !ins.DeadVariables.Keys.Contains(x));
+                    if (fakeVars.Count > 0 && origVars.Count > 0)
+                        left = (Variable)Randomizer.OneValueFromManySetsWithProbability(new int[2] { 40, 60 }, fakeVars.ToArray(), origVars.ToArray());
+                    else if (fakeVars.Count > 0 && origVars.Count == 0)
+                        left = (Variable)Randomizer.OneFromMany(fakeVars.ToArray());
+                    else if (fakeVars.Count == 0 && origVars.Count > 0)
+                        left = (Variable)Randomizer.OneFromMany(origVars.ToArray());
                     break;
             }
-            if (left != null && ins.parent.Involve != BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly)
-            {
-                if (DataAnalysis.isMainRoute[ins.parent])
-                    return left;
 
-                        /* If we aren't in the main route, then we cannot use NOT_INITIALIZED ones as left value. */
+            if (left == null || DataAnalysis.isMainRoute[ins.parent])
+                return left;
+
+                    /* If we aren't in the main route, then we cannot use NOT_INITIALIZED ones as left value. */
+            else
+            {
+                if (ins.DeadVariables.Keys.Contains(left) && ins.DeadVariables[left] == Variable.State.Not_Initialized)
+                    return Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Filled);
                 else
-                {
-                    if (ins.DeadVariables[left] == Variable.State.Not_Initialized)
-                        return Randomizer.DeadVariable(ins, Variable.State.Free, Variable.State.Filled);
-                    else
-                        return left;
-                }
+                    return left;
             }
-            return left;
+       }
+
+        /// <summary>
+        /// Returns a list of variables from the instruction's DeadVariables list with FREE or FILLED state.
+        /// </summary>
+        /// <param name="ins">The actual instruction.</param>
+        /// <param name="amount">Shows how many right values do we need.</param>
+        /// <returns>A list of proper variables which may hold less variables than needed.</returns>
+        private static List<Variable> GetRandomRightValues(Instruction ins, int amount)
+        {
+            /* First we gather the variables with the proper state. */
+            List<Variable> proper_vars = new List<Variable>();
+            switch (ins.parent.Involve)
+            {
+                case BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly:
+                    proper_vars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] != Variable.State.Not_Initialized);
+                    proper_vars.AddRange(ins.parent.parent.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake));
+                    break;
+                case BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly:
+                    proper_vars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] != Variable.State.Not_Initialized
+                        && x.fake == false);
+                    break;
+                case BasicBlock.InvolveInFakeCodeGeneration.Both:
+                    proper_vars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] != Variable.State.Not_Initialized);
+                    proper_vars.AddRange(ins.parent.parent.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input));
+                    proper_vars = proper_vars.Distinct().ToList();
+                    break;
+            }
+            /* If we have less proper variables than needed: we return as many as we have. */
+            if (proper_vars.Count <= amount)
+                return proper_vars;
+            /* If we have more, then we pick randomly. */
+            else
+                return Randomizer.UniqueSelect<Variable>(proper_vars, amount).ToList();
         }
 
         /// <summary>
@@ -114,16 +147,11 @@ namespace Obfuscator
                 if (GetLeftValueForInstruction(ins) == null)
                     continue;
 
-                /* If a conditional jump cannot be made here, or we didn't choose it, we generate a fake instruction. */
-                int i = Randomizer.SingleNumber(0, 99);
-                if (func.BasicBlocks.Count < 2 || i >= prob_of_cond_jump)
-                {
-                    _GenerateFakeInstruction(ins);
+                _GenerateFakeInstruction(ins);
 
-                    /* If the instruction is made, then we have to refresh the states of the dead variables. */
-                    if (ins.statementType != StatementTypeType.EnumValues.eNoOperation)
-                        ins.RefreshNext();
-                }
+                /* If the instruction is made, then we have to refresh the states of the dead variables. */
+                if (ins.statementType != StatementTypeType.EnumValues.eNoOperation)
+                    ins.RefreshNext();                
             }
 
             /* Now we check for forbidden state collisions at every basic blocks' beginning. */
@@ -132,47 +160,6 @@ namespace Obfuscator
                 if (DataAnalysis.ForbiddenStateCollision(bb.Instructions.First()))
                     throw new ObfuscatorException("Forbidden state collision: FILLED meets NOT_INITIALIZED.");
             }
-        }
-
-        /// <summary>
-        /// Function to change the remaining nop's in the function to conditional jumps.
-        /// </summary>
-        /// <param name="func">The function to work on.</param>
-        public static void GenerateConditionalJumps(Function func)
-        {
-            /* We have to go through all the nop's in the function. */
-            List<Instruction> nops = GetAllNops(func);
-
-            foreach (Instruction ins in nops)
-            {
-                if (func.BasicBlocks.Count < 2)
-                    continue;
-
-                _GenerateConditionalJump(ins);
-            }
-        }
-
-        /// <summary>
-        /// Function to make a Conditional Jump out of a Nop.
-        /// </summary>
-        /// <param name="ins">The nop we want to work on.</param>
-        private static void _GenerateConditionalJump(Instruction ins)
-        {
-            /* 
-             * Before doing anything, we have to split the basic block holding this
-             * instruction, so we can make a conditional jump at the end of the
-             * new basic block, unless it is already the last instruction.
-             */
-            if ( !ins.Equals(ins.parent.Instructions.Last()) )
-                ins.parent.SplitAfterInstruction(ins);
-
-            /* We get a jump target. */
-            BasicBlock jumptarget = new BasicBlock(ins.parent.parent);
-            
-            /* We make a random conditional jump here, which has to be always false. */
-            Randomizer.GenerateConditionalJumpInstruction(ins, Instruction.ConditionType.AlwaysFalse, jumptarget);
-
-            Meshing.ExpandExtraFakeLane(jumptarget, ins.parent.getSuccessors.Last(), true);
         }
 
         /// <summary>
@@ -229,7 +216,7 @@ namespace Obfuscator
                     /* We choose Full Assignment, or rightvalue is the same as leftvalue, or we are in a loop body. */
                     if (DataAnalysis.isLoopBody[ins.parent] || leftvalue.Equals(rightvalues[0]) 
                                                             || statementType == StatementTypeType.EnumValues.eFullAssignment
-                                                            || (ins.parent.Involve != BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly 
+                                                            || (ins.DeadVariables.Keys.Contains(leftvalue) 
                                                             && ins.DeadVariables[leftvalue] == Variable.State.Filled))
                     {
                         /* Here we random generate an operator. */
@@ -282,7 +269,7 @@ namespace Obfuscator
                      * t1 = t2 op t1
                      */
                     if (DataAnalysis.isLoopBody[ins.parent] || statementType == StatementTypeType.EnumValues.eFullAssignment
-                        || (ins.parent.Involve != BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly 
+                        || (ins.DeadVariables.Keys.Contains(leftvalue) 
                         && ins.DeadVariables[leftvalue] == Variable.State.Filled))
                     {
                         /* Here we random generate an operator: + or - */
@@ -292,7 +279,7 @@ namespace Obfuscator
                                                                                         Instruction.ArithmeticOperationType.Subtraction);
 
                         if (DataAnalysis.isLoopBody[ins.parent]
-                            || (ins.parent.Involve != BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly 
+                            || (ins.DeadVariables.Keys.Contains(leftvalue) 
                             && ins.DeadVariables[leftvalue] == Variable.State.Filled))
                             ins.MakeFullAssignment(leftvalue, rightvalues[0], leftvalue, null, op);
 
@@ -312,36 +299,49 @@ namespace Obfuscator
         }
 
         /// <summary>
-        /// Returns a list of variables from the instruction's DeadVariables list with FREE or FILLED state.
+        /// Function to change the remaining nop's in the function to conditional jumps.
         /// </summary>
-        /// <param name="ins">The actual instruction.</param>
-        /// <param name="amount">Shows how many right values do we need.</param>
-        /// <returns>A list of proper variables which may hold less variables than needed.</returns>
-        private static List<Variable> GetRandomRightValues(Instruction ins, int amount)
+        /// <param name="func">The function to work on.</param>
+        public static void GenerateConditionalJumps(Function func)
         {
-            /* First we gather the variables with the proper state. */
-            List<Variable> proper_vars = new List<Variable>();
-            switch(ins.parent.Involve)
+            /* We have to go through all the nop's in the function. */
+            List<Instruction> nops = GetAllNops(func);
+
+            foreach (Instruction ins in nops)
             {
-                case BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly:
-                    proper_vars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] == Variable.State.Free || ins.DeadVariables[x] == Variable.State.Filled);
-                    break;
-                case BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly:
-                    proper_vars = ins.parent.parent.LocalVariables.FindAll(x => (x.fake == false && !ins.DeadVariables.Keys.Contains(x)));
-                    break;
-                case BasicBlock.InvolveInFakeCodeGeneration.Both:
-                    proper_vars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] == Variable.State.Free || ins.DeadVariables[x] == Variable.State.Filled);
-                    proper_vars.Concat(ins.parent.parent.LocalVariables.FindAll(x => x.fake == false && !ins.DeadVariables.Keys.Contains(x)));
-                    break;
+                if (func.BasicBlocks.Count < 2)
+                    continue;
+
+                int i = Randomizer.SingleNumber(0, 99);
+                if (ins.parent.CondJumpsCreatable == true && i <= Common.prob_of_cond_jump)
+                {
+                    _GenerateConditionalJump(ins);
+                }
             }
-            /* If we have less proper variables than needed: we return as many as we have. */
-            if (proper_vars.Count <= amount)
-                return proper_vars;
-            /* If we have more, then we pick randomly. */
-            else
-                return Randomizer.UniqueSelect<Variable>(proper_vars, amount).ToList();
         }
 
+        /// <summary>
+        /// Function to make a Conditional Jump out of a Nop.
+        /// </summary>
+        /// <param name="ins">The nop we want to work on.</param>
+        private static void _GenerateConditionalJump(Instruction ins)
+        {
+            /* 
+             * Before doing anything, we have to split the basic block holding this
+             * instruction, so we can make a conditional jump at the end of the
+             * new basic block, unless it is already the last instruction.
+             */
+            if (!ins.Equals(ins.parent.Instructions.Last()))
+                ins.parent.SplitAfterInstruction(ins);
+
+            /* We get a jump target. */
+            BasicBlock jumptarget = new BasicBlock(ins.parent.parent);
+
+            /* We make a random conditional jump here, which has to be always false. */
+            Randomizer.GenerateConditionalJumpInstruction(ins, Instruction.ConditionType.AlwaysFalse, jumptarget);
+
+            Meshing.ExpandExtraFakeLane(jumptarget, ins.parent.getSuccessors.Last(), true);
+        }
 
         /// <summary>
         /// Fills each basic block of a function by  NoOperation instructions (according to FPO)

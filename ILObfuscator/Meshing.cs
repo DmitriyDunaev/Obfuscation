@@ -49,7 +49,9 @@ namespace Obfuscator
                 {
                     BasicBlock mainRouteBB = bb.getSuccessors.First();
                     BasicBlock fake = new BasicBlock(bb.parent);
+                    fake.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
                     BasicBlock extraFake = new BasicBlock(bb.parent);
+                    extraFake.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
                     extraFake.dead = true;
                     bb.LinkToSuccessor(fake, true);
                     Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, extraFake);
@@ -127,6 +129,7 @@ namespace Obfuscator
 
             //Creating fake2 to hold the true lane for the conditional jump
             BasicBlock fake2 = new BasicBlock(fake1.parent);
+            fake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
 
             //Creating the fake1 conditional jump
             Variable var = originalInstruction.GetVarFromCondition();
@@ -145,10 +148,12 @@ namespace Obfuscator
             // Creating a new basic block
             BasicBlock fake1 = new BasicBlock(bb.parent);
             fake1.Instructions.Add(new Instruction(fake1));
+            fake1.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
 
             // Creating the second fake block
             BasicBlock fake2 = new BasicBlock(bb.parent);
             fake2.Instructions.Add(new Instruction(fake2));
+            fake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
 
             // Starting the linking
             fake1.Instructions.Last().MakeUnconditionalJump(fake2);
@@ -185,11 +190,12 @@ namespace Obfuscator
         {
             //Creating extraFake2 to hold the next Loop condition
             BasicBlock extraFake2 = new BasicBlock(extraFake1.parent);
+            extraFake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
             extraFake2.dead = true;
 
             //Creating extraFake3 to hold the extra fake code in case of No-Loop
             BasicBlock extraFake3 = new BasicBlock(extraFake1.parent);
-            extraFake3.Involve = BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly;
+            extraFake3.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
             extraFake3.dead = true;
 
             //Creating the extraFake3 unconditional jump back to the Main Lane
@@ -200,7 +206,7 @@ namespace Obfuscator
 
             //Creating extraFake4 to hold the extra fake code in case of No-Loop
             BasicBlock extraFake4 = new BasicBlock(extraFake1.parent);
-            extraFake4.Involve = BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly;
+            extraFake4.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
             extraFake4.dead = true;
 
             //Creating the extraFake4 unconditional jump back to the Main Lane
@@ -352,6 +358,8 @@ namespace Obfuscator
             //in order to make the CFG irreducible
             if (atFakeCodeGeneration)
             {
+                extraFake3.CondJumpsCreatable = false;
+                extraFake4.CondJumpsCreatable = false;
                 reacheableBasicBlocks = reacheableBasicBlocks.FindAll(x => DataAnalysis.isLoopBody.Keys.Contains(x) 
                     && DataAnalysis.isLoopBody[x] == true);
             }
