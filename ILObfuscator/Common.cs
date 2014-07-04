@@ -48,15 +48,15 @@ namespace Obfuscator
         /// <summary>
         /// Number of fake instructions to be generated per single original 
         /// </summary>
-        public static int FPO = 1;
+        public static int FPO = 5;
         /// <summary>
         /// Minimal number of instructions in a basic block
         /// </summary>
-        public static int FakePadding = 1;
+        public static int FakePadding = 20;
         /// <summary>
         /// Variability of fake_padding
         /// </summary>
-        public static int FakePaddingVariance = 1;
+        public static int FakePaddingVariance = 5;
         /// <summary>
         /// Describes the probability of generating a conditional jump in percents.
         /// </summary>
@@ -67,7 +67,7 @@ namespace Obfuscator
         /// <summary>
         /// Number of the fake conditions that are generated in the conditional meshing algorithm
         /// </summary>
-        public static int ConditionalJumpRadius = 2;
+        public static int ConditionalJumpRadius = 5;
         /// <summary>
         /// The enumeration for the chances of the jump generation
         /// </summary>
@@ -88,7 +88,7 @@ namespace Obfuscator
         /// <summary>
         /// Maximal range between the numbers used to define Loop conditional jumps
         /// </summary>
-        public static int LoopConditionalJumpMaxRange = 1;
+        public static int LoopConditionalJumpMaxRange = 10;
         
 
         // **** Common Methods ****

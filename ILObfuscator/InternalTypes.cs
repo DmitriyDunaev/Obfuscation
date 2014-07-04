@@ -120,7 +120,6 @@ namespace Internal
         public Function parent { get; private set; }
         public bool dead = false;
         public InvolveInFakeCodeGeneration Involve = InvolveInFakeCodeGeneration.FakeVariablesOnly;
-        public bool CondJumpsCreatable = true;
 
         private List<string> RefPredecessors = new List<string>();
         private List<string> RefSuccessors = new List<string>();

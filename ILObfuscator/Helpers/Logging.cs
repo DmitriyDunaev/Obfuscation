@@ -38,8 +38,7 @@ namespace Obfuscator
                 sb.AppendLine("digraph{");
                 foreach (BasicBlock bb in func.BasicBlocks)
                 {
-                    basicBlockID = string.Concat("\"", string.Concat(bb.ID.ToString().Substring(bb.ID.ToString().IndexOf('_') + 1, 8), "\""));
-                    
+                    basicBlockID = string.Join("","\"", bb.ID.ToString().Substring(bb.ID.ToString().IndexOf('_') + 1, 8), "\"");
                     //Defining the attributes for the actual basic block
                     if (!basicBlocksCFG_Attributes.ContainsKey(bb))
                     {
@@ -63,8 +62,6 @@ namespace Obfuscator
                                     break;
                             }
                         }
-                        //else if (bb.Involve == BasicBlock.InvolveInFakeCodeGeneration.Both)
-                        //    bbAttribute = string.Concat(basicBlockID, " [ fillcolor=red, style=filled ];");
                         else
                         {
                             switch (obfuscationPoint)
@@ -82,7 +79,7 @@ namespace Obfuscator
                                     bbAttribute = string.Concat(basicBlockID, " [ fillcolor=gray33, style=filled ];");
                                     break;
                             }
-                        }
+                        }                            
                         basicBlocksCFG_Attributes.Add(bb, bbAttribute);
                     }
                     else
@@ -97,7 +94,7 @@ namespace Obfuscator
                     //Creating the edges
                     foreach (BasicBlock successor in bb.getSuccessors)
                     {
-                        successorID = string.Concat("\"", string.Concat(successor.ID.ToString().Substring(successor.ID.ToString().IndexOf('_') + 1, 8), "\""));
+                        successorID = string.Join("","\"", successor.ID.ToString().Substring(successor.ID.ToString().IndexOf('_') + 1, 8), "\"");                        
                         if (bb.getSuccessors.Count > 1)
                         {
                             variableID = bb.Instructions.Last().GetVarFromCondition().ID.Substring(0, 6);
@@ -123,14 +120,12 @@ namespace Obfuscator
                                     break;
                             }
                             if (successor == bb.getSuccessors.First())
-                                edgeAttributes = string.Concat("[label=\"",string.Concat(variableID,string.Concat(relOperator,
-                                    string.Concat(bb.Instructions.Last().GetConstFromCondition().ToString(),"\"]"))));
+                                edgeAttributes = string.Join("","[label=\"",variableID,relOperator,
+                                    bb.Instructions.Last().GetConstFromCondition().ToString(),"\"]");
                             else
-                                edgeAttributes = "[label=\"false\"]";
+                                edgeAttributes = string.Join("","[label=\"false\"]");
                         }
-                        sb.AppendLine(string.Concat(basicBlockID,string.Concat(" -> ",string.Concat(successorID,string.Concat(
-                            edgeAttributes,";")))));
-                        edgeAttributes = string.Empty;
+                        sb.AppendLine(string.Join(" ",basicBlockID,"->",successorID,edgeAttributes,";"));
                     }
                     sb.AppendLine(basicBlocksCFG_Attributes[bb]);
                 }

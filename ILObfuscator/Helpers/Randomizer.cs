@@ -70,7 +70,7 @@ namespace Obfuscator
             do
             {
                 block_num = SingleNumber(0, func.BasicBlocks.Count - 1);
-            } while (func.BasicBlocks[block_num].getSuccessors.Count == 0);
+            } while (func.BasicBlocks[block_num].getSuccessors.Count == 0 || func.BasicBlocks[block_num].getPredecessors.Count == 0);
             return func.BasicBlocks[block_num];
         }
 

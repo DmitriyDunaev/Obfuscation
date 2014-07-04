@@ -101,22 +101,10 @@ namespace Obfuscator
         {
             /* First we gather the variables with the proper state. */
             List<Variable> proper_vars = new List<Variable>();
-            switch (ins.parent.Involve)
-            {
-                case BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly:
-                    proper_vars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] != Variable.State.Not_Initialized);
-                    proper_vars.AddRange(ins.parent.parent.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake));
-                    break;
-                case BasicBlock.InvolveInFakeCodeGeneration.OriginalVariablesOnly:
-                    proper_vars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] != Variable.State.Not_Initialized
-                        && x.fake == false);
-                    break;
-                case BasicBlock.InvolveInFakeCodeGeneration.Both:
-                    proper_vars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] != Variable.State.Not_Initialized);
-                    proper_vars.AddRange(ins.parent.parent.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input));
-                    proper_vars = proper_vars.Distinct().ToList();
-                    break;
-            }
+            proper_vars = ins.DeadVariables.Keys.ToList().FindAll(x => ins.DeadVariables[x] != Variable.State.Not_Initialized);
+            proper_vars.AddRange(ins.parent.parent.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input));
+            proper_vars = proper_vars.Distinct().ToList();
+                    
             /* If we have less proper variables than needed: we return as many as we have. */
             if (proper_vars.Count <= amount)
                 return proper_vars;
@@ -162,6 +150,9 @@ namespace Obfuscator
                 if (DataAnalysis.ForbiddenStateCollision(bb.Instructions.First()))
                     throw new ObfuscatorException("Forbidden state collision: FILLED meets NOT_INITIALIZED.");
             }
+
+            if (GetAllNops(func).Count > 0)
+                throw new ObfuscatorException("Lack of available dead variables");
         }
 
         /// <summary>
@@ -315,7 +306,7 @@ namespace Obfuscator
                     continue;
 
                 int i = Randomizer.SingleNumber(0, 99);
-                if (ins.parent.CondJumpsCreatable == true && i <= Common.prob_of_cond_jump)
+                if (i <= Common.prob_of_cond_jump)
                 {
                     _GenerateConditionalJump(ins);
                 }
@@ -336,10 +327,11 @@ namespace Obfuscator
             if (!ins.Equals(ins.parent.Instructions.Last()))
                 ins.parent.SplitAfterInstruction(ins);
 
-            /* We get a jump target. */
+            
+            // We get a jump target.
             BasicBlock jumptarget = new BasicBlock(ins.parent.parent);
 
-            /* We make a random conditional jump here, which has to be always false. */
+            // We make a random conditional jump here, which has to be always false.
             Randomizer.GenerateConditionalJumpInstruction(ins, Instruction.ConditionType.AlwaysFalse, jumptarget);
 
             Meshing.ExpandExtraFakeLane(jumptarget, ins.parent.getSuccessors.Last(), true);

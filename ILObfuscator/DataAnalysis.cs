@@ -43,7 +43,10 @@ namespace Obfuscator
         private static void recursive(BasicBlock actual, Common.Direction direction)
         {
             DoneIDs.Add(actual.ID);
-            ReachableBasicBlocks.Add(actual);            
+            //If it's not the last or the first basic block, then we add then to the list
+            //Both had to be out of the list to avoid problems during data analysis
+            if (actual.getPredecessors.Count > 0 && actual.getSuccessors.Count > 0)
+                ReachableBasicBlocks.Add(actual);            
 
             List<BasicBlock> bblist = (direction == Common.Direction.Up) ? actual.getPredecessors : actual.getSuccessors;
             foreach (BasicBlock block in bblist)
@@ -273,8 +276,8 @@ namespace Obfuscator
                              *  If it's an input parameter we don't use it as NOT_INITIALIZED,
                              *  and if it's a fake input parameter we don't use it at all.
                              */
-                            if (var.kind != Variable.Kind.Input || (!var.fake && state != Variable.State.Not_Initialized))
-                                inst.DeadVariables.Add(var, state);        
+                            if (var.kind != Variable.Kind.Input|| (!var.fake && state != Variable.State.Not_Initialized))
+                                inst.DeadVariables.Add(var, state);
                         }
                     }
                 }
