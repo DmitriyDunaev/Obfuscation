@@ -281,9 +281,9 @@ namespace Obfuscator
                     {
                          sb_instructions.AppendLine(ReadableBBLabels[bb.ID] + ":");
                     }
-                    bb.Instructions.ForEach(x => sb_instructions.AppendLine("\t" + x.TACtext));
+                    bb.Instructions.ForEach(x => sb_instructions.AppendLine("\t" + x.TACtext + " | " + x.DeadVariables.Count));
                     prev = bb;
-                }
+                }                
 
                 ReadableVariables.Keys.ToList().ForEach(x => sb_instructions.Replace(x, ReadableVariables[x]));
                 ReadableBBLabels.Keys.ToList().ForEach(x => sb_instructions.Replace(x, ReadableBBLabels[x]));

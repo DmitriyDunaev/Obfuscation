@@ -69,8 +69,8 @@ namespace Obfuscator
                     List<Variable> origVars = ins.parent.parent.LocalVariables.FindAll(x => x.fake == false && !ins.DeadVariables.Keys.Contains(x));
                     if (fakeVars.Count > 0 && origVars.Count > 0)
                         left = (Variable)Randomizer.OneValueFromManySetsWithProbability(new int[2] { 40, 60 },
-                            ((System.Collections.IEnumerable)fakeVars).Cast<Variable>(),
-                            ((System.Collections.IEnumerable)origVars).Cast<Variable>());
+                            ((System.Collections.IEnumerable)fakeVars).Cast<Object>(),
+                            ((System.Collections.IEnumerable)origVars).Cast<Object>());
                     else if (fakeVars.Count > 0 && origVars.Count == 0)
                         left = (Variable)Randomizer.OneFromMany(fakeVars.ToArray());
                     else if (fakeVars.Count == 0 && origVars.Count > 0)
