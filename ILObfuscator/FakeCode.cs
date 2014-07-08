@@ -69,8 +69,8 @@ namespace Obfuscator
                     List<Variable> origVars = ins.parent.parent.LocalVariables.FindAll(x => x.fake == false && !ins.DeadVariables.Keys.Contains(x));
                     if (fakeVars.Count > 0 && origVars.Count > 0)
                         left = (Variable)Randomizer.OneValueFromManySetsWithProbability(new int[2] { 40, 60 },
-                            ((System.Collections.IEnumerable)fakeVars).Cast<Object>(),
-                            ((System.Collections.IEnumerable)origVars).Cast<Object>());
+                            fakeVars,
+                            origVars);
                     else if (fakeVars.Count > 0 && origVars.Count == 0)
                         left = (Variable)Randomizer.OneFromMany(fakeVars.ToArray());
                     else if (fakeVars.Count == 0 && origVars.Count > 0)
@@ -151,8 +151,9 @@ namespace Obfuscator
                     throw new ObfuscatorException("Forbidden state collision: FILLED meets NOT_INITIALIZED.");
             }
 
+            //Checking whether we have nops left
             if (GetAllNops(func).Count > 0)
-                throw new ObfuscatorException("Lack of available dead variables");
+                throw new ObfuscatorException("Lack of available dead variables.");
         }
 
         /// <summary>
@@ -305,8 +306,8 @@ namespace Obfuscator
                 if (func.BasicBlocks.Count < 2)
                     continue;
 
-                int i = Randomizer.SingleNumber(0, 99);
-                if (i <= Common.prob_of_cond_jump)
+                int i = Randomizer.SingleNumber(0, 100);
+                if (i <= Common.ConditionalJumpProbability)
                 {
                     _GenerateConditionalJump(ins);
                 }
@@ -328,13 +329,14 @@ namespace Obfuscator
                 ins.parent.SplitAfterInstruction(ins);
 
             
-            // We get a jump target.
+            // We create a jump target.
             BasicBlock jumptarget = new BasicBlock(ins.parent.parent);
 
             // We make a random conditional jump here, which has to be always false.
             Randomizer.GenerateConditionalJumpInstruction(ins, Instruction.ConditionType.AlwaysFalse, jumptarget);
 
-            Meshing.ExpandExtraFakeLane(jumptarget, ins.parent.getSuccessors.Last(), true);
+            //We expand the Fake Route as we did during meshing
+            Meshing.ExpandFakeRoute(jumptarget, ins.parent.getSuccessors.Last(), true);
         }
 
         /// <summary>

@@ -47,16 +47,26 @@ namespace Obfuscator
                 List<BasicBlock> basicblocks = funct.BasicBlocks.FindAll(x => x.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump);
                 foreach (BasicBlock bb in basicblocks)
                 {
-                    BasicBlock mainRouteBB = bb.getSuccessors.First();
-                    BasicBlock fake = new BasicBlock(bb.parent);
-                    fake.Involve = BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly;
-                    BasicBlock extraFake = new BasicBlock(bb.parent);
-                    extraFake.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
-                    extraFake.dead = true;
-                    bb.LinkToSuccessor(fake, true);
-                    Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, extraFake);
-                    ExpandFakeLane(fake, mainRouteBB, false);
-                    ExpandExtraFakeLane(extraFake, mainRouteBB, false);
+                    int i = Randomizer.SingleNumber(0, 100);
+                    if (i <= Common.UnconditionalMeshingProbability)
+                    {
+                        BasicBlock mainRouteBB = bb.getSuccessors.First();
+                        BasicBlock falseLane = new BasicBlock(bb.parent);
+                        //The false lane involves fake variables only in other to provided the correct output
+                        falseLane.Involve = BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly;
+                        falseLane.Meshable = false;
+                        BasicBlock trueLane = new BasicBlock(bb.parent);
+                        //The true lane involves both fake and original variables in other to provided the wrong output
+                        trueLane.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
+                        trueLane.Meshable = false;
+                        trueLane.dead = true;
+                        //Linking first the false lane
+                        bb.LinkToSuccessor(falseLane, true);
+                        //Creating the jump to the true lane
+                        Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, trueLane);
+                        ExpandMainRoute(falseLane, mainRouteBB, false);
+                        ExpandFakeRoute(trueLane, mainRouteBB, false);
+                    }
                 }
             }
         }
@@ -74,18 +84,28 @@ namespace Obfuscator
                                                                             x.Instructions.Last().RefVariables.Count() == 1);
                 foreach (BasicBlock bb in basicblocks)
                 {
-                    InsertConditionals(bb);
+                    //We perform the conditonal meshing if
+                    //1) we have DoubleMeshing
+                    //2) we don't have DoubleMeshing but the basic block is meshable (only original basic blocks)
+                    if (Common.DoubleMeshing || (Common.DoubleMeshing == false && bb.Meshable))
+                    {
+                        int i = Randomizer.SingleNumber(0, 100);
+                        if (i <= Common.ConditionalMeshingProbability)
+                        {
+                            InsertConditionals(bb);
+                        }
+                    }
                 }
             }            
         }
 
         /// <summary>
-        /// Expands the fake lane into the CFT and creates the conditional jumps for both Main Routa and Extra Fake code
+        /// Expands the Main Route into the CFT, creating the conditional jump for both Main Route and Fake Route
         /// </summary>
-        /// <param name="fake1">The first basic block of the Fake Lane</param>
-        /// <param name="mainLaneBB">The basic block we should go to be back in the Main Route</param>
+        /// <param name="fake1">The first fake basic block to be used in the expansion</param>
+        /// <param name="mainLaneBB">The original basic block we should jump to stay in the Main Route</param>
         /// <param name="atFakeCodeGeneration">Wheter we are or not at the fake code generation phase</param>
-        private static void ExpandFakeLane(BasicBlock fake1, BasicBlock mainRouteBB, bool atFakeCodeGeneration)
+        private static void ExpandMainRoute(BasicBlock fake1, BasicBlock mainRouteBB, bool atFakeCodeGeneration)
         {
             //Fetching the Conditional Jump (AlwaysFalse) created in the previous basic block
             Instruction originalInstruction = fake1.getPredecessors.First().Instructions.Last();
@@ -124,34 +144,36 @@ namespace Obfuscator
                                                                             Instruction.RelationalOperationType.GreaterOrEquals);
             }
 
-            //Creating the false lane for the conditional jump that goes back to the Main Route
-            fake1.LinkToSuccessor(ExpandFakeLane(fake1, mainRouteBB), true);
+            //Creating and expanding the false lane that stays in the Main Route
+            fake1.LinkToSuccessor(ExpandMainRoute(mainRouteBB), true);
 
             //Creating fake2 to hold the true lane for the conditional jump
             BasicBlock fake2 = new BasicBlock(fake1.parent);
-            fake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly;
+            fake2.Meshable = false;
+            fake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
 
-            //Creating the fake1 conditional jump
+            //Creating the conditional jump (always false) to fake route
             Variable var = originalInstruction.GetVarFromCondition();
             fake1.Instructions.Last().MakeConditionalJump(var, rightValue, relationalOperation, fake2);
-            //Expanding the extra fake lane
-            ExpandExtraFakeLane(fake2, mainRouteBB, atFakeCodeGeneration);            
+            //Expanding the fake route
+            ExpandFakeRoute(fake2, mainRouteBB, atFakeCodeGeneration);            
         }
 
         /// <summary>
-        /// Expands the fake lane into the CFT that goes back to the Main Route
+        /// Expands the Main Route into the CFT, inserting "FakeVariablesOnly" basic blocks with and random conditional jump
+        /// between them
         /// </summary>
-        /// <param name="bb">The actual basic block that will hold the conditional jump</param>
-        /// <param name="originaltarget">The basic block we should go to be back in the Main Route</param>
-        private static BasicBlock ExpandFakeLane(BasicBlock bb, BasicBlock originaltarget)
+        /// <param name="originaltarget">The basic block we should go to stay in the Main Route</param>
+        private static BasicBlock ExpandMainRoute(BasicBlock originaltarget)
         {
             // Creating a new basic block
-            BasicBlock fake1 = new BasicBlock(bb.parent);
+            BasicBlock fake1 = new BasicBlock(originaltarget.parent);
             fake1.Instructions.Add(new Instruction(fake1));
+            fake1.Meshable = false;
             fake1.Involve = BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly;
 
             // Creating the second fake block
-            BasicBlock fake2 = new BasicBlock(bb.parent);
+            BasicBlock fake2 = new BasicBlock(originaltarget.parent);
             fake2.Instructions.Add(new Instruction(fake2));
             fake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly;
 
@@ -174,58 +196,57 @@ namespace Obfuscator
             // And then converting its nop instruction into a ConditionalJump
             Randomizer.GenerateConditionalJumpInstruction(fake1.Instructions.Last(), Instruction.ConditionType.Random, originaltarget);
 
-            //bb.LinkToSuccessor(fake1, true);
-            //bb.parent.Validate();
             return fake1;
 
         }
 
         /// <summary>
-        /// Expands the extra fake lane into the CFT and creates the conditional jumps for both Loop and Extra Fake code
+        /// Expands the fake route into the CFT and creates the conditional jumps for both Loop and Fake code
         /// </summary>
-        /// <param name="extraFake1">The first basic block of the Extra Fake Lane</param>
+        /// <param name="fake1">The first fake basic block to be used in the expansion</param>
         /// <param name="mainLaneBB">The basic block we should go in case of no-loop</param>
         /// <param name="atFakeCodeGeneration">Wheter we are or not at the fake code generation phase</param>
-        public static void ExpandExtraFakeLane(BasicBlock extraFake1, BasicBlock mainRouteBB, bool atFakeJumpGeneration)
+        public static void ExpandFakeRoute(BasicBlock fake1, BasicBlock mainRouteBB, bool atFakeJumpGeneration)
         {
-            //Creating extraFake2 to hold the next Loop condition
-            BasicBlock extraFake2 = new BasicBlock(extraFake1.parent);
-            extraFake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
-            extraFake2.dead = true;
+            //Creating fake2 to hold the next Loop condition
+            BasicBlock fake2 = new BasicBlock(fake1.parent);
+            fake2.Meshable = false;
+            fake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
+            fake2.dead = true;
 
-            //Creating extraFake3 to hold the extra fake code in case of No-Loop
-            BasicBlock extraFake3 = new BasicBlock(extraFake1.parent);
-            extraFake3.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
-            extraFake3.dead = true;
+            //Creating fake3 to hold the extra fake code in case of No-Loop
+            BasicBlock fake3 = new BasicBlock(fake1.parent);
+            fake3.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
+            fake3.dead = true;
 
-            //Creating the extraFake3 unconditional jump back to the Main Lane
-            extraFake3.Instructions.Last().MakeUnconditionalJump(mainRouteBB);
+            //Creating the fake3 unconditional jump back to the Main Lane
+            fake3.Instructions.Last().MakeUnconditionalJump(mainRouteBB);
 
-            //Linking extraFake3 to extraFake2
-            extraFake2.LinkToSuccessor(extraFake3);
+            //Linking fake3 to fake2
+            fake2.LinkToSuccessor(fake3);
 
-            //Creating extraFake4 to hold the extra fake code in case of No-Loop
-            BasicBlock extraFake4 = new BasicBlock(extraFake1.parent);
-            extraFake4.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
-            extraFake4.dead = true;
+            //Creating fake4 to hold the extra fake code in case of No-Loop
+            BasicBlock fake4 = new BasicBlock(fake1.parent);
+            fake4.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
+            fake4.dead = true;
 
-            //Creating the extraFake4 unconditional jump back to the Main Lane
-            extraFake4.Instructions.Last().MakeUnconditionalJump(mainRouteBB);
+            //Creating the fake4 unconditional jump back to the Main Lane
+            fake4.Instructions.Last().MakeUnconditionalJump(mainRouteBB);
 
-            //Linking extraFake4 to extraFake1
-            extraFake1.LinkToSuccessor(extraFake4);
+            //Linking fake4 to fake1
+            fake1.LinkToSuccessor(fake4);
 
             //Fetching the Conditional Jump (AlwaysFalse) created in the previous basic block
-            Instruction originalInstruction = extraFake1.getPredecessors.First().Instructions.Last();
+            Instruction originalInstruction = fake1.getPredecessors.First().Instructions.Last();
 
-            //Defining the relational operator for the extraFake1 conditional jump
+            //Defining the relational operator for the fake1 conditional jump
             Instruction.RelationalOperationType relationalOperationEF1 = (Instruction.RelationalOperationType)
                                                         Randomizer.OneFromMany(Instruction.RelationalOperationType.Smaller,
                                                                             Instruction.RelationalOperationType.SmallerOrEquals,
                                                                             Instruction.RelationalOperationType.Greater,
                                                                             Instruction.RelationalOperationType.GreaterOrEquals);
 
-            //Defining the constant for the extraFake1 conditional jump
+            //Defining the constant for the fake1 conditional jump
             int rightValueEF1 = 0;
             if (originalInstruction.GetConstFromCondition() >= originalInstruction.GetVarFromCondition().fixedMax.Value)
             {
@@ -249,11 +270,11 @@ namespace Obfuscator
                 } while (rightValueEF1 == (int)originalInstruction.GetConstFromCondition() &&
                  (int)originalInstruction.GetConstFromCondition() != Common.GlobalMinValue + Common.LoopConditionalJumpMaxRange);
             }
-            //Creating the extraFake1 conditional jump
+            //Creating the fake1 conditional jump
             Variable var = originalInstruction.GetVarFromCondition();
-            extraFake1.Instructions.Last().MakeConditionalJump(var, rightValueEF1, relationalOperationEF1, extraFake2);
+            fake1.Instructions.Last().MakeConditionalJump(var, rightValueEF1, relationalOperationEF1, fake2);
 
-            //Defining the range for the extraFake2 conditional jump constant
+            //Defining the range for the fake2 conditional jump constant
             int range = Randomizer.SingleNumber(0, Common.LoopConditionalJumpMaxRange);
 
             //Defining relational operation for the extraFake2 conditional jump based on the extraFake1 condtional jump relational operation and the range
@@ -290,7 +311,7 @@ namespace Obfuscator
                     break;
             }
 
-            //Defining the constant for the extraFake2 conditional jump
+            //Defining the constant for the fake2 conditional jump
             int rightValueEF2 = 0;
             if (rightValueEF1 == Common.GlobalMinValue || rightValueEF1 == Common.GlobalMaxValue)
                 rightValueEF2 = rightValueEF1;
@@ -352,8 +373,8 @@ namespace Obfuscator
                 }
             }
 
-            //Selecting the target for extraFake2 in order to create a loop
-            List<BasicBlock> reacheableBasicBlocks = DataAnalysis.GetReachableBasicBlocks(extraFake2, Common.Direction.Up);
+            //Selecting the target for fake2 in order to create a loop
+            List<BasicBlock> reacheableBasicBlocks = DataAnalysis.GetReachableBasicBlocks(fake2, Common.Direction.Up);
             //In case we are at fake jump generation, we should try to choose reachable basic blocks in a loop body
             //in order to make the CFG irreducible
             if (atFakeJumpGeneration)
@@ -363,13 +384,19 @@ namespace Obfuscator
                 //If we have reachable basic blocks in a loop body, we use them
                 if (loopReachableBasicBlocks.Count > 0)
                     reacheableBasicBlocks = loopReachableBasicBlocks;
+                else                
+                    //If we don't have reachable basic blocks in a loop body, we check whether the amount of reachable
+                    //basic blocks we have is greater than MaxJumpForLoop. This parameter is used to control the chance
+                    //of problems ("nops" left in the end) during fake instructions generation.
+                    if (Common.MaxJumpBackForLoop > 0 && reacheableBasicBlocks.Count > Common.MaxJumpBackForLoop)
+                        reacheableBasicBlocks.RemoveRange(Common.MaxJumpBackForLoop, reacheableBasicBlocks.Count - Common.MaxJumpBackForLoop);
             }
             
             //Defining the target basic block for the conditional jump
             BasicBlock loopTarget = (BasicBlock) Randomizer.OneFromMany(reacheableBasicBlocks.ToArray());
 
-            //Creating the extraFake2 conditional jump to the loop target
-            extraFake2.Instructions.Last().MakeConditionalJump(var, rightValueEF2, relationalOperationEF2, loopTarget);
+            //Creating the fake2 conditional jump to the loop target
+            fake2.Instructions.Last().MakeConditionalJump(var, rightValueEF2, relationalOperationEF2, loopTarget);
         }
 
         /// <summary>
@@ -702,8 +729,10 @@ namespace Obfuscator
 
                 returnlist.Add(new Cond(originalconstant + i, originalrelop, originalconstant));
 
-                if (i > 0) i++;
-                else if (i < -1) i--;
+                if (i > 0) 
+                    i++;
+                else if (i < -1) 
+                    i--;
                 i *= -1;
             }
             returnlist.Shuffle<Cond>();

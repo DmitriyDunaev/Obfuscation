@@ -62,17 +62,17 @@ namespace Obfuscator
         /// </summary>
         /// <param name="func">A parent function</param>
         /// <returns>Random basic block</returns>
-        public static BasicBlock JumpableBasicBlock(Function func)
-        {
-            if (func.BasicBlocks.Count < 2)
-                throw new RandomizerException("Function has no jumpable basic blocks.");
-            int block_num = 0;
-            do
-            {
-                block_num = SingleNumber(0, func.BasicBlocks.Count - 1);
-            } while (func.BasicBlocks[block_num].getSuccessors.Count == 0 || func.BasicBlocks[block_num].getPredecessors.Count == 0);
-            return func.BasicBlocks[block_num];
-        }
+        //public static BasicBlock JumpableBasicBlock(Function func)
+        //{
+        //    if (func.BasicBlocks.Count < 2)
+        //        throw new RandomizerException("Function has no jumpable basic blocks.");
+        //    int block_num = 0;
+        //    do
+        //    {
+        //        block_num = SingleNumber(0, func.BasicBlocks.Count - 1);
+        //    } while (func.BasicBlocks[block_num].getSuccessors.Count == 0 || func.BasicBlocks[block_num].getPredecessors.Count == 0);
+        //    return func.BasicBlocks[block_num];
+        //}
 
 
         /// <summary>
@@ -252,21 +252,17 @@ namespace Obfuscator
                 {
                     case Instruction.ConditionType.AlwaysTrue:
                         relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Greater,
-                                                                                    Instruction.RelationalOperationType.GreaterOrEquals,
-                                                                                    Instruction.RelationalOperationType.NotEquals);
+                                                                                    Instruction.RelationalOperationType.GreaterOrEquals);
                         break;
                     case Instruction.ConditionType.AlwaysFalse:
                         relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Smaller,
-                                                                                    Instruction.RelationalOperationType.SmallerOrEquals,
-                                                                                    Instruction.RelationalOperationType.Equals);
+                                                                                    Instruction.RelationalOperationType.SmallerOrEquals);
                         break;
                     case Instruction.ConditionType.Random:
                         relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Smaller,
                                                                                     Instruction.RelationalOperationType.SmallerOrEquals,
-                                                                                    Instruction.RelationalOperationType.Equals,
                                                                                     Instruction.RelationalOperationType.Greater,
-                                                                                    Instruction.RelationalOperationType.GreaterOrEquals,
-                                                                                    Instruction.RelationalOperationType.NotEquals);
+                                                                                    Instruction.RelationalOperationType.GreaterOrEquals);
                         break;
                     default:
                         throw new RandomizerException("Unrecognized condition type.");
@@ -280,21 +276,17 @@ namespace Obfuscator
                 {
                     case Instruction.ConditionType.AlwaysTrue:
                         relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Smaller,
-                                                                                    Instruction.RelationalOperationType.SmallerOrEquals,
-                                                                                    Instruction.RelationalOperationType.NotEquals);
+                                                                                    Instruction.RelationalOperationType.SmallerOrEquals);
                         break;
                     case Instruction.ConditionType.AlwaysFalse:
                         relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Greater,
-                                                                                    Instruction.RelationalOperationType.GreaterOrEquals,
-                                                                                    Instruction.RelationalOperationType.Equals);
+                                                                                    Instruction.RelationalOperationType.GreaterOrEquals);
                         break;
                     case Instruction.ConditionType.Random:
                         relop = (Instruction.RelationalOperationType)OneFromMany(Instruction.RelationalOperationType.Smaller,
                                                                                     Instruction.RelationalOperationType.SmallerOrEquals,
-                                                                                    Instruction.RelationalOperationType.Equals,
                                                                                     Instruction.RelationalOperationType.Greater,
-                                                                                    Instruction.RelationalOperationType.GreaterOrEquals,
-                                                                                    Instruction.RelationalOperationType.NotEquals);
+                                                                                    Instruction.RelationalOperationType.GreaterOrEquals);
                         break;
                     default:
                         throw new RandomizerException("Unrecognized condition type.");

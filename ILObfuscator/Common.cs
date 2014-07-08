@@ -14,7 +14,7 @@ namespace Obfuscator
         /// <summary>
         /// Determines the maximal number of retrys, before the user is asked.
         /// </summary>
-        public static int MaxNumberOfRuns = 10;
+        public static int MaxNumberOfRuns = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["MaxNumberOfRuns"]);
         
         /// <summary>
         /// Memory region sizes for supported types
@@ -30,44 +30,73 @@ namespace Obfuscator
         /// <summary>
         /// Number of fake input parameters to generate
         /// </summary>
-        public static int NumFakeInputParam = 1;
+        public static int NumFakeInputParam = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["NumFakeInputParam"]);
+        /// <summary>
+        /// Whether to push random VALID parameters or leave it to the user (Used for testing)
+        /// </summary>
+        public static bool RandomPushValues = Convert.ToBoolean(System.Configuration.ConfigurationSettings.AppSettings["RandomPushValues"]);
 
-        public static bool RandomPushValues = false;
+        // **** Meshing Parameters Section ****
+        /// <summary>
+        /// Whether to apply conditional meshing in fake conditional jumps
+        /// </summary>             
+        public static bool DoubleMeshing = Convert.ToBoolean(System.Configuration.ConfigurationSettings.AppSettings["DoubleMeshing"]);
+        /// <summary>
+        /// Probability of unconditional meshing in percents
+        /// </summary>
+        public static int UnconditionalMeshingProbability = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["UnconditionalMeshingProbability"]);
+        /// <summary>
+        /// Probability of conditional meshing in percents
+        /// </summary>
+        public static int ConditionalMeshingProbability = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["ConditionalMeshingProbability"]);
 
 
         // **** Fake Code Generation Section ****
-        
+
         /// <summary>
         /// Maximal number used in fake code generation (e.g. in conditional statements) 
         /// </summary>
-        public static int GlobalMaxValue = 500;
+        public static int GlobalMaxValue = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["GlobalMaxValue"]);
         /// <summary>
         /// Minimal number used in fake code generation (e.g. in conditional statements) 
         /// </summary>
-        public static int GlobalMinValue = 100;
+        public static int GlobalMinValue = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["GlobalMinValue"]);
         /// <summary>
         /// Number of fake instructions to be generated per single original 
         /// </summary>
-        public static int FPO = 5;
+        public static int FPO = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["FPO"]);
         /// <summary>
         /// Minimal number of instructions in a basic block
         /// </summary>
-        public static int FakePadding = 20;
+        public static int FakePadding = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["FakePadding"]);
         /// <summary>
         /// Variability of fake_padding
         /// </summary>
-        public static int FakePaddingVariance = 5;
+        public static int FakePaddingVariance = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["FakePaddingVariance"]);
         /// <summary>
         /// Describes the probability of generating a conditional jump in percents.
         /// </summary>
-        public static int prob_of_cond_jump = 5;
+        public static int ConditionalJumpProbability = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["ConditionalJumpProbability"]);
+        /// <summary>
+        /// Maximal number of basic blocks to jump back in order to create a infinite loop
+        /// The greater the number, the higher is the chance to need more than one run to
+        /// be able to create fake instructions correctly. This parameter will be used only
+        /// when we don't have available basic blocks inside a loop body.
+        /// A negative value will led us to use all available reachable basic blocks.
+        /// </summary>
+        public static int MaxJumpBackForLoop = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["MaxJumpBackForLoop"]);
 
         // **** Meshing Algorithm Section ****
 
         /// <summary>
         /// Number of the fake conditions that are generated in the conditional meshing algorithm
         /// </summary>
-        public static int ConditionalJumpRadius = 5;
+        public static int ConditionalJumpRadius = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["ConditionalJumpRadius"]);
+        /// <summary>
+        /// Maximal range between the numbers used to define Loop conditional jumps
+        /// </summary>
+        public static int LoopConditionalJumpMaxRange = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["LoopConditionalJumpMaxRange"]);
+        
         /// <summary>
         /// The enumeration for the chances of the jump generation
         /// </summary>
@@ -85,12 +114,7 @@ namespace Obfuscator
             Up = 0,
             Down = 1
         }
-        /// <summary>
-        /// Maximal range between the numbers used to define Loop conditional jumps
-        /// </summary>
-        public static int LoopConditionalJumpMaxRange = 10;
         
-
         // **** Common Methods ****
 
         /// <summary>

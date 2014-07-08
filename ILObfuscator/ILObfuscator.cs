@@ -54,65 +54,80 @@ namespace Obfuscator
                 func.UpdateAllCalls();
             }
 
-            Console.Write("Constants covering algorithm");
-            ConstCoverage.CoverConstants(routine);
-            routine.Validate();
-            PrintSuccess();
-            Logging.WriteReadableTAC(routine, "CONST");
-            Logging.DrawCFG(routine, "CONST");
+            //Checking for Multiple Obfuscation
+            for (i = 0; i < Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["MultipleRuns"]); i++)
+            {
+                if (System.Configuration.ConfigurationSettings.AppSettings["ConstCoverAlgInMultipleRuns"].Split('-')[i].Equals("1"))
+                {
+                    Console.Write("Constants covering algorithm");
+                    ConstCoverage.CoverConstants(routine);
+                    routine.Validate();
+                    PrintSuccess();
+                    Logging.WriteReadableTAC(routine, "CONST");
+                    Logging.DrawCFG(routine, "CONST");
+                }
+
+                if (System.Configuration.ConfigurationSettings.AppSettings["UncMeshingAlgInMultipleRuns"].Split('-')[i].Equals("1"))
+                {
+                    Console.Write("Meshing algorithm: Unconditional Jumps");
+                    Meshing.MeshUnconditionals(routine);
+                    routine.Validate();
+                    PrintSuccess();
+                    Logging.WriteReadableTAC(routine, "MeshingUNC");
+                    Logging.DrawCFG(routine, "MeshingUNC");
+                }
+                
+                if (System.Configuration.ConfigurationSettings.AppSettings["CondMeshingAlgInMultipleRuns"].Split('-')[i].Equals("1"))
+                {
+                    Console.Write("Meshing algorithm: Conditional Jumps");
+                    Meshing.MeshConditionals(routine);
+                    routine.Validate();
+                    PrintSuccess();
+                    Logging.WriteReadableTAC(routine, "MeshingCOND");
+                    Logging.DrawCFG(routine, "MeshingCOND");
+                }
+
+                Console.Write("Generation of fake NOP instructions");
+                foreach (Function func in routine.Functions)
+                    FakeCode.GenerateNoOperations(func);
+                routine.Validate();
+                PrintSuccess();
+                Logging.WriteRoutine(routine, "NoOpersGeneration");
+                Logging.WriteReadableTAC(routine, "FakeNOPs");
+
+                Console.Write("Running first data analysis");
+                DataAnalysis.GatherBasicBlockInfo(routine);
+                PrintSuccess();
+
+                if (System.Configuration.ConfigurationSettings.AppSettings["FakeJumpsAlgInMultipleRuns"].Split('-')[i].Equals("1"))
+                {
+                    Console.Write("Generation of fake conditional jumps from NOPs");
+                    foreach (Function func in routine.Functions)
+                        FakeCode.GenerateConditionalJumps(func);
+                    Logging.WriteRoutine(routine, "CondJumps");
+                    foreach (Function func in routine.Functions)
+                        FakeCode.GenerateNoOperations(func);
+                    routine.Validate();
+                    PrintSuccess();
+                }
+
+                Console.Write("Running second data analysis");
+                foreach (Function func in routine.Functions)
+                    DataAnalysis.DeadVarsAlgortihm(func);
+                DataAnalysis.GatherBasicBlockInfo(routine);
+                PrintSuccess();
 
 
-            Console.Write("Meshing algorithm: Unconditional Jumps");
-            Meshing.MeshUnconditionals(routine);
-            routine.Validate();
-            PrintSuccess();
-            Logging.WriteReadableTAC(routine, "MeshingUNC");
-            Logging.DrawCFG(routine, "MeshingUNC");
-            
+                Console.Write("Generation of fake instructions from NOPs");
+                foreach (Function func in routine.Functions)
+                    FakeCode.GenerateFakeInstructions(func);
+                Logging.WriteRoutine(routine, "FakeIns");
+                Logging.DrawCFG(routine, "CondJumps");
+                routine.Validate();
+                PrintSuccess();
 
-            Console.Write("Meshing algorithm: Conditional Jumps");
-            Meshing.MeshConditionals(routine);
-            routine.Validate();
-            PrintSuccess();
-            Logging.WriteReadableTAC(routine, "MeshingCOND");
-            Logging.DrawCFG(routine, "MeshingCOND");
-            
-
-            Console.Write("Generation of fake NOP instructions");
-            foreach (Function func in routine.Functions)
-                FakeCode.GenerateNoOperations(func);
-            routine.Validate();
-            PrintSuccess();
-            Logging.WriteRoutine(routine, "NoOpersGeneration");
-            Logging.WriteReadableTAC(routine, "FakeNOPs");
-
-
-            Console.Write("Generation of fake conditional jumps from NOPs");
-            foreach (Function func in routine.Functions)
-                FakeCode.GenerateConditionalJumps(func);
-            Logging.WriteRoutine(routine, "CondJumps");
-            foreach (Function func in routine.Functions)
-                FakeCode.GenerateNoOperations(func);
-            routine.Validate();
-            PrintSuccess();
-
-
-            Console.Write("Running data analysis");
-            foreach (Function func in routine.Functions)
-                DataAnalysis.DeadVarsAlgortihm(func);
-            DataAnalysis.GatherBasicBlockInfo(routine);
-            PrintSuccess();
-
-            
-            Console.Write("Generation of fake instructions from NOPs");
-            foreach (Function func in routine.Functions)
-                FakeCode.GenerateFakeInstructions(func);
-            Logging.WriteRoutine(routine, "FakeIns");            
-            Logging.DrawCFG(routine, "CondJumps");
-            routine.Validate();
-            PrintSuccess();
-
-            Logging.WriteReadableTAC(routine, "FakeInstrFromNOPs");
+                Logging.WriteReadableTAC(routine, "FakeInstrFromNOPs");
+            }
         }
 
         public static void Obfuscate(ref Exchange exch)

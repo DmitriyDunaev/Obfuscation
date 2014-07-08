@@ -120,6 +120,7 @@ namespace Internal
         public Function parent { get; private set; }
         public bool dead = false;
         public InvolveInFakeCodeGeneration Involve = InvolveInFakeCodeGeneration.FakeVariablesOnly;
+        public bool Meshable = true;
 
         private List<string> RefPredecessors = new List<string>();
         private List<string> RefSuccessors = new List<string>();
@@ -242,6 +243,7 @@ namespace Internal
             this.dead = original.dead;
             this.parent = original.parent;
             this.Involve = original.Involve;
+            this.Meshable = original.Meshable;
             Instructions = Common.DeepClone(original.Instructions) as List<Instruction>;
             Instructions.ForEach(x => x.ResetID());
             Instructions.ForEach(x => x.parent = this);
