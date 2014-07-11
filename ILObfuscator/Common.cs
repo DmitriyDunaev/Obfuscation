@@ -15,6 +15,10 @@ namespace Obfuscator
         /// Determines the maximal number of retrys, before the user is asked.
         /// </summary>
         public static int MaxNumberOfRuns = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["MaxNumberOfRuns"]);
+        /// <summary>
+        /// Percentage of local fake variables to be injected in relation to the number of original ones
+        /// </summary>
+        public static int PercentageFakeVars = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["PercentageFakeVars"]);
         
         /// <summary>
         /// Memory region sizes for supported types
@@ -49,7 +53,14 @@ namespace Obfuscator
         /// Probability of conditional meshing in percents
         /// </summary>
         public static int ConditionalMeshingProbability = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["ConditionalMeshingProbability"]);
-
+        /// <summary>
+        /// Number of the fake conditions that are generated in the conditional meshing algorithm
+        /// </summary>
+        public static int ConditionalJumpRadius = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["ConditionalJumpRadius"]);
+        /// <summary>
+        /// Maximal range between the numbers used to define Loop conditional jumps
+        /// </summary>
+        public static int LoopConditionalJumpMaxRange = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["LoopConditionalJumpMaxRange"]);
 
         // **** Fake Code Generation Section ****
 
@@ -82,20 +93,8 @@ namespace Obfuscator
         /// The greater the number, the higher is the chance to need more than one run to
         /// be able to create fake instructions correctly. This parameter will be used only
         /// when we don't have available basic blocks inside a loop body.
-        /// A negative value will led us to use all available reachable basic blocks.
         /// </summary>
         public static int MaxJumpBackForLoop = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["MaxJumpBackForLoop"]);
-
-        // **** Meshing Algorithm Section ****
-
-        /// <summary>
-        /// Number of the fake conditions that are generated in the conditional meshing algorithm
-        /// </summary>
-        public static int ConditionalJumpRadius = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["ConditionalJumpRadius"]);
-        /// <summary>
-        /// Maximal range between the numbers used to define Loop conditional jumps
-        /// </summary>
-        public static int LoopConditionalJumpMaxRange = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["LoopConditionalJumpMaxRange"]);
         
         /// <summary>
         /// The enumeration for the chances of the jump generation

@@ -33,6 +33,8 @@ namespace Platform_x86
             sb.AppendLine("includelib  \\masm32\\lib\\msvcrt.lib");
             sb.AppendLine();
             sb.AppendLine(".data");
+            sb.AppendLine("scan db 'scanf:',0");
+            sb.AppendLine("print db 'printf: %d',0");
             sb.AppendLine("msg db 'Return = %d',0");
             int count = 1;
             foreach (Variable var in routine.Functions[1].LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true))
@@ -401,7 +403,10 @@ namespace Platform_x86
                     if (op == Instruction.ArithmeticOperationType.Multiplication)
                         sb.Append("MUL ");
                     else
+                    {
+                        sb.AppendLine("CDQ");
                         sb.Append("DIV ");
+                    }
 
                     if (right2_var != null && right2_const == null)
                         sb.Append("ebx");
@@ -433,7 +438,22 @@ namespace Platform_x86
             {
                 case Instruction.ProceduralType.Call:
                     if (called_func == null)
-                        sb.AppendLine(";CALL " + inst.TACtext.Split(' ')[1]);
+                    {
+                        if (inst.TACtext.Contains("scanf"))
+                        {
+                            sb.AppendLine("invoke  crt_printf,addr scan");
+                            sb.AppendLine("invoke  crt_scanf,addr inf,addr din");
+                            sb.AppendLine("MOV eax, din");
+                        }
+                        else if (inst.TACtext.Contains("printf"))
+                        {
+                            sb.AppendLine("POP eax");
+                            sb.AppendLine("invoke  crt_printf,addr  print,eax");
+                            sb.AppendLine("PUSH eax");
+                        }
+                        else
+                            sb.AppendLine(";CALL " + inst.TACtext.Split(' ')[1]);
+                    }
                     else
                         sb.AppendLine("CALL " + called_func.globalID);
                     break;
@@ -523,13 +543,13 @@ namespace Platform_x86
             // Remove unnecessary instructions like "MOV a,b; MOV b,a;"
             System.Collections.Specialized.StringCollection movmov = new System.Collections.Specialized.StringCollection();
             Match matchResult = Regex.Match(funcASM.ToString(), @"mov (.*), (.*)(\r\n)+mov (\2), (\1)", RegexOptions.IgnoreCase);
-            while (matchResult.Success)
-            {
-                movmov.Add(matchResult.Value);
-                matchResult = matchResult.NextMatch();
-            }
-            foreach (string item in movmov)
-                funcASM = funcASM.Replace(item, string.Empty);
+            //while (matchResult.Success)
+            //{
+            //    movmov.Add(matchResult.Value);
+            //    matchResult = matchResult.NextMatch();
+            //}
+            //foreach (string item in movmov)
+            //    funcASM = funcASM.Replace(item, string.Empty);
 
             // Remove unnecessary Labels that are not used for jumping
             List<string> labels = new List<string>();

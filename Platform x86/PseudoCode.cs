@@ -173,7 +173,8 @@ namespace Platform_x86
             {
                 PreReturn(lineIndex);
             }
-            else if (original[lineIndex].IndexOf("sub_") != -1)
+            else if (original[lineIndex].IndexOf("sub_") != -1 || original[lineIndex].IndexOf("scanf") != -1
+                || original[lineIndex].IndexOf("printf") != -1)
             {
                 CallInstruction(original[lineIndex]);
             }
@@ -182,7 +183,7 @@ namespace Platform_x86
                 PreFullAssignCopy(lineIndex);
             }
             else
-                Console.Write("Instruction not implemented: " + original[lineIndex]);
+                Console.WriteLine("Instruction not implemented: " + original[lineIndex]);
             return lineIndex;
         }
         private static void PreReturn(int lineIndex)
@@ -268,6 +269,12 @@ namespace Platform_x86
             int numParams = 0;
             int indexFunction = routine.Function.Count - 1;
             int indexBasicblock = routine.Function[indexFunction].BasicBlock.Count - 1;
+            //Removing mask in case of printf or scanf
+            if (line.Contains("%d"))
+                line = line.Replace("\"%d\" ", "");
+            //Removing address sign in case of scanf
+            if (line.Contains("&"))
+                line = line.Replace("&", "");
             InstructionType newInstruction;
             //Dealing with parameters
             if (!line.Contains("()")) 
@@ -300,6 +307,13 @@ namespace Platform_x86
                 if (routine.Function[i].GlobalID.Value == tokens2[0])
                     routine.Function[i].CalledFrom.EnumerationValue = CalledFromType.EnumValues.eBoth;
             }
+            if (line.Contains("scanf"))
+            {
+                string aux = line.Substring(line.IndexOf('(') + 1);
+                aux = aux.Replace(")", "");
+                RetrieveInstruction(aux);
+            }
+
         }
         private static void RetrieveInstruction(string line)
         {

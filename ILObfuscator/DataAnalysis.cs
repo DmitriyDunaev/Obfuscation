@@ -106,9 +106,9 @@ namespace Obfuscator
             /* First we clear all the DeadVariables lists. */
             func.BasicBlocks.ForEach(delegate(BasicBlock bb) { bb.Instructions.ForEach(delegate(Instruction inst) { inst.DeadVariables.Clear(); }); });
 
-            /* Then we search for the FREE and the NOT_INITIALIZED dead variables. */
-            _DeadVarsAlgortihm(func, Variable.State.Free);
+            /* Then we search for the NOT_INITIALIZED and the FREE dead variables. */
             _DeadVarsAlgortihm(func, Variable.State.Not_Initialized);
+            _DeadVarsAlgortihm(func, Variable.State.Free);            
 
             /*
              * Now we have the list of the dead variables, we must separate the dead

@@ -151,7 +151,7 @@ namespace Obfuscator
                     throw new ObfuscatorException("Forbidden state collision: FILLED meets NOT_INITIALIZED.");
             }
 
-            //Checking whether we have nops left
+            //Checking whether we have "nops" left
             if (GetAllNops(func).Count > 0)
                 throw new ObfuscatorException("Lack of available dead variables.");
         }

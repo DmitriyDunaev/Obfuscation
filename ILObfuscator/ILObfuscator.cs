@@ -57,6 +57,15 @@ namespace Obfuscator
             //Checking for Multiple Obfuscation
             for (i = 0; i < Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["MultipleRuns"]); i++)
             {
+                //Creating fake variables
+                foreach (Function func in routine.Functions)
+                {
+                    for (int j = 0; j < (Common.PercentageFakeVars * func.LocalVariables.FindAll(x => !x.fake).Count)/100; j++)
+                    {
+                        func.LocalVariables.Add(new Variable(Variable.Kind.Local,Variable.Purpose.Fake,Common.MemoryRegionSize.Integer));
+                    }
+                }
+                
                 if (System.Configuration.ConfigurationSettings.AppSettings["ConstCoverAlgInMultipleRuns"].Split('-')[i].Equals("1"))
                 {
                     Console.Write("Constants covering algorithm");
@@ -95,7 +104,7 @@ namespace Obfuscator
                 Logging.WriteRoutine(routine, "NoOpersGeneration");
                 Logging.WriteReadableTAC(routine, "FakeNOPs");
 
-                Console.Write("Running first data analysis");
+                Console.Write("Prior data analysis");
                 DataAnalysis.GatherBasicBlockInfo(routine);
                 PrintSuccess();
 
@@ -111,7 +120,7 @@ namespace Obfuscator
                     PrintSuccess();
                 }
 
-                Console.Write("Running second data analysis");
+                Console.Write("Complete data analysis");
                 foreach (Function func in routine.Functions)
                     DataAnalysis.DeadVarsAlgortihm(func);
                 DataAnalysis.GatherBasicBlockInfo(routine);

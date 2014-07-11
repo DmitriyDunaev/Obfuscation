@@ -384,14 +384,13 @@ namespace Obfuscator
                 //If we have reachable basic blocks in a loop body, we use them
                 if (loopReachableBasicBlocks.Count > 0)
                     reacheableBasicBlocks = loopReachableBasicBlocks;
-                else                
-                    //If we don't have reachable basic blocks in a loop body, we check whether the amount of reachable
-                    //basic blocks we have is greater than MaxJumpForLoop. This parameter is used to control the chance
-                    //of problems ("nops" left in the end) during fake instructions generation.
-                    if (Common.MaxJumpBackForLoop > 0 && reacheableBasicBlocks.Count > Common.MaxJumpBackForLoop)
-                        reacheableBasicBlocks.RemoveRange(Common.MaxJumpBackForLoop, reacheableBasicBlocks.Count - Common.MaxJumpBackForLoop);
             }
-            
+            //Check whether the amount of reachable basic blocks we have is greater than MaxJumpForLoop. 
+            //This parameter is used to control the chance of problems ("nops" left in the end) during 
+            //fake instructions generation.
+            if (reacheableBasicBlocks.Count > Common.MaxJumpBackForLoop)
+                reacheableBasicBlocks.RemoveRange(Common.MaxJumpBackForLoop, reacheableBasicBlocks.Count - Common.MaxJumpBackForLoop);
+
             //Defining the target basic block for the conditional jump
             BasicBlock loopTarget = (BasicBlock) Randomizer.OneFromMany(reacheableBasicBlocks.ToArray());
 
