@@ -135,6 +135,9 @@ namespace Obfuscator
                 case @"/":
                     operation = Instruction.ArithmeticOperationType.Division;
                     break;
+                case "%":
+                    operation = Instruction.ArithmeticOperationType.Modulo;
+                    break;
                 default:
                     throw new ParserException("Cannot parse arithmetic operation type.");
             }

@@ -34,7 +34,7 @@ namespace Platform_x86
             sb.AppendLine();
             sb.AppendLine(".data");
             sb.AppendLine("scan db 'scanf:',0");
-            sb.AppendLine("print db 'printf: %d',0");
+            sb.AppendLine("print db 'printf: %d',0ah, 0h");
             sb.AppendLine("msg db 'Return = %d',0");
             int count = 1;
             foreach (Variable var in routine.Functions[1].LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true))
@@ -414,6 +414,8 @@ namespace Platform_x86
                         sb.Append(right2_const);
 
                     sb.AppendLine();
+                    if (op == Instruction.ArithmeticOperationType.Modulo)
+                        sb.AppendLine("MOV eax, edx");
                 }
             }
 

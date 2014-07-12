@@ -185,8 +185,8 @@ namespace Internal
             {
                 case StatementTypeType.EnumValues.eFullAssignment:
                     // var := var op var OR var:= var op number
-                    if (Regex.IsMatch(TACtext, @"^[vtcfp]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfp]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} [-+*/] ([vtcfp]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})$", RegexOptions.None)
-                        | Regex.IsMatch(TACtext, @"^[vtcfp]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfp]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} [-+*/] ([-+]?\d+)$", RegexOptions.None))
+                    if (Regex.IsMatch(TACtext, @"^[vtcfp]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfp]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} [-+*/%] ([vtcfp]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})$", RegexOptions.None)
+                        | Regex.IsMatch(TACtext, @"^[vtcfp]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} := [vtcfp]_ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} [-+*/%] ([-+]?\d+)$", RegexOptions.None))
                         break;
                     else
                         throw new ValidatorException("The instruction Text value does not match its StatementType property. Instruction: " + ID);

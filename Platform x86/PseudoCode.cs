@@ -32,15 +32,16 @@ namespace Platform_x86
         }
         private static void PreProc()
         {
-            string[] toReplacePC = { "_cdecl ", "*(_BYTE *)", "*(_DWORD *)", ",", ";", "signed ", "unsigned ", "(signed ", "(unsigned " }; //Array of unnecessary elements
-            string[] toReplaceTAC = { "", "", "", "", "", "", "", "(", "(" };
+            string[] toReplacePC = { "_cdecl ", "*(_BYTE *)", "*(_DWORD *)",";", "signed ", "unsigned ", "(signed ", "(unsigned " }; //Array of unnecessary elements
+            string[] toReplaceTAC = { "", "", "", "", "", "", "(", "(" };
             for (int i = 0; i < original.Length; i++)
             {
                 //Replacing unnecessary elements
                 for (int j = 0; j < toReplacePC.Length; j++) 
                 {
                     if (original[i].Contains(toReplacePC[j]))
-                        original[i] = original[i].Replace(toReplacePC[j], toReplaceTAC[j]);
+                        if (!original[i].Contains("for"))
+                            original[i] = original[i].Replace(toReplacePC[j], toReplaceTAC[j]);
                 }
                 //Removing comments
                 if (original[i].Contains("//")) 
@@ -103,6 +104,8 @@ namespace Platform_x86
             currentFunctionLocalVars = newFunction.Local.Append();
             if (!line.Contains("()"))
             {
+                //Removing commas
+                line = line.Replace(",","");
                 //Separating parameters
                 string[] tokens = line.Split('('); 
                 aux = tokens[1].Replace(")", "");
@@ -132,23 +135,27 @@ namespace Platform_x86
             VariableType newVariable;
             for (int i = 0; i < tokens.Length - 1; i += 2)
             {
-                //Checking wheter it is a pointer
-                if (tokens[i + 1].IndexOf('*') != -1)
+                //Checking whether we already have created this variable
+                if (GetIDVariable(tokens[i + 1]).Equals(tokens[i + 1]))
                 {
-                    pointer = true;
-                    tokens[i + 1] = tokens[i + 1].Remove(tokens[i + 1].IndexOf('*'), 1);
+                    //Checking wheter it is a pointer
+                    if (tokens[i + 1].IndexOf('*') != -1)
+                    {
+                        pointer = true;
+                        tokens[i + 1] = tokens[i + 1].Remove(tokens[i + 1].IndexOf('*'), 1);
+                    }
+                    else
+                        pointer = false;
+                    newVariable = currentFunctionLocalVars.Variable.Append();
+                    newVariable.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+                    newVariable.Value = string.Concat("v_", newVariable.ID.Value);
+                    newVariable.GlobalID.Value = tokens[i + 1];
+                    newVariable.Pointer.Value = pointer;
+                    if (tokens[i].Equals("char"))
+                        newVariable.MemoryRegionSize.Value = 1;
+                    else
+                        newVariable.MemoryRegionSize.Value = 4;
                 }
-                else
-                    pointer = false;
-                newVariable = currentFunctionLocalVars.Variable.Append();
-                newVariable.ID.Value = string.Concat("ID_",Guid.NewGuid().ToString().ToUpper());
-                newVariable.Value = string.Concat("v_",newVariable.ID.Value);
-                newVariable.GlobalID.Value = tokens[i + 1];
-                newVariable.Pointer.Value = pointer;
-                if (tokens[i].Equals("char"))
-                    newVariable.MemoryRegionSize.Value = 1;               
-                else
-                    newVariable.MemoryRegionSize.Value = 4;               
             }
         }
         private static int CreateInstruction(int lineIndex)
@@ -173,8 +180,8 @@ namespace Platform_x86
             {
                 PreReturn(lineIndex);
             }
-            else if (original[lineIndex].IndexOf("sub_") != -1 || original[lineIndex].IndexOf("scanf") != -1
-                || original[lineIndex].IndexOf("printf") != -1)
+            else if ((original[lineIndex].IndexOf("sub_") != -1 && original[lineIndex].IndexOf("=") == -1) 
+                || original[lineIndex].IndexOf("scanf") != -1 || original[lineIndex].IndexOf("printf") != -1)
             {
                 CallInstruction(original[lineIndex]);
             }
@@ -194,9 +201,7 @@ namespace Platform_x86
             {
                 aux = aux.Substring(aux.IndexOf("sub_")); //sub_401334(a)
                 aux = aux.Remove(aux.IndexOf('(')); //sub_401334
-                CreateLocalVariable(string.Join(" ", currentFunctionReturnType, aux));
                 CallInstruction(original[lineIndex].Substring(original[lineIndex].IndexOf("sub_")));
-                RetrieveInstruction(original[lineIndex].Substring(original[lineIndex].IndexOf("sub_")));
                 ReturnInstruction(string.Concat("return ",aux));
             }
             //aux is something like "return a1 + v5"
@@ -263,7 +268,7 @@ namespace Platform_x86
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
             ReturnInstruction("return");
         }
-        private static void CallInstruction(string line)
+        private static void CallInstruction(string line, string returnType = "")
         {
             //The parameter line is expected to have a content similar to "sub_401334(a, b)"
             int numParams = 0;
@@ -282,8 +287,17 @@ namespace Platform_x86
                 //Extracting parameters
                 string aux = line.Substring(line.IndexOf('(') + 1); 
                 aux = aux.Replace(")", "");
-                string[] tokens = aux.Split(' ');
+                //Checking whether we have operations inside the parameters list. Something like "sub_4114C0(v10, v10 + 10)"
+                string[] tokens = aux.Split(',');
+                foreach (string token in tokens)
+                {
+                    if (token.Contains("+") || token.Contains("-") || token.Contains("*") || token.Contains("/") || token.Contains("%"))
+                        aux = aux.Replace(token,string.Concat(" ", ProcessOperations(token)));
+                }
+                //Removing commas
+                aux = aux.Replace(",","");
                 //Creating "param" instructions
+                tokens = aux.Split(' ');
                 foreach (string token in tokens)
                 {
                     newInstruction = routine.Function[indexFunction].BasicBlock[indexBasicblock].Instruction.Append();
@@ -295,8 +309,12 @@ namespace Platform_x86
                     numParams++;
                 }
             }
-            //Creating the "call" instruction
             string[] tokens2 = line.Split('(');
+            //Creating the variable to retrieve the returned value
+            if (returnType.Length == 0)
+                returnType = currentFunctionReturnType;
+            CreateLocalVariable(string.Join(" ", returnType, tokens2[0]));
+            //Creating the call instruction
             newInstruction = routine.Function[indexFunction].BasicBlock[indexBasicblock].Instruction.Append();
             newInstruction.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eProcedural;
@@ -307,13 +325,17 @@ namespace Platform_x86
                 if (routine.Function[i].GlobalID.Value == tokens2[0])
                     routine.Function[i].CalledFrom.EnumerationValue = CalledFromType.EnumValues.eBoth;
             }
+            //Creating the retrieve instruction
+            //If the called function is a "scanf", we pass only the variable
             if (line.Contains("scanf"))
             {
                 string aux = line.Substring(line.IndexOf('(') + 1);
                 aux = aux.Replace(")", "");
                 RetrieveInstruction(aux);
             }
-
+            //If the instruction is not a "scanf" nor a "printf", then we create a retrieve instruction using the whole line
+            else if (!line.Contains("printf"))
+                RetrieveInstruction(line);
         }
         private static void RetrieveInstruction(string line)
         {
@@ -331,71 +353,52 @@ namespace Platform_x86
         private static void PreFullAssignCopy(int lineIndex, string operation = "")
         {
             string aux = operation;
-            if (operation.Length == 0)
-            {
+            if (aux.Length == 0)
                 aux = original[lineIndex];
-            }
-            string[] tokens = aux.Split(' ');
-            if (tokens.Length == 1) 
+            if (aux.Contains("sub_"))
+                CopyInstruction(aux);
+            else
             {
-                //aux is something like "v5++"
-                if (aux.IndexOf("++") != -1)
+                string[] tokens = aux.Split(' ');
+                if (tokens.Length == 1)
                 {
-                    aux = aux.Replace("++", "");
-                    FullAssignInstruction(string.Join(" ", aux, "=", aux, "+ 1"));
-                }
-                //aux is something like "v5--"
-                else
-                {
-                    aux = aux.Replace("--", "");
-                    FullAssignInstruction(string.Join(" ", aux, "=", aux, "- 1"));
-                }
-            }
-            else if (tokens.Length == 3 && ((aux.Contains("+=") || aux.Contains("-=") || aux.Contains("*=") || aux.Contains("/=")))) //aux is something like "v5 += v1"
-            {
-                tokens[1] = tokens[1].Remove(tokens[1].IndexOf('='), 1);
-                FullAssignInstruction(string.Join(" ", tokens[0], "=", tokens[2], tokens[1], tokens[0]));
-            }
-            //aux is something like "v5 = v1" or "v5 = v1 + v2" or "v5 = v1 += v2" or "v5 = v1 = v2"
-            else 
-            {
-                //aux is "v5 = v1"
-                if (tokens.Length == 3) 
-                {
-                    CopyInstruction(aux);
-                }
-                else
-                {
-                    
-                    int i = tokens.Length - 1;
-                    while (i > 1)
+                    //aux is something like "v5++"
+                    if (aux.IndexOf("++") != -1)
                     {
-                        //aux is "v5 = v1 + v2"
-                        if (tokens[i - 3].Equals("=") && ((tokens[i - 1].Equals("+") || tokens[i - 1].Equals("-") || tokens[i - 1].Equals("*") || tokens[i - 1].Equals("/")))) 
-                        {
-                            string tempVariable = string.Concat("t_", randNumbers.Next().ToString());
-                            CreateLocalVariable(string.Concat("int ", tempVariable));
-                            FullAssignInstruction(string.Join(" ", tempVariable, tokens[i - 3], tokens[i - 2], tokens[i - 1], tokens[i]));
-                            CopyInstruction(string.Join(" ", tokens[i - 4], "=", tempVariable)); //v5 = v1
-                            i -= 4;
-                        }
-                        //aux is "v5 = v1 += v2"
-                        else if (tokens[i - 3].Equals("=") && ((tokens[i - 1].Equals("+=") || tokens[i - 1].Equals("-=")))) 
-                        {
-                            tokens[i - 1] = tokens[i - 1].Replace("=", "");
-                            FullAssignInstruction(string.Join(" ", tokens[i - 2], "=", tokens[i], tokens[i - 1], tokens[i - 2])); //v1 = v2 + v1
-                            CopyInstruction(string.Join(" ", tokens[i - 4], tokens[i - 3], tokens[i - 2])); //v5 = v1
-                            i -= 4;
-                        }
-                        //aux is "v5 = v1 = v2"
-                        else 
-                        {
-                            while (i > 0 && tokens[i - 1].Equals("="))
-                            {
-                                CopyInstruction(tokens[i - 2] + " " + tokens[i - 1] + " " + tokens[i]);
-                                i -= 2;
-                            }
-                        }
+                        aux = aux.Replace("++", "");
+                        FullAssignInstruction(string.Join(" ", aux, "=", aux, "+ 1"));
+                    }
+                    //aux is something like "v5--"
+                    else
+                    {
+                        aux = aux.Replace("--", "");
+                        FullAssignInstruction(string.Join(" ", aux, "=", aux, "- 1"));
+                    }
+                }
+                else if (tokens.Length == 3)
+                {
+                    //aux is something like "v5 += v1"
+                    if (aux.Contains("+=") || aux.Contains("-=") || aux.Contains("*=") || aux.Contains("/=")) 
+                    {
+                        tokens[1] = tokens[1].Remove(tokens[1].IndexOf('='), 1);
+                        FullAssignInstruction(string.Join(" ", tokens[0], "=", tokens[2], tokens[1], tokens[0]));
+                    }
+                    //aux is "v5 = v1"
+                    else
+                        CopyInstruction(aux);
+                }                
+                else
+                {
+                    //aux is something like "a1 *= i - 1 +..."
+                    if (aux.Contains("+=") || aux.Contains("-=") || aux.Contains("*=") || aux.Contains("/=")) 
+                    {
+                        tokens[1] = tokens[1].Remove(tokens[1].IndexOf('='), 1);
+                        FullAssignInstruction(string.Join(" ", tokens[0], "=", ProcessOperations(aux.Substring(aux.IndexOf('=') + 1)), tokens[1], tokens[0]));
+                    }
+                    else
+                    {
+                        //aux is "v5 = v1 + v2 -..."
+                        CopyInstruction(string.Join(" ", tokens[0], "=", ProcessOperations(aux.Substring(aux.IndexOf('=') + 1))));
                     }
                 }
             }
@@ -430,17 +433,36 @@ namespace Platform_x86
             newInstruction.Value = string.Join(" ", GetValueVariable(tokens[0]), ":=",
                 GetValueVariable(tokens[2]), tokens[3], GetValueVariable(tokens[4]));
         }
-        private static void CopyInstruction(string input)
+        private static void CopyInstruction(string line)
         {
-            //The parameter "input" is expected to have a content similar to "v3 = 10" or "v3 = a1"
-            string[] tokens = input.Split(' ');
+            //The parameter "line" is expected to have a content similar to "v3 = 10" or "v3 = a1" or "v5 = sub_4113E0(v6)"
+            string[] tokens;
+            //Dealing with calls, something like "v5 = sub_4113E0(v6)"
+            if (line.Contains("sub_"))
+            {
+                //Extracting only the call "sub_4113E0(v6)"
+                tokens = line.Split('=');
+                tokens[0] = tokens[0].TrimEnd();
+                tokens[1] = tokens[1].TrimStart();
+                string returnType = string.Empty;
+                if (GetMemoryRegionSizeVariable(tokens[0]) == 4)
+                    returnType = "int";
+                else
+                    returnType = "char";
+                CallInstruction(tokens[1], returnType);
+                //Replacing the instruction to something like "v5 = sub_4113E0", where "sub_4113E0" is a variable
+                string aux = tokens[1].Remove(tokens[1].IndexOf('(')); //sub_4113E0
+                line = string.Join(" ", tokens[0], "=", aux);
+            }
+
+            tokens = line.Split(' ');
             string[] forPointers = { "", "" };
             
             int functionIndex = routine.Function.Count - 1;
             int basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
             InstructionType newInstruction = routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction.Append();
             newInstruction.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            if (input.IndexOf('*') != -1 || input.IndexOf('&') != -1)
+            if (line.IndexOf('*') != -1 || line.IndexOf('&') != -1)
                 newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.ePointerAssignment;
             else
                 newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eCopy;
@@ -486,36 +508,15 @@ namespace Platform_x86
             string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); //Extracting the control elements
             aux = aux.Remove(aux.Length - 2);
             string[] tokens = aux.Split(' ');
+            //aux is something like i (true)
+            if (tokens.Length == 1)
+                CondJumpInstruction(string.Concat(tokens[0], " != 0"));
             //aux is something similar to "i < 100"
-            if (tokens.Length == 3) 
-            {
+            else if (tokens.Length == 3) 
                 CondJumpInstruction(string.Join(" ", tokens[0], tokens[1], tokens[2]));
-            }
             //aux is something similar to "i * a1 < 100 "
             else
-            {
-                string tempVariable1 = string.Empty;
-                string tempVariable2;
-                int i = 0;
-                while (i < tokens.Length && (tokens[i + 1].Equals("*") || tokens[i + 1].Equals("-") || tokens[i + 1].Equals("+") || tokens[i + 1].Equals("/")))
-                {
-                    if (tempVariable1.Length == 0)
-                    {
-                        tempVariable1 = string.Concat("t_", randNumbers.Next().ToString());
-                        CreateLocalVariable(string.Concat("int ", tempVariable1));
-                        FullAssignInstruction(string.Join(" ", tempVariable1, "=", tokens[i], tokens[i + 1], tokens[i + 2]));
-                    }
-                    else
-                    {
-                        tempVariable2 = string.Concat("t_", randNumbers.Next().ToString());
-                        CreateLocalVariable(string.Concat("int ", tempVariable2));
-                        FullAssignInstruction(string.Join(" ", tempVariable2, "=", tempVariable1, tokens[i + 1], tokens[i + 2]));
-                        tempVariable1 = tempVariable2;
-                    }
-                    i += 2;
-                }
-                CondJumpInstruction(string.Join(" ", tempVariable1, tokens[i + 1], tokens[i + 2]));
-            }
+                CondJumpInstruction(string.Join(" ", ProcessOperations(aux), tokens[tokens.Length - 2], tokens[tokens.Length - 1]));
 
             //New Basic Block for the True Lane
             BasicBlockType trueBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
@@ -585,17 +586,38 @@ namespace Platform_x86
             //Extracting the control elements ( i = 2 i < 10 i++ )
             string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); 
             aux = aux.Remove(aux.Length - 2);
-            string[] tokens = aux.Split(' ');
+            string[] tokens = aux.Split(';');
+            string[] tokens2;
             //i = 2
-            CopyInstruction(string.Join(" ", tokens[0], tokens[1], tokens[2]));
+            tokens[0] = tokens[0].Trim();
+            if ((tokens[0].Contains("*") || tokens[0].Contains("-") || tokens[0].Contains("+")
+                || tokens[0].Contains("/") || tokens[0].Contains("%")))
+            {
+                tokens2 = tokens[0].Split(' ');
+                CopyInstruction(string.Join(" ", tokens2[0], tokens2[1], ProcessOperations(tokens[0].Substring(tokens[0].IndexOf('=') + 1))));
+            }
+            else
+                CopyInstruction(tokens[0]);
             
             //New Basic Block for the Conditional Jump
             BasicBlockType condJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             condJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             condJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = condJumpBasicBlock.ID.Value;
-            //i < 10
-            CondJumpInstruction(string.Join(" ", tokens[3], tokens[4], tokens[5]));
+            tokens[1] = tokens[1].Trim();
+            tokens2 = tokens[1].Split(' ');
+            //aux is something like i (true)
+            if (tokens2.Length == 1)
+                CondJumpInstruction(string.Concat(tokens2[0], " != 0"));
+            //aux is something similar to "i < 100"
+            else if (tokens2.Length == 3)
+                CondJumpInstruction(string.Join(" ", tokens2[0], tokens2[1], tokens2[2]));
+            //aux is something similar to "i * a1 < 100 "
+            else
+                CondJumpInstruction(string.Join(" ", ProcessOperations(aux), tokens2[tokens2.Length - 2], tokens2[tokens2.Length - 1]));
+            
+            ////i < 10
+            //CondJumpInstruction(string.Join(" ", tokens[3], tokens[4], tokens[5]));
             basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
 
             //New Basic Block for the Inner Scope
@@ -609,8 +631,11 @@ namespace Platform_x86
             int instructionIndex = routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction.Count - 1;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value = string.Concat(
                 routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value, innerScopeBasicBlock.ID.Value);
-            //Processing instructions between { } //Returns the new line index //i++
-            lineIndex = ProcessInnerScope(lineIndex, tokens[6]); 
+            //Processing instructions between { } 
+            //Returns the new line index 
+            //i++
+            tokens[2] = tokens[2].Trim();
+            lineIndex = ProcessInnerScope(lineIndex, tokens[2]); 
             UncondJumpInstruction(routine.Function[functionIndex].BasicBlock.Count - 1, routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value);
 
             //New Basic Block for the Unconditional Jump
@@ -656,40 +681,21 @@ namespace Platform_x86
             condJumpBasicBlock.Successors.Value = routine.Function[functionIndex].BasicBlock[innerBasicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[innerBasicBlockIndex].Predecessors.Value = string.Join(" ",
                 routine.Function[functionIndex].BasicBlock[innerBasicBlockIndex].Predecessors.Value, condJumpBasicBlock.ID.Value);
+            
             //Extracting the control elements
             string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); 
             aux = aux.Remove(aux.Length - 2);
             string[] tokens = aux.Split(' ');
+            //aux is something like i (true)
+            if (tokens.Length == 1)
+                CondJumpInstruction(string.Concat(tokens[0], " != 0"));
             //aux is something like i < 100
-            if (tokens.Length == 3)
-            {
+            else if (tokens.Length == 3)
                 CondJumpInstruction(string.Join(" ",tokens[0], tokens[1], tokens[2]));
-            }
             //aux is something like i * j < 100
             else
-            {
-                string tempVariable1 = string.Empty;
-                string tempVariable2;
-                int i = 0;
-                while (i < tokens.Length && (tokens[i + 1].Equals("*") || tokens[i + 1].Equals("-") || tokens[i + 1].Equals("+") || tokens[i + 1].Equals("/")))
-                {
-                    if (tempVariable1.Length == 0)
-                    {
-                        tempVariable1 = string.Concat("t_", randNumbers.Next().ToString());
-                        CreateLocalVariable(string.Concat("int ", tempVariable1));
-                        FullAssignInstruction(string.Join(" ", tempVariable1, "=", tokens[i], tokens[i + 1], tokens[i + 2]));
-                    }
-                    else
-                    {
-                        tempVariable2 = string.Concat("t_", randNumbers.Next().ToString());
-                        CreateLocalVariable(string.Concat("int ", tempVariable2));
-                        FullAssignInstruction(string.Join(" ", tempVariable2, "=", tempVariable1, tokens[i + 1], tokens[i + 2]));
-                        tempVariable1 = tempVariable2;
-                    }
-                    i += 2;
-                }
-                CondJumpInstruction(string.Join(" ", tempVariable1, tokens[i + 1], tokens[i + 2]));
-            }
+                CondJumpInstruction(string.Join(" ", ProcessOperations(aux), tokens[tokens.Length - 2], tokens[tokens.Length - 1]));
+            
             int instructionIndex = condJumpBasicBlock.Instruction.Count - 1;
             condJumpBasicBlock.Instruction[instructionIndex].Value = string.Concat(condJumpBasicBlock.Instruction[instructionIndex].Value,
                 routine.Function[functionIndex].BasicBlock[innerBasicBlockIndex].ID.Value);
@@ -720,36 +726,15 @@ namespace Platform_x86
             condJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = condJumpBasicBlock.ID.Value;
             condJumpBasicBlock.Successors.Value = string.Empty;
+            //aux is something like i (true)
+            if (tokens.Length == 1)
+                CondJumpInstruction(string.Concat(tokens[0], " != 0"));
             //aux is something like i < 100
-            if (tokens.Length == 3)
-            {
+            else if (tokens.Length == 3)
                 CondJumpInstruction(string.Join(" ", tokens[0], tokens[1], tokens[2]));
-            }
             //aux is something like i * j < 100
             else
-            {
-                string tempVariable1 = string.Empty;
-                string tempVariable2;
-                int i = 0;
-                while (i < tokens.Length && (tokens[i + 1].Equals("*") || tokens[i + 1].Equals("-") || tokens[i + 1].Equals("+") || tokens[i + 1].Equals("/")))
-                {
-                    if (tempVariable1.Length == 0)
-                    {
-                        tempVariable1 = string.Concat("t_", randNumbers.Next().ToString());
-                        CreateLocalVariable(string.Concat("int ", tempVariable1));
-                        FullAssignInstruction(string.Join(" ",tempVariable1, "=", tokens[i], tokens[i + 1], tokens[i + 2]));
-                    }
-                    else
-                    {
-                        tempVariable2 = string.Concat("t_", randNumbers.Next().ToString());
-                        CreateLocalVariable(string.Concat("int ", tempVariable2));
-                        FullAssignInstruction(string.Join(" ", tempVariable2, "=", tempVariable1, tokens[i + 1], tokens[i + 2]));
-                        tempVariable1 = tempVariable2;
-                    }
-                    i += 2;
-                }
-                CondJumpInstruction(string.Join(" ",tempVariable1, tokens[i + 1], tokens[i + 2]));
-            }
+                CondJumpInstruction(string.Join(" ", ProcessOperations(aux), tokens[tokens.Length - 2], tokens[tokens.Length - 1]));
             basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
 
             //New Basic Block for the Inner Scope
@@ -831,14 +816,40 @@ namespace Platform_x86
                 }
             }
             else
-            {
                 auxIndex = CreateInstruction(auxIndex);
-            }
             //In case we are processing an inner scope of a for loop. This operation would be
             //something like i++
             if (operation.Length > 0)
                 PreFullAssignCopy(0, operation);
             return auxIndex;
+        }
+        private static string ProcessOperations(string line)
+        {
+            //The parameter line is something like "a1 + v5" or "a1 + v5 + a2..."
+            line = line.Trim();
+            string tempVariable1 = string.Empty;
+            string tempVariable2;
+            string[] tokens = line.Split(' ');
+            int i = 0;
+            while (i + 1 < tokens.Length && (tokens[i + 1].Equals("*") || tokens[i + 1].Equals("-") || tokens[i + 1].Equals("+")
+                || tokens[i + 1].Equals("/") || tokens[i + 1].Equals("%")))
+            {
+                if (tempVariable1.Length == 0)
+                {
+                    tempVariable1 = string.Concat("t_", randNumbers.Next().ToString());
+                    CreateLocalVariable(string.Concat("int ", tempVariable1));
+                    FullAssignInstruction(string.Join(" ", tempVariable1, "=", tokens[i], tokens[i + 1], tokens[i + 2]));
+                }
+                else
+                {
+                    tempVariable2 = string.Concat("t_", randNumbers.Next().ToString());
+                    CreateLocalVariable(string.Concat("int ", tempVariable2));
+                    FullAssignInstruction(string.Join(" ", tempVariable2, "=", tempVariable1, tokens[i + 1], tokens[i + 2]));
+                    tempVariable1 = tempVariable2;
+                }
+                i += 2;
+            }
+            return tempVariable1;
         }
         private static string GetIDVariable(string globalID)
         {
@@ -858,6 +869,13 @@ namespace Platform_x86
             }
             return globalID;
         }
+        private static int GetMemoryRegionSizeVariable(string globalID)
+        {
+            int i = 0;
+            while (i < currentFunctionLocalVars.Variable.Count && currentFunctionLocalVars.Variable[i].GlobalID.Value != globalID)
+                i++;
+            return (int)currentFunctionLocalVars.Variable[i].MemoryRegionSize.Value;
+        }
         private static string GetIDFunction(string globalID)
         {
             
@@ -867,6 +885,6 @@ namespace Platform_x86
                     return routine.Function[i].ID.Value;
             }
             return globalID;
-        }
+        }      
     }
 }
