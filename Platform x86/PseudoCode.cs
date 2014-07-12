@@ -13,9 +13,17 @@ namespace Platform_x86
         private static RoutineType routine;
         private static Variables currentFunctionLocalVars;
         private static string currentFunctionReturnType;
-        private static string[] original; //Stores the original pseudocode
+        //Stores the pseudocode
+        private static string[] original;
         private static Random randNumbers = new Random(DateTime.Now.Millisecond);
-        
+        //Stores the index of the basic blocks that need linking after logical operations and which branch they belong to
+        private static Dictionary<int, bool> logicalBasicBlocks = new Dictionary<int, bool>();
+
+        /// <summary>
+        /// Translates PseudoCode (PC) to Three Address Code (TAC)
+        /// </summary>
+        /// <param name="path2PC">Path to the PC file</param>
+        /// <returns>A XML document</returns>
         public static XmlDocument GetTAC(string path2PC)
         {
             XmlDocument doc = new XmlDocument();
@@ -30,6 +38,9 @@ namespace Platform_x86
             return doc;
         
         }
+        /// <summary>
+        /// Preprocesses the PC removing unnecessary elements
+        /// </summary>
         private static void PreProc()
         {
             string[] toReplacePC = { "_cdecl ", "*(_BYTE *)", "*(_DWORD *)",";", "signed ", "unsigned ", "(signed ", "(unsigned " }; //Array of unnecessary elements
@@ -50,6 +61,10 @@ namespace Platform_x86
                 original[i] = original[i].TrimEnd();
             }
         }
+        /// <summary>
+        /// Goes through the lines of the PC calling the necessary functions to translate
+        /// the code to TAC
+        /// </summary>
         private static void Translate()
         {
             string[] types = { "int ", "char ", "long ", "short ", "int* ", "char* ", "long* ", "short* " };
@@ -86,9 +101,12 @@ namespace Platform_x86
                 i++;
             }
         }
+        /// <summary>
+        /// Creates a new function
+        /// </summary>
+        /// <param name="line">PC line, similar to "int sub_401334(int a1, int a2)"</param>
         private static void CreateFunction(string line)
         {
-            //The parameter line is expected to have a content similar to "int sub_401334(int a1 int a2)"
             if (routine.Function.Count > 0)
                 FakeReturnInstruction();
             //Extracting the returning type
@@ -125,8 +143,11 @@ namespace Platform_x86
             }
             BasicBlockType newBasicBlock = newFunction.BasicBlock.Append();
             newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Successors.Value = string.Empty;
         }
+        /// <summary>
+        /// Creates a new local variable if it does not exist already        
+        /// </summary>
+        /// <param name="line">Line similar to "int a int b int c"</param>
         private static void CreateLocalVariable(string line)
         {
             //The parameter line is expected to have a content similar to "int a int b int c"
@@ -158,6 +179,11 @@ namespace Platform_x86
                 }
             }
         }
+        /// <summary>
+        /// Selects the necessary function to create a new instruction
+        /// </summary>
+        /// <param name="lineIndex">Index of the PC line in the array "original" </param>
+        /// <returns>The correct line index after the creation of the instruction</returns>
         private static int CreateInstruction(int lineIndex)
         {
             if (original[lineIndex].Contains("if"))
@@ -193,6 +219,10 @@ namespace Platform_x86
                 Console.WriteLine("Instruction not implemented: " + original[lineIndex]);
             return lineIndex;
         }
+        /// <summary>
+        /// Preprocesses the line before creating the return instruction
+        /// </summary>
+        /// <param name="lineIndex">Index of the PC line in the array "original" </param>
         private static void PreReturn(int lineIndex)
         {
             string aux = original[lineIndex];
@@ -205,40 +235,18 @@ namespace Platform_x86
                 ReturnInstruction(string.Concat("return ",aux));
             }
             //aux is something like "return a1 + v5"
-            else if (aux.Contains("+") || aux.Contains("-") || aux.Contains("*") || aux.Contains("/")) 
-            {
-                string tempVariable1 = string.Empty;
-                string tempVariable2;
-                string[] tokens = aux.Split(' ');
-                int i = 1;
-                while (i + 1 < tokens.Length && (tokens[i + 1].Equals("*") || tokens[i + 1].Equals("-") || tokens[i + 1].Equals("+") || tokens[i + 1].Equals("/")))
-                {
-                    if (tempVariable1.Length == 0)
-                    {
-                        tempVariable1 = string.Concat("t_", randNumbers.Next().ToString());
-                        CreateLocalVariable(string.Concat("int ", tempVariable1));
-                        FullAssignInstruction(string.Join(" ", tempVariable1, "=", tokens[i], tokens[i + 1], tokens[i + 2]));
-                    }
-                    else
-                    {
-                        tempVariable2 = string.Concat("t_", randNumbers.Next().ToString());
-                        CreateLocalVariable(string.Concat("int ", tempVariable2));
-                        FullAssignInstruction(string.Join(" ", tempVariable2, "=", tempVariable1, tokens[i + 1], tokens[i + 2]));
-                        tempVariable1 = tempVariable2;
-                    }
-                    i += 2;
-                }
-                ReturnInstruction(string.Concat("return ", tempVariable1));
-            }
+            else if (aux.Contains("+") || aux.Contains("-") || aux.Contains("*") || aux.Contains("/") || aux.Contains("%")) 
+                ReturnInstruction(string.Concat("return ", ProcessArithmeticOperations(aux.Substring(aux.IndexOf(' ')))));
             //aux is something like "return 0" or "return a1"
             else 
-            {
                 ReturnInstruction(aux);
-            }
         }
+        /// <summary>
+        /// Creates a return instruction
+        /// </summary>
+        /// <param name="line">PC line, similar to "return v3"</param>
         private static void ReturnInstruction(string line)
         {
-            //The parameter line is expected to have a content similar to "return v3"
             string[] tokens = line.Split(' ');
             int indexFunction = routine.Function.Count - 1;
             int indexBasicblock = routine.Function[indexFunction].BasicBlock.Count - 1;
@@ -258,6 +266,9 @@ namespace Platform_x86
             else 
                 newInstruction.Value = "return";
         }
+        /// <summary>
+        /// Creates the fake exit block
+        /// </summary>
         private static void FakeReturnInstruction()
         {
             int functionIndex = routine.Function.Count - 1;
@@ -268,9 +279,13 @@ namespace Platform_x86
             routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
             ReturnInstruction("return");
         }
+        /// <summary>
+        /// Creates a call instruction
+        /// </summary>
+        /// <param name="line">PC line, similar to "sub_401334(a, b)"</param>
+        /// <param name="returnType">Return type in case the currentFunctionReturnType should not be used"</param>
         private static void CallInstruction(string line, string returnType = "")
         {
-            //The parameter line is expected to have a content similar to "sub_401334(a, b)"
             int numParams = 0;
             int indexFunction = routine.Function.Count - 1;
             int indexBasicblock = routine.Function[indexFunction].BasicBlock.Count - 1;
@@ -292,7 +307,7 @@ namespace Platform_x86
                 foreach (string token in tokens)
                 {
                     if (token.Contains("+") || token.Contains("-") || token.Contains("*") || token.Contains("/") || token.Contains("%"))
-                        aux = aux.Replace(token,string.Concat(" ", ProcessOperations(token)));
+                        aux = aux.Replace(token, string.Concat(" ", ProcessArithmeticOperations(token)));
                 }
                 //Removing commas
                 aux = aux.Replace(",","");
@@ -337,9 +352,12 @@ namespace Platform_x86
             else if (!line.Contains("printf"))
                 RetrieveInstruction(line);
         }
+        /// <summary>
+        /// Creates a retrieve instruction
+        /// </summary>
+        /// <param name="line">PC line, similar to "sub_401334(a, b)"</param>
         private static void RetrieveInstruction(string line)
         {
-            //The parameter line is expected to have a content similar to "sub_401334(a, b)"
             string[] tokens = line.Split('(');
             int indexFunction = routine.Function.Count - 1;
             int indexBasicblock = routine.Function[indexFunction].BasicBlock.Count - 1;
@@ -350,6 +368,11 @@ namespace Platform_x86
             newInstruction.RefVars.Value = GetIDVariable(tokens[0]);
             newInstruction.Value = string.Concat("retrieve ", GetValueVariable(tokens[0]));
         }
+        /// <summary>
+        /// Preprocesses the line before creating a "full assignment" or a "copy" instruction
+        /// </summary>
+        /// <param name="lineIndex">Index of the PC line in the array "original" </param>
+        /// <param name="operation">Customized operation, not explicit in PC</param>
         private static void PreFullAssignCopy(int lineIndex, string operation = "")
         {
             string aux = operation;
@@ -393,19 +416,22 @@ namespace Platform_x86
                     if (aux.Contains("+=") || aux.Contains("-=") || aux.Contains("*=") || aux.Contains("/=")) 
                     {
                         tokens[1] = tokens[1].Remove(tokens[1].IndexOf('='), 1);
-                        FullAssignInstruction(string.Join(" ", tokens[0], "=", ProcessOperations(aux.Substring(aux.IndexOf('=') + 1)), tokens[1], tokens[0]));
+                        FullAssignInstruction(string.Join(" ", tokens[0], "=", ProcessArithmeticOperations(aux.Substring(aux.IndexOf('=') + 1)), tokens[1], tokens[0]));
                     }
                     else
                     {
                         //aux is "v5 = v1 + v2 -..."
-                        CopyInstruction(string.Join(" ", tokens[0], "=", ProcessOperations(aux.Substring(aux.IndexOf('=') + 1))));
+                        CopyInstruction(string.Join(" ", tokens[0], "=", ProcessArithmeticOperations(aux.Substring(aux.IndexOf('=') + 1))));
                     }
                 }
             }
         }
+        /// <summary>
+        /// Creates a "full assignment" instruction
+        /// </summary>
+        /// <param name="line">PC line, similar to "v3 = a2 * a1"</param>
         private static void FullAssignInstruction(string line)
         {
-            //The parameter line is expected to have a content similar to "v3 = a2 * a1"
             string[] tokens = line.Split(' ');
             int indexFunction = routine.Function.Count - 1;
             int indexBasicblock = routine.Function[indexFunction].BasicBlock.Count - 1;
@@ -433,9 +459,12 @@ namespace Platform_x86
             newInstruction.Value = string.Join(" ", GetValueVariable(tokens[0]), ":=",
                 GetValueVariable(tokens[2]), tokens[3], GetValueVariable(tokens[4]));
         }
+        /// <summary>
+        /// Creates a "copy" instruction
+        /// </summary>
+        /// <param name="line">PC line, similar to "v3 = 10" or "v3 = a1" or "v5 = sub_4113E0(v6)"</param>
         private static void CopyInstruction(string line)
         {
-            //The parameter "line" is expected to have a content similar to "v3 = 10" or "v3 = a1" or "v5 = sub_4113E0(v6)"
             string[] tokens;
             //Dealing with calls, something like "v5 = sub_4113E0(v6)"
             if (line.Contains("sub_"))
@@ -500,38 +529,49 @@ namespace Platform_x86
             newInstruction.Value = string.Concat(forPointers[0], string.Concat(GetValueVariable(tokens[0]), string.Concat(" := ", 
                 string.Concat(forPointers[1], GetValueVariable(tokens[2])))));
         }
+        /// <summary>
+        /// Creates a "if" instruction
+        /// </summary>
+        /// <param name="lineIndex">Index of the PC line in the array "original" </param>
+        /// <returns>The correct line index after processing the inner scope of the instruction</returns>
         private static int IfInstruction(int lineIndex)
         {
-            //The parameter lineIndex indicates which line we are in in the original code
             int functionIndex = routine.Function.Count - 1;
-            int basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
-            string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); //Extracting the control elements
+            int predBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            int linkedLogicalBasicBlockIndex = -1;
+            //Extracting the control elements
+            string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); 
             aux = aux.Remove(aux.Length - 2);
-            string[] tokens = aux.Split(' ');
-            //aux is something like i (true)
-            if (tokens.Length == 1)
-                CondJumpInstruction(string.Concat(tokens[0], " != 0"));
-            //aux is something similar to "i < 100"
-            else if (tokens.Length == 3) 
-                CondJumpInstruction(string.Join(" ", tokens[0], tokens[1], tokens[2]));
-            //aux is something similar to "i * a1 < 100 "
+            //Checking whether we have logical operations in the condition
+            if (aux.Contains("||") || aux.Contains("&&"))
+            {
+                int lastCondJumpIndex = ProcessLogicalOperations(aux);
+                //Selecting the right predecessor for the true lane based in the logical operations
+                if (logicalBasicBlocks[lastCondJumpIndex] == true)
+                {
+                    predBasicBlockIndex = lastCondJumpIndex;
+                    linkedLogicalBasicBlockIndex = lastCondJumpIndex;
+                    logicalBasicBlocks.Remove(linkedLogicalBasicBlockIndex);
+                }
+                else
+                {
+                    linkedLogicalBasicBlockIndex = predBasicBlockIndex;
+                    logicalBasicBlocks.Remove(linkedLogicalBasicBlockIndex);
+                }
+            }
             else
-                CondJumpInstruction(string.Join(" ", ProcessOperations(aux), tokens[tokens.Length - 2], tokens[tokens.Length - 1]));
+                PreCondJump(aux);
 
             //New Basic Block for the True Lane
             BasicBlockType trueBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
-            int trueBasickBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            int firstTrueBasickBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
             trueBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            trueBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            trueBasicBlock.Successors.Value = string.Empty;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = trueBasicBlock.ID.Value;
-            int instructionIndex = routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction.Count - 1;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value = string.Concat(
-                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value, trueBasicBlock.ID.Value);
-            //Processing instructions between { } //Returns the new line index            
+            LinkPredecessor(functionIndex, firstTrueBasickBlockIndex, predBasicBlockIndex, true);
+            CompleteCondJump(functionIndex, predBasicBlockIndex, trueBasicBlock.ID.Value);
+            //Processing instructions between { }        
             lineIndex = ProcessInnerScope(lineIndex);
             lineIndex++;
-            int lastInnerTrueBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            int lastTrueBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
 
             int lastFalseBasicBlockIndex = -1;
             if (original[lineIndex].Contains("else"))
@@ -539,11 +579,13 @@ namespace Platform_x86
                 //New Basic Block for the False Lane
                 BasicBlockType falseBasicBlock = routine.Function[functionIndex].BasicBlock.Append();
                 falseBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-                falseBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-                falseBasicBlock.Successors.Value = string.Empty;
-                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = string.Join(" ",
-                    routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value, falseBasicBlock.ID.Value);
-                //Processing instructions between { } //Returns the new line index
+                int firsFalseBasickBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+                //Linking the basic blocks created by logical operations (if they exist)
+                if (linkedLogicalBasicBlockIndex != -1)
+                    LinkLogicalBasicBlocks(firstTrueBasickBlockIndex, firsFalseBasickBlockIndex);
+                else
+                    LinkPredecessor(functionIndex, firsFalseBasickBlockIndex, predBasicBlockIndex);
+                //Processing instructions between { }
                 lineIndex = ProcessInnerScope(lineIndex); 
                 lastFalseBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
             }
@@ -551,38 +593,41 @@ namespace Platform_x86
             //New Basic Block for the intructions after the IF
             BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Successors.Value = string.Empty;
-            //Linking basic blocks
+            int newBasickBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            
+            //Linking all basic blocks
             if (lastFalseBasicBlockIndex != -1)
             {
-                newBasicBlock.Predecessors.Value = string.Join(" ", routine.Function[functionIndex].BasicBlock[lastInnerTrueBasicBlockIndex].ID.Value,
-                    routine.Function[functionIndex].BasicBlock[lastFalseBasicBlockIndex].ID.Value);
-                if (routine.Function[functionIndex].BasicBlock[lastFalseBasicBlockIndex].Successors.Value.Length > 0)
-                    routine.Function[functionIndex].BasicBlock[lastFalseBasicBlockIndex].Successors.Value = string.Join(" ",
-                        newBasicBlock.ID.Value, routine.Function[functionIndex].BasicBlock[lastFalseBasicBlockIndex].Successors.Value);
-                else
-                    routine.Function[functionIndex].BasicBlock[lastFalseBasicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+                LinkPredecessor(functionIndex, newBasickBlockIndex, lastFalseBasicBlockIndex);
                 UncondJumpInstruction(lastFalseBasicBlockIndex, newBasicBlock.ID.Value);
             }
             else
-                newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[lastInnerTrueBasicBlockIndex].ID.Value;
-            if (routine.Function[functionIndex].BasicBlock[lastInnerTrueBasicBlockIndex].Successors.Value.Length > 0)
-                routine.Function[functionIndex].BasicBlock[lastInnerTrueBasicBlockIndex].Successors.Value = string.Join(" ",
-                    newBasicBlock.ID.Value, routine.Function[functionIndex].BasicBlock[lastInnerTrueBasicBlockIndex].Successors.Value);
-            else
-                routine.Function[functionIndex].BasicBlock[lastInnerTrueBasicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
+            {
+                //Linking the basic blocks created by logical operations (if they exist)
+                if (linkedLogicalBasicBlockIndex != -1)
+                    LinkLogicalBasicBlocks(firstTrueBasickBlockIndex, newBasickBlockIndex);
+                else
+                    LinkPredecessor(functionIndex, newBasickBlockIndex, predBasicBlockIndex);
+            }
+            LinkPredecessor(functionIndex, newBasickBlockIndex, lastTrueBasicBlockIndex);            
 
             //Adding a fake unconditional jump that will be used later during unconditional meshing
             if (trueBasicBlock.Instruction.Last.StatementType.EnumerationValue != StatementTypeType.EnumValues.eConditionalJump)
-                UncondJumpInstruction(trueBasickBlockIndex, trueBasicBlock.Successors.Value);
+                UncondJumpInstruction(lastTrueBasicBlockIndex, newBasicBlock.ID.Value);
 
             return lineIndex;
         }
+        /// <summary>
+        /// Creates a "for" instruction
+        /// </summary>
+        /// <param name="lineIndex">Index of the PC line in the array "original" </param>
+        /// <returns>The correct line index after processing the inner scope of the instruction</returns>
         private static int ForInstruction(int lineIndex)
         {
             //The parameter lineIndex indicates which line we are in in the original code
             int functionIndex = routine.Function.Count - 1;
-            int basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            int predBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            
             //Extracting the control elements ( i = 2 i < 10 i++ )
             string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); 
             aux = aux.Remove(aux.Length - 2);
@@ -590,11 +635,10 @@ namespace Platform_x86
             string[] tokens2;
             //i = 2
             tokens[0] = tokens[0].Trim();
-            if ((tokens[0].Contains("*") || tokens[0].Contains("-") || tokens[0].Contains("+")
-                || tokens[0].Contains("/") || tokens[0].Contains("%")))
+            if ((tokens[0].Contains("*") || tokens[0].Contains("-") || tokens[0].Contains("+") || tokens[0].Contains("/") || tokens[0].Contains("%")))
             {
                 tokens2 = tokens[0].Split(' ');
-                CopyInstruction(string.Join(" ", tokens2[0], tokens2[1], ProcessOperations(tokens[0].Substring(tokens[0].IndexOf('=') + 1))));
+                CopyInstruction(string.Join(" ", tokens2[0], tokens2[1], ProcessArithmeticOperations(tokens[0].Substring(tokens[0].IndexOf('=') + 1))));
             }
             else
                 CopyInstruction(tokens[0]);
@@ -602,176 +646,152 @@ namespace Platform_x86
             //New Basic Block for the Conditional Jump
             BasicBlockType condJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             condJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            condJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = condJumpBasicBlock.ID.Value;
+            int condJumpBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            LinkPredecessor(functionIndex, condJumpBasicBlockIndex, predBasicBlockIndex);            
+            //Creating the conditional jump
             tokens[1] = tokens[1].Trim();
-            tokens2 = tokens[1].Split(' ');
-            //aux is something like i (true)
-            if (tokens2.Length == 1)
-                CondJumpInstruction(string.Concat(tokens2[0], " != 0"));
-            //aux is something similar to "i < 100"
-            else if (tokens2.Length == 3)
-                CondJumpInstruction(string.Join(" ", tokens2[0], tokens2[1], tokens2[2]));
-            //aux is something similar to "i * a1 < 100 "
-            else
-                CondJumpInstruction(string.Join(" ", ProcessOperations(aux), tokens2[tokens2.Length - 2], tokens2[tokens2.Length - 1]));
-            
-            ////i < 10
-            //CondJumpInstruction(string.Join(" ", tokens[3], tokens[4], tokens[5]));
-            basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            PreCondJump(tokens[1]);
 
             //New Basic Block for the Inner Scope
             BasicBlockType innerScopeBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             innerScopeBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            innerScopeBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            innerScopeBasicBlock.Successors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value = string.Join(" ",
-                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value, innerScopeBasicBlock.ID.Value);
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = innerScopeBasicBlock.ID.Value;
-            int instructionIndex = routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction.Count - 1;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value = string.Concat(
-                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value, innerScopeBasicBlock.ID.Value);
-            //Processing instructions between { } 
-            //Returns the new line index 
-            //i++
+            int firstInnerScopeBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            LinkPredecessor(functionIndex, firstInnerScopeBasicBlockIndex, condJumpBasicBlockIndex);
+            CompleteCondJump(functionIndex, condJumpBasicBlockIndex, innerScopeBasicBlock.ID.Value);
+            //tokens[2] is something like "i++"
             tokens[2] = tokens[2].Trim();
-            lineIndex = ProcessInnerScope(lineIndex, tokens[2]); 
-            UncondJumpInstruction(routine.Function[functionIndex].BasicBlock.Count - 1, routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value);
+            //Processing instructions between { } 
+            lineIndex = ProcessInnerScope(lineIndex, tokens[2]);
+            int lastInnerScopeBasicBlock = routine.Function[functionIndex].BasicBlock.Count - 1;
+            LinkPredecessor(functionIndex, condJumpBasicBlockIndex, lastInnerScopeBasicBlock);
+            UncondJumpInstruction(lastInnerScopeBasicBlock, routine.Function[functionIndex].BasicBlock[condJumpBasicBlockIndex].ID.Value);
 
             //New Basic Block for the Unconditional Jump
             BasicBlockType uncondJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             uncondJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            uncondJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = string.Join(" ",
-                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value, uncondJumpBasicBlock.ID.Value);
-            basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            int uncondJumpBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            LinkPredecessor(functionIndex, uncondJumpBasicBlockIndex, condJumpBasicBlockIndex);
 
             //New Basic Block for the intructions after the For Loop
             BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            newBasicBlock.Successors.Value = string.Empty;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
-            UncondJumpInstruction(basicBlockIndex,newBasicBlock.ID.Value);
+            int newBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            LinkPredecessor(functionIndex, newBasicBlockIndex, uncondJumpBasicBlockIndex);
+            UncondJumpInstruction(uncondJumpBasicBlockIndex, newBasicBlock.ID.Value);
 
             return lineIndex;
         }
+        /// <summary>
+        /// Creates a "DoWhile" instruction
+        /// </summary>
+        /// <param name="lineIndex">Index of the PC line in the array "original" </param>
+        /// <returns>The correct line index after processing the inner scope of the instruction</returns>
         private static int DoWhileInstruction(int lineIndex)
         {
             //The parameter lineIndex indicates which line we are in in the original code
             int functionIndex = routine.Function.Count - 1;
-            int basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            int predBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            
             //New Basic Block for the Inner Scope
-            BasicBlockType innerScopeBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
+            BasicBlockType innerScopeBasicBlock = routine.Function[functionIndex].BasicBlock.Append();
             innerScopeBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            innerScopeBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = innerScopeBasicBlock.ID.Value;
-            innerScopeBasicBlock.Successors.Value = string.Empty;
-            int innerBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
-            //Processing instructions between { } //Returns the new line index
+            int firstInnerScopeBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            LinkPredecessor(functionIndex, firstInnerScopeBasicBlockIndex, predBasicBlockIndex);
+            //Processing instructions between { }
             lineIndex = ProcessInnerScope(lineIndex); 
             lineIndex++;
-            basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            int lastInnerScopeBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
 
             //New Basic Block for the Conditional Jump
             BasicBlockType condJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             condJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            condJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = condJumpBasicBlock.ID.Value;
-            condJumpBasicBlock.Successors.Value = routine.Function[functionIndex].BasicBlock[innerBasicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[innerBasicBlockIndex].Predecessors.Value = string.Join(" ",
-                routine.Function[functionIndex].BasicBlock[innerBasicBlockIndex].Predecessors.Value, condJumpBasicBlock.ID.Value);
-            
+            int condJumpBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            LinkPredecessor(functionIndex, condJumpBasicBlockIndex, lastInnerScopeBasicBlockIndex);
+            LinkPredecessor(functionIndex, lastInnerScopeBasicBlockIndex, condJumpBasicBlockIndex);            
             //Extracting the control elements
             string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); 
             aux = aux.Remove(aux.Length - 2);
-            string[] tokens = aux.Split(' ');
-            //aux is something like i (true)
-            if (tokens.Length == 1)
-                CondJumpInstruction(string.Concat(tokens[0], " != 0"));
-            //aux is something like i < 100
-            else if (tokens.Length == 3)
-                CondJumpInstruction(string.Join(" ",tokens[0], tokens[1], tokens[2]));
-            //aux is something like i * j < 100
-            else
-                CondJumpInstruction(string.Join(" ", ProcessOperations(aux), tokens[tokens.Length - 2], tokens[tokens.Length - 1]));
-            
-            int instructionIndex = condJumpBasicBlock.Instruction.Count - 1;
-            condJumpBasicBlock.Instruction[instructionIndex].Value = string.Concat(condJumpBasicBlock.Instruction[instructionIndex].Value,
-                routine.Function[functionIndex].BasicBlock[innerBasicBlockIndex].ID.Value);
-            basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            PreCondJump(aux);            
+            CompleteCondJump(functionIndex, condJumpBasicBlockIndex, innerScopeBasicBlock.ID.Value);
 
             //New Basic Block for the intructions after the Do While Loop
             BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = string.Join(" ",
-                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value, newBasicBlock.ID.Value);
+            int newBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            LinkPredecessor(functionIndex, newBasicBlockIndex, condJumpBasicBlockIndex);
 
             return lineIndex;
         }
+        /// <summary>
+        /// Creates a "while" instruction
+        /// </summary>
+        /// <param name="lineIndex">Index of the PC line in the array "original" </param>
+        /// <returns>The correct line index after processing the inner scope of the instruction</returns>
         private static int WhileInstruction(int lineIndex)
         {
-            //The parameter lineIndex indicates which line we are in in the original code
             int functionIndex = routine.Function.Count - 1;
-            int basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
-            //Extracting the control elements
-            string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); 
-            aux = aux.Remove(aux.Length - 2);
-            string[] tokens = aux.Split(' ');
-
+            int predBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            
             //New Basic Block for the Conditional Jump
             BasicBlockType condJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             condJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            condJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = condJumpBasicBlock.ID.Value;
-            condJumpBasicBlock.Successors.Value = string.Empty;
-            //aux is something like i (true)
-            if (tokens.Length == 1)
-                CondJumpInstruction(string.Concat(tokens[0], " != 0"));
-            //aux is something like i < 100
-            else if (tokens.Length == 3)
-                CondJumpInstruction(string.Join(" ", tokens[0], tokens[1], tokens[2]));
-            //aux is something like i * j < 100
-            else
-                CondJumpInstruction(string.Join(" ", ProcessOperations(aux), tokens[tokens.Length - 2], tokens[tokens.Length - 1]));
-            basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            int condJumpBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            LinkPredecessor(functionIndex, condJumpBasicBlockIndex, predBasicBlockIndex);
+            //Extracting the control elements
+            string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2);
+            aux = aux.Remove(aux.Length - 2);
+            PreCondJump(aux);
 
             //New Basic Block for the Inner Scope
             BasicBlockType innerScopeBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             innerScopeBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            innerScopeBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            innerScopeBasicBlock.Successors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value = string.Join(" ",
-                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Predecessors.Value, innerScopeBasicBlock.ID.Value);
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = innerScopeBasicBlock.ID.Value;
-            int instructionIndex = routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction.Count - 1;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value = string.Concat(
-                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction[instructionIndex].Value, innerScopeBasicBlock.ID.Value);
-            //Processing instructions between { } //Returns the new line index
-            lineIndex = ProcessInnerScope(lineIndex); 
-            UncondJumpInstruction(routine.Function[functionIndex].BasicBlock.Count - 1, routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value);
+            int firstInnerScopeBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            LinkPredecessor(functionIndex, firstInnerScopeBasicBlockIndex, condJumpBasicBlockIndex);
+            CompleteCondJump(functionIndex, condJumpBasicBlockIndex, innerScopeBasicBlock.ID.Value);
+            //Processing instructions between { }
+            lineIndex = ProcessInnerScope(lineIndex);
+            int lastInnerScopeBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            UncondJumpInstruction(lastInnerScopeBasicBlockIndex, routine.Function[functionIndex].BasicBlock[condJumpBasicBlockIndex].ID.Value);            
+            LinkPredecessor(functionIndex, condJumpBasicBlockIndex, lastInnerScopeBasicBlockIndex);
 
             //New Basic Block for the Unconditional Jump
             BasicBlockType uncondJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             uncondJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            uncondJumpBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = string.Join(" ",
-                routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value, uncondJumpBasicBlock.ID.Value);
-            basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            int uncondJumpBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            LinkPredecessor(functionIndex, uncondJumpBasicBlockIndex, condJumpBasicBlockIndex);
 
             //New Basic Block for the intructions after the While Loop
             BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
-            newBasicBlock.Predecessors.Value = routine.Function[functionIndex].BasicBlock[basicBlockIndex].ID.Value;
-            routine.Function[functionIndex].BasicBlock[basicBlockIndex].Successors.Value = newBasicBlock.ID.Value;
-            UncondJumpInstruction(basicBlockIndex, newBasicBlock.ID.Value);
+            int newBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            LinkPredecessor(functionIndex, newBasicBlockIndex, uncondJumpBasicBlockIndex);
+            UncondJumpInstruction(uncondJumpBasicBlockIndex, newBasicBlock.ID.Value);
 
             return lineIndex;
         }
+        /// <summary>
+        /// Preprocesses the line before creating the conditional jump instruction
+        /// </summary>
+        /// <param name="line">PC line, similar to "i" or "i < 100" or "i * a1 > 100"</param>
+        private static void PreCondJump(string line)
+        {
+            string[] tokens = line.Split(' ');
+            //line is something like i (true)
+            if (tokens.Length == 1)
+                CondJumpInstruction(string.Concat(tokens[0], " != 0"));
+            //line is something similar to "i < 100"
+            else if (tokens.Length == 3)
+                CondJumpInstruction(line);
+            //line is something similar to "i * a1 < 100 "
+            else
+                CondJumpInstruction(string.Join(" ", ProcessArithmeticOperations(line), tokens[tokens.Length - 2], tokens[tokens.Length - 1]));
+        }
+        /// <summary>
+        /// Creates a conditional jump instruction
+        /// </summary>
+        /// <param name="line">PC line, similar to "i < a1"</param>
         private static void CondJumpInstruction(string line)
         {
-            //The parameter line is expected to have a content similar to "i &lt; a1"
             string[] tokens = line.Split(' ');
             int functionIndex = routine.Function.Count - 1;
             int basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
@@ -792,6 +812,11 @@ namespace Platform_x86
             newInstruction.RefVars.Value = refVars;
             newInstruction.Value = string.Join(" ", "if", GetValueVariable(tokens[0]), tokens[1], GetValueVariable(tokens[2]), "goto ");
         }
+        /// <summary>
+        /// Creates a unconditional jump instruction
+        /// </summary>
+        /// <param name="indexOwnerBasicBlock">Index of the basic block holding the unconditional jump</param>
+        /// <param name="targetBasicBlockID">Target basic block ID</param>
         private static void UncondJumpInstruction(int indexOwnerBasicBlock, string targetBasicBlockID)
         {
             //The parameter basicBlockID is expected to have a content similar to "ID_80D994CA-833A-4F05-99A9-EC3BD2DEA9EE"
@@ -802,6 +827,12 @@ namespace Platform_x86
             newInstruction.PolyRequired.Value = false;
             newInstruction.Value = string.Concat("goto ",targetBasicBlockID);
         }
+        /// <summary>
+        /// Processes the inner scope of a instruction
+        /// </summary>
+        /// <param name="lineIndex">Index of the PC line in the array "original" </param>
+        /// <param name="operation">Operation to be insert at the end of the inner scope</param>
+        /// <returns>The correct line index after processing the inner scope of the instruction</returns>
         private static int ProcessInnerScope(int lineIndex, string operation = "")
         {
             int auxIndex = lineIndex + 1;
@@ -823,9 +854,13 @@ namespace Platform_x86
                 PreFullAssignCopy(0, operation);
             return auxIndex;
         }
-        private static string ProcessOperations(string line)
+        /// <summary>
+        /// Processes a sequence of arithmetic operations
+        /// </summary>
+        /// <param name="line">Line similar to "a1 + v5" or "a1 + v5 + a2...""</param>
+        /// <returns>The temporary variable that will hold the sequence operations' result</returns>
+        private static string ProcessArithmeticOperations(string line)
         {
-            //The parameter line is something like "a1 + v5" or "a1 + v5 + a2..."
             line = line.Trim();
             string tempVariable1 = string.Empty;
             string tempVariable2;
@@ -851,6 +886,172 @@ namespace Platform_x86
             }
             return tempVariable1;
         }
+        /// <summary>
+        /// Processes logical operations
+        /// </summary>
+        /// <param name="line">Line similar to "a1 < 100 || a1 >= 200"</param>
+        /// <returns>The last condJumpBasicBlock index</returns>
+        private static int ProcessLogicalOperations(string line)
+        {
+            int functionIndex = routine.Function.Count - 1;
+            int predBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            int condJumpBasicBlockIndex;
+            int uncondJumpBasicBlockIndex;
+            int nextCondJumpBasicBlockIndex;
+
+            logicalBasicBlocks.Clear();
+            line = line.Replace("||", "|@");
+            line = line.Replace("&&", "&@");
+            string[] tokens = line.Split('@');
+            PreCondJump(tokens[0].Substring(0, tokens[0].Length - 2));
+            if (tokens[0].Contains("|"))
+                logicalBasicBlocks.Add(predBasicBlockIndex, true);
+            else
+                logicalBasicBlocks.Add(predBasicBlockIndex, false);
+            //New basic block for the next conditional jump
+            BasicBlockType condJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append();
+            condJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+            condJumpBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            if (tokens[0].Contains("&"))
+            {
+                LinkPredecessor(functionIndex, condJumpBasicBlockIndex, predBasicBlockIndex, true);
+                CompleteCondJump(functionIndex, predBasicBlockIndex, condJumpBasicBlock.ID.Value);
+            }
+            else
+                LinkPredecessor(functionIndex, condJumpBasicBlockIndex, predBasicBlockIndex);
+            for (int i = 1; i < tokens.Length; i++)
+            {
+                tokens[i] = tokens[i].TrimStart();
+                if (tokens[i].Contains("|") || tokens[i].Contains("&"))
+                    PreCondJump(tokens[i].Substring(0, tokens[i].Length - 2));
+                else
+                    PreCondJump(tokens[i]);
+                if (tokens[i].Contains("|") && !tokens[i -1].Contains("&"))
+                    logicalBasicBlocks.Add(condJumpBasicBlockIndex, true);
+                else
+                {
+                    BasicBlockType uncondJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append();
+                    uncondJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+                    uncondJumpBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+                    logicalBasicBlocks.Add(uncondJumpBasicBlockIndex, false);
+                    LinkPredecessor(functionIndex, uncondJumpBasicBlockIndex, condJumpBasicBlockIndex);
+                }
+                
+                if (i < tokens.Length - 1)
+                {
+                    BasicBlockType nextCondJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append();
+                    nextCondJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
+                    nextCondJumpBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+                    if (tokens[i].Contains("&"))
+                    {
+                        CompleteCondJump(functionIndex, condJumpBasicBlockIndex, nextCondJumpBasicBlock.ID.Value);
+                        LinkPredecessor(functionIndex, nextCondJumpBasicBlockIndex, condJumpBasicBlockIndex, true);
+                    }
+                    else if (tokens[i - 1].Contains("&") && tokens[i].Contains("|"))
+                    {
+                        logicalBasicBlocks.Add(condJumpBasicBlockIndex, true);
+                        LinkLogicalBasicBlocks(-1, nextCondJumpBasicBlockIndex, true);
+                    }
+                    else
+                        LinkPredecessor(functionIndex, nextCondJumpBasicBlockIndex, condJumpBasicBlockIndex);
+                    condJumpBasicBlockIndex = nextCondJumpBasicBlockIndex;
+                }
+                //Adding the last conditional jump
+                else
+                    logicalBasicBlocks.Add(condJumpBasicBlockIndex, true);
+            }
+            return condJumpBasicBlockIndex;
+        }
+        private static void LinkLogicalBasicBlocks(int trueBasicBlockIndex, int falseBasicBlockIndex, bool partial = false)
+        {
+            int functionIndex = routine.Function.Count - 1;
+            List<int> linkedPartial = new List<int>();
+            BasicBlockType trueBasicBlock = routine.Function[functionIndex].BasicBlock[trueBasicBlockIndex];
+            BasicBlockType falseBasicBlock = routine.Function[functionIndex].BasicBlock[falseBasicBlockIndex];
+            foreach (int basicBlockIndex in logicalBasicBlocks.Keys)
+            {
+                BasicBlockType basicBlock = routine.Function[functionIndex].BasicBlock[basicBlockIndex];
+
+                if (!partial && logicalBasicBlocks[basicBlockIndex] == true)
+                {
+                    if (basicBlock.Instruction.Exists)
+                    {
+                        LinkPredecessor(functionIndex, trueBasicBlockIndex, basicBlockIndex, true);
+                        CompleteCondJump(functionIndex, basicBlockIndex, trueBasicBlock.ID.Value);
+                    }
+                    else
+                    {
+                        LinkPredecessor(functionIndex, trueBasicBlockIndex, basicBlockIndex);
+                        UncondJumpInstruction(basicBlockIndex, trueBasicBlock.ID.Value);
+                    }
+                }
+                else if (logicalBasicBlocks[basicBlockIndex] == false)
+                {
+                    if (basicBlock.Instruction.Exists)
+                    {
+                        LinkPredecessor(functionIndex, falseBasicBlockIndex, basicBlockIndex);
+                        linkedPartial.Add(basicBlockIndex);
+                    }
+                    else
+                    {
+                        LinkPredecessor(functionIndex, falseBasicBlockIndex, basicBlockIndex);
+                        UncondJumpInstruction(basicBlockIndex, falseBasicBlock.ID.Value);
+                        linkedPartial.Add(basicBlockIndex);
+                    }
+                }                
+            }
+            foreach (int basicBlockIndex in linkedPartial)
+                logicalBasicBlocks.Remove(basicBlockIndex);
+        }
+        /// <summary>
+        /// Links two basic blocks
+        /// </summary>
+        /// <param name="funcIndex">Index of the function which the basic blocks belong to</param>
+        /// <param name="actualIndex">Actual basic block index</param>
+        /// <param name="predIndex">Predecessor basic block index</param>
+        private static void LinkPredecessor(int funcIndex, int actualIndex, int predIndex, bool first = false)
+        {
+            
+            if (!routine.Function[funcIndex].BasicBlock[actualIndex].Predecessors.Exists())
+                routine.Function[funcIndex].BasicBlock[actualIndex].Predecessors.Value =
+                    routine.Function[funcIndex].BasicBlock[predIndex].ID.Value;
+            else
+                routine.Function[funcIndex].BasicBlock[actualIndex].Predecessors.Value = 
+                    string.Join(" ", routine.Function[funcIndex].BasicBlock[actualIndex].Predecessors.Value,
+                    routine.Function[funcIndex].BasicBlock[predIndex].ID.Value);
+
+            if (!routine.Function[funcIndex].BasicBlock[predIndex].Successors.Exists())
+                routine.Function[funcIndex].BasicBlock[predIndex].Successors.Value =
+                    routine.Function[funcIndex].BasicBlock[actualIndex].ID.Value;
+            else
+            {
+                if (first)
+                    routine.Function[funcIndex].BasicBlock[predIndex].Successors.Value =
+                    string.Join(" ", routine.Function[funcIndex].BasicBlock[actualIndex].ID.Value,
+                    routine.Function[funcIndex].BasicBlock[predIndex].Successors.Value);
+                else
+                    routine.Function[funcIndex].BasicBlock[predIndex].Successors.Value =
+                    string.Join(" ", routine.Function[funcIndex].BasicBlock[predIndex].Successors.Value,
+                        routine.Function[funcIndex].BasicBlock[actualIndex].ID.Value);
+            }
+        }
+        /// <summary>
+        /// Completes a conditional jump instruction with its target
+        /// </summary>
+        /// <param name="funcIndex">Index of the function which the basic block belongs to</param>
+        /// <param name="indexOwnerBasicBlock">Index of the basic block holding the conditional jump</param>
+        /// <param name="targetBasicBlockID">Conditional jump target ID</param>
+        private static void CompleteCondJump(int funcIndex, int indexOwnerBasicBlock, string targetBasicBlockID)
+        {
+            int instructionIndex = routine.Function[funcIndex].BasicBlock[indexOwnerBasicBlock].Instruction.Count - 1;
+            routine.Function[funcIndex].BasicBlock[indexOwnerBasicBlock].Instruction[instructionIndex].Value = string.Concat(
+                routine.Function[funcIndex].BasicBlock[indexOwnerBasicBlock].Instruction[instructionIndex].Value, targetBasicBlockID);
+        }
+        /// <summary>
+        /// Gets the ID of a variable
+        /// </summary>
+        /// <param name="globalID">Variable's global ID</param>
+        /// <returns>Either the ID of the variable if it exists in the routine or the globalID if it does not</returns>
         private static string GetIDVariable(string globalID)
         {
             for (int i = 0; i < currentFunctionLocalVars.Variable.Count; i++)
@@ -860,6 +1061,11 @@ namespace Platform_x86
             }
             return globalID;
         }
+        /// <summary>
+        /// Gets the value of a variable
+        /// </summary>
+        /// <param name="globalID">Variable's global ID</param>
+        /// <returns>Either the value of the variable if it exists or the globalID if it does not</returns>
         private static string GetValueVariable(string globalID)
         {
             for (int i = 0; i < currentFunctionLocalVars.Variable.Count; i++)
@@ -869,6 +1075,11 @@ namespace Platform_x86
             }
             return globalID;
         }
+        /// <summary>
+        /// Gets the memory region size of a variable
+        /// </summary>
+        /// <param name="globalID">Variable's global ID</param>
+        /// <returns>The memory region size</returns>
         private static int GetMemoryRegionSizeVariable(string globalID)
         {
             int i = 0;
@@ -876,6 +1087,11 @@ namespace Platform_x86
                 i++;
             return (int)currentFunctionLocalVars.Variable[i].MemoryRegionSize.Value;
         }
+        /// <summary>
+        /// Gets the ID of a function
+        /// </summary>
+        /// <param name="globalID">Function's global ID</param>
+        /// <returns>Either the ID of the function if it exists in the routine or the globalID if it does not</returns>
         private static string GetIDFunction(string globalID)
         {
             
