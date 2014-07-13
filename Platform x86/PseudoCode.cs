@@ -627,13 +627,14 @@ namespace Platform_x86
             //The parameter lineIndex indicates which line we are in in the original code
             int functionIndex = routine.Function.Count - 1;
             int predBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            bool logicalOperations = false;
             
             //Extracting the control elements ( i = 2 i < 10 i++ )
             string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); 
             aux = aux.Remove(aux.Length - 2);
             string[] tokens = aux.Split(';');
             string[] tokens2;
-            //i = 2
+            //Creating the copy instruction
             tokens[0] = tokens[0].Trim();
             if ((tokens[0].Contains("*") || tokens[0].Contains("-") || tokens[0].Contains("+") || tokens[0].Contains("/") || tokens[0].Contains("%")))
             {
@@ -650,14 +651,25 @@ namespace Platform_x86
             LinkPredecessor(functionIndex, condJumpBasicBlockIndex, predBasicBlockIndex);            
             //Creating the conditional jump
             tokens[1] = tokens[1].Trim();
-            PreCondJump(tokens[1]);
+            //Checking whether we have logical operations in the condition
+            if (tokens[1].Contains("||") || tokens[1].Contains("&&"))
+            {
+                ProcessLogicalOperations(tokens[1]);
+                logicalOperations = true;
+            }
+            else
+                PreCondJump(tokens[1]);
 
             //New Basic Block for the Inner Scope
             BasicBlockType innerScopeBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             innerScopeBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             int firstInnerScopeBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
-            LinkPredecessor(functionIndex, firstInnerScopeBasicBlockIndex, condJumpBasicBlockIndex);
-            CompleteCondJump(functionIndex, condJumpBasicBlockIndex, innerScopeBasicBlock.ID.Value);
+            //Only if we do not have logical operations
+            if (!logicalOperations)
+            {
+                LinkPredecessor(functionIndex, firstInnerScopeBasicBlockIndex, condJumpBasicBlockIndex);
+                CompleteCondJump(functionIndex, condJumpBasicBlockIndex, innerScopeBasicBlock.ID.Value);
+            }
             //tokens[2] is something like "i++"
             tokens[2] = tokens[2].Trim();
             //Processing instructions between { } 
@@ -670,7 +682,11 @@ namespace Platform_x86
             BasicBlockType uncondJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             uncondJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             int uncondJumpBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
-            LinkPredecessor(functionIndex, uncondJumpBasicBlockIndex, condJumpBasicBlockIndex);
+            //Linking the basic blocks created by logical operations (if they exist)
+            if (logicalOperations)
+                LinkLogicalBasicBlocks(firstInnerScopeBasicBlockIndex, uncondJumpBasicBlockIndex);
+            else
+                LinkPredecessor(functionIndex, uncondJumpBasicBlockIndex, condJumpBasicBlockIndex);
 
             //New Basic Block for the intructions after the For Loop
             BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
@@ -691,6 +707,7 @@ namespace Platform_x86
             //The parameter lineIndex indicates which line we are in in the original code
             int functionIndex = routine.Function.Count - 1;
             int predBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            bool logicalOperations = false;
             
             //New Basic Block for the Inner Scope
             BasicBlockType innerScopeBasicBlock = routine.Function[functionIndex].BasicBlock.Append();
@@ -707,18 +724,31 @@ namespace Platform_x86
             condJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             int condJumpBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
             LinkPredecessor(functionIndex, condJumpBasicBlockIndex, lastInnerScopeBasicBlockIndex);
-            LinkPredecessor(functionIndex, lastInnerScopeBasicBlockIndex, condJumpBasicBlockIndex);            
             //Extracting the control elements
             string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2); 
             aux = aux.Remove(aux.Length - 2);
-            PreCondJump(aux);            
-            CompleteCondJump(functionIndex, condJumpBasicBlockIndex, innerScopeBasicBlock.ID.Value);
+            //Checking whether we have logical operations in the condition
+            if (aux.Contains("||") || aux.Contains("&&"))
+            {
+                ProcessLogicalOperations(aux);
+                logicalOperations = true;
+            }
+            else
+            {
+                PreCondJump(aux);
+                LinkPredecessor(functionIndex, firstInnerScopeBasicBlockIndex, condJumpBasicBlockIndex);
+                CompleteCondJump(functionIndex, condJumpBasicBlockIndex, innerScopeBasicBlock.ID.Value);
+            }
 
             //New Basic Block for the intructions after the Do While Loop
             BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             newBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             int newBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
-            LinkPredecessor(functionIndex, newBasicBlockIndex, condJumpBasicBlockIndex);
+            //Linking the basic blocks created by logical operations (if they exist)
+            if (logicalOperations)
+                LinkLogicalBasicBlocks(firstInnerScopeBasicBlockIndex, newBasicBlockIndex);
+            else
+                LinkPredecessor(functionIndex, newBasicBlockIndex, condJumpBasicBlockIndex);
 
             return lineIndex;
         }
@@ -731,6 +761,7 @@ namespace Platform_x86
         {
             int functionIndex = routine.Function.Count - 1;
             int predBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
+            bool logicalOperations = false;
             
             //New Basic Block for the Conditional Jump
             BasicBlockType condJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
@@ -740,14 +771,25 @@ namespace Platform_x86
             //Extracting the control elements
             string aux = original[lineIndex].Substring(original[lineIndex].IndexOf('(') + 2);
             aux = aux.Remove(aux.Length - 2);
-            PreCondJump(aux);
+            //Checking whether we have logical operations in the condition
+            if (aux.Contains("||") || aux.Contains("&&"))
+            {
+                ProcessLogicalOperations(aux);
+                logicalOperations = true;
+            }
+            else
+                PreCondJump(aux);
 
             //New Basic Block for the Inner Scope
             BasicBlockType innerScopeBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             innerScopeBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             int firstInnerScopeBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
-            LinkPredecessor(functionIndex, firstInnerScopeBasicBlockIndex, condJumpBasicBlockIndex);
-            CompleteCondJump(functionIndex, condJumpBasicBlockIndex, innerScopeBasicBlock.ID.Value);
+            //Only if we do not have logical operations
+            if (!logicalOperations)
+            {
+                LinkPredecessor(functionIndex, firstInnerScopeBasicBlockIndex, condJumpBasicBlockIndex);
+                CompleteCondJump(functionIndex, condJumpBasicBlockIndex, innerScopeBasicBlock.ID.Value);
+            }
             //Processing instructions between { }
             lineIndex = ProcessInnerScope(lineIndex);
             int lastInnerScopeBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
@@ -758,7 +800,11 @@ namespace Platform_x86
             BasicBlockType uncondJumpBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
             uncondJumpBasicBlock.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             int uncondJumpBasicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
-            LinkPredecessor(functionIndex, uncondJumpBasicBlockIndex, condJumpBasicBlockIndex);
+            //Linking the basic blocks created by logical operations (if they exist)
+            if (logicalOperations)
+                LinkLogicalBasicBlocks(firstInnerScopeBasicBlockIndex, uncondJumpBasicBlockIndex);
+            else
+                LinkPredecessor(functionIndex, uncondJumpBasicBlockIndex, condJumpBasicBlockIndex);
 
             //New Basic Block for the intructions after the While Loop
             BasicBlockType newBasicBlock = routine.Function[functionIndex].BasicBlock.Append(); 
@@ -962,6 +1008,12 @@ namespace Platform_x86
             }
             return condJumpBasicBlockIndex;
         }
+        /// <summary>
+        /// Links basic blocks created  due to logical operations
+        /// </summary>
+        /// <param name="trueBasicBlockIndex">Basic block to be linked to in the true branch</param>
+        /// <param name="falseBasicBlockIndex">Basic block to be linked to in the false branch</param>
+        /// <param name="partial">Flag to indicate that partial linking should be performed (only false branch)</param>
         private static void LinkLogicalBasicBlocks(int trueBasicBlockIndex, int falseBasicBlockIndex, bool partial = false)
         {
             int functionIndex = routine.Function.Count - 1;
