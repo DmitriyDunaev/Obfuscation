@@ -54,6 +54,14 @@ namespace Obfuscator
                 func.UpdateAllCalls();
             }
 
+            //Checking whether the functions have either "division" or "modulo" operations
+            //If they do, fake instructions with original variables should be insert only right before the return
+            //to avoid problems with the these instructions
+            foreach (Function func in routine.Functions)
+            {
+                func.CheckDivisionModulo();
+            }
+
             //Checking for Multiple Obfuscation
             for (i = 0; i < Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["MultipleRuns"]); i++)
             {

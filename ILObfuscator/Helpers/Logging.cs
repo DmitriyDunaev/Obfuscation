@@ -46,7 +46,7 @@ namespace Obfuscator
                         if (bb.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump)
                         {
                             bbAttribute = string.Concat(basicBlockID, " [ shape=diamond");
-                            if (bb.Involve == BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly
+                            if (bb.Involve == BasicBlock.InvolveInFakeCodeGeneration.Both
                                 && !obfuscationPoint.Equals("CONST"))
                                 bbAttribute = string.Concat(bbAttribute, ", fillcolor=red, style=filled ];");
                             else
@@ -63,14 +63,14 @@ namespace Obfuscator
                                         bbAttribute = string.Concat(bbAttribute, ", fillcolor=yellow2, style=filled ];");
                                         break;
                                     case "CondJumps":
-                                        bbAttribute = string.Concat(bbAttribute, ", fillcolor=gray33, style=filled ];");
+                                        bbAttribute = string.Concat(bbAttribute, ", fillcolor=gray90, style=filled ];");
                                         break;
                                 }
                             }
                         }
                         else
                         {
-                            if (bb.Involve == BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly
+                            if (bb.Involve == BasicBlock.InvolveInFakeCodeGeneration.Both
                                 && !obfuscationPoint.Equals("CONST"))
                                 bbAttribute = string.Concat(basicBlockID, " [ fillcolor=red, style=filled ];");
                             else
@@ -87,7 +87,7 @@ namespace Obfuscator
                                         bbAttribute = string.Concat(basicBlockID, " [ fillcolor=yellow2, style=filled ];");
                                         break;
                                     case "CondJumps":
-                                        bbAttribute = string.Concat(basicBlockID, " [ fillcolor=gray33, style=filled ];");
+                                        bbAttribute = string.Concat(basicBlockID, " [ fillcolor=gray90, style=filled ];");
                                         break;
                                 }
                             }
@@ -104,6 +104,7 @@ namespace Obfuscator
                     }
 
                     //Creating the edges
+                    bool trueBranchFilled = false;
                     foreach (BasicBlock successor in bb.getSuccessors)
                     {
                         successorID = string.Join("","\"", successor.ID.ToString().Substring(successor.ID.ToString().IndexOf('_') + 1, 8), "\"");                        
@@ -131,11 +132,14 @@ namespace Obfuscator
                                     relOperator = " != ";
                                     break;
                             }
-                            if (successor == bb.getSuccessors.First())
-                                edgeAttributes = string.Join("","[label=\"",variableID,relOperator,
-                                    bb.Instructions.Last().GetConstFromCondition().ToString(),"\"]");
+                            if (successor == bb.getSuccessors.First() && !trueBranchFilled)
+                            {
+                                edgeAttributes = string.Join("", "[label=\"", variableID, relOperator,
+                                    bb.Instructions.Last().GetConstFromCondition().ToString(), "\"]");
+                                trueBranchFilled = true;
+                            }
                             else
-                                edgeAttributes = string.Join("","[label=\"false\"]");
+                                edgeAttributes = string.Join("", "[label=\"false\"]");
                         }
                         sb.AppendLine(string.Join(" ",basicBlockID,"->",successorID,edgeAttributes,";"));
                         edgeAttributes = string.Empty;

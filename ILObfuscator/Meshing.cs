@@ -50,22 +50,23 @@ namespace Obfuscator
                     int i = Randomizer.SingleNumber(0, 100);
                     if (i <= Common.UnconditionalMeshingProbability)
                     {
-                        BasicBlock mainRouteBB = bb.getSuccessors.First();
+                        BasicBlock originalSuccessor = bb.getSuccessors.First();
                         BasicBlock falseLane = new BasicBlock(bb.parent);
                         //The false lane involves fake variables only in other to provided the correct output
                         falseLane.Involve = BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly;
                         falseLane.Meshable = false;
                         BasicBlock trueLane = new BasicBlock(bb.parent);
-                        //The true lane involves both fake and original variables in other to provided the wrong output
-                        trueLane.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
+                        //The true lane should involve both fake and original variables in other to provided the wrong output
+                        if (funct.containsDivisionModulo == false || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0)
+                            trueLane.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
                         trueLane.Meshable = false;
                         trueLane.dead = true;
                         //Linking first the false lane
                         bb.LinkToSuccessor(falseLane, true);
                         //Creating the jump to the true lane
                         Randomizer.GenerateConditionalJumpInstruction(bb.Instructions.Last(), Instruction.ConditionType.AlwaysFalse, trueLane);
-                        ExpandMainRoute(falseLane, mainRouteBB, false);
-                        ExpandFakeRoute(trueLane, mainRouteBB, false);
+                        ExpandMainRoute(falseLane, originalSuccessor, false);
+                        ExpandFakeRoute(trueLane, originalSuccessor, false);
                     }
                 }
             }
@@ -105,7 +106,7 @@ namespace Obfuscator
         /// <param name="fake1">The first fake basic block to be used in the expansion</param>
         /// <param name="mainLaneBB">The original basic block we should jump to stay in the Main Route</param>
         /// <param name="atFakeCodeGeneration">Wheter we are or not at the fake code generation phase</param>
-        private static void ExpandMainRoute(BasicBlock fake1, BasicBlock mainRouteBB, bool atFakeCodeGeneration)
+        private static void ExpandMainRoute(BasicBlock fake1, BasicBlock originalSuccessor, bool atFakeCodeGeneration)
         {
             //Fetching the Conditional Jump (AlwaysFalse) created in the previous basic block
             Instruction originalInstruction = fake1.getPredecessors.First().Instructions.Last();
@@ -145,18 +146,19 @@ namespace Obfuscator
             }
 
             //Creating and expanding the false lane that stays in the Main Route
-            fake1.LinkToSuccessor(ExpandMainRoute(mainRouteBB), true);
+            fake1.LinkToSuccessor(ExpandMainRoute(originalSuccessor), true);
 
             //Creating fake2 to hold the true lane for the conditional jump
             BasicBlock fake2 = new BasicBlock(fake1.parent);
             fake2.Meshable = false;
-            fake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
+            if (fake2.parent.containsDivisionModulo == false || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0)
+                fake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
 
             //Creating the conditional jump (always false) to fake route
             Variable var = originalInstruction.GetVarFromCondition();
             fake1.Instructions.Last().MakeConditionalJump(var, rightValue, relationalOperation, fake2);
             //Expanding the fake route
-            ExpandFakeRoute(fake2, mainRouteBB, atFakeCodeGeneration);            
+            ExpandFakeRoute(fake2, originalSuccessor, atFakeCodeGeneration);            
         }
 
         /// <summary>
@@ -170,12 +172,10 @@ namespace Obfuscator
             BasicBlock fake1 = new BasicBlock(originaltarget.parent);
             fake1.Instructions.Add(new Instruction(fake1));
             fake1.Meshable = false;
-            fake1.Involve = BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly;
 
             // Creating the second fake block
             BasicBlock fake2 = new BasicBlock(originaltarget.parent);
             fake2.Instructions.Add(new Instruction(fake2));
-            fake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.FakeVariablesOnly;
 
             // Starting the linking
             fake1.Instructions.Last().MakeUnconditionalJump(fake2);
@@ -206,32 +206,38 @@ namespace Obfuscator
         /// <param name="fake1">The first fake basic block to be used in the expansion</param>
         /// <param name="mainLaneBB">The basic block we should go in case of no-loop</param>
         /// <param name="atFakeCodeGeneration">Wheter we are or not at the fake code generation phase</param>
-        public static void ExpandFakeRoute(BasicBlock fake1, BasicBlock mainRouteBB, bool atFakeJumpGeneration)
+        public static void ExpandFakeRoute(BasicBlock fake1, BasicBlock originalSuccessor, bool atFakeJumpGeneration)
         {
             //Creating fake2 to hold the next Loop condition
             BasicBlock fake2 = new BasicBlock(fake1.parent);
             fake2.Meshable = false;
-            fake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
+            if (!atFakeJumpGeneration && (fake2.parent.containsDivisionModulo == false 
+                || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0))
+                fake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
             fake2.dead = true;
 
             //Creating fake3 to hold the extra fake code in case of No-Loop
             BasicBlock fake3 = new BasicBlock(fake1.parent);
-            fake3.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
+            if (!atFakeJumpGeneration && (fake3.parent.containsDivisionModulo == false 
+                || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0))
+                fake3.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
             fake3.dead = true;
 
             //Creating the fake3 unconditional jump back to the Main Lane
-            fake3.Instructions.Last().MakeUnconditionalJump(mainRouteBB);
+            fake3.Instructions.Last().MakeUnconditionalJump(originalSuccessor);
 
             //Linking fake3 to fake2
             fake2.LinkToSuccessor(fake3);
 
             //Creating fake4 to hold the extra fake code in case of No-Loop
             BasicBlock fake4 = new BasicBlock(fake1.parent);
-            fake4.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
+            if (!atFakeJumpGeneration && (fake4.parent.containsDivisionModulo == false 
+                || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0))
+                fake4.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
             fake4.dead = true;
 
             //Creating the fake4 unconditional jump back to the Main Lane
-            fake4.Instructions.Last().MakeUnconditionalJump(mainRouteBB);
+            fake4.Instructions.Last().MakeUnconditionalJump(originalSuccessor);
 
             //Linking fake4 to fake1
             fake1.LinkToSuccessor(fake4);

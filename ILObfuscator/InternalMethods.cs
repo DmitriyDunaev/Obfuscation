@@ -84,7 +84,8 @@ namespace Internal
             foreach (BasicBlock bb in this.BasicBlocks)
             {
                 //We collect all "call" instructions in this basic block
-                bbCalls = bb.Instructions.FindAll(x => x.TACtext.Contains("call"));
+                bbCalls = bb.Instructions.FindAll(x => x.TACtext.Contains("call") && !x.TACtext.Contains("printf") 
+                && !x.TACtext.Contains("scanf"));
                 foreach (Instruction ins in bbCalls)
                 {
                     //Storing all "call" instructions in the actual basic block with their indexes
@@ -95,6 +96,8 @@ namespace Internal
             //We check wheter we have any "call" instruction in this function
             if (allCalls.Count > 0)
             {
+                //Number of lines that are shifted during the injection of fake "param" instructions
+                int offset = 0;
                 foreach (Instruction call in allCalls.Keys)
                 {
                     //Splitting the call in tokens - tokens[0] = "call", tokens[1] = "function_ID", tokens[2] = "numParams"
@@ -127,17 +130,36 @@ namespace Internal
                                 Instruction nop = new Instruction(call.parent);
                                 nop.MakeParam(paramVariable, null);
                                 //Inserting the "param" instruction right before the "call" instruction
-                                call.parent.Instructions.Insert(allCalls[call] + i, nop);
+                                call.parent.Instructions.Insert(allCalls[call] + offset + i, nop);
+                                offset++;
                                 //Updating the number of parameters for this call
                                 numParams++;
                             }
                             //Updating the TAC text of the call with the new number of parameters
-                            call.parent.Instructions[allCalls[call] + i].TACtext = string.Join(" ", "call", calledFunc.ID,
+                            call.parent.Instructions[allCalls[call] + offset].TACtext = string.Join(" ", "call", calledFunc.ID,
                                 numParams);
                         }
                     }
                 }
             }            
+        }
+
+        /// <summary>
+        /// Checks whether this functions contains either "division" or "modulo" operations
+        /// If they do, the output should be changed only right before the return to avoid problems
+        /// with the operations
+        /// </summary>
+        public void CheckDivisionModulo()
+        {
+            foreach (BasicBlock bb in this.BasicBlocks)
+            {
+                List<Instruction> divModInstructions = bb.Instructions.FindAll(x => x.TACtext.Contains("%") || x.TACtext.Contains("/"));
+                if (divModInstructions.Count > 0)
+                {
+                    this.containsDivisionModulo = true;
+                    break;
+                }
+            }
         }
     }
 
@@ -201,7 +223,6 @@ namespace Internal
 
             successor.Predecessors.Add(this);
         }
-
 
         /// <summary>
         /// Clones a BasicBlock with its instructions and successors

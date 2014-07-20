@@ -67,6 +67,8 @@ namespace Internal
         public List<Variable> LocalVariables = new List<Variable>();
         public List<BasicBlock> BasicBlocks = new List<BasicBlock>();
 
+        public bool containsDivisionModulo = false;
+
         // Constructor
         public Function(FunctionType function, Routine par)
         {

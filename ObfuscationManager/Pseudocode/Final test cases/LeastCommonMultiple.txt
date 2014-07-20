@@ -1,0 +1,30 @@
+int __cdecl sub_411B00(int a1, int a2)
+{
+  int v4; // [sp+DCh] [bp-20h]@2
+  int v5; // [sp+E8h] [bp-14h]@1
+  int v6; // [sp+F4h] [bp-8h]@1
+
+  v6 = a1;
+  v5 = a2;
+  do
+  {
+    v4 = v6 % v5;
+    v6 = v5;
+    v5 = v4;
+  }
+  while ( v4 );
+  return a2 * a1 / v6;
+}
+
+int __cdecl sub_411420()
+{
+  int v5; // [sp+D0h] [bp-20h]@1
+  int v6; // [sp+DCh] [bp-14h]@1
+  int v7; // [sp+E8h] [bp-8h]@1
+
+  scanf("%d", &v7);
+  scanf("%d", &v6);
+  v5 = sub_411B00(v7, v6);
+  printf("%d", v5);
+  return v5;
+}
