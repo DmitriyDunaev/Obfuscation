@@ -10,7 +10,7 @@ int __cdecl sub_413D20()
   v5 = 10;
   scanf("%d", &v8);
   scanf("%d", &v9);
-  if ( v9 < 10 )
+  if ( v9 <= 10 )
   {
     v7 = v6 * v8 / v5 + 32;
   }

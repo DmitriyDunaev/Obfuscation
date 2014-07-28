@@ -1,0 +1,83 @@
+int __cdecl sub_411480(signed int a1)
+{
+  int v2; // [sp+Ch] [bp-E4h]@1
+  int v3; // [sp+E8h] [bp-8h]@2
+
+  if ( a1 > 500 )
+  {
+    if ( a1 > 1000 )
+    {
+      if ( a1 > 1500 )
+      {
+        if ( a1 > 2000 )
+          v3 = 0;
+        else
+          v3 = 10;
+      }
+      else
+      {
+        v3 = 15;
+      }
+    }
+    else
+    {
+      v3 = 20;
+    }
+  }
+  else
+  {
+    v3 = 25;
+  }
+  v2 = 100;
+  
+  return v3 * a1 / v2;
+}
+
+
+int __cdecl sub_4113F0(signed int a1)
+{
+  int v3; // [sp+D0h] [bp-8h]@2
+
+  if ( a1 > 1 )
+  {
+    if ( a1 > 3 )
+    {
+      if ( a1 > 6 )
+      {
+        if ( a1 > 10 )
+          v3 = 500;
+        else
+          v3 = 300;
+      }
+      else
+      {
+        v3 = 200;
+      }
+    }
+    else
+    {
+      v3 = 100;
+    }
+  }
+  else
+  {
+    v3 = 0;
+  }
+  return v3;
+}
+
+int __cdecl sub_411560()
+{
+  int v0; // eax@1
+  int v7; // [sp+DCh] [bp-2Ch]@1
+  int v8; // [sp+E8h] [bp-20h]@1
+  int v9; // [sp+F4h] [bp-14h]@1
+  int v10; // [sp+100h] [bp-8h]@1
+
+  scanf("%d", &v10);
+  scanf("%d", &v9);
+  v7 = sub_411480(v10);
+  v0 = sub_4113F0(v9);
+  v8 = v0 + v7 + v10;
+  return v8;
+}

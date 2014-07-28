@@ -244,7 +244,7 @@ namespace Platform_x86
                 ReturnInstruction(string.Concat("return ",aux));
             }
             //aux is something like "return a1 + v5"
-            else if (aux.Contains("+") || aux.Contains("-") || aux.Contains("*") || aux.Contains("/") || aux.Contains("%")) 
+            else if (aux.Contains(" + ") || aux.Contains(" - ") || aux.Contains(" * ") || aux.Contains(" / ") || aux.Contains(" % ")) 
                 ReturnInstruction(string.Concat("return ", ProcessArithmeticOperations(aux.Substring(aux.IndexOf(' ')))));
             //aux is something like "return 0" or "return a1"
             else 
@@ -256,6 +256,8 @@ namespace Platform_x86
         /// <param name="line">PC line, similar to "return v3"</param>
         private static void ReturnInstruction(string line)
         {
+            if (line.Contains("*"))
+                line = line.Remove(line.IndexOf('*'), 1);
             string[] tokens = line.Split(' ');
             int indexFunction = routine.Function.Count - 1;
             int indexBasicblock = routine.Function[indexFunction].BasicBlock.Count - 1;
@@ -461,6 +463,13 @@ namespace Platform_x86
             newInstruction.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eFullAssignment;
             newInstruction.PolyRequired.Value = false;
+
+            //Dealing with pointers
+            string[] forPointers = { string.Empty, string.Empty, string.Empty };
+            tokens[0] = DealWithPointers(tokens[0], out forPointers[0]);
+            tokens[2] = DealWithPointers(tokens[2], out forPointers[1]);
+            tokens[4] = DealWithPointers(tokens[4], out forPointers[2]);
+            
             string refVars = string.Empty;
             //Adding v3
             if (!GetIDVariable(tokens[0]).Equals(tokens[0]))
@@ -478,8 +487,8 @@ namespace Platform_x86
                 else
                     refVars = GetIDVariable(tokens[4]);
             newInstruction.RefVars.Value = refVars;
-            newInstruction.Value = string.Join(" ", GetValueVariable(tokens[0]), ":=",
-                GetValueVariable(tokens[2]), tokens[3], GetValueVariable(tokens[4]));
+            newInstruction.Value = string.Join("", forPointers[0], GetValueVariable(tokens[0]), " := ",
+                forPointers[1], GetValueVariable(tokens[2]), " ", tokens[3], " ", forPointers[2], GetValueVariable(tokens[4]));
         }
         /// <summary>
         /// Creates a "copy" instruction
@@ -507,7 +516,6 @@ namespace Platform_x86
             }
 
             tokens = line.Split(' ');
-            string[] forPointers = { "", "" };
             
             int functionIndex = routine.Function.Count - 1;
             int basicBlockIndex = routine.Function[functionIndex].BasicBlock.Count - 1;
@@ -518,27 +526,12 @@ namespace Platform_x86
             else
                 newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eCopy;
             newInstruction.PolyRequired.Value = false;
+
             //Dealing with pointers
-            if (tokens[0].IndexOf('*') != -1) 
-            {
-                forPointers[0] = "* ";
-                tokens[0] = tokens[0].Remove(tokens[0].IndexOf('*'), 1);
-            }
-            else if (tokens[0].IndexOf('&') != -1)
-            {
-                forPointers[0] = "& ";
-                tokens[0] = tokens[0].Remove(tokens[0].IndexOf('&'), 1);
-            }
-            if (tokens[2].IndexOf('*') != -1)
-            {
-                forPointers[1] = "* ";
-                tokens[2] = tokens[2].Remove(tokens[2].IndexOf('*'), 1);
-            }
-            else if (tokens[2].IndexOf('&') != -1)
-            {
-                forPointers[1] = "& ";
-                tokens[2] = tokens[2].Remove(tokens[2].IndexOf('&'), 1);
-            }
+            string[] forPointers = { string.Empty, string.Empty };
+            tokens[0] = DealWithPointers(tokens[0], out forPointers[0]);
+            tokens[2] = DealWithPointers(tokens[2], out forPointers[1]);
+            
             string refVars = string.Empty;
             if (!GetIDVariable(tokens[0]).Equals(tokens[0]))
                     refVars = GetIDVariable(tokens[0]);
@@ -548,8 +541,8 @@ namespace Platform_x86
                 else
                     refVars = GetIDVariable(tokens[2]);                            
             newInstruction.RefVars.Value = refVars;
-            newInstruction.Value = string.Concat(forPointers[0], string.Concat(GetValueVariable(tokens[0]), string.Concat(" := ", 
-                string.Concat(forPointers[1], GetValueVariable(tokens[2])))));
+            newInstruction.Value = string.Join("", forPointers[0], GetValueVariable(tokens[0]), " := ", forPointers[1],
+                GetValueVariable(tokens[2]));
         }
         /// <summary>
         /// Creates a "if" instruction
@@ -912,6 +905,12 @@ namespace Platform_x86
             newInstruction.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eConditionalJump;
             newInstruction.PolyRequired.Value = false;
+
+            //Dealing with pointers
+            string[] forPointers = { string.Empty, string.Empty };
+            tokens[0] = DealWithPointers(tokens[0], out forPointers[0]);
+            tokens[2] = DealWithPointers(tokens[2], out forPointers[1]);
+
             string refVars = string.Empty;
             //Adding i
             if (!GetIDVariable(tokens[0]).Equals(tokens[0]))
@@ -923,7 +922,8 @@ namespace Platform_x86
                 else
                     refVars = string.Concat(refVars, GetIDVariable(tokens[2]));
             newInstruction.RefVars.Value = refVars;
-            newInstruction.Value = string.Join(" ", "if", GetValueVariable(tokens[0]), tokens[1], GetValueVariable(tokens[2]), "goto ");
+            newInstruction.Value = string.Join("", "if ", forPointers[0], GetValueVariable(tokens[0]), " ", tokens[1], " ",
+                forPointers[1], GetValueVariable(tokens[2]), " goto ");
         }
         /// <summary>
         /// Creates a unconditional jump instruction
@@ -1281,6 +1281,27 @@ namespace Platform_x86
                 index++;
             }
             return index;
+        }
+        /// <summary>
+        /// Checks whether we are working with pointers and apply the necessary operations
+        /// </summary>
+        /// <param name="globalID">Global ID of the possible pointer</param>
+        /// <param name="difOperator">Output parameter that have the deference operator</param>
+        /// <returns>The gloabl ID that should be used</returns>
+        private static string DealWithPointers(string globalID, out string defOperator)
+        {
+            defOperator = string.Empty;
+            if (globalID.IndexOf('*') != -1)
+            {
+                defOperator = "* ";
+                return globalID.Remove(globalID.IndexOf('*'), 1);
+            }
+            else if (globalID.IndexOf('&') != -1)
+            {
+                defOperator = "& ";
+                return globalID.Remove(globalID.IndexOf('&'), 1);
+            }
+            return globalID;
         }
     }
 }
