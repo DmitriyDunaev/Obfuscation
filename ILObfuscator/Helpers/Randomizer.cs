@@ -297,6 +297,44 @@ namespace Obfuscator
 
 
         /// <summary>
+        /// Selects one number between MostProbable and ZeroProbable based on f(x)=1/x function
+        /// </summary>
+        /// <param name="mostProbableNumber">The most probable number (inclusive)</param>
+        /// <param name="zeroProbableNumber">The zero probable number (exclusive)</param>
+        /// <returns>A number based on probability distribution</returns>
+        public static int OneFromSectionWithDescendingProbability(int mostProbableNumber, int zeroProbableNumber)
+        {
+            int numbers = Math.Abs(zeroProbableNumber - mostProbableNumber);
+            List<int> weights = new List<int>(numbers);
+            for (int i = 0; i < numbers; i++)
+                weights.Add(Convert.ToInt32(Math.Round((1 / (0.5 + i))*1000000)));
+            double divisor = weights.Sum() / 1000000;
+            for (int i = 1; i < numbers; i++)
+                weights[i] = Convert.ToInt32(Math.Round(weights[i] / divisor));
+            weights[0] = 0;
+            weights[0] = 1000000 - weights.Sum();
+            Dictionary<int, int> weighted_numbers = new Dictionary<int, int>();
+            for (int i = 0; i < numbers; i++)
+            {
+                int aggregated_weight = 0;
+                for (int j = 0; j <= i; j++)
+                    aggregated_weight = aggregated_weight + Convert.ToInt32(weights[j]);
+                if (mostProbableNumber < zeroProbableNumber)
+                    weighted_numbers.Add(mostProbableNumber + i, aggregated_weight);
+                else
+                    weighted_numbers.Add(mostProbableNumber - i, aggregated_weight);
+            }
+            int equiprobable_random = rnd.Next(0, 1000000);
+            foreach (KeyValuePair<int,int> candidate in weighted_numbers)
+            {
+                if (candidate.Value > equiprobable_random)
+                    return candidate.Key;
+            }
+            throw new RandomizerException("Unexpected behaviour in Randomizer with descending probability. Return candidate not found.");
+        }
+
+
+        /// <summary>
         /// Randomly (using uniform distribution) selects unique elements from a list
         /// </summary>
         /// <param name="arr">List with elements to be selected from</param>
