@@ -1,23 +1,27 @@
 int __cdecl sub_413D20()
 {
-  int v5; // [sp+D0h] [bp-38h]@1
-  int v6; // [sp+DCh] [bp-2Ch]@1
-  int v7; // [sp+E8h] [bp-20h]@2
-  int v8; // [sp+F4h] [bp-14h]@1
-  int v9; // [sp+100h] [bp-8h]@1
+	int v5; // [sp+D0h] [bp-38h]@1
+	int v6; // [sp+DCh] [bp-2Ch]@1
+	int v7; // [sp+EBh] [bp-1Dh]@1
+	int v8; // [sp+F4h] [bp-14h]@1
+	int v9; // [sp+100h] [bp-8h]@1
 
-  v6 = 18;
-  v5 = 10;
-  scanf("%d", &v8);
-  scanf("%d", &v9);
-  if ( v9 <= 10 )
-  {
-    v7 = v6 * v8 / v5 + 32;
-  }
-  else
-  {
-    v8 -= 32;
-    v7 = v5 * v8 / v6;
-  }
-  return v7;
+	v6 = 18;
+	v5 = 10;
+	scanf("%d", &v7);
+	scanf("%d", &v9);
+	v8 = v9;
+	if ( v7 != 99 && v7 != 67 )
+	{
+		if ( v7 == 102 || v7 == 70 )
+		{
+			v9 -= 32;
+			v8 = v5 * v9 / v6;
+		}
+	}
+	else
+	{
+		v8 = v6 * v9 / v5 + 32;
+	}
+	return v8;
 }

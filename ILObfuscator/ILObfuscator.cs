@@ -12,6 +12,8 @@ namespace Obfuscator
     {
         private static void Obfuscation(Routine routine)
         {
+            Logging.WriteComplexityMetrics(routine, "Original");
+            
             //Creating fake input parameters
             int funcIndex = 0, i = 0;
             //In case the number of fake parameters is greater or equals to the number of functions, all fake parameters will be
@@ -140,6 +142,7 @@ namespace Obfuscator
                     FakeCode.GenerateFakeInstructions(func);
                 Logging.WriteRoutine(routine, "FakeIns");
                 Logging.DrawCFG(routine, "CondJumps");
+                Logging.WriteComplexityMetrics(routine, "Final");
                 routine.Validate();
                 PrintSuccess();
 

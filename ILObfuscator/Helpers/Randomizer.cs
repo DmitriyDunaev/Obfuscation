@@ -247,7 +247,8 @@ namespace Obfuscator
        
             if (use_min_limit)  // FixedMin will be used
             {
-                right_value = SingleNumber(Common.GlobalMinValue + Common.LoopConditionalJumpMaxRange, var.fixedMin.Value);
+                //right_value = SingleNumber(Common.GlobalMinValue + Common.LoopConditionalJumpMaxRange, var.fixedMin.Value);
+                right_value = OneFromSectionWithDescendingProbability(var.fixedMin.Value, Common.GlobalMinValue + Common.LoopConditionalJumpMaxRange);
                 switch (condition)
                 {
                     case Instruction.ConditionType.AlwaysTrue:
@@ -271,7 +272,8 @@ namespace Obfuscator
 
             if (!use_min_limit)     // FixedMax will be used
             {
-                right_value = SingleNumber(var.fixedMax.Value, Common.GlobalMaxValue - Common.LoopConditionalJumpMaxRange);
+                //right_value = SingleNumber(var.fixedMax.Value, Common.GlobalMaxValue - Common.LoopConditionalJumpMaxRange);
+                right_value = OneFromSectionWithDescendingProbability(var.fixedMax.Value, Common.GlobalMaxValue - Common.LoopConditionalJumpMaxRange);
                 switch (condition)
                 {
                     case Instruction.ConditionType.AlwaysTrue:

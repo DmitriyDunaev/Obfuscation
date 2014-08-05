@@ -34,7 +34,7 @@ namespace Platform_x86
             sb.AppendLine();
             sb.AppendLine(".data");
             sb.AppendLine("scan db 'scanf:',0");
-            sb.AppendLine("print db 'printf: %d',0ah, 0h");
+            sb.AppendLine("printInt db 'printf: %d',0ah, 0h");
             sb.AppendLine("msg db 'Return = %d',0");
             int count = 1;
             foreach (Variable var in routine.Functions.Last().LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true))
@@ -48,7 +48,7 @@ namespace Platform_x86
                 sb.AppendLine("orig" + count + "  db 'Original parameter #" + count + ":" + "',0");
                 count++;
             }
-            sb.AppendLine("inf db '%d',0");
+            sb.AppendLine("formatInt db '%d',0");
             sb.AppendLine();
             sb.AppendLine(".data?");
             sb.AppendLine("din dd ?");
@@ -60,7 +60,7 @@ namespace Platform_x86
             foreach (Variable var in routine.Functions.Last().LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == false))
             {
                 sb.AppendLine("invoke  crt_printf,addr orig" + count);
-                sb.AppendLine("invoke  crt_scanf,addr inf,addr din");
+                sb.AppendLine("invoke  crt_scanf,addr formatInt,addr din");
                 sb.AppendLine("MOV eax, din");
                 sb.AppendLine("PUSH eax");
                 count++;
@@ -71,7 +71,7 @@ namespace Platform_x86
                 if (Common.RandomPushValues == false)
                 {
                     sb.AppendLine("invoke  crt_printf,addr  f" + count);
-                    sb.AppendLine("invoke  crt_scanf,addr inf,addr din");
+                    sb.AppendLine("invoke  crt_scanf,addr formatInt,addr din");
                     sb.AppendLine("MOV eax, din");
                     sb.AppendLine("PUSH eax");
                 }
@@ -442,15 +442,15 @@ namespace Platform_x86
                     if (called_func == null)
                     {
                         if (inst.TACtext.Contains("scanf"))
-                        {
+                        {                            
                             sb.AppendLine("invoke  crt_printf,addr scan");
-                            sb.AppendLine("invoke  crt_scanf,addr inf,addr din");
+                            sb.AppendLine("invoke  crt_scanf,addr formatInt,addr din");
                             sb.AppendLine("MOV eax, din");
                         }
                         else if (inst.TACtext.Contains("printf"))
                         {
                             sb.AppendLine("POP eax");
-                            sb.AppendLine("invoke  crt_printf,addr  print,eax");
+                            sb.AppendLine("invoke  crt_printf,addr  printInt,eax");
                             sb.AppendLine("PUSH eax");
                         }
                         else
@@ -468,7 +468,12 @@ namespace Platform_x86
                     sb.AppendLine();
 
                     if (var != null)
+                    {
                         framestack -= var.memoryRegionSize;
+                        //Checking for memory alignment
+                        if (framestack % 4 != 0)
+                            framestack -= (4 + framestack % 4);
+                    }
                     else
                         framestack -= 4;
 
@@ -519,6 +524,9 @@ namespace Platform_x86
             {
                 Offsets.Add(var, fs);
                 fs -= var.memoryRegionSize;
+                //Checking for memory alignment
+                if (fs % 4 != 0)
+                    fs -= (4 + fs % 4);
             }
             func.LocalVariables.Reverse();
             foreach (Variable var in func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input))

@@ -1,23 +1,23 @@
 signed int __cdecl sub_401334(signed int a1)
 {
-  signed int v1; // ST00_4@2
-  signed int i; // [sp+4h] [bp-Ch]@1
-  signed int v4; // [sp+8h] [bp-8h]@1
-  signed int v5; // [sp+Ch] [bp-4h]@1
+	signed int v1; // ST00_4@2
+	signed int i; // [sp+4h] [bp-Ch]@1
+	signed int v4; // [sp+8h] [bp-8h]@1
+	signed int v5; // [sp+Ch] [bp-4h]@1
 
-  v5 = 1;
-  v4 = 1;
-  for ( i = 2; i < a1; ++i )
-  {
-    v1 = v4;
-    v4 = v5;
-    v5 += v1;
-  }
-  return v5;
+	v5 = 1;
+	v4 = 1;
+	for ( i = 2; i < a1; ++i )
+	{
+		v1 = v4;
+		v4 = v5;
+		v5 += v1;
+	}
+	return v5;
 }
 
 signed int __cdecl sub_401373(int a)
 {
-  sub_401940();
-  return sub_401334(a);
+	sub_401940();
+	return sub_401334(a);
 }

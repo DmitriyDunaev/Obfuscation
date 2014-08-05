@@ -1,25 +1,25 @@
 int __cdecl sub_4113E0(signed int a1, signed int a2)
 {
-  int i; // [sp+D0h] [bp-20h]@1
-  int v5; // [sp+DCh] [bp-14h]@1
-  int v6; // [sp+E8h] [bp-8h]@1
+	int i; // [sp+D0h] [bp-20h]@1
+	int v5; // [sp+DCh] [bp-14h]@1
+	int v6; // [sp+E8h] [bp-8h]@1
 
-  v6 = a1;
-  v5 = a2;
-  for ( i = a1 % a2; i; i = v6 % i )
-  {
-    v6 = v5;
-    v5 = i;
-  }
-  return v5;
+	v6 = a1;
+	v5 = a2;
+	for ( i = a1 % a2; i; i = v6 % i )
+	{
+		v6 = v5;
+		v5 = i;
+	}
+	return v5;
 }
 
 int __cdecl sub_411460()
 {
-  int v6; // [sp+DCh] [bp-14h]@1
-  int v7; // [sp+E8h] [bp-8h]@1
+	int v6; // [sp+DCh] [bp-14h]@1
+	int v7; // [sp+E8h] [bp-8h]@1
 
-  scanf("%d", &v7);
-  scanf("%d", &v6);
-  return sub_4113E0(v7, v6);
+	scanf("%d", &v7);
+	scanf("%d", &v6);
+	return sub_4113E0(v7, v6);
 }

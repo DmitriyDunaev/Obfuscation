@@ -1,23 +1,25 @@
 int __cdecl sub_4113E0(int a1)
 {
-  int i; // [sp+D0h] [bp-8h]@1
-  int v1; // [sp+D0h] [bp-8h]@1
+	int i; // [sp+D0h] [bp-8h]@1
+	int v1; // [sp+D0h] [bp-8h]@1
 
-  v1 = a1;
-  i = a1;
-  while ( i > 1 )
-  {
-    v1 *= i - 1;
-	--i;
-  }
-  return v1;
+	v1 = a1;
+	i = a1;
+	while ( i > 1 )
+	{
+		v1 *= i - 1;
+		--i;
+	}
+	return v1;
 }
 
 int __cdecl sub_411450(int a)
 {
-  int v5; // [sp+D0h] [bp-14h]@1
+	int v5; // [sp+D0h] [bp-14h]@1
+	int v6; // [sp+E8h] [bp-8h]@1
 
-  v5 = sub_4113E0(a);
-  printf("%d", v5);
-  return v5;
+	scanf("%d", &v6);
+	v5 = sub_4113E0(v6);
+	printf("%d", v5);
+	return v5;
 }

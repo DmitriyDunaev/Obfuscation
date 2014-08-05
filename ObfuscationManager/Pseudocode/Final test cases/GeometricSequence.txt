@@ -1,24 +1,23 @@
 ﻿signed int __cdecl sub_401334(signed int a1, int a2)
 {
-  signed int result; // eax@2
-  int v2; // [sp+8h] [bp-18h]@1
-  int *v4; // [sp+10h] [bp-10h]@1
-  int i; // [sp+18h] [bp-8h]@3
+	signed int result; // eax@2
+	int v2; // [sp+8h] [bp-18h]@1
+	int *v4; // [sp+10h] [bp-10h]@1
+	int i; // [sp+18h] [bp-8h]@3
 
-  v2 = a1;
-  v4 = &v2;
+	v2 = a1;
+	v4 = &v2;
 
-  for ( i = 1; i < a2; ++i )
-  {
-     v2 *= a1;
-  }
-  result = *v4;
-  
-  return result;
+	for ( i = 1; i < a2; ++i )
+	{
+		v2 *= a1;
+	}
+	result = *v4;
+
+	return result;
 }
 
 signed int __cdecl sub_401397(int a, int b)
 {
-  sub_401970();
-  return sub_401334(a, b);
+	return sub_401334(a, b);
 }

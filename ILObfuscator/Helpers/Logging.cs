@@ -134,8 +134,15 @@ namespace Obfuscator
                             }
                             if (successor == bb.getSuccessors.First() && !trueBranchFilled)
                             {
-                                edgeAttributes = string.Join("", "[label=\"", variableID, relOperator,
-                                    bb.Instructions.Last().GetConstFromCondition().ToString(), "\"]");
+                                if (bb.Instructions.Last().GetConstFromCondition().ToString().Length > 0)
+                                    edgeAttributes = string.Join("", "[label=\"", variableID, relOperator,
+                                        bb.Instructions.Last().GetConstFromCondition().ToString(), "\"]");
+                                else
+                                {
+                                    string secVariableID = bb.Instructions.Last().GetRightVarFromCondition().ID.Substring(0, 6);
+                                    edgeAttributes = string.Join("", "[label=\"", variableID, relOperator,
+                                        secVariableID, "\"]");
+                                }
                                 trueBranchFilled = true;
                             }
                             else
@@ -293,7 +300,7 @@ namespace Obfuscator
                     {
                          sb_instructions.AppendLine(ReadableBBLabels[bb.ID] + ":");
                     }
-                    bb.Instructions.ForEach(x => sb_instructions.AppendLine("\t" + x.TACtext + " | " + x.DeadVariables.Count));
+                    bb.Instructions.ForEach(x => sb_instructions.AppendLine("\t" + x.TACtext));// + " | " + x.DeadVariables.Count));
                     prev = bb;
                 }                
 
@@ -323,6 +330,204 @@ namespace Obfuscator
             File.WriteAllText(filename_routine, content);
         }
 
+        /// <summary>
+        /// Writes various complexity metrics about the given routine
+        /// </summary>
+        /// <param name="routine">Routine to be logged</param>
+        /// <param name="filename_distinguisher">Filename distinguisher (e.g. last used algorithm abbreviation)</param>
+        public static void WriteComplexityMetrics(Routine routine, string filename_distinguisher = "")
+        {
+            if (!Directory.Exists(pathToLog))
+                Directory.CreateDirectory(pathToLog);
+            StringBuilder sb = new StringBuilder();
+            foreach (Function func in routine.Functions)
+            {
+                //For McCabe's Metric
+                int edges = 0;
+                
+                //For Halstead's Metric
+                List<string> operators = new List<string>();
+                List<string> operands = new List<string>();
+
+                //For Elshoff's Metric
+                List<string> referencedVars = new List<string>();
+                List<string> definedVars = new List<string>();
+                
+                //For McClure's Metric
+                int numComparisons = 0;
+                List<string> controlVariables = new List<string>();
+
+                foreach (BasicBlock bb in func.BasicBlocks)
+                {
+                    edges += bb.getSuccessors.Count;
+                    foreach (Instruction ins in bb.Instructions)
+                    {
+                        switch (ins.statementType)
+                        {
+                            case ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump:                                
+                                operators.Add("if");
+                                operands.Add(ins.GetVarFromCondition().ID);
+                                referencedVars.Add(ins.GetVarFromCondition().ID);
+                                controlVariables.Add(ins.GetVarFromCondition().ID);
+                                numComparisons++;
+                                switch (ins.GetRelopFromCondition())
+                                {
+                                    case Instruction.RelationalOperationType.Equals:
+                                        operators.Add("==");
+                                        break;
+                                    case Instruction.RelationalOperationType.Greater:
+                                        operators.Add(">");
+                                        break;
+                                    case Instruction.RelationalOperationType.GreaterOrEquals:
+                                        operators.Add(">=");
+                                        break;
+                                    case Instruction.RelationalOperationType.NotEquals:
+                                        operators.Add("!=");
+                                        break;
+                                    case Instruction.RelationalOperationType.Smaller:
+                                        operators.Add("<");
+                                        break;
+                                    case Instruction.RelationalOperationType.SmallerOrEquals:
+                                        operators.Add("<=");
+                                        break;
+                                }
+                                if (ins.GetConstFromCondition().ToString().Length > 0)
+                                    operands.Add(ins.GetConstFromCondition().ToString());
+                                else
+                                {
+                                    operands.Add(ins.GetRightVarFromCondition().ID);
+                                    referencedVars.Add(ins.GetRightVarFromCondition().ID);
+                                }
+                                operators.Add("goto");
+                                operands.Add(ins.GetTrueSucc().ID);
+                                break;                                
+                            case ExchangeFormat.StatementTypeType.EnumValues.eCopy:
+                            case ExchangeFormat.StatementTypeType.EnumValues.ePointerAssignment:
+                                operands.Add(ins.RefVariables.First().ID);
+                                definedVars.Add(ins.RefVariables.First().ID);
+                                operators.Add(":=");
+                                if (ins.RefVariables.Count > 1)
+                                {
+                                    operands.Add(ins.RefVariables.Last().ID);
+                                    referencedVars.Add(ins.RefVariables.Last().ID);
+                                }
+                                else
+                                    operands.Add(ins.TACtext.Split(' ')[2]);
+                                break;
+                            case ExchangeFormat.StatementTypeType.EnumValues.eFullAssignment:
+                                operands.Add(ins.RefVariables.First().ID);
+                                definedVars.Add(ins.RefVariables.First().ID);
+                                operators.Add(":=");
+                                operands.Add(ins.RefVariables[1].ID);
+                                referencedVars.Add(ins.RefVariables[1].ID);
+                                operators.Add(ins.TACtext.Split(' ')[3]);
+                                if (ins.RefVariables.Count > 2)
+                                {
+                                    operands.Add(ins.RefVariables.Last().ID);
+                                    referencedVars.Add(ins.RefVariables.Last().ID);
+                                }
+                                else
+                                    operands.Add(ins.TACtext.Split(' ')[4]);
+                                break;                        
+                            case ExchangeFormat.StatementTypeType.EnumValues.eProcedural:
+                                if (ins.TACtext.Contains("call"))
+                                {
+                                    operators.Add("call");
+                                    operands.Add(ins.TACtext.Split(' ')[1]);
+                                    operands.Add(ins.TACtext.Split(' ')[2]);
+                                }
+                                else if (ins.TACtext.Contains("param"))
+                                {
+                                    operators.Add("param");
+                                    if (ins.RefVariables.Count > 0)
+                                    {
+                                        operands.Add(ins.RefVariables.First().ID);
+                                        referencedVars.Add(ins.RefVariables.First().ID);
+                                    }
+                                    else
+                                        operands.Add(ins.TACtext.Split(' ')[1]);
+                                }
+                                else if (ins.TACtext.Contains("return"))
+                                {
+                                    operators.Add("return");
+                                    if (ins.TACtext.Split(' ').Length > 1)
+                                    {
+                                        if (ins.RefVariables.Count > 0)
+                                        {
+                                            operands.Add(ins.RefVariables.First().ID);
+                                            referencedVars.Add(ins.RefVariables.First().ID);
+                                        }
+                                        else
+                                            operands.Add(ins.TACtext.Split(' ')[1]);
+                                    }
+                                }
+                                break;
+                            case ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump:
+                                operators.Add("goto");
+                                operands.Add(ins.TACtext.Split(' ')[1]);
+                                break;
+                        }
+                    }
+                }
+
+                sb.AppendLine("FUNCTION:");
+                sb.AppendLine("  - Global ID: " + func.globalID);                
+
+                //Control Flow Complexity (McCabe's Metric)
+                int nodes = func.BasicBlocks.Count;
+                int controlFlowComplexity = edges - nodes + 2;
+                sb.AppendLine("Control Flow Complexity (McCabe's Metric): " + controlFlowComplexity + " distinct paths");
+                
+                //Language Complexity (Halstead's Metric)
+                int totalOperators = operators.Count;
+                int totalOperands = operands.Count;
+                operators = operators.Distinct().ToList();
+                operands = operands.Distinct().ToList();
+                int uniqueOperators = operators.Count;
+                int uniqueOperands = operands.Count;
+                int progLenght = totalOperators + totalOperands;
+                int progVocabulary = uniqueOperators + uniqueOperands;
+                double volume = progLenght * Math.Log(progVocabulary, 2);
+                double difficulty = (uniqueOperators / 2) * (totalOperands / uniqueOperands);
+                double effort = volume * difficulty;
+                sb.AppendLine("\nLanguage Complexity (Halstead's Metric)");
+                sb.AppendLine("  Program Vocabulary: " + progVocabulary + " unique operators and operands");
+                sb.AppendLine("  Program Length: " + progLenght + " references to operators and operands");                
+                sb.AppendLine("  Volume: ~" + Convert.ToInt32(volume) + " mathematical bits");
+                sb.AppendLine("  Difficulty to understand: " + difficulty);
+                sb.AppendLine("  Effort to implement: " + effort.ToString("F"));
+                sb.AppendLine("  Time to implement: " + (effort / 18).ToString("F") + " seconds");
+
+                //Data Flow Complexity (Elshoff's Metric)
+                definedVars = definedVars.Distinct().ToList();
+                foreach (string definedVar in definedVars)
+                    referencedVars.Remove(definedVar);
+                referencedVars = referencedVars.Distinct().ToList();
+                int dataFlowComplexity = referencedVars.Count;
+                sb.AppendLine("\nData Flow Complexity (Elshoff's Metric): " + dataFlowComplexity);
+
+                //Oviedo's Metric
+                sb.AppendLine("\nOviedo's Metric: " + (controlFlowComplexity + dataFlowComplexity));
+
+                //Decisional Complexity (McClure's Metric)
+                controlVariables = controlVariables.Distinct().ToList();
+                int decisionalComplexity = numComparisons + controlVariables.Count;
+                sb.AppendLine("\nDecisional Complexity (McClure's Metric): " + decisionalComplexity);
+
+                //Data Complexity (Chapin's Metric)
+                int p = func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input).Count;
+                int m = definedVars.Count;
+                int c = controlVariables.Count;
+                int t = func.LocalVariables.FindAll(x => !definedVars.Contains(x.ID) && !referencedVars.Contains(x.ID)).Count;
+                double dataComplexity = p + 2 * m + 3 * c + 0.5 * t;
+                sb.AppendLine("\nData Complexity (Chapin's Metric): " + dataComplexity);
+
+                sb.AppendLine("\n*****************************************************************************************\n");
+            }
+
+            string filename_routine = Path.Combine(pathToLog, string.Format("Obfuscation_Complexity_{0}_{1:dd.MM.yyy}.log", filename_distinguisher, DateTime.Now));
+            File.WriteAllText(filename_routine, sb.ToString());
+        }
     }
 }
 

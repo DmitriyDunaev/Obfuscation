@@ -312,8 +312,17 @@ namespace Platform_x86
             int indexFunction = routine.Function.Count - 1;
             int indexBasicblock = routine.Function[indexFunction].BasicBlock.Count - 1;
             //Removing mask in case of printf or scanf
+            string type = string.Empty;
             if (line.Contains("%d"))
+            {
                 line = line.Replace("\"%d\", ", "");
+                type = "_int";
+            }
+            else if (line.Contains("%c"))
+            {
+                line = line.Replace("\"%c\", ", "");
+                type = "_char";
+            }
             //Removing address sign in case of scanf
             if (line.Contains("&"))
                 line = line.Replace("&", "");
@@ -356,7 +365,7 @@ namespace Platform_x86
             newInstruction.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eProcedural;
             newInstruction.PolyRequired.Value = false;
-            newInstruction.Value = string.Join(" ", "call", GetIDFunction(tokens2[0]), numParams);
+            newInstruction.Value = string.Join(" ", "call", string.Concat(GetIDFunction(tokens2[0]), type), numParams);
             for (int i = 0; i < routine.Function.Count; i++)
             {
                 if (routine.Function[i].GlobalID.Value == tokens2[0])

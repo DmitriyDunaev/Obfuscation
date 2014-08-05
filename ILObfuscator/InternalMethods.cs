@@ -121,7 +121,7 @@ namespace Internal
                                 //Checking whether we have reached the number of fake input parameters setted by the user
                                 if (this.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true).Count < Common.NumFakeInputParam)
                                     //If we didn't, then a new fake input parameter is created
-                                    paramVariable = NewFakeInputParameter(fakeInputsParams[i].fixedMin, fakeInputsParams[i].fixedMax);
+                                    paramVariable = NewFakeInputParameter(fakeInputsParams[i].fixedMin, fakeInputsParams[i].fixedMax);                                  
                                 else
                                     //If we did, then we use the last fake input parameter created
                                     //We will fall in this case when the number of fake input parameters is less than the number of functions,
@@ -130,7 +130,7 @@ namespace Internal
                                 Instruction nop = new Instruction(call.parent);
                                 nop.MakeParam(paramVariable, null);
                                 //Inserting the "param" instruction right before the "call" instruction
-                                call.parent.Instructions.Insert(allCalls[call] + offset + i, nop);
+                                call.parent.Instructions.Insert(allCalls[call] + /*offset +*/ i, nop);
                                 offset++;
                                 //Updating the number of parameters for this call
                                 numParams++;
@@ -460,7 +460,7 @@ namespace Internal
         /// If you can do this, it will be a huge help for me.
 
         /// <summary>
-        /// Extracts the variable from a condition
+        /// Extracts the left variable from a condition
         /// </summary>
         /// <returns>The extracted variable</returns>
         public Variable GetVarFromCondition()
@@ -468,6 +468,17 @@ namespace Internal
             // TODO;
 
             return RefVariables.First();
+        }
+
+        /// <summary>
+        /// Extracts the right variable from a condition
+        /// </summary>
+        /// <returns>The extracted variable</returns>
+        public Variable GetRightVarFromCondition()
+        {
+            // TODO;
+
+            return RefVariables.Last();
         }
 
         /// <summary>
