@@ -455,7 +455,7 @@ namespace ExchangeFormat
             ID = new MemberAttribute_ID(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_BasicBlockType_altova_ID]);
             Predecessors = new MemberAttribute_Predecessors(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_BasicBlockType_altova_Predecessors]);
             Successors = new MemberAttribute_Successors(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_BasicBlockType_altova_Successors]);
-
+            PolyRequired = new MemberAttribute_PolyRequired(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_BasicBlockType_altova_PolyRequired]);
             Instruction = new MemberElement_Instruction(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_BasicBlockType_altova_Instruction]);
         }
 
@@ -477,6 +477,28 @@ namespace ExchangeFormat
                 get
                 {
                     return (string)Altova.Xml.XmlTreeOperations.CastToString(Altova.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                }
+                set
+                {
+                    Altova.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                }
+            }
+            public bool Exists() { return owner.GetAttribute(info) != null; }
+            public void Remove() { owner.RemoveAttribute(info); }
+
+            public Altova.Xml.Meta.Attribute Info { get { return new Altova.Xml.Meta.Attribute(info); } }
+        }
+        public MemberAttribute_PolyRequired PolyRequired;
+        public class MemberAttribute_PolyRequired
+        {
+            private Altova.Xml.TypeBase owner;
+            private Altova.TypeInfo.MemberInfo info;
+            public MemberAttribute_PolyRequired(Altova.Xml.TypeBase owner, Altova.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            public bool Value
+            {
+                get
+                {
+                    return (bool)Altova.Xml.XmlTreeOperations.CastToBool(Altova.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
@@ -576,7 +598,6 @@ namespace ExchangeFormat
         {
             ID = new MemberAttribute_ID(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_InstructionType_altova_ID]);
             StatementType = new MemberAttribute_StatementType(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_InstructionType_altova_StatementType]);
-            PolyRequired = new MemberAttribute_PolyRequired(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_InstructionType_altova_PolyRequired]);
             RefVars = new MemberAttribute_RefVars(this, Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._altova_mi_altova_InstructionType_altova_RefVars]);
 
         }
@@ -661,28 +682,6 @@ namespace ExchangeFormat
                         throw new System.IndexOutOfRangeException();
                 }
             }
-        }
-        public MemberAttribute_PolyRequired PolyRequired;
-        public class MemberAttribute_PolyRequired
-        {
-            private Altova.Xml.TypeBase owner;
-            private Altova.TypeInfo.MemberInfo info;
-            public MemberAttribute_PolyRequired(Altova.Xml.TypeBase owner, Altova.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
-            public bool Value
-            {
-                get
-                {
-                    return (bool)Altova.Xml.XmlTreeOperations.CastToBool(Altova.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
-                }
-                set
-                {
-                    Altova.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
-                }
-            }
-            public bool Exists() { return owner.GetAttribute(info) != null; }
-            public void Remove() { owner.RemoveAttribute(info); }
-
-            public Altova.Xml.Meta.Attribute Info { get { return new Altova.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_RefVars RefVars;
         public class MemberAttribute_RefVars

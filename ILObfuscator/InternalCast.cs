@@ -114,6 +114,8 @@ namespace Internal
             if (successors.Count > 0)
                 export.Successors.Value = string.Join(" ", successors.ToArray());
             // TODO: continue
+            if (bb.PolyRequired)
+                export.PolyRequired.Value = bb.PolyRequired;
             foreach (Instruction inst_original in bb.Instructions)
             {
                 InstructionType inst = export.Instruction.Append();
@@ -130,8 +132,6 @@ namespace Internal
             export.Value = inst.TACtext;
 
             // Optional values
-            if(inst.polyRequired)
-                export.PolyRequired.Value = inst.polyRequired;
             List<string> refvars = new List<string>();
             inst.RefVariables.ForEach(x => refvars.Add(x.ID));
             if(refvars.Count > 0)

@@ -107,7 +107,6 @@ namespace Obfuscator
             else if (result == Common.JumpGenerationChances.New)
             {
                 targetlist.Add(new BasicBlock(targetlist.First(), targetlist.First().getSuccessors));
-                targetlist.Last().Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
                 return targetlist.Last();
             }
             else

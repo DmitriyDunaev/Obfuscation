@@ -39,6 +39,7 @@
 			<xs:attribute name="ID" type="myID" use="required"/>
 			<xs:attribute name="Predecessors" type="myIDREFS" use="optional"/>
 			<xs:attribute name="Successors" type="myIDREFS" use="optional"/>
+      <xs:attribute name="PolyRequired" type="xs:boolean" use="optional" default="false"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Instruction">
@@ -60,7 +61,6 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name="PolyRequired" type="xs:boolean" use="optional" default="false"/>
 			<xs:attribute name="RefVars" type="myIDREFS" use="optional"/>
 		</xs:complexType>
 	</xs:element>

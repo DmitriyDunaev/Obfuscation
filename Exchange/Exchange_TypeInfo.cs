@@ -112,12 +112,12 @@ namespace ExchangeFormat
         public static readonly int _altova_mi_altova_BasicBlockType_altova_Successors = 8;
         public static readonly int _altova_mi_altova_BasicBlockType_altova_Instruction = 9;
         public static readonly int _altova_mil_altova_BasicBlockType = 10;
+        public static readonly int _altova_mi_altova_BasicBlockType_altova_PolyRequired = 13;
 
         public static readonly int _altova_mif_altova_InstructionType = _altova_mil_altova_BasicBlockType;
         public static readonly int _altova_mi_altova_InstructionType_altova_unnamed = _altova_mif_altova_InstructionType;
         public static readonly int _altova_mi_altova_InstructionType_altova_ID = 11;
         public static readonly int _altova_mi_altova_InstructionType_altova_StatementType = 12;
-        public static readonly int _altova_mi_altova_InstructionType_altova_PolyRequired = 13;
         public static readonly int _altova_mi_altova_InstructionType_altova_RefVars = 14;
         public static readonly int _altova_mil_altova_InstructionType = 15;
 

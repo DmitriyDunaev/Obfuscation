@@ -124,6 +124,7 @@ namespace Internal
         public bool dead = false;
         public InvolveInFakeCodeGeneration Involve = InvolveInFakeCodeGeneration.FakeVariablesOnly;
         public bool Meshable = true;
+        public bool PolyRequired = false;
 
         private List<string> RefPredecessors = new List<string>();
         private List<string> RefSuccessors = new List<string>();
@@ -151,6 +152,7 @@ namespace Internal
         {
             _ID = new IDManager(bb.ID.Value);
             parent = func;
+            PolyRequired = bb.PolyRequired.Exists() ? bb.PolyRequired.Value : false;
             if (bb.Predecessors.Exists())
                 foreach (string pid in bb.Predecessors.Value.Split(' '))
                     RefPredecessors.Add(pid);
@@ -247,12 +249,11 @@ namespace Internal
             this.parent = original.parent;
             this.Involve = original.Involve;
             this.Meshable = original.Meshable;
+            this.PolyRequired = true;
             Instructions = Common.DeepClone(original.Instructions) as List<Instruction>;
             Instructions.ForEach(x => x.ResetID());
-            Instructions.ForEach(x => x.polyRequired=true);
             Instructions.ForEach(x => x.parent = this);
             newSuccessors.ForEach(x => LinkToSuccessor(x));
-
 
             if (Successors.Count() == 1 && (Instructions.Last().statementType != StatementTypeType.EnumValues.eUnconditionalJump && Instructions.Last().statementType != StatementTypeType.EnumValues.eProcedural))
             {
@@ -452,7 +453,6 @@ namespace Internal
         }
         public StatementTypeType.EnumValues statementType { get; private set; }
         public string TACtext { get; set; }
-        public bool polyRequired { get; set; }
         public bool isFake { get; private set; }
 
         public List<Variable> RefVariables = new List<Variable>();
@@ -468,7 +468,6 @@ namespace Internal
             statementType = instr.StatementType.EnumerationValue;
             TACtext = instr.Value;
             isFake = false;
-            polyRequired = instr.PolyRequired.Exists() ? instr.PolyRequired.Value : false;
             if (instr.RefVars.Exists())
             {
                 foreach (string vid in instr.RefVars.Value.Split(' '))
@@ -498,7 +497,6 @@ namespace Internal
             this.parent = parent;
             statementType = StatementTypeType.EnumValues.eNoOperation;
             TACtext = "nop";
-            polyRequired = false;
         }
 
         
