@@ -296,17 +296,75 @@ namespace Platform_x86
             int? right_const;
             Parser.Copy(inst, out leftvalue, out right_var, out right_const);
 
+            /* For polymorphism */
+            int probPolymorphism = Randomizer.SingleNumber(0, 99);
+            int xorConst = Randomizer.SingleNumber(Common.GlobalMinValue, Common.GlobalMaxValue);
+
             /* We copy a variable's value to another. */
             if (right_var != null && right_const == null)
             {
-                sb.AppendLine("MOV eax, " + StackPointerOfVariable(right_var));
+                if (!inst.polyRequired)
+                    sb.AppendLine("MOV eax, " + StackPointerOfVariable(right_var));
+                else
+                {
+                    if (probPolymorphism <= 50)
+                        sb.AppendLine("MOV eax, " + StackPointerOfVariable(right_var));
+                    else if (probPolymorphism > 50 && probPolymorphism <= 80)
+                    {
+                        sb.AppendLine("MOV ebx, " + StackPointerOfVariable(right_var));
+                        sb.AppendLine("MOV ecx, " + xorConst);
+                        sb.AppendLine("XOR ebx, ecx");
+                        sb.AppendLine("MOV eax, ebx");
+                        sb.AppendLine("XOR eax, ecx");
+                    }
+                    else if (probPolymorphism > 80 && probPolymorphism <= 99)
+                    {
+                        sb.AppendLine("MOV ebx, " + StackPointerOfVariable(right_var));
+                        sb.AppendLine("MOV ecx, " + xorConst);
+                        sb.AppendLine("XOR ebx, ecx");
+                        sb.AppendLine("NOT ecx");
+                        sb.AppendLine("MOV edx, ebx");
+                        sb.AppendLine("AND edx, ecx");
+                        sb.AppendLine("MOV eax, edx");
+                        sb.AppendLine("NOT ebx");
+                        sb.AppendLine("AND ebx, " + xorConst);
+                        sb.AppendLine("OR eax, ebx");
+                    }
+                }
                 sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", eax");
             }
 
             /* We copy a constant value to a variable. */
             else if (right_var == null && right_const != null)
             {
-                sb.AppendLine("MOV eax, " + right_const);
+                if (!inst.polyRequired)
+                    sb.AppendLine("MOV eax, " + right_const);
+                else
+                {
+                    if (probPolymorphism <= 50)
+                        sb.AppendLine("MOV eax, " + right_const);
+                    else if (probPolymorphism > 50 && probPolymorphism <= 80)
+                    {
+                        sb.AppendLine("MOV ebx, " + right_const);
+                        sb.AppendLine("MOV ecx, " + xorConst);
+                        sb.AppendLine("XOR ebx, ecx");
+                        sb.AppendLine("MOV eax, ebx");
+                        sb.AppendLine("XOR eax, ecx");
+                    }
+                    else if (probPolymorphism > 80 && probPolymorphism <= 99)
+                    {
+                        sb.AppendLine("MOV ebx, " + right_const);
+                        sb.AppendLine("MOV ecx, " + xorConst);
+                        sb.AppendLine("XOR ebx, ecx");
+                        sb.AppendLine("NOT ecx");
+                        sb.AppendLine("MOV edx, ebx");
+                        sb.AppendLine("AND edx, ecx");
+                        sb.AppendLine("MOV eax, edx");
+                        sb.AppendLine("NOT ebx");
+                        sb.AppendLine("AND ebx, " + xorConst);
+                        sb.AppendLine("OR eax, ebx");
+                    }
+                }
                 sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", eax");
             }
 

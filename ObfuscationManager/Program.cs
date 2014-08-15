@@ -1,5 +1,4 @@
-﻿using CommonModule;
-using ExchangeFormat;
+﻿using ExchangeFormat;
 using System;
 using System.Xml;
 
@@ -19,7 +18,7 @@ namespace ObfuscationManager
                 Console.ResetColor();
                 Console.Write("Loading XML, checking complience with Exchange.xsd");
                 string pathToPC = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Pseudocode", System.Configuration.ConfigurationManager.AppSettings["PseudoCode"]);
-                doc = ExportImport.ImportXmlNew(InputType.PseudoCode, PlatformType.x86, pathToPC);
+                doc = ExportImport.ImportXmlNew(ExportImport.InputType.PseudoCode, ExportImport.PlatformType.x86, pathToPC);
                 exch = ExportImport.XmlToExchange(doc);
             }
             catch (Obfuscator.ValidatorException exc)
@@ -52,7 +51,7 @@ namespace ObfuscationManager
                 Console.WriteLine(" . . . . . CANCELLED\n");
 
                 Console.Write("Converting Exchange to platform-dependent assembly");
-                string asm = ExportImport.ExchangeToAsm(exch, PlatformType.x86);
+                string asm = ExportImport.ExchangeToAsm(exch, ExportImport.PlatformType.x86);
                 Obfuscator.Logging.WriteTextFile(asm, "ASM");
                 Console.WriteLine(". . . IMPLEMENTING\n");
             }
@@ -85,7 +84,7 @@ namespace ObfuscationManager
                 Console.Write(string.Format("- Message: {0}\n- Target: [{1}.{2}]\nYou can find the full stack trace in a log file.\n", 
                     e.Message, e.TargetSite.DeclaringType, e.TargetSite.Name));
                 Console.ResetColor();
-//                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.StackTrace);
                 return 1;
             }
         }

@@ -61,6 +61,10 @@ namespace Obfuscator
         /// Maximal range between the numbers used to define Loop conditional jumps
         /// </summary>
         public static int LoopConditionalJumpMaxRange = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["LoopConditionalJumpMaxRange"]);
+        /// <summary>
+        /// Probability of jumping into a loop body
+        /// </summary>
+        public static int JumpLoopBodyProbability = Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["JumpLoopBodyProbability"]);
 
         // **** Fake Code Generation Section ****
 

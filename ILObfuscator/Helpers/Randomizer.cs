@@ -306,6 +306,8 @@ namespace Obfuscator
         /// <returns>A number based on probability distribution</returns>
         public static int OneFromSectionWithDescendingProbability(int mostProbableNumber, int zeroProbableNumber)
         {
+            if (mostProbableNumber == zeroProbableNumber)
+                return mostProbableNumber;
             int numbers = Math.Abs(zeroProbableNumber - mostProbableNumber);
             List<int> weights = new List<int>(numbers);
             for (int i = 0; i < numbers; i++)

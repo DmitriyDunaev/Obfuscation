@@ -79,10 +79,6 @@
       <Project>{d43e6c54-2df5-454e-9566-dffe2f3a6946}</Project>
       <Name>Altova</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CommonModule\CommonModule.vcxproj">
-      <Project>{5808fa55-3303-437f-bed5-ed79ac4eccff}</Project>
-      <Name>CommonModule</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Exchange\Exchange.csproj">
       <Project>{93d90e85-c287-4b4e-b6ea-fc92e9e1bd76}</Project>
       <Name>Exchange</Name>

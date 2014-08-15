@@ -68,6 +68,7 @@ namespace Internal
         public List<BasicBlock> BasicBlocks = new List<BasicBlock>();
 
         public bool containsDivisionModulo = false;
+        public bool irreducibleCFG = false;
 
         // Constructor
         public Function(FunctionType function, Routine par)
@@ -248,8 +249,10 @@ namespace Internal
             this.Meshable = original.Meshable;
             Instructions = Common.DeepClone(original.Instructions) as List<Instruction>;
             Instructions.ForEach(x => x.ResetID());
+            Instructions.ForEach(x => x.polyRequired=true);
             Instructions.ForEach(x => x.parent = this);
             newSuccessors.ForEach(x => LinkToSuccessor(x));
+
 
             if (Successors.Count() == 1 && (Instructions.Last().statementType != StatementTypeType.EnumValues.eUnconditionalJump && Instructions.Last().statementType != StatementTypeType.EnumValues.eProcedural))
             {

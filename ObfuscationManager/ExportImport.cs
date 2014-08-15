@@ -1,5 +1,4 @@
-﻿using CommonModule;
-using ExchangeFormat;
+﻿using ExchangeFormat;
 using Internal;
 using System;
 using System.Collections.Generic;
@@ -17,11 +16,14 @@ namespace ObfuscationManager
     public static class ExportImport
     {
 
-        [DllImport("CommonModule.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern XmlDocument ReadChar(string fileName, int memFlag, long defaultN);
-
-        [MarshalAs(UnmanagedType.LPStr)]
-        private static string path;
+        public enum InputType
+        {
+            PseudoCode = 0
+        }
+        public enum PlatformType
+        {
+            x86 = 0
+        }
 
         /// <summary>
         /// Imports routine data from low-level a platform-dependent module

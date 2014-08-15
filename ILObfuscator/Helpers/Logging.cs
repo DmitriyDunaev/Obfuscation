@@ -350,12 +350,15 @@ namespace Obfuscator
                 List<string> operands = new List<string>();
 
                 //For Elshoff's Metric
-                List<string> referencedVars = new List<string>();
-                List<string> definedVars = new List<string>();
-                
+                List<string> bbReferencedVars = new List<string>();
+                List<string> funcReferencedVars = new List<string>();
+                List<string> bbDefinedVars = new List<string>();
+                List<string> funcDefinedVars = new List<string>();
+                int dataFlowComplexity = 0;
+
                 //For McClure's Metric
                 int numComparisons = 0;
-                List<string> controlVariables = new List<string>();
+                List<string> controlVariables = new List<string>();                
 
                 foreach (BasicBlock bb in func.BasicBlocks)
                 {
@@ -367,7 +370,7 @@ namespace Obfuscator
                             case ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump:                                
                                 operators.Add("if");
                                 operands.Add(ins.GetVarFromCondition().ID);
-                                referencedVars.Add(ins.GetVarFromCondition().ID);
+                                bbReferencedVars.Add(ins.GetVarFromCondition().ID);
                                 controlVariables.Add(ins.GetVarFromCondition().ID);
                                 numComparisons++;
                                 switch (ins.GetRelopFromCondition())
@@ -396,7 +399,7 @@ namespace Obfuscator
                                 else
                                 {
                                     operands.Add(ins.GetRightVarFromCondition().ID);
-                                    referencedVars.Add(ins.GetRightVarFromCondition().ID);
+                                    bbReferencedVars.Add(ins.GetRightVarFromCondition().ID);
                                 }
                                 operators.Add("goto");
                                 operands.Add(ins.GetTrueSucc().ID);
@@ -404,27 +407,27 @@ namespace Obfuscator
                             case ExchangeFormat.StatementTypeType.EnumValues.eCopy:
                             case ExchangeFormat.StatementTypeType.EnumValues.ePointerAssignment:
                                 operands.Add(ins.RefVariables.First().ID);
-                                definedVars.Add(ins.RefVariables.First().ID);
+                                bbDefinedVars.Add(ins.RefVariables.First().ID);
                                 operators.Add(":=");
                                 if (ins.RefVariables.Count > 1)
                                 {
                                     operands.Add(ins.RefVariables.Last().ID);
-                                    referencedVars.Add(ins.RefVariables.Last().ID);
+                                    bbReferencedVars.Add(ins.RefVariables.Last().ID);
                                 }
                                 else
                                     operands.Add(ins.TACtext.Split(' ')[2]);
                                 break;
                             case ExchangeFormat.StatementTypeType.EnumValues.eFullAssignment:
                                 operands.Add(ins.RefVariables.First().ID);
-                                definedVars.Add(ins.RefVariables.First().ID);
+                                bbDefinedVars.Add(ins.RefVariables.First().ID);
                                 operators.Add(":=");
                                 operands.Add(ins.RefVariables[1].ID);
-                                referencedVars.Add(ins.RefVariables[1].ID);
+                                bbReferencedVars.Add(ins.RefVariables[1].ID);
                                 operators.Add(ins.TACtext.Split(' ')[3]);
                                 if (ins.RefVariables.Count > 2)
                                 {
                                     operands.Add(ins.RefVariables.Last().ID);
-                                    referencedVars.Add(ins.RefVariables.Last().ID);
+                                    bbReferencedVars.Add(ins.RefVariables.Last().ID);
                                 }
                                 else
                                     operands.Add(ins.TACtext.Split(' ')[4]);
@@ -442,7 +445,7 @@ namespace Obfuscator
                                     if (ins.RefVariables.Count > 0)
                                     {
                                         operands.Add(ins.RefVariables.First().ID);
-                                        referencedVars.Add(ins.RefVariables.First().ID);
+                                        bbReferencedVars.Add(ins.RefVariables.First().ID);
                                     }
                                     else
                                         operands.Add(ins.TACtext.Split(' ')[1]);
@@ -455,7 +458,7 @@ namespace Obfuscator
                                         if (ins.RefVariables.Count > 0)
                                         {
                                             operands.Add(ins.RefVariables.First().ID);
-                                            referencedVars.Add(ins.RefVariables.First().ID);
+                                            bbReferencedVars.Add(ins.RefVariables.First().ID);
                                         }
                                         else
                                             operands.Add(ins.TACtext.Split(' ')[1]);
@@ -468,6 +471,16 @@ namespace Obfuscator
                                 break;
                         }
                     }
+                    bbDefinedVars = bbDefinedVars.Distinct().ToList();
+                    bbReferencedVars = bbReferencedVars.Distinct().ToList();
+                    foreach (string definedVar in bbDefinedVars)
+                        bbReferencedVars.Remove(definedVar);
+                    bbReferencedVars = bbReferencedVars.Distinct().ToList();
+                    dataFlowComplexity += bbReferencedVars.Count;
+                    funcDefinedVars.AddRange(bbDefinedVars);
+                    funcReferencedVars.AddRange(bbReferencedVars);
+                    bbDefinedVars.Clear();
+                    bbReferencedVars.Clear();
                 }
 
                 sb.AppendLine("FUNCTION:");
@@ -493,17 +506,12 @@ namespace Obfuscator
                 sb.AppendLine("\nLanguage Complexity (Halstead's Metric)");
                 sb.AppendLine("  Program Vocabulary: " + progVocabulary + " unique operators and operands");
                 sb.AppendLine("  Program Length: " + progLenght + " references to operators and operands");                
-                sb.AppendLine("  Volume: ~" + Convert.ToInt32(volume) + " mathematical bits");
+                sb.AppendLine("  Volume: ~ " + Convert.ToInt32(volume) + " mathematical bits");
                 sb.AppendLine("  Difficulty to understand: " + difficulty);
                 sb.AppendLine("  Effort to implement: " + effort.ToString("F"));
                 sb.AppendLine("  Time to implement: " + (effort / 18).ToString("F") + " seconds");
 
-                //Data Flow Complexity (Elshoff's Metric)
-                definedVars = definedVars.Distinct().ToList();
-                foreach (string definedVar in definedVars)
-                    referencedVars.Remove(definedVar);
-                referencedVars = referencedVars.Distinct().ToList();
-                int dataFlowComplexity = referencedVars.Count;
+                //Data Flow Complexity (Elshoff's Metric)                
                 sb.AppendLine("\nData Flow Complexity (Elshoff's Metric): " + dataFlowComplexity);
 
                 //Oviedo's Metric
@@ -515,10 +523,12 @@ namespace Obfuscator
                 sb.AppendLine("\nDecisional Complexity (McClure's Metric): " + decisionalComplexity);
 
                 //Data Complexity (Chapin's Metric)
+                funcDefinedVars = funcDefinedVars.Distinct().ToList();
+                funcReferencedVars = funcReferencedVars.Distinct().ToList();
                 int p = func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input).Count;
-                int m = definedVars.Count;
+                int m = funcDefinedVars.Count;
                 int c = controlVariables.Count;
-                int t = func.LocalVariables.FindAll(x => !definedVars.Contains(x.ID) && !referencedVars.Contains(x.ID)).Count;
+                int t = func.LocalVariables.FindAll(x => !funcDefinedVars.Contains(x.ID) && !funcReferencedVars.Contains(x.ID)).Count;
                 double dataComplexity = p + 2 * m + 3 * c + 0.5 * t;
                 sb.AppendLine("\nData Complexity (Chapin's Metric): " + dataComplexity);
 

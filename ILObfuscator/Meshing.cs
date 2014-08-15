@@ -184,11 +184,9 @@ namespace Obfuscator
 
             // Creating a clone of the original target in order to make the CFT more obfuscated
             if (originaltarget.Instructions.Last().statementType == ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
-            {
                 polyrequtarget = new BasicBlock(originaltarget, originaltarget.getSuccessors);
-                polyrequtarget.Instructions.ForEach(delegate(Instruction inst) { inst.polyRequired = true; });
-            }
-            else polyrequtarget = originaltarget;
+            else 
+                polyrequtarget = originaltarget;
 
             // And now setting the edges
             fake2.Instructions.Last().MakeUnconditionalJump(polyrequtarget);
@@ -211,15 +209,15 @@ namespace Obfuscator
             //Creating fake2 to hold the next Loop condition
             BasicBlock fake2 = new BasicBlock(fake1.parent);
             fake2.Meshable = false;
-            if (/*!atFakeJumpGeneration &&*/ (fake2.parent.containsDivisionModulo == false 
-                || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0))
+            if (fake2.parent.containsDivisionModulo == false 
+                || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0)
                 fake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
             fake2.dead = true;
 
             //Creating fake3 to hold the extra fake code in case of No-Loop
             BasicBlock fake3 = new BasicBlock(fake1.parent);
-            if (/*!atFakeJumpGeneration &&*/ (fake3.parent.containsDivisionModulo == false 
-                || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0))
+            if (fake3.parent.containsDivisionModulo == false 
+                || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0)
                 fake3.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
             fake3.dead = true;
 
@@ -231,8 +229,8 @@ namespace Obfuscator
 
             //Creating fake4 to hold the extra fake code in case of No-Loop
             BasicBlock fake4 = new BasicBlock(fake1.parent);
-            if (/*!atFakeJumpGeneration &&*/ (fake4.parent.containsDivisionModulo == false 
-                || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0))
+            if (fake4.parent.containsDivisionModulo == false 
+                || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0)
                 fake4.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
             fake4.dead = true;
 
@@ -387,9 +385,16 @@ namespace Obfuscator
             {
                 List<BasicBlock> loopReachableBasicBlocks = reacheableBasicBlocks.FindAll(x => DataAnalysis.isLoopBody.Keys.Contains(x)
                     && DataAnalysis.isLoopBody[x] == true);
-                //If we have reachable basic blocks in a loop body, we use them
+                //If we have reachable basic blocks in a loop body, we can use them
                 if (loopReachableBasicBlocks.Count > 0)
-                    reacheableBasicBlocks = loopReachableBasicBlocks;
+                {
+                    int i = Randomizer.SingleNumber(0, 100);
+                    if (!fake2.parent.irreducibleCFG || i <= Common.JumpLoopBodyProbability)
+                    {
+                        reacheableBasicBlocks = loopReachableBasicBlocks;
+                        fake2.parent.irreducibleCFG = true;
+                    }
+                }
             }
             //Check whether the amount of reachable basic blocks we have is greater than MaxJumpForLoop. 
             //This parameter is used to control the chance of problems ("nops" left in the end) during 
