@@ -133,30 +133,30 @@ namespace Platform_x86
                     switch (inst.statementType)
                     {
                         case ExchangeFormat.StatementTypeType.EnumValues.eFullAssignment:
-                            sb.Append(FullAssignment(inst, inst.polyRequired));
+                            sb.Append(FullAssignment(inst, inst.parent.PolyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eUnaryAssignment:
-                            sb.Append(UnaryAssignment(inst, inst.polyRequired));
+                            sb.Append(UnaryAssignment(inst, inst.parent.PolyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eCopy:
-                            sb.Append(Copy(inst, inst.polyRequired));
+                            sb.Append(Copy(inst, inst.parent.PolyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump:
-                            sb.Append(UnconditionalJump(inst, inst.polyRequired));
+                            sb.Append(UnconditionalJump(inst, inst.parent.PolyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eConditionalJump:
-                            sb.Append(ConditionalJump(inst, inst.polyRequired));
+                            sb.Append(ConditionalJump(inst, inst.parent.PolyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eProcedural:
-                            sb.Append(Procedural(inst, inst.polyRequired));
+                            sb.Append(Procedural(inst, inst.parent.PolyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eIndexedAssignment:
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.ePointerAssignment:
-                            sb.Append(PointerAssignment(inst, inst.polyRequired));
+                            sb.Append(PointerAssignment(inst, inst.parent.PolyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.eNoOperation:
-                            sb.Append(NoOperation(inst, inst.polyRequired));
+                            sb.Append(NoOperation(inst, inst.parent.PolyRequired));
                             break;
                         case ExchangeFormat.StatementTypeType.EnumValues.Invalid:
                             break;
@@ -303,7 +303,7 @@ namespace Platform_x86
             /* We copy a variable's value to another. */
             if (right_var != null && right_const == null)
             {
-                if (!inst.polyRequired)
+                if (!polyReq)
                     sb.AppendLine("MOV eax, " + StackPointerOfVariable(right_var));
                 else
                 {
@@ -337,7 +337,7 @@ namespace Platform_x86
             /* We copy a constant value to a variable. */
             else if (right_var == null && right_const != null)
             {
-                if (!inst.polyRequired)
+                if (!polyReq)
                     sb.AppendLine("MOV eax, " + right_const);
                 else
                 {

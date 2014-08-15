@@ -275,7 +275,6 @@ namespace Platform_x86
             InstructionType newInstruction = routine.Function[indexFunction].BasicBlock[indexBasicblock].Instruction.Append();
             newInstruction.ID.Value = string.Concat("ID_",Guid.NewGuid().ToString().ToUpper());
             newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eProcedural;
-            newInstruction.PolyRequired.Value = false;
             //Real return
             if (tokens.Length > 1) 
             {
@@ -349,7 +348,6 @@ namespace Platform_x86
                     newInstruction = routine.Function[indexFunction].BasicBlock[indexBasicblock].Instruction.Append();
                     newInstruction.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
                     newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eProcedural;
-                    newInstruction.PolyRequired.Value = false;
                     newInstruction.RefVars.Value = GetIDVariable(token);
                     newInstruction.Value = string.Concat("param ", GetValueVariable(token));
                     numParams++;
@@ -364,7 +362,6 @@ namespace Platform_x86
             newInstruction = routine.Function[indexFunction].BasicBlock[indexBasicblock].Instruction.Append();
             newInstruction.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eProcedural;
-            newInstruction.PolyRequired.Value = false;
             newInstruction.Value = string.Join(" ", "call", string.Concat(GetIDFunction(tokens2[0]), type), numParams);
             for (int i = 0; i < routine.Function.Count; i++)
             {
@@ -395,7 +392,6 @@ namespace Platform_x86
             InstructionType newInstruction = newInstruction = routine.Function[indexFunction].BasicBlock[indexBasicblock].Instruction.Append();
             newInstruction.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eProcedural;
-            newInstruction.PolyRequired.Value = false;
             newInstruction.RefVars.Value = GetIDVariable(tokens[0]);
             newInstruction.Value = string.Concat("retrieve ", GetValueVariable(tokens[0]));
         }
@@ -471,7 +467,6 @@ namespace Platform_x86
             InstructionType newInstruction = routine.Function[indexFunction].BasicBlock[indexBasicblock].Instruction.Append();
             newInstruction.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eFullAssignment;
-            newInstruction.PolyRequired.Value = false;
 
             //Dealing with pointers
             string[] forPointers = { string.Empty, string.Empty, string.Empty };
@@ -534,7 +529,6 @@ namespace Platform_x86
                 newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.ePointerAssignment;
             else
                 newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eCopy;
-            newInstruction.PolyRequired.Value = false;
 
             //Dealing with pointers
             string[] forPointers = { string.Empty, string.Empty };
@@ -913,7 +907,6 @@ namespace Platform_x86
             InstructionType newInstruction = routine.Function[functionIndex].BasicBlock[basicBlockIndex].Instruction.Append();
             newInstruction.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eConditionalJump;
-            newInstruction.PolyRequired.Value = false;
 
             //Dealing with pointers
             string[] forPointers = { string.Empty, string.Empty };
@@ -946,7 +939,6 @@ namespace Platform_x86
             InstructionType newInstruction = routine.Function[functionIndex].BasicBlock[indexOwnerBasicBlock].Instruction.Append();
             newInstruction.ID.Value = string.Concat("ID_", Guid.NewGuid().ToString().ToUpper());
             newInstruction.StatementType.EnumerationValue = StatementTypeType.EnumValues.eUnconditionalJump;
-            newInstruction.PolyRequired.Value = false;
             newInstruction.Value = string.Concat("goto ",targetBasicBlockID);
         }
         /// <summary>
