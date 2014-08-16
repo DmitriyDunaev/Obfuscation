@@ -1,7 +1,7 @@
 // typeinfo.cs
 // This file contains generated code and will be overwritten when you rerun code generation.
 
-namespace Altova.TypeInfo
+namespace Helper.TypeInfo
 {
 	public enum WhitespaceType {Unknown, Preserve, Replace, Collapse}
 	public enum FacetCheckResult {Fail, Success, EnumFail, EnumSuccess}
@@ -178,4 +178,4 @@ namespace Altova.TypeInfo
 	public class ValueFormatter
 	{
 	}
-} // namespace Altova.TypeInfo
+} // namespace Helper.TypeInfo

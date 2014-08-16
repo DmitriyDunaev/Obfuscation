@@ -7,7 +7,7 @@ using System.Text;
 using System.Net;
 using System;
 
-namespace Altova.IO
+namespace Helper.IO
 {
     public abstract class Input
     {

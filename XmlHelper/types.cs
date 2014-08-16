@@ -5,7 +5,7 @@
 using System;
 using System.Globalization;
 
-namespace Altova.Types
+namespace Helper.Types
 {
 	public enum DateTimeFormat
 	{

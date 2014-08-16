@@ -3,9 +3,9 @@
 
 
 using System;
-using Altova;
+using Helper;
 
-namespace Altova.Types
+namespace Helper.Types
 {
 	public class ConversionException : Exception
 	{

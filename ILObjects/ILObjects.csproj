@@ -52,13 +52,13 @@
     <Compile Include="Variable.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AltovaXML\HelperXML.csproj">
-      <Project>{03aaa791-ec2d-4a90-abbf-45337e52dfd6}</Project>
-      <Name>HelperXML</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Exchange\Exchange.csproj">
       <Project>{93d90e85-c287-4b4e-b6ea-fc92e9e1bd76}</Project>
       <Name>Exchange</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XmlHelper\XmlHelper.csproj">
+      <Project>{2194cacf-fea9-466b-babd-558541c88e7a}</Project>
+      <Name>XmlHelper</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -33,9 +33,9 @@
     <Compile Include="Exchange.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AltovaXML\HelperXML.csproj">
-      <Project>{03AAA791-EC2D-4A90-ABBF-45337E52DFD6}</Project>
-      <Name>HelperXML</Name>
+    <ProjectReference Include="..\XmlHelper\XmlHelper.csproj">
+      <Project>{2194cacf-fea9-466b-babd-558541c88e7a}</Project>
+      <Name>XmlHelper</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -5,8 +5,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{03AAA791-EC2D-4A90-ABBF-45337E52DFD6}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AssemblyName>AltovaXML</AssemblyName>
-    <RootNamespace>AltovaXML</RootNamespace>
+    <AssemblyName>HelperXML2</AssemblyName>
+    <RootNamespace>HelperXML2</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
