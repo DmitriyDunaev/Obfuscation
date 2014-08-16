@@ -31,47 +31,44 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
     <Compile Include="DataAnalysis.cs" />
-    <Compile Include="Helpers\Exceptions.cs" />
+    <Compile Include="FakeParameters.cs" />
+    <Compile Include="Exceptions.cs" />
     <Compile Include="FakeCode.cs" />
-    <Compile Include="Helpers\Logging.cs" />
-    <Compile Include="Helpers\Parser.cs" />
-    <Compile Include="Helpers\ToString.cs" />
-    <Compile Include="Helpers\Traversal.cs" />
-    <Compile Include="InternalCast.cs" />
     <Compile Include="MakeFakeInstructions.cs" />
-    <Compile Include="InternalMethods.cs" />
     <Compile Include="Meshing.cs" />
     <Compile Include="ConstCoverage.cs" />
     <Compile Include="ILObfuscator.cs" />
-    <Compile Include="InternalTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Helpers\Randomizer.cs" />
-    <Compile Include="Helpers\Validator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AltovaXML\AltovaXML.csproj">
+    <ProjectReference Include="..\AltovaXML\HelperXML.csproj">
       <Project>{03aaa791-ec2d-4a90-abbf-45337e52dfd6}</Project>
-      <Name>AltovaXML</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Altova\Altova.csproj">
-      <Project>{d43e6c54-2df5-454e-9566-dffe2f3a6946}</Project>
-      <Name>Altova</Name>
+      <Name>HelperXML</Name>
     </ProjectReference>
     <ProjectReference Include="..\Exchange\Exchange.csproj">
       <Project>{93d90e85-c287-4b4e-b6ea-fc92e9e1bd76}</Project>
       <Name>Exchange</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ILObjects\ILObjects.csproj">
+      <Project>{bb7b46fa-6855-472d-a364-fa83788bb2c3}</Project>
+      <Name>ILObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ILServices\ILServices.csproj">
+      <Project>{1de873e2-65fc-44ba-ab50-5f818c4c8fea}</Project>
+      <Name>ILServices</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

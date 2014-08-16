@@ -1,10 +1,11 @@
-﻿using ExchangeFormat;
-using Internal;
+﻿using Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Configuration;
+using Services;
+
 
 namespace Obfuscator
 {
@@ -15,22 +16,16 @@ namespace Obfuscator
             Logging.WriteComplexityMetrics(routine, "Original");
             
             //Creating fake input parameters in all functions
-            for (int i = 0; i < Common.NumFakeInputParam; i++)
-            {
-                List<int> borders = Randomizer.MultipleNumbers(2, Common.GlobalMinValue + Common.LoopConditionalJumpMaxRange,
-                        Common.GlobalMaxValue - Common.LoopConditionalJumpMaxRange, false, true);
-                foreach (Function func in routine.Functions)
-                    func.NewFakeInputParameter(borders.First(), borders.Last());
-            }
+            FakeParameters.CreateFakeParameters(routine);
 
             //Updating all CALLs according to the new number of parameters
             foreach (Function func in routine.Functions)
             {
-                func.UpdateAllCalls();
+                FakeParameters.UpdateAllFunctionCalls(func);
             }
 
             //Checking whether the functions have either "division" or "modulo" operations
-            //If they do, fake instructions with original variables should be insert only right before the return
+            //If they do, fake instructions with original variables should be inserted only before the return
             //to avoid problems with the these instructions
             foreach (Function func in routine.Functions)
             {
@@ -38,20 +33,20 @@ namespace Obfuscator
             }
 
             //Checking for Multiple Obfuscation
-            for (int i = 0; i < Convert.ToInt32(System.Configuration.ConfigurationSettings.AppSettings["MultipleRuns"]); i++)
+            for (int i = 0; i < Convert.ToInt32(ConfigurationManager.AppSettings["MultipleRuns"]); i++)
             {
                 //Creating fake variables
                 foreach (Function func in routine.Functions)
                 {
                     for (int j = 0; j < (Common.PercentageFakeVars * func.LocalVariables.FindAll(x => !x.fake).Count)/100; j++)
                     {
-                        func.LocalVariables.Add(new Variable(Variable.Kind.Local,Variable.Purpose.Fake,Common.MemoryRegionSize.Integer));
+                        func.LocalVariables.Add(new Variable(Variable.Kind.Local, Variable.Purpose.Fake, Objects.Common.MemoryRegionSize.Integer));
                     }
                 }
                 
-                if (System.Configuration.ConfigurationSettings.AppSettings["ConstCoverAlgInMultipleRuns"].Split('-')[i].Equals("1"))
+                if (ConfigurationManager.AppSettings["ConstCoverAlgInMultipleRuns"].Split('-')[i].Equals("1"))
                 {
-                    Console.Write("Constants covering algorithm");
+                    Console.Write("Step 1: Constants coverage");
                     ConstCoverage.CoverConstants(routine);
                     routine.Validate();
                     PrintSuccess();
@@ -59,19 +54,19 @@ namespace Obfuscator
                     Logging.DrawCFG(routine, "CONST");
                 }
 
-                if (System.Configuration.ConfigurationSettings.AppSettings["UncMeshingAlgInMultipleRuns"].Split('-')[i].Equals("1"))
+                if (ConfigurationManager.AppSettings["UncMeshingAlgInMultipleRuns"].Split('-')[i].Equals("1"))
                 {
-                    Console.Write("Meshing algorithm: Unconditional Jumps");
+                    Console.Write("Step 2: Meshing unconditional jumps");
                     Meshing.MeshUnconditionals(routine);
                     routine.Validate();
                     PrintSuccess();
                     Logging.WriteReadableTAC(routine, "MeshingUNC");
                     Logging.DrawCFG(routine, "MeshingUNC");
                 }
-                
-                if (System.Configuration.ConfigurationSettings.AppSettings["CondMeshingAlgInMultipleRuns"].Split('-')[i].Equals("1"))
+
+                if (ConfigurationManager.AppSettings["CondMeshingAlgInMultipleRuns"].Split('-')[i].Equals("1"))
                 {
-                    Console.Write("Meshing algorithm: Conditional Jumps");
+                    Console.Write("Step 3: Meshing conditional jumps");
                     Meshing.MeshConditionals(routine);
                     routine.Validate();
                     PrintSuccess();
@@ -79,7 +74,7 @@ namespace Obfuscator
                     Logging.DrawCFG(routine, "MeshingCOND");
                 }
 
-                Console.Write("Generation of fake NOP instructions");
+                Console.Write("Step 4: Generation of fake NOP instructions");
                 foreach (Function func in routine.Functions)
                     FakeCode.GenerateNoOperations(func);
                 routine.Validate();
@@ -87,13 +82,13 @@ namespace Obfuscator
                 Logging.WriteRoutine(routine, "NoOpersGeneration");
                 Logging.WriteReadableTAC(routine, "FakeNOPs");
 
-                Console.Write("Prior data analysis");
+                Console.Write("Step 5: Partial data analysis");
                 DataAnalysis.GatherBasicBlockInfo(routine);
                 PrintSuccess();
 
-                if (System.Configuration.ConfigurationSettings.AppSettings["FakeJumpsAlgInMultipleRuns"].Split('-')[i].Equals("1"))
+                if (ConfigurationManager.AppSettings["FakeJumpsAlgInMultipleRuns"].Split('-')[i].Equals("1"))
                 {
-                    Console.Write("Generation of fake conditional jumps from NOPs");
+                    Console.Write("Step 6: Generation of fake conditional jumps from NOPs");
                     foreach (Function func in routine.Functions)
                         FakeCode.GenerateConditionalJumps(func);
                     Logging.WriteRoutine(routine, "CondJumps");
@@ -103,14 +98,14 @@ namespace Obfuscator
                     PrintSuccess();
                 }
 
-                Console.Write("Complete data analysis");
+                Console.Write("Step 7: Complete data analysis");
                 foreach (Function func in routine.Functions)
                     DataAnalysis.DeadVarsAlgortihm(func);
                 DataAnalysis.GatherBasicBlockInfo(routine);
                 PrintSuccess();
 
 
-                Console.Write("Generation of fake instructions from NOPs");
+                Console.Write("Step 8: Generation of fake instructions from NOPs");
                 foreach (Function func in routine.Functions)
                     FakeCode.GenerateFakeInstructions(func);
                 Logging.WriteRoutine(routine, "FakeIns");
@@ -123,17 +118,15 @@ namespace Obfuscator
             }
         }
 
-        public static void Obfuscate(ref Exchange exch)
+        public static void Obfuscate(ref ExchangeFormat.Exchange exch)
         {
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("\tINTERMEDIATE LEVEL OBFUSCATION\n");
+            Console.WriteLine("\n\tINTERMEDIATE LEVEL OBFUSCATION\n");
             Console.ResetColor();
 
-            Console.Write("Converting Exchange to Routine class");
             Routine routine = (Routine)exch;
-            PrintSuccess();
 
-            Console.Write("First validation of the routine");
+            Console.Write("Performing logical control");
             routine.Validate();
             PrintSuccess();
 
@@ -155,7 +148,7 @@ namespace Obfuscator
                     {
                         Success = false;
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(" . . . . . . . FAILED\n");
+                        Console.WriteLine(" . . . . . UNSUCCESSFUL\n");
                         Console.ResetColor();
                         routine = (Routine)exch;
                     }
@@ -178,7 +171,7 @@ namespace Obfuscator
                 else
                 {
                     //Console.WriteLine("Obfuscation failed {0} times. Possible problems: (1) FILLED and NOT_INITIALIZED collision; (2) basic blocks with single GOTO predecessor. Consequence: weaker result.", Common.MaxNumberOfRuns);
-                    Console.WriteLine("Obfuscation failed {0} times. Possible problem: FILLED and NOT_INITIALIZED collision. Consequence: weaker result.", Common.MaxNumberOfRuns);
+                    Console.WriteLine("Obfuscation process was unsuccessful {0} times. Consequence: weaker resilience.", Common.MaxNumberOfRuns);
                     Console.WriteLine("Do you want to try again? (y/n)");
                     char answer = Convert.ToChar(Console.Read());
                     switch (answer)
@@ -192,7 +185,7 @@ namespace Obfuscator
 
                         case 'n':
                         case 'N':
-                            Console.WriteLine("Using the code with collision...");
+                            Console.WriteLine("Using the resulting code...");
                             Console.WriteLine();
                             TryAgain = false;
                             break;
@@ -203,7 +196,7 @@ namespace Obfuscator
                 }
             } while (TryAgain);
 
-            Console.Write("Writing readable TAC");
+            Console.Write("Logging TAC after obfuscation");
             Logging.WriteReadableTAC(routine);
             routine.Validate();
             PrintSuccess();
@@ -212,8 +205,8 @@ namespace Obfuscator
             Logging.WriteStatistics(routine);
             PrintSuccess();
 
-            Console.Write("Converting Routine to Exchange class");
-            exch = (Exchange)routine;
+            Console.Write("Performing logical control");
+            routine.Validate();
             PrintSuccess();
         }
 
@@ -224,10 +217,10 @@ namespace Obfuscator
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             if (Console.CursorLeft % 2 != 0)
                 Console.Write(" ");
-            for (int i = Console.CursorLeft; i < 56; i += 2)
+            for (int i = Console.CursorLeft; i < 60; i += 2)
                 Console.Write(". ");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("COMPLETED\n");
+            Console.WriteLine("SUCCESS\n");
             Console.ResetColor();
         }
     }

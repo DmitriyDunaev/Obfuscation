@@ -1,12 +1,12 @@
 // xstypes.cs 
 // This file contains generated code and will be overwritten when you rerun code generation.
 
-using Altova.TypeInfo;
-using Altova.Types;
+using Helper.TypeInfo;
+using Helper.Types;
 using System.Xml;
 using System.Text;
 
-namespace Altova.Xml
+namespace Helper.Xml
 {
 	
 	public class XmlFormatter : ValueFormatter
@@ -66,7 +66,7 @@ namespace Altova.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Altova.Types.DateTimeFormat.W3_time);
+			return dt.ToString(Helper.Types.DateTimeFormat.W3_time);
 		}
 	}
 	
@@ -74,7 +74,7 @@ namespace Altova.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Altova.Types.DateTimeFormat.W3_date);
+			return dt.ToString(Helper.Types.DateTimeFormat.W3_date);
 		}
 	}
 	
@@ -82,7 +82,7 @@ namespace Altova.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Altova.Types.DateTimeFormat.W3_gYear);
+			return dt.ToString(Helper.Types.DateTimeFormat.W3_gYear);
 		}
 	}
 	
@@ -90,7 +90,7 @@ namespace Altova.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Altova.Types.DateTimeFormat.W3_gMonth);
+			return dt.ToString(Helper.Types.DateTimeFormat.W3_gMonth);
 		}
 	}
 
@@ -99,7 +99,7 @@ namespace Altova.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Altova.Types.DateTimeFormat.W3_gDay);
+			return dt.ToString(Helper.Types.DateTimeFormat.W3_gDay);
 		}
 	}
 	
@@ -107,7 +107,7 @@ namespace Altova.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Altova.Types.DateTimeFormat.W3_gYearMonth);
+			return dt.ToString(Helper.Types.DateTimeFormat.W3_gYearMonth);
 		}
 	}
 	
@@ -115,7 +115,7 @@ namespace Altova.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Altova.Types.DateTimeFormat.W3_gMonthDay);
+			return dt.ToString(Helper.Types.DateTimeFormat.W3_gMonthDay);
 		}
 	}
 	
@@ -123,12 +123,12 @@ namespace Altova.Xml
 	{
 		public override string Format(byte[] v)
 		{
-            return Altova.HexBinary.decode(v);
+            return Helper.HexBinary.decode(v);
 		}
 
         public override byte[] ParseBinary(string s)
         {
-            return Altova.HexBinary.encode(s);
+            return Helper.HexBinary.encode(s);
         }
 	}
 	
@@ -357,7 +357,7 @@ namespace Altova.Xml
 	} // class XsValidation
 } // namespace
 
-namespace Altova.Xml.Meta
+namespace Helper.Xml.Meta
 {
 	/// <summary>
 	/// Information object for a simple type.
@@ -710,13 +710,13 @@ namespace Altova.Xml.Meta
 	/// </summary>
 	public class ComplexType
 	{
-		Altova.TypeInfo.TypeInfo typeInfo;
+		Helper.TypeInfo.TypeInfo typeInfo;
 
 		/// <summary>
 		/// Constructs a new instance of complex type from a type info object.
 		/// </summary>
 		/// <param name="typeInfo"></param>
-		public ComplexType(Altova.TypeInfo.TypeInfo typeInfo)
+		public ComplexType(Helper.TypeInfo.TypeInfo typeInfo)
 		{
 			this.typeInfo = typeInfo;
 		}
@@ -831,7 +831,7 @@ namespace Altova.Xml.Meta
 		}
 
 
-		Altova.TypeInfo.MemberInfo GetMember(string localName, string namespaceURI, MemberFlags mask, MemberFlags check)
+		Helper.TypeInfo.MemberInfo GetMember(string localName, string namespaceURI, MemberFlags mask, MemberFlags check)
 		{
 			foreach (MemberInfo member in typeInfo.Members)
 			{
@@ -1004,13 +1004,13 @@ namespace Altova.Xml.Meta
 	/// </summary>
 	public class Element
 	{
-		Altova.TypeInfo.MemberInfo memberInfo;
+		Helper.TypeInfo.MemberInfo memberInfo;
 
 		/// <summary>
 		/// Constructs an instance of this class from the given member information.
 		/// </summary>
 		/// <param name="info">The member information object.</param>
-		public Element(Altova.TypeInfo.MemberInfo info)
+		public Element(Helper.TypeInfo.MemberInfo info)
 		{
 			this.memberInfo = info;
 		}
@@ -1078,9 +1078,9 @@ namespace Altova.Xml.Meta
 	/// </summary>
 	public class Attribute
 	{
-		Altova.TypeInfo.MemberInfo memberInfo;
+		Helper.TypeInfo.MemberInfo memberInfo;
 
-		public Attribute(Altova.TypeInfo.MemberInfo info)
+		public Attribute(Helper.TypeInfo.MemberInfo info)
 		{
 			this.memberInfo = info;
 		}

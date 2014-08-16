@@ -1,0 +1,36 @@
+﻿signed int __cdecl sub_401334(signed int a1)
+{
+  signed int result; // eax@2
+  int v2; // [sp+8h] [bp-18h]@1
+  int v3; // [sp+Ch] [bp-14h]@4
+  int *v4; // [sp+10h] [bp-10h]@1
+  signed int *v5; // [sp+14h] [bp-Ch]@1
+  int i; // [sp+18h] [bp-8h]@3
+  int v7; // [sp+1Ch] [bp-4h]@1
+
+  v2 = 1;
+  v7 = 1;
+  v5 = &a1;
+  v4 = &v2;
+  if ( a1 > 2 )
+  {
+    for ( i = 2; i < a1; ++i )
+    {
+      v3 = v7;
+      v7 = *v4;
+      v2 += v3;
+    }
+    result = *v4;
+  }
+  else
+  {
+    result = 1;
+  }
+  return result;
+}
+
+signed int __cdecl sub_401397(int a)
+{
+  sub_401970();
+  return sub_401334(a);
+}

@@ -49,15 +49,11 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExportImport.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -65,19 +61,15 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\Exchange.xsd">
+    <None Include="Scheme\Exchange.xsd">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AltovaXML\AltovaXML.csproj">
+    <ProjectReference Include="..\AltovaXML\HelperXML.csproj">
       <Project>{03aaa791-ec2d-4a90-abbf-45337e52dfd6}</Project>
-      <Name>AltovaXML</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Altova\Altova.csproj">
-      <Project>{d43e6c54-2df5-454e-9566-dffe2f3a6946}</Project>
-      <Name>Altova</Name>
+      <Name>HelperXML</Name>
     </ProjectReference>
     <ProjectReference Include="..\Exchange\Exchange.csproj">
       <Project>{93d90e85-c287-4b4e-b6ea-fc92e9e1bd76}</Project>
@@ -87,24 +79,14 @@
       <Project>{7bbcfcfc-f998-41d8-846a-ee3ff0a3d7b6}</Project>
       <Name>ILObfuscator</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ILServices\ILServices.csproj">
+      <Project>{1de873e2-65fc-44ba-ab50-5f818c4c8fea}</Project>
+      <Name>ILServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Platform x86\Platform x86.csproj">
       <Project>{9c336c5b-d5c9-4b08-a40a-fb90c56a20ad}</Project>
       <Name>Platform x86</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Pseudocode\fibonacci_real.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Pseudocode\simple_test.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Pseudocode\fibonacci.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Schemas\test.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -122,6 +104,30 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Pseudocode\Factorial.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pseudocode\Fibonacci.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pseudocode\GeometricSequence.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pseudocode\GreatestCommonDivisor.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pseudocode\LeastCommonMultiple.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pseudocode\Temperature.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pseudocode\Tests\fibonacci.txt" />
+    <Content Include="Pseudocode\Tests\fibonacci_real.txt" />
+    <Content Include="Pseudocode\Tests\simple_test.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

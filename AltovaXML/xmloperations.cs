@@ -2,9 +2,9 @@
 // This file contains generated code and will be overwritten when you rerun code generation.
 
 using System.Xml;
-using Altova.TypeInfo;
+using Helper.TypeInfo;
 
-namespace Altova.Xml
+namespace Helper.Xml
 {
 	/// <summary>
 	/// Fault exception propagates fault as a node back to main WS method
@@ -323,12 +323,12 @@ namespace Altova.Xml
             SetValue(node, member, GetFormatter(member).Format(b));
         }
 
-        public static void SetValue(XmlNode node, MemberInfo member, Altova.Types.DateTime b)
+        public static void SetValue(XmlNode node, MemberInfo member, Helper.Types.DateTime b)
         {
             SetValue(node, member, GetFormatter(member).Format(b));
         }
 
-        public static void SetValue(XmlNode node, MemberInfo member, Altova.Types.Duration b)
+        public static void SetValue(XmlNode node, MemberInfo member, Helper.Types.Duration b)
         {
             SetValue(node, member, GetFormatter(member).Format(b));
         }
@@ -343,7 +343,7 @@ namespace Altova.Xml
 			SetValue(node, member, GetFormatter(member).Format(d));
 		}
 
-		public static void SetValue(XmlNode node, MemberInfo member, Altova.Types.QName qn)
+		public static void SetValue(XmlNode node, MemberInfo member, Helper.Types.QName qn)
         {
 			if (qn.Uri == null)
             {
@@ -381,47 +381,47 @@ namespace Altova.Xml
 
 	    public static double CastToDouble( XmlNode node, MemberInfo member)
         {
-            return Altova.CoreTypes.CastToDouble(node.InnerText);
+            return Helper.CoreTypes.CastToDouble(node.InnerText);
         }
 
 	    public static string CastToString( XmlNode node, MemberInfo member)
         {
-            return Altova.CoreTypes.CastToString(node.InnerText);
+            return Helper.CoreTypes.CastToString(node.InnerText);
         }
 
 	    public static long CastToInt64( XmlNode node, MemberInfo member)
         {
-            return Altova.CoreTypes.CastToInt64(node.InnerText);
+            return Helper.CoreTypes.CastToInt64(node.InnerText);
         }
 
 	    public static ulong CastToUInt64( XmlNode node, MemberInfo member)
         {
-            return Altova.CoreTypes.CastToUInt64(node.InnerText);
+            return Helper.CoreTypes.CastToUInt64(node.InnerText);
         }
 
 	    public static uint CastToUInt( XmlNode node, MemberInfo member)
         {
-            return Altova.CoreTypes.CastToUInt(node.InnerText);
+            return Helper.CoreTypes.CastToUInt(node.InnerText);
         }
 
 	    public static int CastToInt( XmlNode node, MemberInfo member)
         {
-            return Altova.CoreTypes.CastToInt(node.InnerText);
+            return Helper.CoreTypes.CastToInt(node.InnerText);
         }
 
 	    public static bool CastToBool( XmlNode node, MemberInfo member)
         {
-            return Altova.CoreTypes.CastToBool(node.InnerText);
+            return Helper.CoreTypes.CastToBool(node.InnerText);
         }
 
-        public static Altova.Types.DateTime CastToDateTime(XmlNode node, MemberInfo member)
+        public static Helper.Types.DateTime CastToDateTime(XmlNode node, MemberInfo member)
         {
-            return Altova.CoreTypes.CastToDateTime(node.InnerText);
+            return Helper.CoreTypes.CastToDateTime(node.InnerText);
         }
 
-        public static Altova.Types.Duration CastToDuration(XmlNode node, MemberInfo member)
+        public static Helper.Types.Duration CastToDuration(XmlNode node, MemberInfo member)
         {
-            return Altova.CoreTypes.CastToDuration(node.InnerText);
+            return Helper.CoreTypes.CastToDuration(node.InnerText);
         }
 
         public static byte[] CastToBinary(XmlNode node, MemberInfo member)
@@ -431,21 +431,21 @@ namespace Altova.Xml
 
 		public static decimal CastToDecimal(XmlNode node, MemberInfo member)
 		{
-			return Altova.CoreTypes.CastToDecimal(node.InnerText);
+			return Helper.CoreTypes.CastToDecimal(node.InnerText);
 		}
 		
-		public static Altova.Types.QName CastToQName(XmlNode node, MemberInfo member)
+		public static Helper.Types.QName CastToQName(XmlNode node, MemberInfo member)
         {
             int i = node.InnerText.IndexOf(":");
             if (i == -1)
-                return new Altova.Types.QName(node.GetNamespaceOfPrefix(""), node.InnerText);
+                return new Helper.Types.QName(node.GetNamespaceOfPrefix(""), node.InnerText);
 
             string prefix = node.InnerText.Substring(0, i);
             string local = node.InnerText.Substring(i + 1);
             
             string uri = node.GetNamespaceOfPrefix(prefix);
 
-            return new Altova.Types.QName(uri, prefix, local);
+            return new Helper.Types.QName(uri, prefix, local);
         }
 
 	    public static XmlNode FindAttribute( XmlNode node,  MemberInfo member)
@@ -455,21 +455,21 @@ namespace Altova.Xml
             return attrs.GetNamedItem(member.LocalName, member.NamespaceURI);
         }
 
-		public static XmlDocument LoadDocument(Altova.IO.Input input)
+		public static XmlDocument LoadDocument(Helper.IO.Input input)
         {
-			if (input is Altova.IO.FileInput)
+			if (input is Helper.IO.FileInput)
 			{
-				return LoadDocument(((Altova.IO.FileInput)input).Filename);
+				return LoadDocument(((Helper.IO.FileInput)input).Filename);
 			}
 			switch (input.Type)
 			{
-                case Altova.IO.Input.InputType.Stream:
+                case Helper.IO.Input.InputType.Stream:
                     return LoadDocument(input.Stream);
 
-                case Altova.IO.Input.InputType.Reader:
+                case Helper.IO.Input.InputType.Reader:
                     return LoadDocument(input.Reader);
 
-                case Altova.IO.Input.InputType.XmlDocument:
+                case Helper.IO.Input.InputType.XmlDocument:
                     return input.Document;
 
                 default:
@@ -514,24 +514,24 @@ namespace Altova.Xml
             return doc;
         }
 
-		public static void SaveDocument(XmlDocument doc, Altova.IO.Output output, string encoding, bool bBigEndian, bool bBOM, bool prettyPrint)
+		public static void SaveDocument(XmlDocument doc, Helper.IO.Output output, string encoding, bool bBigEndian, bool bBOM, bool prettyPrint)
         {
             SaveDocument(doc, output, GetEncodingObject(encoding, bBigEndian, bBOM), prettyPrint);
         }
 
-        public static void SaveDocument(XmlDocument doc, Altova.IO.Output output, System.Text.Encoding encoding, bool prettyPrint)
+        public static void SaveDocument(XmlDocument doc, Helper.IO.Output output, System.Text.Encoding encoding, bool prettyPrint)
         {
             switch (output.Type)
             {
-                case Altova.IO.Output.OutputType.Stream:
+                case Helper.IO.Output.OutputType.Stream:
                     SaveDocument(doc, output.Stream, encoding, prettyPrint);
                     break;
 
-                case Altova.IO.Output.OutputType.Writer:
+                case Helper.IO.Output.OutputType.Writer:
                     SaveDocument(doc, output.Writer, prettyPrint);
                     break;
 
-                case Altova.IO.Output.OutputType.XmlDocument:
+                case Helper.IO.Output.OutputType.XmlDocument:
                     break;
 
                 default:
@@ -698,4 +698,4 @@ namespace Altova.Xml
 			return new XmlDocument();
 		}
 	}; // class XmlTreeOperations
-} // namespace Altova.Xml
+} // namespace Helper.Xml

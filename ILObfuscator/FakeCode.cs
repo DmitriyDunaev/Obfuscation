@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Internal;
-using ExchangeFormat;
+using Objects;
 using System.Text.RegularExpressions;
+using Services;
 
 namespace Obfuscator
 {
@@ -18,14 +17,10 @@ namespace Obfuscator
          * However we must not choose this if we have only one basic block
          * apart from the "fake exit block". So we must have at least 3 BBs.
          * 
-         * At the remaining probability we generate instructions that are
+         * At the remaining nops we generate instructions that are
          * using the dead variables present at the point of the actual nop.
-         * However we must not choose this if we have no dead variables
-         * available for using as a left value present.
          */
-
-        
-
+                
         /// <summary>
         /// Returns a list of all nops present in the function.
         /// </summary>
@@ -38,7 +33,7 @@ namespace Obfuscator
             {
                 foreach (Instruction ins in bb.Instructions)
                 {
-                    if (ins.statementType == StatementTypeType.EnumValues.eNoOperation)
+                    if (ins.statementType == Objects.Common.StatementType.NoOperation)
                         nops.Add(ins);
                 }
             }
@@ -119,16 +114,6 @@ namespace Obfuscator
         /// <param name="func">The function to work on.</param>
         public static void GenerateFakeInstructions(Function func)
         {
-            //foreach (Variable var in DataAnalysis.UsableNotInit)
-            //{
-            //    Instruction ins = new Instruction(func.BasicBlocks[0]);
-            //    ins.DeadVariables = func.BasicBlocks[0].Instructions.First().DeadVariables;
-            //    ins.DeadPointers = func.BasicBlocks[0].Instructions.First().DeadPointers;
-            //    func.BasicBlocks[0].Instructions.Insert(0, ins);
-            //    ins.MakeCopy(var, null, 6969);
-            //    ins.RefreshNext();
-            //}
-
             /* We have to go through all the nop's in the function. */
             List<Instruction> nops = GetAllNops(func);
 
@@ -140,8 +125,8 @@ namespace Obfuscator
                 _GenerateFakeInstruction(ins);
 
                 /* If the instruction is made, then we have to refresh the states of the dead variables. */
-                if (ins.statementType != StatementTypeType.EnumValues.eNoOperation)
-                    ins.RefreshNext();                
+                if (ins.statementType != Objects.Common.StatementType.NoOperation)
+                    RefreshNext(ins);                
             }
 
             /* Now we check for forbidden state collisions at every basic blocks' beginning. */
@@ -169,12 +154,12 @@ namespace Obfuscator
             List<Variable> rightvalues = GetRandomRightValues(ins, 2);
 
             /* We random generate a statement type which we may not use according to the available right values. */
-            StatementTypeType.EnumValues statementType =
-                (StatementTypeType.EnumValues) Randomizer.OneFromManyWithProbability (
+            Objects.Common.StatementType statementType =
+                (Objects.Common.StatementType)Randomizer.OneFromManyWithProbability(
                                                                         new int[3] { 25, 15, 60 }                       ,
-                                                                        StatementTypeType.EnumValues.eCopy              ,
-                                                                        StatementTypeType.EnumValues.eUnaryAssignment   ,
-                                                                        StatementTypeType.EnumValues.eFullAssignment    );
+                                                                        Objects.Common.StatementType.Copy,
+                                                                        Objects.Common.StatementType.UnaryAssignment,
+                                                                        Objects.Common.StatementType.FullAssignment);
 
             /*
              * The number of the available right values determines which kind of instructions
@@ -203,13 +188,13 @@ namespace Obfuscator
 
                     /* We don't have any right values, so we have to copy a constant value. */
                     else
-                        ins.MakeCopy(leftvalue, null, Randomizer.SingleNumber(Common.GlobalMinValue, Common.GlobalMaxValue));
+                        MakeInstruction.Copy(ins, leftvalue, null, Randomizer.SingleNumber(Common.GlobalMinValue, Common.GlobalMaxValue));
                     break;
 
                 case 1:
                     /* We choose Full Assignment, or rightvalue is the same as leftvalue, or we are in a loop body. */
-                    if (DataAnalysis.isLoopBody[ins.parent] || leftvalue.Equals(rightvalues[0]) 
-                                                            || statementType == StatementTypeType.EnumValues.eFullAssignment
+                    if (DataAnalysis.isLoopBody[ins.parent] || leftvalue.Equals(rightvalues[0])
+                                                            || statementType == Objects.Common.StatementType.FullAssignment
                                                             || (ins.DeadVariables.Keys.Contains(leftvalue) 
                                                             && ins.DeadVariables[leftvalue] == Variable.State.Filled))
                     {
@@ -237,16 +222,16 @@ namespace Obfuscator
                             num = Convert.ToInt32(Math.Pow(2, pow));
                         }
 
-                        ins.MakeFullAssignment(leftvalue, rightvalues.First(), null, num, op);
+                        MakeInstruction.FullAssignment(ins, leftvalue, rightvalues.First(), null, num, op);
                     }
 
                     /* If we choose Unary Assignment. */
-                    else if (statementType == StatementTypeType.EnumValues.eUnaryAssignment)
-                        ins.MakeUnaryAssignment(leftvalue, rightvalues.First(), Instruction.UnaryOperationType.ArithmeticNegation);
+                    else if (statementType == Objects.Common.StatementType.UnaryAssignment)
+                        MakeInstruction.UnaryAssignment(ins, leftvalue, rightvalues.First(), Instruction.UnaryOperationType.ArithmeticNegation);
 
                     /* If we choose Copy. */
                     else
-                        ins.MakeCopy(leftvalue, rightvalues.First(), null);
+                        MakeInstruction.Copy(ins, leftvalue, rightvalues.First(), null);
                     break;
 
                 case 2:
@@ -262,7 +247,7 @@ namespace Obfuscator
                      * If we are in a loop body, then we can only make a full assignment like that:
                      * t1 = t2 op t1
                      */
-                    if (DataAnalysis.isLoopBody[ins.parent] || statementType == StatementTypeType.EnumValues.eFullAssignment
+                    if (DataAnalysis.isLoopBody[ins.parent] || statementType == Objects.Common.StatementType.FullAssignment
                         || (ins.DeadVariables.Keys.Contains(leftvalue) 
                         && ins.DeadVariables[leftvalue] == Variable.State.Filled))
                     {
@@ -275,19 +260,19 @@ namespace Obfuscator
                         if (DataAnalysis.isLoopBody[ins.parent]
                             || (ins.DeadVariables.Keys.Contains(leftvalue) 
                             && ins.DeadVariables[leftvalue] == Variable.State.Filled))
-                            ins.MakeFullAssignment(leftvalue, rightvalues[0], leftvalue, null, op);
+                            MakeInstruction.FullAssignment(ins, leftvalue, rightvalues[0], leftvalue, null, op);
 
                         else
-                            ins.MakeFullAssignment(leftvalue, rightvalues[0], rightvalues[1], null, op);
+                            MakeInstruction.FullAssignment(ins, leftvalue, rightvalues[0], rightvalues[1], null, op);
                     }
                     
                     /* If we choose Copy. */
-                    else if (statementType == StatementTypeType.EnumValues.eCopy)
-                        ins.MakeCopy(leftvalue, rightvalues.First(), null);
+                    else if (statementType == Objects.Common.StatementType.Copy)
+                        MakeInstruction.Copy(ins, leftvalue, rightvalues.First(), null);
 
                     /* If we choose Unary Assignment. */
                     else
-                        ins.MakeUnaryAssignment(leftvalue, rightvalues.First(), Instruction.UnaryOperationType.ArithmeticNegation);
+                        MakeInstruction.UnaryAssignment(ins, leftvalue, rightvalues.First(), Instruction.UnaryOperationType.ArithmeticNegation);
                     break;
             }
         }
@@ -333,7 +318,7 @@ namespace Obfuscator
             BasicBlock jumptarget = new BasicBlock(ins.parent.parent);
 
             // We make a random conditional jump here, which has to be always false.
-            Randomizer.GenerateConditionalJumpInstruction(ins, Instruction.ConditionType.AlwaysFalse, jumptarget);
+            MakeInstruction.RandomConditionalJump(ins, Instruction.ConditionType.AlwaysFalse, jumptarget);
 
             //We expand the Fake Route as we did during meshing
             Meshing.ExpandFakeRoute(jumptarget, ins.parent.getSuccessors.Last(), true);
@@ -365,15 +350,15 @@ namespace Obfuscator
                             nops_and_original.Add(new Instruction(bb));
 
                         // Add original to TAIL
-                        if (inst.statementType == StatementTypeType.EnumValues.eConditionalJump ||
-                            inst.statementType == StatementTypeType.EnumValues.eUnconditionalJump ||
-                            (inst.statementType == StatementTypeType.EnumValues.eProcedural &&
+                        if (inst.statementType == Objects.Common.StatementType.ConditionalJump ||
+                            inst.statementType == Objects.Common.StatementType.UnconditionalJump ||
+                            (inst.statementType == Objects.Common.StatementType.Procedural &&
                                     Regex.IsMatch(inst.TACtext, @"^return ", RegexOptions.None) ||
                                     Regex.IsMatch(inst.TACtext, @"^call ", RegexOptions.None)
                                     ))
                             nops_and_original.Add(inst);
                         // Add original to HEAD
-                        else if (inst.statementType == StatementTypeType.EnumValues.eProcedural &&
+                        else if (inst.statementType == Objects.Common.StatementType.Procedural &&
                             Regex.IsMatch(inst.TACtext, @"^retrieve ", RegexOptions.None))
                             nops_and_original.Insert(0, inst);
                         // Mesh original between NOPs
@@ -391,5 +376,140 @@ namespace Obfuscator
                 }
             }
         }
+
+
+        /*
+ * When we modify a fake instruction, we change the states in it, so we
+ * have to update the dead variables in the following instructions.
+ */
+        /// <summary>
+        /// Refreshes the state of all following instructions' dead variables.
+        /// </summary>
+        public static void RefreshNext(Instruction ins)
+        {
+            /*
+             * For every used dead variable in the instruction we should first determine
+             * its new state, then we could push it's (changed) state through all the
+             * following instructions, so it will get the appropriate state everywhere.
+             */
+            foreach (Variable var in ins.RefVariables)
+            {
+                if (ins.DeadVariables.ContainsKey(var))
+                {
+                    List<Variable.State> states = ins.GetChangedStates(var);
+
+                    if (states.Count() == 0)
+                    {
+                        /* Nothing has changed. */
+                        continue;
+                    }
+
+                    /* First we set the state of that used dead variable. */
+                    ins.DeadVariables[var] = states.First();
+
+                    /* Then we tell its (changed) state to the following instructions. */
+                    foreach (Instruction inst in ins.GetFollowingInstructions())
+                        RefreshNext(inst, var, ins.DeadVariables[var]);
+                }
+                else if (ins.DeadPointers.ContainsKey(var))
+                {
+                    List<Variable.State> states = ins.GetChangedStates(var);
+
+                    /* First we set the state of that used dead pointer. */
+                    ins.DeadPointers[var].State = states.First();
+
+                    /* Then we tell its (changed) state to the following instructions. */
+                    foreach (Instruction inst in ins.GetFollowingInstructions())
+                        RefreshNext(inst, var, ins.DeadPointers[var].State);
+
+                    /* 
+                     * We set the state of the dead variable pointed by the dead pointer.
+                     * 
+                     * WARNING FOR FUTURE: (1)
+                     */
+                    if (states.Count() > 1)
+                        ins.DeadVariables[ins.DeadPointers[var].PointsTo] = states[1];
+
+                    /* Then we tell its (changed) state to the following instructions. */
+                    foreach (Instruction inst in ins.GetFollowingInstructions())
+                        RefreshNext(inst, ins.DeadPointers[var].PointsTo, ins.DeadVariables[ins.DeadPointers[var].PointsTo]);
+                }
+            }
+        }
+
+
+        /*
+         * This function is called when we encounter a change in a dead variable's state.
+         * So we want to push this change through all the instructions, and deal with
+         * this variable only.
+         * 
+         * However we can't just overwrite the statement without any check...
+         */
+        private static void RefreshNext(Instruction ins, Variable var, Variable.State state)
+        {
+            /*
+             * If this instruction uses this variable as well, or this instruction
+             * uses a pointer that points to this variable then its state must not
+             * be changed, because it's perfect as it is right now.
+             */
+            if (ins.RefVariables.Contains(var))
+            {
+                /* This instruction uses this variable. */
+                return;
+            }
+
+            /*
+             * We have to do anything only if the variable is in this instruction is
+             * dead, and it's state differs from the new state.
+             */
+            if (ins.DeadVariables.ContainsKey(var)      // This variable is dead.
+                && ins.DeadVariables[var] != state)     // The state differs.
+            {
+                foreach (Variable v in ins.RefVariables)
+                {
+                    if (ins.DeadPointers.ContainsKey(v) && ins.DeadPointers[v].PointsTo.Equals(var))
+                    {
+                        /* The instruction uses a pointer that points to this variable. */
+                        return;
+                    }
+                }
+
+                /*
+                 * Now we are at the point, that maybe we have to change the state.
+                 * Although it's not sure, because if the instruction has more than one predecessors,
+                 * then the actual state might not change anything.
+                 * For example: NOT_INITIALIZED meets FREE, or FREE meets FILLED.
+                 * 
+                 * NOTE: we don't know right now what to do if NOT_INIT meets FILLED...
+                 */
+                state = DataAnalysis.CheckPrecedingStates(ins, var, state);
+
+                ins.DeadVariables[var] = state;
+                foreach (Instruction inst in ins.GetFollowingInstructions())
+                    RefreshNext(inst, var, state);
+            }
+
+            /*
+             * Another case for doing something when we pass a dead pointer with changed state.
+             * In this case we do not have to look for variables pointing to that one.
+             * 
+             * WARNING FOR FUTURE: (1)
+             */
+            if (ins.DeadPointers.ContainsKey(var)           // This is a dead pointer.
+                && ins.DeadPointers[var].State != state)    // The states differ.
+            {
+                /* Just like in the previous case, we have to check all the preceding states for collisions. */
+                state = DataAnalysis.CheckPrecedingStates(ins, var, state);
+
+                ins.DeadPointers[var].State = state;
+                foreach (Instruction inst in ins.GetFollowingInstructions())
+                    RefreshNext(inst, var, state);
+            }
+        }
+
+
+
+
+
     }
 }

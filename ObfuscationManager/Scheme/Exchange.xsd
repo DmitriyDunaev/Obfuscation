@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="Routine">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Global" type="Variables" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="Function" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="Description" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Function">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Local" type="Variables" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="BasicBlock" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="ID" type="myID" use="required"/>
+			<xs:attribute name="GlobalID" type="xs:string" use="required"/>
+			<xs:attribute name="CalledFrom" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="InternalOnly"/>
+						<xs:enumeration value="ExternalOnly"/>
+						<xs:enumeration value="Both"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="RefInputVars" type="myIDREFS" use="optional"/>
+			<xs:attribute name="RefOutputVars" type="myIDREFS" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="BasicBlock">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Instruction" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="ID" type="myID" use="required"/>
+			<xs:attribute name="Predecessors" type="myIDREFS" use="optional"/>
+			<xs:attribute name="Successors" type="myIDREFS" use="optional"/>
+      <xs:attribute name="PolyRequired" type="xs:boolean" use="optional" default="false"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Instruction">
+		<!--TAC instruction is given in the innerText-->
+		<xs:complexType mixed="true">
+			<xs:attribute name="ID" type="myID" use="required"/>
+			<xs:attribute name="StatementType" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="FullAssignment"/>
+						<xs:enumeration value="UnaryAssignment"/>
+						<xs:enumeration value="Copy"/>
+						<xs:enumeration value="UnconditionalJump"/>
+						<xs:enumeration value="ConditionalJump"/>
+						<xs:enumeration value="Procedural"/>
+						<xs:enumeration value="IndexedAssignment"/>
+						<xs:enumeration value="PointerAssignment"/>
+						<xs:enumeration value="NoOperation"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="RefVars" type="myIDREFS" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Variable">
+		<!--Variable's name is given in the innerText-->
+		<xs:complexType mixed="true">
+			<xs:simpleContent>
+				<xs:extension base="myVariable">
+					<xs:attribute name="ID" type="myID" use="required"/>
+					<xs:attribute name="Pointer" type="xs:boolean" use="required"/>
+					<xs:attribute name="MemoryRegionSize" use="required">
+						<xs:simpleType>
+							<xs:restriction base="xs:integer">
+								<xs:minExclusive value="0"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute name="MemoryUnitSize" use="optional">
+						<xs:simpleType>
+							<xs:restriction base="xs:integer">
+								<xs:minExclusive value="0"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute name="FixedValue" type="xs:string" use="optional"/>
+					<xs:attribute name="MinValue" type="xs:integer" use="optional"/>
+					<xs:attribute name="MaxValue" type="xs:integer" use="optional"/>
+					<xs:attribute name="GlobalID" type="xs:string" use="optional"/>
+					<xs:attribute name="Fake" type="xs:boolean" use="optional"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="myID">
+		<xs:restriction base="xs:ID">
+			<xs:pattern value="ID_[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="myIDREFS">
+		<xs:restriction base="xs:IDREFS">
+			<xs:pattern value="(ID_[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12} ){1,}ID_[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}|ID_[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="myVariable">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[vtcfp]_ID_[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Variables">
+		<xs:sequence>
+			<xs:element ref="Variable" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -2,9 +2,9 @@
 // This file contains generated code and will be overwritten when you rerun code generation.
 
 using System.Xml;
-using Altova.TypeInfo;
+using Helper.TypeInfo;
 
-namespace Altova.Xml
+namespace Helper.Xml
 {
 	public class Document
 	{

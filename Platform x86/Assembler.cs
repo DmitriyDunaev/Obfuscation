@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Internal;
-using Obfuscator;
+using Objects;
+using Services;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 
 namespace Platform_x86
@@ -22,7 +22,15 @@ namespace Platform_x86
 
         private static int framestack;
 
-        public static string GetAssemblyFromTAC(Routine routine)
+
+        public static string GetPlatformDependentCode(XmlDocument doc)
+        {
+            ExchangeFormat.Exchange exch = ExchangeFormat.Exchange.LoadFromString(doc.InnerXml);
+            return GetAssemblyFromTAC((Routine)exch);
+        }
+
+
+        private static string GetAssemblyFromTAC(Routine routine)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -68,7 +76,7 @@ namespace Platform_x86
             count = 1;
             foreach (Variable var in routine.Functions.Last().LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true))
             {
-                if (Common.RandomPushValues == false)
+                if (Common.FixFakeParameters == false)
                 {
                     sb.AppendLine("invoke  crt_printf,addr  f" + count);
                     sb.AppendLine("invoke  crt_scanf,addr formatInt,addr din");
@@ -110,27 +118,17 @@ namespace Platform_x86
             framestack = BuildStack(func);
             sb.AppendLine(Prologue(func));
 
-            Obfuscator.Traversal.ReorderBasicBlocks(func);
+            Services.Traversal.ReorderBasicBlocks(func);
             BasicBlock prev = func.BasicBlocks.First();
             foreach (BasicBlock bb in func.BasicBlocks)
             {
                 /* We shouldn't write the "fake exit block". */
                 if (bb.getSuccessors.Count == 0)
                     continue;
-
-                // true ||
-                if (true || bb.getPredecessors.Count() > 1 || (bb.getPredecessors.Count() == 1 &&
-                        bb.getPredecessors.First() != prev))
-                //|| (bb.getPredecessors.Count() == 1 &&
-                //   bb.getPredecessors.First().Instructions.Last().statementType == 
-                //   ExchangeFormat.StatementTypeType.EnumValues.eUnconditionalJump)
-                {
-                    sb.AppendLine(ReadableBBLabels[bb.ID] + ":");
-                }
-
+                sb.AppendLine(ReadableBBLabels[bb.ID] + ":");
                 foreach (Instruction inst in bb.Instructions)
                 {
-                    switch (inst.statementType)
+                    switch ((ExchangeFormat.StatementTypeType.EnumValues)inst.statementType)
                     {
                         case ExchangeFormat.StatementTypeType.EnumValues.eFullAssignment:
                             sb.Append(FullAssignment(inst, inst.parent.PolyRequired));
@@ -298,10 +296,10 @@ namespace Platform_x86
 
             /* For polymorphism */
             int probPolymorphism = Randomizer.SingleNumber(0, 99);
-            int xorConst = Randomizer.SingleNumber(Common.GlobalMinValue, Common.GlobalMaxValue);
+            int xorConst = Randomizer.SingleNumber(0, 255);
 
             /* We copy a variable's value to another. */
-            if (right_var != null && right_const == null)
+            if (right_var != null)
             {
                 if (!polyReq)
                     sb.AppendLine("MOV eax, " + StackPointerOfVariable(right_var));
@@ -335,7 +333,7 @@ namespace Platform_x86
             }
 
             /* We copy a constant value to a variable. */
-            else if (right_var == null && right_const != null)
+            if (right_const != null)
             {
                 if (!polyReq)
                     sb.AppendLine("MOV eax, " + right_const);
@@ -367,9 +365,6 @@ namespace Platform_x86
                 }
                 sb.AppendLine("MOV " + StackPointerOfVariable(leftvalue) + ", eax");
             }
-
-            else
-                throw new ObfuscatorException("Not valid copy instruction: both right variable and constant.");
 
             return sb.ToString();
         }
