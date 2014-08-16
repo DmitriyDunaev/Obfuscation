@@ -105,7 +105,7 @@ namespace ObfuscationManager
         private static void ValidateXml(XmlDocument doc2validate)
         {
             System.Xml.Schema.XmlSchemaSet schemas = new System.Xml.Schema.XmlSchemaSet();
-            schemas.Add(null, @"Scheme\Exchange.xsd");
+            schemas.Add(null, System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Scheme\Exchange.xsd"));
             try
             {
                 XDocument doc = XDocument.Parse(doc2validate.InnerXml);
