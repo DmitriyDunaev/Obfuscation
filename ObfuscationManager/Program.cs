@@ -25,7 +25,7 @@ namespace ObfuscationManager
                 doc = Platform_x86.PseudoCode.GetTAC(pathToPC);
                 Obfuscator.ILObfuscator.PrintSuccess();
                 Console.Write("Performing formal control");
-                ValidateXml(doc);
+                XmlHelper.Validate.AgainstScheme(doc);
                 exch = Exchange.LoadFromString(doc.InnerXml);
             }
             catch (Exception exc)
@@ -53,7 +53,7 @@ namespace ObfuscationManager
                 Console.Write("Performing formal control");
                 doc.LoadXml(exch.SaveToString(true));
                 doc.Save("export.xml");
-                ValidateXml(doc);
+                XmlHelper.Validate.AgainstScheme(doc);
                 Obfuscator.ILObfuscator.PrintSuccess();
                 
                 Console.Write("Sending XML to platform-dependent module");
@@ -98,26 +98,6 @@ namespace ObfuscationManager
         }
 
 
-        /// <summary>
-        /// Validates an XML document against Exchange.xsd schema
-        /// </summary>
-        /// <param name="doc2validate">XML document to be validated</param>
-        private static void ValidateXml(XmlDocument doc2validate)
-        {
-            System.Xml.Schema.XmlSchemaSet schemas = new System.Xml.Schema.XmlSchemaSet();
-            schemas.Add(null, System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Scheme\Exchange.xsd"));
-            try
-            {
-                XDocument doc = XDocument.Parse(doc2validate.InnerXml);
-                doc.Validate(schemas, (o, e) =>
-                {
-                    throw new Exception(e.Message);
-                });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("XML could not be validated! It is not well-formed or does not comply with XSD.", ex);
-            }
-        }
+        
     }
 }

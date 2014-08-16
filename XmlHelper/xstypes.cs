@@ -1,12 +1,9 @@
-// xstypes.cs 
-// This file contains generated code and will be overwritten when you rerun code generation.
-
-using Helper.TypeInfo;
-using Helper.Types;
+using XmlHelper.TypeInfo;
+using XmlHelper.Types;
 using System.Xml;
 using System.Text;
 
-namespace Helper.Xml
+namespace XmlHelper.Xml
 {
 	
 	public class XmlFormatter : ValueFormatter
@@ -66,7 +63,7 @@ namespace Helper.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Helper.Types.DateTimeFormat.W3_time);
+			return dt.ToString(XmlHelper.Types.DateTimeFormat.W3_time);
 		}
 	}
 	
@@ -74,7 +71,7 @@ namespace Helper.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Helper.Types.DateTimeFormat.W3_date);
+			return dt.ToString(XmlHelper.Types.DateTimeFormat.W3_date);
 		}
 	}
 	
@@ -82,7 +79,7 @@ namespace Helper.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Helper.Types.DateTimeFormat.W3_gYear);
+			return dt.ToString(XmlHelper.Types.DateTimeFormat.W3_gYear);
 		}
 	}
 	
@@ -90,7 +87,7 @@ namespace Helper.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Helper.Types.DateTimeFormat.W3_gMonth);
+			return dt.ToString(XmlHelper.Types.DateTimeFormat.W3_gMonth);
 		}
 	}
 
@@ -99,7 +96,7 @@ namespace Helper.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Helper.Types.DateTimeFormat.W3_gDay);
+			return dt.ToString(XmlHelper.Types.DateTimeFormat.W3_gDay);
 		}
 	}
 	
@@ -107,7 +104,7 @@ namespace Helper.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Helper.Types.DateTimeFormat.W3_gYearMonth);
+			return dt.ToString(XmlHelper.Types.DateTimeFormat.W3_gYearMonth);
 		}
 	}
 	
@@ -115,7 +112,7 @@ namespace Helper.Xml
 	{
 		public override string Format(DateTime dt)
 		{
-			return dt.ToString(Helper.Types.DateTimeFormat.W3_gMonthDay);
+			return dt.ToString(XmlHelper.Types.DateTimeFormat.W3_gMonthDay);
 		}
 	}
 	
@@ -123,12 +120,12 @@ namespace Helper.Xml
 	{
 		public override string Format(byte[] v)
 		{
-            return Helper.HexBinary.decode(v);
+            return XmlHelper.HexBinary.decode(v);
 		}
 
         public override byte[] ParseBinary(string s)
         {
-            return Helper.HexBinary.encode(s);
+            return XmlHelper.HexBinary.encode(s);
         }
 	}
 	
@@ -357,7 +354,7 @@ namespace Helper.Xml
 	} // class XsValidation
 } // namespace
 
-namespace Helper.Xml.Meta
+namespace XmlHelper.Xml.Meta
 {
 	/// <summary>
 	/// Information object for a simple type.
@@ -710,13 +707,13 @@ namespace Helper.Xml.Meta
 	/// </summary>
 	public class ComplexType
 	{
-		Helper.TypeInfo.TypeInfo typeInfo;
+		XmlHelper.TypeInfo.TypeInfo typeInfo;
 
 		/// <summary>
 		/// Constructs a new instance of complex type from a type info object.
 		/// </summary>
 		/// <param name="typeInfo"></param>
-		public ComplexType(Helper.TypeInfo.TypeInfo typeInfo)
+		public ComplexType(XmlHelper.TypeInfo.TypeInfo typeInfo)
 		{
 			this.typeInfo = typeInfo;
 		}
@@ -831,7 +828,7 @@ namespace Helper.Xml.Meta
 		}
 
 
-		Helper.TypeInfo.MemberInfo GetMember(string localName, string namespaceURI, MemberFlags mask, MemberFlags check)
+		XmlHelper.TypeInfo.MemberInfo GetMember(string localName, string namespaceURI, MemberFlags mask, MemberFlags check)
 		{
 			foreach (MemberInfo member in typeInfo.Members)
 			{
@@ -1004,13 +1001,13 @@ namespace Helper.Xml.Meta
 	/// </summary>
 	public class Element
 	{
-		Helper.TypeInfo.MemberInfo memberInfo;
+		XmlHelper.TypeInfo.MemberInfo memberInfo;
 
 		/// <summary>
 		/// Constructs an instance of this class from the given member information.
 		/// </summary>
 		/// <param name="info">The member information object.</param>
-		public Element(Helper.TypeInfo.MemberInfo info)
+		public Element(XmlHelper.TypeInfo.MemberInfo info)
 		{
 			this.memberInfo = info;
 		}
@@ -1078,9 +1075,9 @@ namespace Helper.Xml.Meta
 	/// </summary>
 	public class Attribute
 	{
-		Helper.TypeInfo.MemberInfo memberInfo;
+		XmlHelper.TypeInfo.MemberInfo memberInfo;
 
-		public Attribute(Helper.TypeInfo.MemberInfo info)
+		public Attribute(XmlHelper.TypeInfo.MemberInfo info)
 		{
 			this.memberInfo = info;
 		}

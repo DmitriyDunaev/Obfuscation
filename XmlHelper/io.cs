@@ -1,13 +1,10 @@
-// io.cs
-// This file contains generated code and will be overwritten when you rerun code generation.
-
 using System.IO;
 using System.Xml;
 using System.Text;
 using System.Net;
 using System;
 
-namespace Helper.IO
+namespace XmlHelper.IO
 {
     public abstract class Input
     {

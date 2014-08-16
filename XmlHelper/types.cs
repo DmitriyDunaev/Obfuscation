@@ -1,11 +1,7 @@
-// types.cs
-// This file contains generated code and will be overwritten when you rerun code generation.
-
-
 using System;
 using System.Globalization;
 
-namespace Helper.Types
+namespace XmlHelper.Types
 {
 	public enum DateTimeFormat
 	{

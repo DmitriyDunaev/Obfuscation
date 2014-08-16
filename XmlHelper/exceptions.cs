@@ -1,11 +1,7 @@
-// exceptions.cs
-// This file contains generated code and will be overwritten when you rerun code generation.
-
-
 using System;
-using Helper;
+using XmlHelper;
 
-namespace Helper.Types
+namespace XmlHelper.Types
 {
 	public class ConversionException : Exception
 	{

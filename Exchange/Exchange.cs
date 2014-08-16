@@ -20,9 +20,9 @@ namespace ExchangeFormat
     }
 
 
-    public class Variables : Helper.Xml.TypeBase
+    public class Variables : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.ComplexType StaticInfo { get { return new Helper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_Variables]); } }
+        public static XmlHelper.Xml.Meta.ComplexType StaticInfo { get { return new XmlHelper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_Variables]); } }
 
 
         public Variables(System.Xml.XmlNode init)
@@ -51,9 +51,9 @@ namespace ExchangeFormat
         public MemberElement_Variable Variable;
         public class MemberElement_Variable : System.Collections.IEnumerable
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberElement_Variable(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberElement_Variable(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public VariableType this[int i] { get { return At(i); } }
             public VariableType At(int index) { return new VariableType(owner.GetElementAt(info, index)); }
             public VariableType First { get { return new VariableType(owner.GetElementFirst(info)); } }
@@ -66,22 +66,22 @@ namespace ExchangeFormat
 
             public System.Collections.IEnumerator GetEnumerator()
             {
-                return new VariableType.Enumerator(Helper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
+                return new VariableType.Enumerator(XmlHelper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
             }
 
-            public Helper.Xml.Meta.Element Info { get { return new Helper.Xml.Meta.Element(info); } }
+            public XmlHelper.Xml.Meta.Element Info { get { return new XmlHelper.Xml.Meta.Element(info); } }
         }
         public void SetXsiType()
         {
-            Helper.Xml.XmlTreeOperations.SetAttribute(Node, "xsi:type", "http://www.w3.org/2001/XMLSchema-instance",
+            XmlHelper.Xml.XmlTreeOperations.SetAttribute(Node, "xsi:type", "http://www.w3.org/2001/XMLSchema-instance",
                 new System.Xml.XmlQualifiedName("Variables", ""));
         }
 
     } // class Variables
 
-    public class myID : Helper.Xml.TypeBase
+    public class myID : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_myID]); } }
+        public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_myID]); } }
 
 
         public myID(System.Xml.XmlNode init)
@@ -103,9 +103,9 @@ namespace ExchangeFormat
 
     } // class myID
 
-    public class myIDREFS : Helper.Xml.TypeBase
+    public class myIDREFS : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_myIDREFS]); } }
+        public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_myIDREFS]); } }
 
 
         public myIDREFS(System.Xml.XmlNode init)
@@ -127,9 +127,9 @@ namespace ExchangeFormat
 
     } // class myIDREFS
 
-    public class myVariable : Helper.Xml.TypeBase
+    public class myVariable : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_myVariable]); } }
+        public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_myVariable]); } }
 
 
         public myVariable(System.Xml.XmlNode init)
@@ -151,24 +151,24 @@ namespace ExchangeFormat
 
     } // class myVariable
 
-    public class Exchange : Helper.Xml.TypeBase
+    public class Exchange : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.ComplexType StaticInfo { get { return new Helper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_Exchange2]); } }
+        public static XmlHelper.Xml.Meta.ComplexType StaticInfo { get { return new XmlHelper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_Exchange2]); } }
 
 
         public static Exchange LoadFromFile(string filename)
         {
-            return new Exchange(Helper.Xml.XmlTreeOperations.LoadDocument(filename));
+            return new Exchange(XmlHelper.Xml.XmlTreeOperations.LoadDocument(filename));
         }
 
         public static Exchange LoadFromString(string xmlstring)
         {
-            return new Exchange(Helper.Xml.XmlTreeOperations.LoadXml(xmlstring));
+            return new Exchange(XmlHelper.Xml.XmlTreeOperations.LoadXml(xmlstring));
         }
 
         public static Exchange LoadFromBinary(byte[] binary)
         {
-            return new Exchange(Helper.Xml.XmlTreeOperations.LoadXmlBinary(binary));
+            return new Exchange(XmlHelper.Xml.XmlTreeOperations.LoadXmlBinary(binary));
         }
 
         public void SaveToFile(string filename, bool prettyPrint)
@@ -178,12 +178,12 @@ namespace ExchangeFormat
             {
                 string encoding = ((System.Xml.XmlDeclaration)doc.FirstChild).Encoding;
                 if (encoding == System.String.Empty)
-                    Helper.Xml.XmlTreeOperations.SaveDocument(doc, filename, "UTF-8", false, false, prettyPrint);
+                    XmlHelper.Xml.XmlTreeOperations.SaveDocument(doc, filename, "UTF-8", false, false, prettyPrint);
                 else
-                    Helper.Xml.XmlTreeOperations.SaveDocument(doc, filename, encoding, prettyPrint);
+                    XmlHelper.Xml.XmlTreeOperations.SaveDocument(doc, filename, encoding, prettyPrint);
             }
             else
-                Helper.Xml.XmlTreeOperations.SaveDocument(doc, filename, "UTF-8", false, false, prettyPrint);
+                XmlHelper.Xml.XmlTreeOperations.SaveDocument(doc, filename, "UTF-8", false, false, prettyPrint);
         }
 
         public void SaveToFile(string filename, bool prettyPrint, string encoding)
@@ -194,13 +194,13 @@ namespace ExchangeFormat
         public void SaveToFile(string filename, bool prettyPrint, string encoding, bool bBigEndian, bool bBOM)
         {
             System.Xml.XmlDocument doc = (System.Xml.XmlDocument)Node;
-            Helper.Xml.XmlTreeOperations.SaveDocument(doc, filename, encoding, bBigEndian, bBOM, prettyPrint);
+            XmlHelper.Xml.XmlTreeOperations.SaveDocument(doc, filename, encoding, bBigEndian, bBOM, prettyPrint);
         }
 
         public string SaveToString(bool prettyPrint)
         {
             System.Xml.XmlDocument doc = (System.Xml.XmlDocument)Node;
-            return Helper.Xml.XmlTreeOperations.SaveXml(doc, prettyPrint);
+            return XmlHelper.Xml.XmlTreeOperations.SaveXml(doc, prettyPrint);
         }
 
         public byte[] SaveToBinary(bool prettyPrint)
@@ -210,12 +210,12 @@ namespace ExchangeFormat
             {
                 string encoding = ((System.Xml.XmlDeclaration)doc.FirstChild).Encoding;
                 if (encoding == System.String.Empty)
-                    return Helper.Xml.XmlTreeOperations.SaveXmlBinary(doc, "UTF-8", false, false, prettyPrint);
+                    return XmlHelper.Xml.XmlTreeOperations.SaveXmlBinary(doc, "UTF-8", false, false, prettyPrint);
                 else
-                    return Helper.Xml.XmlTreeOperations.SaveXmlBinary(doc, encoding, prettyPrint);
+                    return XmlHelper.Xml.XmlTreeOperations.SaveXmlBinary(doc, encoding, prettyPrint);
             }
             else
-                return Helper.Xml.XmlTreeOperations.SaveXmlBinary(doc, "UTF-8", false, false, prettyPrint);
+                return XmlHelper.Xml.XmlTreeOperations.SaveXmlBinary(doc, "UTF-8", false, false, prettyPrint);
         }
 
         public byte[] SaveToBinary(bool prettyPrint, string encoding)
@@ -226,7 +226,7 @@ namespace ExchangeFormat
         public byte[] SaveToBinary(bool prettyPrint, string encoding, bool bBigEndian, bool bBOM)
         {
             System.Xml.XmlDocument doc = (System.Xml.XmlDocument)Node;
-            return Helper.Xml.XmlTreeOperations.SaveXmlBinary(doc, encoding, bBigEndian, bBOM, prettyPrint);
+            return XmlHelper.Xml.XmlTreeOperations.SaveXmlBinary(doc, encoding, bBigEndian, bBOM, prettyPrint);
         }
 
         public static Exchange CreateDocument()
@@ -308,9 +308,9 @@ namespace ExchangeFormat
         public MemberElement_BasicBlock BasicBlock;
         public class MemberElement_BasicBlock : System.Collections.IEnumerable
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberElement_BasicBlock(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberElement_BasicBlock(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public BasicBlockType this[int i] { get { return At(i); } }
             public BasicBlockType At(int index) { return new BasicBlockType(owner.GetElementAt(info, index)); }
             public BasicBlockType First { get { return new BasicBlockType(owner.GetElementFirst(info)); } }
@@ -323,17 +323,17 @@ namespace ExchangeFormat
 
             public System.Collections.IEnumerator GetEnumerator()
             {
-                return new BasicBlockType.Enumerator(Helper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
+                return new BasicBlockType.Enumerator(XmlHelper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
             }
 
-            public Helper.Xml.Meta.Element Info { get { return new Helper.Xml.Meta.Element(info); } }
+            public XmlHelper.Xml.Meta.Element Info { get { return new XmlHelper.Xml.Meta.Element(info); } }
         }
         public MemberElement_Function Function;
         public class MemberElement_Function : System.Collections.IEnumerable
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberElement_Function(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberElement_Function(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public FunctionType this[int i] { get { return At(i); } }
             public FunctionType At(int index) { return new FunctionType(owner.GetElementAt(info, index)); }
             public FunctionType First { get { return new FunctionType(owner.GetElementFirst(info)); } }
@@ -346,17 +346,17 @@ namespace ExchangeFormat
 
             public System.Collections.IEnumerator GetEnumerator()
             {
-                return new FunctionType.Enumerator(Helper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
+                return new FunctionType.Enumerator(XmlHelper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
             }
 
-            public Helper.Xml.Meta.Element Info { get { return new Helper.Xml.Meta.Element(info); } }
+            public XmlHelper.Xml.Meta.Element Info { get { return new XmlHelper.Xml.Meta.Element(info); } }
         }
         public MemberElement_Instruction Instruction;
         public class MemberElement_Instruction : System.Collections.IEnumerable
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberElement_Instruction(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberElement_Instruction(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public InstructionType this[int i] { get { return At(i); } }
             public InstructionType At(int index) { return new InstructionType(owner.GetElementAt(info, index)); }
             public InstructionType First { get { return new InstructionType(owner.GetElementFirst(info)); } }
@@ -369,17 +369,17 @@ namespace ExchangeFormat
 
             public System.Collections.IEnumerator GetEnumerator()
             {
-                return new InstructionType.Enumerator(Helper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
+                return new InstructionType.Enumerator(XmlHelper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
             }
 
-            public Helper.Xml.Meta.Element Info { get { return new Helper.Xml.Meta.Element(info); } }
+            public XmlHelper.Xml.Meta.Element Info { get { return new XmlHelper.Xml.Meta.Element(info); } }
         }
         public MemberElement_Routine Routine;
         public class MemberElement_Routine : System.Collections.IEnumerable
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberElement_Routine(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberElement_Routine(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public RoutineType this[int i] { get { return At(i); } }
             public RoutineType At(int index) { return new RoutineType(owner.GetElementAt(info, index)); }
             public RoutineType First { get { return new RoutineType(owner.GetElementFirst(info)); } }
@@ -392,17 +392,17 @@ namespace ExchangeFormat
 
             public System.Collections.IEnumerator GetEnumerator()
             {
-                return new RoutineType.Enumerator(Helper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
+                return new RoutineType.Enumerator(XmlHelper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
             }
 
-            public Helper.Xml.Meta.Element Info { get { return new Helper.Xml.Meta.Element(info); } }
+            public XmlHelper.Xml.Meta.Element Info { get { return new XmlHelper.Xml.Meta.Element(info); } }
         }
         public MemberElement_Variable Variable;
         public class MemberElement_Variable : System.Collections.IEnumerable
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberElement_Variable(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberElement_Variable(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public VariableType this[int i] { get { return At(i); } }
             public VariableType At(int index) { return new VariableType(owner.GetElementAt(info, index)); }
             public VariableType First { get { return new VariableType(owner.GetElementFirst(info)); } }
@@ -415,22 +415,22 @@ namespace ExchangeFormat
 
             public System.Collections.IEnumerator GetEnumerator()
             {
-                return new VariableType.Enumerator(Helper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
+                return new VariableType.Enumerator(XmlHelper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
             }
 
-            public Helper.Xml.Meta.Element Info { get { return new Helper.Xml.Meta.Element(info); } }
+            public XmlHelper.Xml.Meta.Element Info { get { return new XmlHelper.Xml.Meta.Element(info); } }
         }
         public void SetXsiType()
         {
-            Helper.Xml.XmlTreeOperations.SetAttribute(Node, "xsi:type", "http://www.w3.org/2001/XMLSchema-instance",
+            XmlHelper.Xml.XmlTreeOperations.SetAttribute(Node, "xsi:type", "http://www.w3.org/2001/XMLSchema-instance",
                 new System.Xml.XmlQualifiedName("Exchange", ""));
         }
 
     } // class Exchange2
 
-    public class BasicBlockType : Helper.Xml.TypeBase
+    public class BasicBlockType : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.ComplexType StaticInfo { get { return new Helper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_BasicBlockType]); } }
+        public static XmlHelper.Xml.Meta.ComplexType StaticInfo { get { return new XmlHelper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_BasicBlockType]); } }
 
 
         public BasicBlockType(System.Xml.XmlNode init)
@@ -458,90 +458,90 @@ namespace ExchangeFormat
         public MemberAttribute_ID ID;
         public class MemberAttribute_ID
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_ID(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_ID(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_PolyRequired PolyRequired;
         public class MemberAttribute_PolyRequired
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_PolyRequired(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_PolyRequired(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public bool Value
             {
                 get
                 {
-                    return (bool)Helper.Xml.XmlTreeOperations.CastToBool(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (bool)XmlHelper.Xml.XmlTreeOperations.CastToBool(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_Predecessors Predecessors;
         public class MemberAttribute_Predecessors
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_Predecessors(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_Predecessors(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_Successors Successors;
         public class MemberAttribute_Successors
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_Successors(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_Successors(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
 
 
@@ -550,9 +550,9 @@ namespace ExchangeFormat
         public MemberElement_Instruction Instruction;
         public class MemberElement_Instruction : System.Collections.IEnumerable
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberElement_Instruction(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberElement_Instruction(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public InstructionType this[int i] { get { return At(i); } }
             public InstructionType At(int index) { return new InstructionType(owner.GetElementAt(info, index)); }
             public InstructionType First { get { return new InstructionType(owner.GetElementFirst(info)); } }
@@ -565,16 +565,16 @@ namespace ExchangeFormat
 
             public System.Collections.IEnumerator GetEnumerator()
             {
-                return new InstructionType.Enumerator(Helper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
+                return new InstructionType.Enumerator(XmlHelper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
             }
 
-            public Helper.Xml.Meta.Element Info { get { return new Helper.Xml.Meta.Element(info); } }
+            public XmlHelper.Xml.Meta.Element Info { get { return new XmlHelper.Xml.Meta.Element(info); } }
         }
     } // class BasicBlockType
 
-    public class InstructionType : Helper.Xml.TypeBase
+    public class InstructionType : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.ComplexType StaticInfo { get { return new Helper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_InstructionType]); } }
+        public static XmlHelper.Xml.Meta.ComplexType StaticInfo { get { return new XmlHelper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_InstructionType]); } }
 
 
         public InstructionType(System.Xml.XmlNode init)
@@ -602,71 +602,71 @@ namespace ExchangeFormat
         {
             get
             {
-                Helper.TypeInfo.MemberInfo member = Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._helper_mi_helper_InstructionType_helper_unnamed];
-                return (string)Helper.Xml.XmlTreeOperations.CastToString(Node, member);
+                XmlHelper.TypeInfo.MemberInfo member = Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._helper_mi_helper_InstructionType_helper_unnamed];
+                return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(Node, member);
             }
             set
             {
-                Helper.TypeInfo.MemberInfo member = Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._helper_mi_helper_InstructionType_helper_unnamed];
-                Helper.Xml.XmlTreeOperations.SetValue(Node, member, value);
+                XmlHelper.TypeInfo.MemberInfo member = Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._helper_mi_helper_InstructionType_helper_unnamed];
+                XmlHelper.Xml.XmlTreeOperations.SetValue(Node, member, value);
             }
         }
         public MemberAttribute_ID ID;
         public class MemberAttribute_ID
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_ID(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_ID(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_StatementType StatementType;
         public class MemberAttribute_StatementType
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_StatementType(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_StatementType(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
 
 
             public StatementTypeType.EnumValues EnumerationValue
             {
                 get
                 {
-                    return (StatementTypeType.EnumValues)GetEnumerationIndex(info, Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info), 0, 9);
+                    return (StatementTypeType.EnumValues)GetEnumerationIndex(info, XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info), 0, 9);
                 }
 
                 set
                 {
                     if ((int)value >= 0 && (int)value < 9)
-                        Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, info.DataType.facets[(int)value + 0].stringValue);
+                        XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, info.DataType.facets[(int)value + 0].stringValue);
                     else
                         throw new System.IndexOutOfRangeException();
                 }
@@ -675,24 +675,24 @@ namespace ExchangeFormat
         public MemberAttribute_RefVars RefVars;
         public class MemberAttribute_RefVars
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_RefVars(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_RefVars(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
 
 
@@ -700,15 +700,15 @@ namespace ExchangeFormat
 
         public void SetXsiType()
         {
-            Helper.Xml.XmlTreeOperations.SetAttribute(Node, "xsi:type", "http://www.w3.org/2001/XMLSchema-instance",
+            XmlHelper.Xml.XmlTreeOperations.SetAttribute(Node, "xsi:type", "http://www.w3.org/2001/XMLSchema-instance",
                 new System.Xml.XmlQualifiedName("anySimpleType", "http://www.w3.org/2001/XMLSchema"));
         }
 
     } // class InstructionType
 
-    public class FunctionType : Helper.Xml.TypeBase
+    public class FunctionType : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.ComplexType StaticInfo { get { return new Helper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_FunctionType]); } }
+        public static XmlHelper.Xml.Meta.ComplexType StaticInfo { get { return new XmlHelper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_FunctionType]); } }
 
 
         public FunctionType(System.Xml.XmlNode init)
@@ -739,81 +739,81 @@ namespace ExchangeFormat
         public MemberAttribute_ID ID;
         public class MemberAttribute_ID
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_ID(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_ID(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_GlobalID GlobalID;
         public class MemberAttribute_GlobalID
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_GlobalID(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_GlobalID(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_CalledFrom CalledFrom;
         public class MemberAttribute_CalledFrom
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_CalledFrom(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_CalledFrom(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
 
 
             public CalledFromType.EnumValues EnumerationValue
             {
                 get
                 {
-                    return (CalledFromType.EnumValues)GetEnumerationIndex(info, Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info), 0, 3);
+                    return (CalledFromType.EnumValues)GetEnumerationIndex(info, XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info), 0, 3);
                 }
 
                 set
                 {
                     if ((int)value >= 0 && (int)value < 3)
-                        Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, info.DataType.facets[(int)value + 0].stringValue);
+                        XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, info.DataType.facets[(int)value + 0].stringValue);
                     else
                         throw new System.IndexOutOfRangeException();
                 }
@@ -822,46 +822,46 @@ namespace ExchangeFormat
         public MemberAttribute_RefInputVars RefInputVars;
         public class MemberAttribute_RefInputVars
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_RefInputVars(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_RefInputVars(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_RefOutputVars RefOutputVars;
         public class MemberAttribute_RefOutputVars
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_RefOutputVars(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_RefOutputVars(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
 
 
@@ -870,9 +870,9 @@ namespace ExchangeFormat
         public MemberElement_Local Local;
         public class MemberElement_Local : System.Collections.IEnumerable
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberElement_Local(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberElement_Local(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public Variables this[int i] { get { return At(i); } }
             public Variables At(int index) { return new Variables(owner.GetElementAt(info, index)); }
             public Variables First { get { return new Variables(owner.GetElementFirst(info)); } }
@@ -885,17 +885,17 @@ namespace ExchangeFormat
 
             public System.Collections.IEnumerator GetEnumerator()
             {
-                return new Variables.Enumerator(Helper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
+                return new Variables.Enumerator(XmlHelper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
             }
 
-            public Helper.Xml.Meta.Element Info { get { return new Helper.Xml.Meta.Element(info); } }
+            public XmlHelper.Xml.Meta.Element Info { get { return new XmlHelper.Xml.Meta.Element(info); } }
         }
         public MemberElement_BasicBlock BasicBlock;
         public class MemberElement_BasicBlock : System.Collections.IEnumerable
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberElement_BasicBlock(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberElement_BasicBlock(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public BasicBlockType this[int i] { get { return At(i); } }
             public BasicBlockType At(int index) { return new BasicBlockType(owner.GetElementAt(info, index)); }
             public BasicBlockType First { get { return new BasicBlockType(owner.GetElementFirst(info)); } }
@@ -908,16 +908,16 @@ namespace ExchangeFormat
 
             public System.Collections.IEnumerator GetEnumerator()
             {
-                return new BasicBlockType.Enumerator(Helper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
+                return new BasicBlockType.Enumerator(XmlHelper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
             }
 
-            public Helper.Xml.Meta.Element Info { get { return new Helper.Xml.Meta.Element(info); } }
+            public XmlHelper.Xml.Meta.Element Info { get { return new XmlHelper.Xml.Meta.Element(info); } }
         }
     } // class FunctionType
 
-    public class CalledFromType : Helper.Xml.TypeBase
+    public class CalledFromType : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_CalledFromType]); } }
+        public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_CalledFromType]); } }
 
 
         public enum EnumValues
@@ -947,9 +947,9 @@ namespace ExchangeFormat
 
     } // class CalledFromType
 
-    public class RoutineType : Helper.Xml.TypeBase
+    public class RoutineType : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.ComplexType StaticInfo { get { return new Helper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_RoutineType]); } }
+        public static XmlHelper.Xml.Meta.ComplexType StaticInfo { get { return new XmlHelper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_RoutineType]); } }
 
 
         public RoutineType(System.Xml.XmlNode init)
@@ -976,24 +976,24 @@ namespace ExchangeFormat
         public MemberAttribute_Description Description;
         public class MemberAttribute_Description
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_Description(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_Description(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
 
 
@@ -1002,9 +1002,9 @@ namespace ExchangeFormat
         public MemberElement_Global Global;
         public class MemberElement_Global : System.Collections.IEnumerable
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberElement_Global(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberElement_Global(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public Variables this[int i] { get { return At(i); } }
             public Variables At(int index) { return new Variables(owner.GetElementAt(info, index)); }
             public Variables First { get { return new Variables(owner.GetElementFirst(info)); } }
@@ -1017,17 +1017,17 @@ namespace ExchangeFormat
 
             public System.Collections.IEnumerator GetEnumerator()
             {
-                return new Variables.Enumerator(Helper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
+                return new Variables.Enumerator(XmlHelper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
             }
 
-            public Helper.Xml.Meta.Element Info { get { return new Helper.Xml.Meta.Element(info); } }
+            public XmlHelper.Xml.Meta.Element Info { get { return new XmlHelper.Xml.Meta.Element(info); } }
         }
         public MemberElement_Function Function;
         public class MemberElement_Function : System.Collections.IEnumerable
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberElement_Function(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberElement_Function(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public FunctionType this[int i] { get { return At(i); } }
             public FunctionType At(int index) { return new FunctionType(owner.GetElementAt(info, index)); }
             public FunctionType First { get { return new FunctionType(owner.GetElementFirst(info)); } }
@@ -1040,16 +1040,16 @@ namespace ExchangeFormat
 
             public System.Collections.IEnumerator GetEnumerator()
             {
-                return new FunctionType.Enumerator(Helper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
+                return new FunctionType.Enumerator(XmlHelper.Xml.XmlTreeOperations.GetElements(owner.Node, info).GetEnumerator());
             }
 
-            public Helper.Xml.Meta.Element Info { get { return new Helper.Xml.Meta.Element(info); } }
+            public XmlHelper.Xml.Meta.Element Info { get { return new XmlHelper.Xml.Meta.Element(info); } }
         }
     } // class RoutineType
 
     public class VariableType : myVariableType
     {
-        public static new Helper.Xml.Meta.ComplexType StaticInfo { get { return new Helper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_VariableType]); } }
+        public static new XmlHelper.Xml.Meta.ComplexType StaticInfo { get { return new XmlHelper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_VariableType]); } }
 
 
         public VariableType(System.Xml.XmlNode init)
@@ -1082,200 +1082,200 @@ namespace ExchangeFormat
         public MemberAttribute_ID ID;
         public class MemberAttribute_ID
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_ID(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_ID(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_Pointer Pointer;
         public class MemberAttribute_Pointer
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_Pointer(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_Pointer(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public bool Value
             {
                 get
                 {
-                    return (bool)Helper.Xml.XmlTreeOperations.CastToBool(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (bool)XmlHelper.Xml.XmlTreeOperations.CastToBool(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_MemoryRegionSize MemoryRegionSize;
         public class MemberAttribute_MemoryRegionSize
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_MemoryRegionSize(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_MemoryRegionSize(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public decimal Value
             {
                 get
                 {
-                    return (decimal)Helper.Xml.XmlTreeOperations.CastToDecimal(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (decimal)XmlHelper.Xml.XmlTreeOperations.CastToDecimal(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_MemoryUnitSize MemoryUnitSize;
         public class MemberAttribute_MemoryUnitSize
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_MemoryUnitSize(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_MemoryUnitSize(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public decimal Value
             {
                 get
                 {
-                    return (decimal)Helper.Xml.XmlTreeOperations.CastToDecimal(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (decimal)XmlHelper.Xml.XmlTreeOperations.CastToDecimal(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_FixedValue FixedValue;
         public class MemberAttribute_FixedValue
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_FixedValue(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_FixedValue(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_MinValue MinValue;
         public class MemberAttribute_MinValue
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_MinValue(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_MinValue(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public decimal Value
             {
                 get
                 {
-                    return (decimal)Helper.Xml.XmlTreeOperations.CastToDecimal(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (decimal)XmlHelper.Xml.XmlTreeOperations.CastToDecimal(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_MaxValue MaxValue;
         public class MemberAttribute_MaxValue
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_MaxValue(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_MaxValue(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public decimal Value
             {
                 get
                 {
-                    return (decimal)Helper.Xml.XmlTreeOperations.CastToDecimal(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (decimal)XmlHelper.Xml.XmlTreeOperations.CastToDecimal(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_GlobalID GlobalID;
         public class MemberAttribute_GlobalID
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_GlobalID(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_GlobalID(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public string Value
             {
                 get
                 {
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
         public MemberAttribute_Fake Fake;
         public class MemberAttribute_Fake
         {
-            private Helper.Xml.TypeBase owner;
-            private Helper.TypeInfo.MemberInfo info;
-            public MemberAttribute_Fake(Helper.Xml.TypeBase owner, Helper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
+            private XmlHelper.Xml.TypeBase owner;
+            private XmlHelper.TypeInfo.MemberInfo info;
+            public MemberAttribute_Fake(XmlHelper.Xml.TypeBase owner, XmlHelper.TypeInfo.MemberInfo info) { this.owner = owner; this.info = info; }
             public bool Value
             {
                 get
                 {
-                    return (bool)Helper.Xml.XmlTreeOperations.CastToBool(Helper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
+                    return (bool)XmlHelper.Xml.XmlTreeOperations.CastToBool(XmlHelper.Xml.XmlTreeOperations.FindAttribute(owner.Node, info), info);
                 }
                 set
                 {
-                    Helper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(owner.Node, info, value);
                 }
             }
             public bool Exists() { return owner.GetAttribute(info) != null; }
             public void Remove() { owner.RemoveAttribute(info); }
 
-            public Helper.Xml.Meta.Attribute Info { get { return new Helper.Xml.Meta.Attribute(info); } }
+            public XmlHelper.Xml.Meta.Attribute Info { get { return new XmlHelper.Xml.Meta.Attribute(info); } }
         }
 
 
@@ -1283,15 +1283,15 @@ namespace ExchangeFormat
 
         public new void SetXsiType()
         {
-            Helper.Xml.XmlTreeOperations.SetAttribute(Node, "xsi:type", "http://www.w3.org/2001/XMLSchema-instance",
+            XmlHelper.Xml.XmlTreeOperations.SetAttribute(Node, "xsi:type", "http://www.w3.org/2001/XMLSchema-instance",
                 new System.Xml.XmlQualifiedName("myVariable", ""));
         }
 
     } // class VariableType
 
-    public class myVariableType : Helper.Xml.TypeBase
+    public class myVariableType : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.ComplexType StaticInfo { get { return new Helper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_myVariableType]); } }
+        public static XmlHelper.Xml.Meta.ComplexType StaticInfo { get { return new XmlHelper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_myVariableType]); } }
 
 
         public myVariableType(System.Xml.XmlNode init)
@@ -1316,13 +1316,13 @@ namespace ExchangeFormat
         {
             get
             {
-                Helper.TypeInfo.MemberInfo member = Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._helper_mi_helper_myVariableType_helper_unnamed];
-                return (string)Helper.Xml.XmlTreeOperations.CastToString(Node, member);
+                XmlHelper.TypeInfo.MemberInfo member = Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._helper_mi_helper_myVariableType_helper_unnamed];
+                return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(Node, member);
             }
             set
             {
-                Helper.TypeInfo.MemberInfo member = Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._helper_mi_helper_myVariableType_helper_unnamed];
-                Helper.Xml.XmlTreeOperations.SetValue(Node, member, value);
+                XmlHelper.TypeInfo.MemberInfo member = Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._helper_mi_helper_myVariableType_helper_unnamed];
+                XmlHelper.Xml.XmlTreeOperations.SetValue(Node, member, value);
             }
         }
 
@@ -1331,15 +1331,15 @@ namespace ExchangeFormat
 
         public void SetXsiType()
         {
-            Helper.Xml.XmlTreeOperations.SetAttribute(Node, "xsi:type", "http://www.w3.org/2001/XMLSchema-instance",
+            XmlHelper.Xml.XmlTreeOperations.SetAttribute(Node, "xsi:type", "http://www.w3.org/2001/XMLSchema-instance",
                 new System.Xml.XmlQualifiedName("myVariable", ""));
         }
 
     } // class myVariableType
 
-    public class MemoryRegionSizeType : Helper.Xml.TypeBase
+    public class MemoryRegionSizeType : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_MemoryRegionSizeType]); } }
+        public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_MemoryRegionSizeType]); } }
 
 
         public MemoryRegionSizeType(System.Xml.XmlNode init)
@@ -1361,9 +1361,9 @@ namespace ExchangeFormat
 
     } // class MemoryRegionSizeType
 
-    public class MemoryUnitSizeType : Helper.Xml.TypeBase
+    public class MemoryUnitSizeType : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_MemoryUnitSizeType]); } }
+        public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_MemoryUnitSizeType]); } }
 
 
         public MemoryUnitSizeType(System.Xml.XmlNode init)
@@ -1385,9 +1385,9 @@ namespace ExchangeFormat
 
     } // class MemoryUnitSizeType
 
-    public class StatementTypeType : Helper.Xml.TypeBase
+    public class StatementTypeType : XmlHelper.Xml.TypeBase
     {
-        public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_StatementTypeType]); } }
+        public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_helper_StatementTypeType]); } }
 
 
         public enum EnumValues
@@ -1426,9 +1426,9 @@ namespace ExchangeFormat
 
     namespace xs
     {
-        public class ENTITIES : Helper.Xml.TypeBase
+        public class ENTITIES : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_ENTITIES]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_ENTITIES]); } }
 
 
             public ENTITIES(System.Xml.XmlNode init)
@@ -1450,9 +1450,9 @@ namespace ExchangeFormat
 
         } // class ENTITIES
 
-        public class ENTITY : Helper.Xml.TypeBase
+        public class ENTITY : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_ENTITY]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_ENTITY]); } }
 
 
             public ENTITY(System.Xml.XmlNode init)
@@ -1474,9 +1474,9 @@ namespace ExchangeFormat
 
         } // class ENTITY
 
-        public class ID : Helper.Xml.TypeBase
+        public class ID : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_ID]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_ID]); } }
 
 
             public ID(System.Xml.XmlNode init)
@@ -1498,9 +1498,9 @@ namespace ExchangeFormat
 
         } // class ID
 
-        public class IDREF : Helper.Xml.TypeBase
+        public class IDREF : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_IDREF]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_IDREF]); } }
 
 
             public IDREF(System.Xml.XmlNode init)
@@ -1522,9 +1522,9 @@ namespace ExchangeFormat
 
         } // class IDREF
 
-        public class IDREFS : Helper.Xml.TypeBase
+        public class IDREFS : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_IDREFS]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_IDREFS]); } }
 
 
             public IDREFS(System.Xml.XmlNode init)
@@ -1546,9 +1546,9 @@ namespace ExchangeFormat
 
         } // class IDREFS
 
-        public class NCName : Helper.Xml.TypeBase
+        public class NCName : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_NCName]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_NCName]); } }
 
 
             public NCName(System.Xml.XmlNode init)
@@ -1570,9 +1570,9 @@ namespace ExchangeFormat
 
         } // class NCName
 
-        public class NMTOKEN : Helper.Xml.TypeBase
+        public class NMTOKEN : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_NMTOKEN]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_NMTOKEN]); } }
 
 
             public NMTOKEN(System.Xml.XmlNode init)
@@ -1594,9 +1594,9 @@ namespace ExchangeFormat
 
         } // class NMTOKEN
 
-        public class NMTOKENS : Helper.Xml.TypeBase
+        public class NMTOKENS : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_NMTOKENS]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_NMTOKENS]); } }
 
 
             public NMTOKENS(System.Xml.XmlNode init)
@@ -1618,9 +1618,9 @@ namespace ExchangeFormat
 
         } // class NMTOKENS
 
-        public class NOTATION : Helper.Xml.TypeBase
+        public class NOTATION : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_NOTATION]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_NOTATION]); } }
 
 
             public NOTATION(System.Xml.XmlNode init)
@@ -1642,9 +1642,9 @@ namespace ExchangeFormat
 
         } // class NOTATION
 
-        public class Name : Helper.Xml.TypeBase
+        public class Name : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_Name]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_Name]); } }
 
 
             public Name(System.Xml.XmlNode init)
@@ -1666,9 +1666,9 @@ namespace ExchangeFormat
 
         } // class Name
 
-        public class QName : Helper.Xml.TypeBase
+        public class QName : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_QName]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_QName]); } }
 
 
             public QName(System.Xml.XmlNode init)
@@ -1690,9 +1690,9 @@ namespace ExchangeFormat
 
         } // class QName
 
-        public class anySimpleType : Helper.Xml.TypeBase
+        public class anySimpleType : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_anySimpleType]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_anySimpleType]); } }
 
 
             public anySimpleType(System.Xml.XmlNode init)
@@ -1714,9 +1714,9 @@ namespace ExchangeFormat
 
         } // class anySimpleType
 
-        public class anyType : Helper.Xml.TypeBase
+        public class anyType : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.ComplexType StaticInfo { get { return new Helper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_anyType]); } }
+            public static XmlHelper.Xml.Meta.ComplexType StaticInfo { get { return new XmlHelper.Xml.Meta.ComplexType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_anyType]); } }
 
 
             public anyType(System.Xml.XmlNode init)
@@ -1741,13 +1741,13 @@ namespace ExchangeFormat
             {
                 get
                 {
-                    Helper.TypeInfo.MemberInfo member = Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._helper_mi_xs_helper_anyType_helper_unnamed];
-                    return (string)Helper.Xml.XmlTreeOperations.CastToString(Node, member);
+                    XmlHelper.TypeInfo.MemberInfo member = Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._helper_mi_xs_helper_anyType_helper_unnamed];
+                    return (string)XmlHelper.Xml.XmlTreeOperations.CastToString(Node, member);
                 }
                 set
                 {
-                    Helper.TypeInfo.MemberInfo member = Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._helper_mi_xs_helper_anyType_helper_unnamed];
-                    Helper.Xml.XmlTreeOperations.SetValue(Node, member, value);
+                    XmlHelper.TypeInfo.MemberInfo member = Exchange_TypeInfo.binder.Members[Exchange_TypeInfo._helper_mi_xs_helper_anyType_helper_unnamed];
+                    XmlHelper.Xml.XmlTreeOperations.SetValue(Node, member, value);
                 }
             }
 
@@ -1756,15 +1756,15 @@ namespace ExchangeFormat
 
             public void SetXsiType()
             {
-                Helper.Xml.XmlTreeOperations.SetAttribute(Node, "xsi:type", "http://www.w3.org/2001/XMLSchema-instance",
+                XmlHelper.Xml.XmlTreeOperations.SetAttribute(Node, "xsi:type", "http://www.w3.org/2001/XMLSchema-instance",
                     new System.Xml.XmlQualifiedName("anyType", "http://www.w3.org/2001/XMLSchema"));
             }
 
         } // class anyType
 
-        public class anyURI : Helper.Xml.TypeBase
+        public class anyURI : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_anyURI]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_anyURI]); } }
 
 
             public anyURI(System.Xml.XmlNode init)
@@ -1786,9 +1786,9 @@ namespace ExchangeFormat
 
         } // class anyURI
 
-        public class base64Binary : Helper.Xml.TypeBase
+        public class base64Binary : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_base64Binary]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_base64Binary]); } }
 
 
             public base64Binary(System.Xml.XmlNode init)
@@ -1810,9 +1810,9 @@ namespace ExchangeFormat
 
         } // class base64Binary
 
-        public class boolean : Helper.Xml.TypeBase
+        public class boolean : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_boolean]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_boolean]); } }
 
 
             public boolean(System.Xml.XmlNode init)
@@ -1834,9 +1834,9 @@ namespace ExchangeFormat
 
         } // class boolean
 
-        public class byte2 : Helper.Xml.TypeBase
+        public class byte2 : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_byte2]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_byte2]); } }
 
 
             public byte2(System.Xml.XmlNode init)
@@ -1858,9 +1858,9 @@ namespace ExchangeFormat
 
         } // class byte2
 
-        public class date : Helper.Xml.TypeBase
+        public class date : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_date]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_date]); } }
 
 
             public date(System.Xml.XmlNode init)
@@ -1882,9 +1882,9 @@ namespace ExchangeFormat
 
         } // class date
 
-        public class dateTime : Helper.Xml.TypeBase
+        public class dateTime : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_dateTime]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_dateTime]); } }
 
 
             public dateTime(System.Xml.XmlNode init)
@@ -1906,9 +1906,9 @@ namespace ExchangeFormat
 
         } // class dateTime
 
-        public class decimal2 : Helper.Xml.TypeBase
+        public class decimal2 : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_decimal2]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_decimal2]); } }
 
 
             public decimal2(System.Xml.XmlNode init)
@@ -1930,9 +1930,9 @@ namespace ExchangeFormat
 
         } // class decimal2
 
-        public class double2 : Helper.Xml.TypeBase
+        public class double2 : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_double2]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_double2]); } }
 
 
             public double2(System.Xml.XmlNode init)
@@ -1954,9 +1954,9 @@ namespace ExchangeFormat
 
         } // class double2
 
-        public class duration : Helper.Xml.TypeBase
+        public class duration : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_duration]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_duration]); } }
 
 
             public duration(System.Xml.XmlNode init)
@@ -1978,9 +1978,9 @@ namespace ExchangeFormat
 
         } // class duration
 
-        public class float2 : Helper.Xml.TypeBase
+        public class float2 : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_float2]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_float2]); } }
 
 
             public float2(System.Xml.XmlNode init)
@@ -2002,9 +2002,9 @@ namespace ExchangeFormat
 
         } // class float2
 
-        public class gDay : Helper.Xml.TypeBase
+        public class gDay : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_gDay]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_gDay]); } }
 
 
             public gDay(System.Xml.XmlNode init)
@@ -2026,9 +2026,9 @@ namespace ExchangeFormat
 
         } // class gDay
 
-        public class gMonth : Helper.Xml.TypeBase
+        public class gMonth : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_gMonth]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_gMonth]); } }
 
 
             public gMonth(System.Xml.XmlNode init)
@@ -2050,9 +2050,9 @@ namespace ExchangeFormat
 
         } // class gMonth
 
-        public class gMonthDay : Helper.Xml.TypeBase
+        public class gMonthDay : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_gMonthDay]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_gMonthDay]); } }
 
 
             public gMonthDay(System.Xml.XmlNode init)
@@ -2074,9 +2074,9 @@ namespace ExchangeFormat
 
         } // class gMonthDay
 
-        public class gYear : Helper.Xml.TypeBase
+        public class gYear : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_gYear]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_gYear]); } }
 
 
             public gYear(System.Xml.XmlNode init)
@@ -2098,9 +2098,9 @@ namespace ExchangeFormat
 
         } // class gYear
 
-        public class gYearMonth : Helper.Xml.TypeBase
+        public class gYearMonth : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_gYearMonth]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_gYearMonth]); } }
 
 
             public gYearMonth(System.Xml.XmlNode init)
@@ -2122,9 +2122,9 @@ namespace ExchangeFormat
 
         } // class gYearMonth
 
-        public class hexBinary : Helper.Xml.TypeBase
+        public class hexBinary : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_hexBinary]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_hexBinary]); } }
 
 
             public hexBinary(System.Xml.XmlNode init)
@@ -2146,9 +2146,9 @@ namespace ExchangeFormat
 
         } // class hexBinary
 
-        public class int2 : Helper.Xml.TypeBase
+        public class int2 : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_int2]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_int2]); } }
 
 
             public int2(System.Xml.XmlNode init)
@@ -2170,9 +2170,9 @@ namespace ExchangeFormat
 
         } // class int2
 
-        public class integer : Helper.Xml.TypeBase
+        public class integer : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_integer]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_integer]); } }
 
 
             public integer(System.Xml.XmlNode init)
@@ -2194,9 +2194,9 @@ namespace ExchangeFormat
 
         } // class integer
 
-        public class language : Helper.Xml.TypeBase
+        public class language : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_language]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_language]); } }
 
 
             public language(System.Xml.XmlNode init)
@@ -2218,9 +2218,9 @@ namespace ExchangeFormat
 
         } // class language
 
-        public class long2 : Helper.Xml.TypeBase
+        public class long2 : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_long2]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_long2]); } }
 
 
             public long2(System.Xml.XmlNode init)
@@ -2242,9 +2242,9 @@ namespace ExchangeFormat
 
         } // class long2
 
-        public class negativeInteger : Helper.Xml.TypeBase
+        public class negativeInteger : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_negativeInteger]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_negativeInteger]); } }
 
 
             public negativeInteger(System.Xml.XmlNode init)
@@ -2266,9 +2266,9 @@ namespace ExchangeFormat
 
         } // class negativeInteger
 
-        public class nonNegativeInteger : Helper.Xml.TypeBase
+        public class nonNegativeInteger : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_nonNegativeInteger]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_nonNegativeInteger]); } }
 
 
             public nonNegativeInteger(System.Xml.XmlNode init)
@@ -2290,9 +2290,9 @@ namespace ExchangeFormat
 
         } // class nonNegativeInteger
 
-        public class nonPositiveInteger : Helper.Xml.TypeBase
+        public class nonPositiveInteger : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_nonPositiveInteger]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_nonPositiveInteger]); } }
 
 
             public nonPositiveInteger(System.Xml.XmlNode init)
@@ -2314,9 +2314,9 @@ namespace ExchangeFormat
 
         } // class nonPositiveInteger
 
-        public class normalizedString : Helper.Xml.TypeBase
+        public class normalizedString : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_normalizedString]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_normalizedString]); } }
 
 
             public normalizedString(System.Xml.XmlNode init)
@@ -2338,9 +2338,9 @@ namespace ExchangeFormat
 
         } // class normalizedString
 
-        public class positiveInteger : Helper.Xml.TypeBase
+        public class positiveInteger : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_positiveInteger]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_positiveInteger]); } }
 
 
             public positiveInteger(System.Xml.XmlNode init)
@@ -2362,9 +2362,9 @@ namespace ExchangeFormat
 
         } // class positiveInteger
 
-        public class short2 : Helper.Xml.TypeBase
+        public class short2 : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_short2]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_short2]); } }
 
 
             public short2(System.Xml.XmlNode init)
@@ -2386,9 +2386,9 @@ namespace ExchangeFormat
 
         } // class short2
 
-        public class string2 : Helper.Xml.TypeBase
+        public class string2 : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_string2]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_string2]); } }
 
 
             public string2(System.Xml.XmlNode init)
@@ -2410,9 +2410,9 @@ namespace ExchangeFormat
 
         } // class string2
 
-        public class time : Helper.Xml.TypeBase
+        public class time : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_time]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_time]); } }
 
 
             public time(System.Xml.XmlNode init)
@@ -2434,9 +2434,9 @@ namespace ExchangeFormat
 
         } // class time
 
-        public class token : Helper.Xml.TypeBase
+        public class token : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_token]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_token]); } }
 
 
             public token(System.Xml.XmlNode init)
@@ -2458,9 +2458,9 @@ namespace ExchangeFormat
 
         } // class token
 
-        public class unsignedByte : Helper.Xml.TypeBase
+        public class unsignedByte : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_unsignedByte]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_unsignedByte]); } }
 
 
             public unsignedByte(System.Xml.XmlNode init)
@@ -2482,9 +2482,9 @@ namespace ExchangeFormat
 
         } // class unsignedByte
 
-        public class unsignedInt : Helper.Xml.TypeBase
+        public class unsignedInt : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_unsignedInt]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_unsignedInt]); } }
 
 
             public unsignedInt(System.Xml.XmlNode init)
@@ -2506,9 +2506,9 @@ namespace ExchangeFormat
 
         } // class unsignedInt
 
-        public class unsignedLong : Helper.Xml.TypeBase
+        public class unsignedLong : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_unsignedLong]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_unsignedLong]); } }
 
 
             public unsignedLong(System.Xml.XmlNode init)
@@ -2530,9 +2530,9 @@ namespace ExchangeFormat
 
         } // class unsignedLong
 
-        public class unsignedShort : Helper.Xml.TypeBase
+        public class unsignedShort : XmlHelper.Xml.TypeBase
         {
-            public static Helper.Xml.Meta.SimpleType StaticInfo { get { return new Helper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_unsignedShort]); } }
+            public static XmlHelper.Xml.Meta.SimpleType StaticInfo { get { return new XmlHelper.Xml.Meta.SimpleType(Exchange_TypeInfo.binder.Types[Exchange_TypeInfo._helper_ti_xs_helper_unsignedShort]); } }
 
 
             public unsignedShort(System.Xml.XmlNode init)

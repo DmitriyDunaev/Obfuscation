@@ -1,8 +1,6 @@
-// YOU SHOULD NOT MODIFY THIS FILE
-
 using System.Text;
 
-namespace Helper
+namespace XmlHelper
 {
 	public class HexBinary
     {
@@ -682,23 +680,23 @@ namespace Helper
             return "false";
         }
 
-        public static string CastToString(Helper.Types.DateTime dt)
+        public static string CastToString(XmlHelper.Types.DateTime dt)
         {
             return dt.ToString();
         }
 
-		public static string CastToString(Helper.Types.DateTime dt, Helper.Types.DateTimeFormat format)
+		public static string CastToString(XmlHelper.Types.DateTime dt, XmlHelper.Types.DateTimeFormat format)
 		{
 			return dt.ToString(format);
 		}
 		
-		public static string CastToString(object o_which_is_a_dt, Helper.Types.DateTimeFormat format)
+		public static string CastToString(object o_which_is_a_dt, XmlHelper.Types.DateTimeFormat format)
 		{
-			return ((Helper.Types.DateTime)o_which_is_a_dt).ToString(format);
+			return ((XmlHelper.Types.DateTime)o_which_is_a_dt).ToString(format);
 		}
 		
 
-        public static string CastToString(Helper.Types.Duration dur)
+        public static string CastToString(XmlHelper.Types.Duration dur)
         {
             return dur.ToString();
         }
@@ -724,28 +722,28 @@ namespace Helper
 			return s;
 		}
 		
-		public static Helper.Types.QName CastToQName(object o)
+		public static XmlHelper.Types.QName CastToQName(object o)
         {
             if (o is string)
                 return CastToQName((string) o);
 
-            if (o is Helper.Types.QName)
-                return CastToQName((Helper.Types.QName) o);
+            if (o is XmlHelper.Types.QName)
+                return CastToQName((XmlHelper.Types.QName) o);
             return null;
         }
 		
-		public static string CastToString(Helper.Types.QName qn)
+		public static string CastToString(XmlHelper.Types.QName qn)
 		{
 			return qn.ToString();
 		}
 
 
-		public static Helper.Types.QName CastToQName(string s)
+		public static XmlHelper.Types.QName CastToQName(string s)
         {
-            return new Helper.Types.QName(s);
+            return new XmlHelper.Types.QName(s);
         }
 
-        public static Helper.Types.QName CastToQName(Helper.Types.QName qn)
+        public static XmlHelper.Types.QName CastToQName(XmlHelper.Types.QName qn)
         {
             return qn;
         }
@@ -762,22 +760,22 @@ namespace Helper
         }
         */
 
-        public static Helper.Types.DateTime CastToDateTime(string s)
+        public static XmlHelper.Types.DateTime CastToDateTime(string s)
         {
 			if (s == null)
                 throw new System.NullReferenceException();
 			if (s == "")
-                throw new Helper.Types.StringParseException("Cast to DateTime failed.");
-            return Helper.Types.DateTime.Parse(s);
+                throw new XmlHelper.Types.StringParseException("Cast to DateTime failed.");
+            return XmlHelper.Types.DateTime.Parse(s);
         }
 
-        public static Helper.Types.Duration CastToDuration(string s)
+        public static XmlHelper.Types.Duration CastToDuration(string s)
         {
 			if (s == null)
                 throw new System.NullReferenceException();
 			if (s == "")
-                throw new Helper.Types.StringParseException("Cast to Duration failed.");
-            return Helper.Types.Duration.Parse(s);
+                throw new XmlHelper.Types.StringParseException("Cast to Duration failed.");
+            return XmlHelper.Types.Duration.Parse(s);
         }
 
         /*
@@ -792,17 +790,17 @@ namespace Helper
         }
         */
 
-        public static Helper.Types.DateTime CastToDateTime(Helper.Types.DateTime s)
+        public static XmlHelper.Types.DateTime CastToDateTime(XmlHelper.Types.DateTime s)
         {
             return s;
         }
 
-		public static Helper.Types.DateTime CastToDateTime(Helper.Types.DateTime s, Helper.Types.DateTimeFormat format)
+		public static XmlHelper.Types.DateTime CastToDateTime(XmlHelper.Types.DateTime s, XmlHelper.Types.DateTimeFormat format)
 		{
 			return s;
 		}
 
-		public static Helper.Types.Duration CastToDuration(Helper.Types.Duration s)
+		public static XmlHelper.Types.Duration CastToDuration(XmlHelper.Types.Duration s)
         {
             return s;
         }
@@ -892,7 +890,7 @@ namespace Helper
 		{
 			if (!Exists(v))
 				throw new System.NullReferenceException();
-			if (v is Helper.Types.DateTime)
+			if (v is XmlHelper.Types.DateTime)
 				return CastToString(CastToDateTime(v));
 			if (v is System.Boolean)
 				return CastToString(CastToBool(v));	// to ensure the returned string is not capitalized
@@ -940,7 +938,7 @@ namespace Helper
 		}
 		
 		// see #26364 - somebody actually maps dates to bools
-		public static bool CastToBool(Helper.Types.DateTime v, Helper.Types.DateTimeFormat format)
+		public static bool CastToBool(XmlHelper.Types.DateTime v, XmlHelper.Types.DateTimeFormat format)
         {
             return (v != null);
         }
@@ -954,31 +952,31 @@ namespace Helper
 			return System.Convert.ToBoolean(v, System.Globalization.CultureInfo.InvariantCulture);
 		}
 
-		public static Helper.Types.DateTime CastToDateTime(object v)
+		public static XmlHelper.Types.DateTime CastToDateTime(object v)
 		{
 			if (!Exists(v))
 				throw new System.NullReferenceException();
 			if (v is string)
 				return CastToDateTime((string)v);            
-			return (Helper.Types.DateTime)v;
+			return (XmlHelper.Types.DateTime)v;
 		}
 
-		public static Helper.Types.DateTime CastToDateTime(object v, Helper.Types.DateTimeFormat format)
+		public static XmlHelper.Types.DateTime CastToDateTime(object v, XmlHelper.Types.DateTimeFormat format)
 		{
 			if (!Exists(v))
 				throw new System.NullReferenceException();
 			if (v is string)
 				return CastToDateTime((string)v, format);            
-			return (Helper.Types.DateTime)v;
+			return (XmlHelper.Types.DateTime)v;
 		}
 
-		public static Helper.Types.Duration CastToDuration(object v)
+		public static XmlHelper.Types.Duration CastToDuration(object v)
 		{
 			if (!Exists(v))
 				throw new System.NullReferenceException();
 			if (v is string)
 				return CastToDuration((string)v);
-			return (Helper.Types.Duration)v;
+			return (XmlHelper.Types.Duration)v;
 		}
 
 		public static byte[] CastToBinary(object v)
@@ -1067,107 +1065,107 @@ namespace Helper
 			return CastToDouble(v);
 		}
 
-		public static Helper.Types.DateTime CastToDateTime(string v, Helper.Types.DateTimeFormat format)
+		public static XmlHelper.Types.DateTime CastToDateTime(string v, XmlHelper.Types.DateTimeFormat format)
 		{
-			return Helper.Types.DateTime.Parse(v, format);
+			return XmlHelper.Types.DateTime.Parse(v, format);
 		}
 
-		public static string DateTimeToString(Helper.Types.DateTime v)
+		public static string DateTimeToString(XmlHelper.Types.DateTime v)
 		{
-			return CastToString(v, Helper.Types.DateTimeFormat.W3_dateTime);
+			return CastToString(v, XmlHelper.Types.DateTimeFormat.W3_dateTime);
 		}
 
-		public static Helper.Types.DateTime ParseDateTime(string v)
+		public static XmlHelper.Types.DateTime ParseDateTime(string v)
 		{
-			return CastToDateTime(v, Helper.Types.DateTimeFormat.W3_dateTime);
+			return CastToDateTime(v, XmlHelper.Types.DateTimeFormat.W3_dateTime);
 		}
 
-		public static string DateToString(Helper.Types.DateTime v)
+		public static string DateToString(XmlHelper.Types.DateTime v)
 		{
-			return CastToString(v, Helper.Types.DateTimeFormat.W3_date);
+			return CastToString(v, XmlHelper.Types.DateTimeFormat.W3_date);
 		}
 
-		public static Helper.Types.DateTime ParseDate(string v)
+		public static XmlHelper.Types.DateTime ParseDate(string v)
 		{
-			return CastToDateTime(v, Helper.Types.DateTimeFormat.W3_date);
+			return CastToDateTime(v, XmlHelper.Types.DateTimeFormat.W3_date);
 		}
 
-		public static string TimeToString(Helper.Types.DateTime v)
+		public static string TimeToString(XmlHelper.Types.DateTime v)
 		{
-			return CastToString(v, Helper.Types.DateTimeFormat.W3_time);
+			return CastToString(v, XmlHelper.Types.DateTimeFormat.W3_time);
 		}
 
-		public static Helper.Types.DateTime ParseTime(string v)
+		public static XmlHelper.Types.DateTime ParseTime(string v)
 		{
-			return CastToDateTime(v, Helper.Types.DateTimeFormat.W3_time);
+			return CastToDateTime(v, XmlHelper.Types.DateTimeFormat.W3_time);
 		}
 
-		public static string GYearToString(Helper.Types.DateTime v)
+		public static string GYearToString(XmlHelper.Types.DateTime v)
 		{
-			return CastToString(v, Helper.Types.DateTimeFormat.W3_gYear);
+			return CastToString(v, XmlHelper.Types.DateTimeFormat.W3_gYear);
 		}
 
-		public static Helper.Types.DateTime ParseGYear(string v)
+		public static XmlHelper.Types.DateTime ParseGYear(string v)
 		{
-			return CastToDateTime(v, Helper.Types.DateTimeFormat.W3_gYear);
+			return CastToDateTime(v, XmlHelper.Types.DateTimeFormat.W3_gYear);
 		}
 
-		public static decimal GYearToInteger(Helper.Types.DateTime v)
+		public static decimal GYearToInteger(XmlHelper.Types.DateTime v)
 		{
 			return v.Value.Year;
 		}
 
-		public static Helper.Types.DateTime IntegerToGYear(decimal v)
+		public static XmlHelper.Types.DateTime IntegerToGYear(decimal v)
 		{
-			return new Helper.Types.DateTime((int)v,1,1);
+			return new XmlHelper.Types.DateTime((int)v,1,1);
 		}
 
-		public static string GMonthToString(Helper.Types.DateTime v)
+		public static string GMonthToString(XmlHelper.Types.DateTime v)
 		{
-			return CastToString(v, Helper.Types.DateTimeFormat.W3_gMonth);
+			return CastToString(v, XmlHelper.Types.DateTimeFormat.W3_gMonth);
 		}
 
-		public static Helper.Types.DateTime ParseGMonth(string v)
+		public static XmlHelper.Types.DateTime ParseGMonth(string v)
 		{
-			return CastToDateTime(v, Helper.Types.DateTimeFormat.W3_gMonth);
+			return CastToDateTime(v, XmlHelper.Types.DateTimeFormat.W3_gMonth);
 		}
 
-		public static string GDayToString(Helper.Types.DateTime v)
+		public static string GDayToString(XmlHelper.Types.DateTime v)
 		{
-			return CastToString(v, Helper.Types.DateTimeFormat.W3_gDay);
+			return CastToString(v, XmlHelper.Types.DateTimeFormat.W3_gDay);
 		}
 
-		public static Helper.Types.DateTime ParseGDay(string v)
+		public static XmlHelper.Types.DateTime ParseGDay(string v)
 		{
-			return CastToDateTime(v, Helper.Types.DateTimeFormat.W3_gDay);
+			return CastToDateTime(v, XmlHelper.Types.DateTimeFormat.W3_gDay);
 		}
 
-		public static string GYearMonthToString(Helper.Types.DateTime v)
+		public static string GYearMonthToString(XmlHelper.Types.DateTime v)
 		{
-			return CastToString(v, Helper.Types.DateTimeFormat.W3_gYearMonth);
+			return CastToString(v, XmlHelper.Types.DateTimeFormat.W3_gYearMonth);
 		}
 
-		public static Helper.Types.DateTime ParseGYearMonth(string v)
+		public static XmlHelper.Types.DateTime ParseGYearMonth(string v)
 		{
-			return CastToDateTime(v, Helper.Types.DateTimeFormat.W3_gYearMonth);
+			return CastToDateTime(v, XmlHelper.Types.DateTimeFormat.W3_gYearMonth);
 		}
 
-		public static string GMonthDayToString(Helper.Types.DateTime v)
+		public static string GMonthDayToString(XmlHelper.Types.DateTime v)
 		{
-			return CastToString(v, Helper.Types.DateTimeFormat.W3_gMonthDay);
+			return CastToString(v, XmlHelper.Types.DateTimeFormat.W3_gMonthDay);
 		}
 
-		public static Helper.Types.DateTime ParseGMonthDay(string v)
+		public static XmlHelper.Types.DateTime ParseGMonthDay(string v)
 		{
-			return CastToDateTime(v, Helper.Types.DateTimeFormat.W3_gMonthDay);
+			return CastToDateTime(v, XmlHelper.Types.DateTimeFormat.W3_gMonthDay);
 		}
 
-		public static string DurationToString(Helper.Types.Duration v)
+		public static string DurationToString(XmlHelper.Types.Duration v)
 		{
 			return CastToString(v);
 		}
 
-		public static Helper.Types.Duration ParseDuration(string v)
+		public static XmlHelper.Types.Duration ParseDuration(string v)
 		{
 			return CastToDuration(v);
 		}
@@ -1207,12 +1205,12 @@ namespace Helper
 			return CastToBool(v);
 		}
 
-		public static string QNameToString(Helper.Types.QName v)
+		public static string QNameToString(XmlHelper.Types.QName v)
 		{
 			return v.ToString();
 		}
 		
-		public static Helper.Types.QName StringToQName(string s)
+		public static XmlHelper.Types.QName StringToQName(string s)
 		{
 			return CastToQName(s);
 		}

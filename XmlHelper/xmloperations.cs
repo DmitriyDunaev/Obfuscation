@@ -1,10 +1,7 @@
-// xmloperations.cs
-// This file contains generated code and will be overwritten when you rerun code generation.
-
 using System.Xml;
-using Helper.TypeInfo;
+using XmlHelper.TypeInfo;
 
-namespace Helper.Xml
+namespace XmlHelper.Xml
 {
 	/// <summary>
 	/// Fault exception propagates fault as a node back to main WS method
@@ -323,12 +320,12 @@ namespace Helper.Xml
             SetValue(node, member, GetFormatter(member).Format(b));
         }
 
-        public static void SetValue(XmlNode node, MemberInfo member, Helper.Types.DateTime b)
+        public static void SetValue(XmlNode node, MemberInfo member, XmlHelper.Types.DateTime b)
         {
             SetValue(node, member, GetFormatter(member).Format(b));
         }
 
-        public static void SetValue(XmlNode node, MemberInfo member, Helper.Types.Duration b)
+        public static void SetValue(XmlNode node, MemberInfo member, XmlHelper.Types.Duration b)
         {
             SetValue(node, member, GetFormatter(member).Format(b));
         }
@@ -343,7 +340,7 @@ namespace Helper.Xml
 			SetValue(node, member, GetFormatter(member).Format(d));
 		}
 
-		public static void SetValue(XmlNode node, MemberInfo member, Helper.Types.QName qn)
+		public static void SetValue(XmlNode node, MemberInfo member, XmlHelper.Types.QName qn)
         {
 			if (qn.Uri == null)
             {
@@ -381,47 +378,47 @@ namespace Helper.Xml
 
 	    public static double CastToDouble( XmlNode node, MemberInfo member)
         {
-            return Helper.CoreTypes.CastToDouble(node.InnerText);
+            return XmlHelper.CoreTypes.CastToDouble(node.InnerText);
         }
 
 	    public static string CastToString( XmlNode node, MemberInfo member)
         {
-            return Helper.CoreTypes.CastToString(node.InnerText);
+            return XmlHelper.CoreTypes.CastToString(node.InnerText);
         }
 
 	    public static long CastToInt64( XmlNode node, MemberInfo member)
         {
-            return Helper.CoreTypes.CastToInt64(node.InnerText);
+            return XmlHelper.CoreTypes.CastToInt64(node.InnerText);
         }
 
 	    public static ulong CastToUInt64( XmlNode node, MemberInfo member)
         {
-            return Helper.CoreTypes.CastToUInt64(node.InnerText);
+            return XmlHelper.CoreTypes.CastToUInt64(node.InnerText);
         }
 
 	    public static uint CastToUInt( XmlNode node, MemberInfo member)
         {
-            return Helper.CoreTypes.CastToUInt(node.InnerText);
+            return XmlHelper.CoreTypes.CastToUInt(node.InnerText);
         }
 
 	    public static int CastToInt( XmlNode node, MemberInfo member)
         {
-            return Helper.CoreTypes.CastToInt(node.InnerText);
+            return XmlHelper.CoreTypes.CastToInt(node.InnerText);
         }
 
 	    public static bool CastToBool( XmlNode node, MemberInfo member)
         {
-            return Helper.CoreTypes.CastToBool(node.InnerText);
+            return XmlHelper.CoreTypes.CastToBool(node.InnerText);
         }
 
-        public static Helper.Types.DateTime CastToDateTime(XmlNode node, MemberInfo member)
+        public static XmlHelper.Types.DateTime CastToDateTime(XmlNode node, MemberInfo member)
         {
-            return Helper.CoreTypes.CastToDateTime(node.InnerText);
+            return XmlHelper.CoreTypes.CastToDateTime(node.InnerText);
         }
 
-        public static Helper.Types.Duration CastToDuration(XmlNode node, MemberInfo member)
+        public static XmlHelper.Types.Duration CastToDuration(XmlNode node, MemberInfo member)
         {
-            return Helper.CoreTypes.CastToDuration(node.InnerText);
+            return XmlHelper.CoreTypes.CastToDuration(node.InnerText);
         }
 
         public static byte[] CastToBinary(XmlNode node, MemberInfo member)
@@ -431,21 +428,21 @@ namespace Helper.Xml
 
 		public static decimal CastToDecimal(XmlNode node, MemberInfo member)
 		{
-			return Helper.CoreTypes.CastToDecimal(node.InnerText);
+			return XmlHelper.CoreTypes.CastToDecimal(node.InnerText);
 		}
 		
-		public static Helper.Types.QName CastToQName(XmlNode node, MemberInfo member)
+		public static XmlHelper.Types.QName CastToQName(XmlNode node, MemberInfo member)
         {
             int i = node.InnerText.IndexOf(":");
             if (i == -1)
-                return new Helper.Types.QName(node.GetNamespaceOfPrefix(""), node.InnerText);
+                return new XmlHelper.Types.QName(node.GetNamespaceOfPrefix(""), node.InnerText);
 
             string prefix = node.InnerText.Substring(0, i);
             string local = node.InnerText.Substring(i + 1);
             
             string uri = node.GetNamespaceOfPrefix(prefix);
 
-            return new Helper.Types.QName(uri, prefix, local);
+            return new XmlHelper.Types.QName(uri, prefix, local);
         }
 
 	    public static XmlNode FindAttribute( XmlNode node,  MemberInfo member)
@@ -455,21 +452,21 @@ namespace Helper.Xml
             return attrs.GetNamedItem(member.LocalName, member.NamespaceURI);
         }
 
-		public static XmlDocument LoadDocument(Helper.IO.Input input)
+		public static XmlDocument LoadDocument(XmlHelper.IO.Input input)
         {
-			if (input is Helper.IO.FileInput)
+			if (input is XmlHelper.IO.FileInput)
 			{
-				return LoadDocument(((Helper.IO.FileInput)input).Filename);
+				return LoadDocument(((XmlHelper.IO.FileInput)input).Filename);
 			}
 			switch (input.Type)
 			{
-                case Helper.IO.Input.InputType.Stream:
+                case XmlHelper.IO.Input.InputType.Stream:
                     return LoadDocument(input.Stream);
 
-                case Helper.IO.Input.InputType.Reader:
+                case XmlHelper.IO.Input.InputType.Reader:
                     return LoadDocument(input.Reader);
 
-                case Helper.IO.Input.InputType.XmlDocument:
+                case XmlHelper.IO.Input.InputType.XmlDocument:
                     return input.Document;
 
                 default:
@@ -514,24 +511,24 @@ namespace Helper.Xml
             return doc;
         }
 
-		public static void SaveDocument(XmlDocument doc, Helper.IO.Output output, string encoding, bool bBigEndian, bool bBOM, bool prettyPrint)
+		public static void SaveDocument(XmlDocument doc, XmlHelper.IO.Output output, string encoding, bool bBigEndian, bool bBOM, bool prettyPrint)
         {
             SaveDocument(doc, output, GetEncodingObject(encoding, bBigEndian, bBOM), prettyPrint);
         }
 
-        public static void SaveDocument(XmlDocument doc, Helper.IO.Output output, System.Text.Encoding encoding, bool prettyPrint)
+        public static void SaveDocument(XmlDocument doc, XmlHelper.IO.Output output, System.Text.Encoding encoding, bool prettyPrint)
         {
             switch (output.Type)
             {
-                case Helper.IO.Output.OutputType.Stream:
+                case XmlHelper.IO.Output.OutputType.Stream:
                     SaveDocument(doc, output.Stream, encoding, prettyPrint);
                     break;
 
-                case Helper.IO.Output.OutputType.Writer:
+                case XmlHelper.IO.Output.OutputType.Writer:
                     SaveDocument(doc, output.Writer, prettyPrint);
                     break;
 
-                case Helper.IO.Output.OutputType.XmlDocument:
+                case XmlHelper.IO.Output.OutputType.XmlDocument:
                     break;
 
                 default:

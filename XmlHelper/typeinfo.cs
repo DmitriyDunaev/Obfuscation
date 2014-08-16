@@ -1,7 +1,4 @@
-// typeinfo.cs
-// This file contains generated code and will be overwritten when you rerun code generation.
-
-namespace Helper.TypeInfo
+namespace XmlHelper.TypeInfo
 {
 	public enum WhitespaceType {Unknown, Preserve, Replace, Collapse}
 	public enum FacetCheckResult {Fail, Success, EnumFail, EnumSuccess}

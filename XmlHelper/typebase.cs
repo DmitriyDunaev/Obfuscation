@@ -1,10 +1,7 @@
-// typebase.cs
-// This file contains generated code and will be overwritten when you rerun code generation.
-
 using System.Xml;
-using Helper.TypeInfo;
+using XmlHelper.TypeInfo;
 
-namespace Helper.Xml
+namespace XmlHelper.Xml
 {
 	public class TypeBase
 	{

@@ -3,7 +3,7 @@
 
 //using <some stuff>
 
-using Helper.TypeInfo;
+using XmlHelper.TypeInfo;
 
 namespace ExchangeFormat
 {
@@ -332,60 +332,60 @@ namespace ExchangeFormat
 				{
 					new FacetInfo (null, "pattern", "ID_[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni, "myIDREFS", _helper_ti_xs_helper_IDREFS, _helper_mif_helper_myIDREFS, _helper_mil_helper_myIDREFS,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "pattern", "(ID_[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12} ){1,}ID_[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}|ID_[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni, "myVariable", _helper_ti_xs_helper_string2, _helper_mif_helper_myVariable, _helper_mil_helper_myVariable,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "pattern", "[vtcfd]_ID_[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni, "Exchange", 0, _helper_mif_helper_Exchange2, _helper_mil_helper_Exchange2,  null, 				WhitespaceType.Unknown ),
 			new TypeInfo( binder, _helper_ni, "", _helper_ti_xs_helper_anyType, _helper_mif_helper_BasicBlockType, _helper_mil_helper_BasicBlockType,  null, 				WhitespaceType.Unknown ),
-			new TypeInfo( binder, _helper_ni, "", _helper_ti_xs_helper_anyType, _helper_mif_helper_InstructionType, _helper_mil_helper_InstructionType,  null, 				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+			new TypeInfo( binder, _helper_ni, "", _helper_ti_xs_helper_anyType, _helper_mif_helper_InstructionType, _helper_mil_helper_InstructionType,  null, 				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni, "", _helper_ti_xs_helper_anyType, _helper_mif_helper_FunctionType, _helper_mil_helper_FunctionType,  null, 				WhitespaceType.Unknown ),
 			new TypeInfo( binder, _helper_ni, "", _helper_ti_xs_helper_string2, _helper_mif_helper_CalledFromType, _helper_mil_helper_CalledFromType,  
 				new FacetInfo[]
 				{
-					new FacetInfo (Helper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "InternalOnly", 0 ), 
-					new FacetInfo (Helper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "ExternalOnly", 0 ), 
-					new FacetInfo (Helper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "Both", 0 ), 
+					new FacetInfo (XmlHelper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "InternalOnly", 0 ), 
+					new FacetInfo (XmlHelper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "ExternalOnly", 0 ), 
+					new FacetInfo (XmlHelper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "Both", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni, "", _helper_ti_xs_helper_anyType, _helper_mif_helper_RoutineType, _helper_mil_helper_RoutineType,  null, 				WhitespaceType.Unknown ),
-			new TypeInfo( binder, _helper_ni, "", _helper_ti_helper_myVariableType, _helper_mif_helper_VariableType, _helper_mil_helper_VariableType,  null, 				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
-			new TypeInfo( binder, _helper_ni, "", 0, _helper_mif_helper_myVariableType, _helper_mil_helper_myVariableType,  null, 				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+			new TypeInfo( binder, _helper_ni, "", _helper_ti_helper_myVariableType, _helper_mif_helper_VariableType, _helper_mil_helper_VariableType,  null, 				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
+			new TypeInfo( binder, _helper_ni, "", 0, _helper_mif_helper_myVariableType, _helper_mil_helper_myVariableType,  null, 				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni, "", _helper_ti_xs_helper_integer, _helper_mif_helper_MemoryRegionSizeType, _helper_mil_helper_MemoryRegionSizeType,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "minExclusive", "0", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.DecimalFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.DecimalFormatter ),
 			new TypeInfo( binder, _helper_ni, "", _helper_ti_xs_helper_integer, _helper_mif_helper_MemoryUnitSizeType, _helper_mil_helper_MemoryUnitSizeType,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "minExclusive", "0", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.DecimalFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.DecimalFormatter ),
 			new TypeInfo( binder, _helper_ni, "", _helper_ti_xs_helper_string2, _helper_mif_helper_StatementTypeType, _helper_mil_helper_StatementTypeType,  
 				new FacetInfo[]
 				{
-					new FacetInfo (Helper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "FullAssignment", 0 ), 
-					new FacetInfo (Helper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "UnaryAssignment", 0 ), 
-					new FacetInfo (Helper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "Copy", 0 ), 
-					new FacetInfo (Helper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "UnconditionalJump", 0 ), 
-					new FacetInfo (Helper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "ConditionalJump", 0 ), 
-					new FacetInfo (Helper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "Procedural", 0 ), 
-					new FacetInfo (Helper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "IndexedAssignment", 0 ), 
-					new FacetInfo (Helper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "PointerAssignment", 0 ), 
-					new FacetInfo (Helper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "NoOperation", 0 ), 
+					new FacetInfo (XmlHelper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "FullAssignment", 0 ), 
+					new FacetInfo (XmlHelper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "UnaryAssignment", 0 ), 
+					new FacetInfo (XmlHelper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "Copy", 0 ), 
+					new FacetInfo (XmlHelper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "UnconditionalJump", 0 ), 
+					new FacetInfo (XmlHelper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "ConditionalJump", 0 ), 
+					new FacetInfo (XmlHelper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "Procedural", 0 ), 
+					new FacetInfo (XmlHelper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "IndexedAssignment", 0 ), 
+					new FacetInfo (XmlHelper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "PointerAssignment", 0 ), 
+					new FacetInfo (XmlHelper.Xml.XsValidation.facetCheck_string_enumeration, "enumeration", "NoOperation", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 
 			new TypeInfo( binder, _helper_ni_xs, "ENTITIES", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_ENTITIES, _helper_mil_xs_helper_ENTITIES,  
 				new FacetInfo[]
@@ -393,29 +393,29 @@ namespace ExchangeFormat
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 					new FacetInfo (null, "minLength", "1", 1 ), 
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.AnySimpleTypeFormatter ),
-			new TypeInfo( binder, _helper_ni_xs, "ENTITY", _helper_ti_xs_helper_NCName, _helper_mif_xs_helper_ENTITY, _helper_mil_xs_helper_ENTITY,  null, 				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
-			new TypeInfo( binder, _helper_ni_xs, "ID", _helper_ti_xs_helper_NCName, _helper_mif_xs_helper_ID, _helper_mil_xs_helper_ID,  null, 				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
-			new TypeInfo( binder, _helper_ni_xs, "IDREF", _helper_ti_xs_helper_NCName, _helper_mif_xs_helper_IDREF, _helper_mil_xs_helper_IDREF,  null, 				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
+			new TypeInfo( binder, _helper_ni_xs, "ENTITY", _helper_ti_xs_helper_NCName, _helper_mif_xs_helper_ENTITY, _helper_mil_xs_helper_ENTITY,  null, 				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
+			new TypeInfo( binder, _helper_ni_xs, "ID", _helper_ti_xs_helper_NCName, _helper_mif_xs_helper_ID, _helper_mil_xs_helper_ID,  null, 				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
+			new TypeInfo( binder, _helper_ni_xs, "IDREF", _helper_ti_xs_helper_NCName, _helper_mif_xs_helper_IDREF, _helper_mil_xs_helper_IDREF,  null, 				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "IDREFS", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_IDREFS, _helper_mil_xs_helper_IDREFS,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 					new FacetInfo (null, "minLength", "1", 1 ), 
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "NCName", _helper_ti_xs_helper_Name, _helper_mif_xs_helper_NCName, _helper_mil_xs_helper_NCName,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "pattern", "[\\i-[:]][\\c-[:]]*", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "NMTOKEN", _helper_ti_xs_helper_token, _helper_mif_xs_helper_NMTOKEN, _helper_mil_xs_helper_NMTOKEN,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "pattern", "\\c+", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "NMTOKENS", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_NMTOKENS, _helper_mil_xs_helper_NMTOKENS,  
 				new FacetInfo[]
 				{
@@ -424,230 +424,230 @@ namespace ExchangeFormat
 					new FacetInfo (null, "pattern", "\\c+", 0 ), 
 					new FacetInfo (null, "pattern", "\\c+", 0 ), 
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "NOTATION", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_NOTATION, _helper_mil_xs_helper_NOTATION,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "Name", _helper_ti_xs_helper_token, _helper_mif_xs_helper_Name, _helper_mil_xs_helper_Name,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "pattern", "\\i\\c*", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "QName", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_QName, _helper_mil_xs_helper_QName,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.AnySimpleTypeFormatter ),
-			new TypeInfo( binder, _helper_ni_xs, "anySimpleType", 0, _helper_mif_xs_helper_anySimpleType, _helper_mil_xs_helper_anySimpleType,  null, 				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
-			new TypeInfo( binder, _helper_ni_xs, "anyType", 0, _helper_mif_xs_helper_anyType, _helper_mil_xs_helper_anyType,  null, 				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
+			new TypeInfo( binder, _helper_ni_xs, "anySimpleType", 0, _helper_mif_xs_helper_anySimpleType, _helper_mil_xs_helper_anySimpleType,  null, 				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
+			new TypeInfo( binder, _helper_ni_xs, "anyType", 0, _helper_mif_xs_helper_anyType, _helper_mil_xs_helper_anyType,  null, 				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "anyURI", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_anyURI, _helper_mil_xs_helper_anyURI,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "base64Binary", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_base64Binary, _helper_mil_xs_helper_base64Binary,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "boolean", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_boolean, _helper_mil_xs_helper_boolean,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "byte", _helper_ti_xs_helper_short2, _helper_mif_xs_helper_byte2, _helper_mil_xs_helper_byte2,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "minInclusive", "-128", 0 ), 
 					new FacetInfo (null, "maxInclusive", "127", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.IntegerFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.IntegerFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "date", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_date, _helper_mil_xs_helper_date,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse,  Helper.Xml.Xs.DateFormatter ),
+				WhitespaceType.Collapse,  XmlHelper.Xml.Xs.DateFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "dateTime", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_dateTime, _helper_mil_xs_helper_dateTime,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.DateTimeFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.DateTimeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "decimal", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_decimal2, _helper_mil_xs_helper_decimal2,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.DecimalFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.DecimalFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "double", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_double2, _helper_mil_xs_helper_double2,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.DoubleFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.DoubleFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "duration", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_duration, _helper_mil_xs_helper_duration,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse,  Helper.Xml.Xs.DurationFormatter ),
+				WhitespaceType.Collapse,  XmlHelper.Xml.Xs.DurationFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "float", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_float2, _helper_mil_xs_helper_float2,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.DoubleFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.DoubleFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "gDay", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_gDay, _helper_mil_xs_helper_gDay,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse,  Helper.Xml.Xs.GDayFormatter ),
+				WhitespaceType.Collapse,  XmlHelper.Xml.Xs.GDayFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "gMonth", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_gMonth, _helper_mil_xs_helper_gMonth,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse,  Helper.Xml.Xs.GMonthFormatter ),
+				WhitespaceType.Collapse,  XmlHelper.Xml.Xs.GMonthFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "gMonthDay", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_gMonthDay, _helper_mil_xs_helper_gMonthDay,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse,  Helper.Xml.Xs.GMonthDayFormatter ),
+				WhitespaceType.Collapse,  XmlHelper.Xml.Xs.GMonthDayFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "gYear", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_gYear, _helper_mil_xs_helper_gYear,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse,  Helper.Xml.Xs.GYearFormatter ),
+				WhitespaceType.Collapse,  XmlHelper.Xml.Xs.GYearFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "gYearMonth", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_gYearMonth, _helper_mil_xs_helper_gYearMonth,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse,  Helper.Xml.Xs.GYearMonthFormatter ),
+				WhitespaceType.Collapse,  XmlHelper.Xml.Xs.GYearMonthFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "hexBinary", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_hexBinary, _helper_mil_xs_helper_hexBinary,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.HexBinaryFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.HexBinaryFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "int", _helper_ti_xs_helper_long2, _helper_mif_xs_helper_int2, _helper_mil_xs_helper_int2,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "minInclusive", "-2147483648", 0 ), 
 					new FacetInfo (null, "maxInclusive", "2147483647", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.IntegerFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.IntegerFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "integer", _helper_ti_xs_helper_decimal2, _helper_mif_xs_helper_integer, _helper_mil_xs_helper_integer,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "fractionDigits", "0", 0 ), 
 					new FacetInfo (null, "pattern", "[\\-+]?[0-9]+", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.DecimalFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.DecimalFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "language", _helper_ti_xs_helper_token, _helper_mif_xs_helper_language, _helper_mil_xs_helper_language,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "pattern", "[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "long", _helper_ti_xs_helper_integer, _helper_mif_xs_helper_long2, _helper_mil_xs_helper_long2,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "minInclusive", "-9223372036854775808", 0 ), 
 					new FacetInfo (null, "maxInclusive", "9223372036854775807", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.IntegerFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.IntegerFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "negativeInteger", _helper_ti_xs_helper_nonPositiveInteger, _helper_mif_xs_helper_negativeInteger, _helper_mil_xs_helper_negativeInteger,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "maxInclusive", "-1", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.DecimalFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.DecimalFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "nonNegativeInteger", _helper_ti_xs_helper_integer, _helper_mif_xs_helper_nonNegativeInteger, _helper_mil_xs_helper_nonNegativeInteger,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "minInclusive", "0", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.DecimalFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.DecimalFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "nonPositiveInteger", _helper_ti_xs_helper_integer, _helper_mif_xs_helper_nonPositiveInteger, _helper_mil_xs_helper_nonPositiveInteger,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "maxInclusive", "0", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.DecimalFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.DecimalFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "normalizedString", _helper_ti_xs_helper_string2, _helper_mif_xs_helper_normalizedString, _helper_mil_xs_helper_normalizedString,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "replace", 0 ),
 				},
-				WhitespaceType.Replace, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Replace, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "positiveInteger", _helper_ti_xs_helper_nonNegativeInteger, _helper_mif_xs_helper_positiveInteger, _helper_mil_xs_helper_positiveInteger,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "minInclusive", "1", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.DecimalFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.DecimalFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "short", _helper_ti_xs_helper_int2, _helper_mif_xs_helper_short2, _helper_mil_xs_helper_short2,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "minInclusive", "-32768", 0 ), 
 					new FacetInfo (null, "maxInclusive", "32767", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.IntegerFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.IntegerFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "string", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_string2, _helper_mil_xs_helper_string2,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "preserve", 0 ),
 				},
-				WhitespaceType.Preserve, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Preserve, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "time", _helper_ti_xs_helper_anySimpleType, _helper_mif_xs_helper_time, _helper_mil_xs_helper_time,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse,  Helper.Xml.Xs.TimeFormatter ),
+				WhitespaceType.Collapse,  XmlHelper.Xml.Xs.TimeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "token", _helper_ti_xs_helper_normalizedString, _helper_mif_xs_helper_token, _helper_mil_xs_helper_token,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "whitespace", "collapse", 0 ),
 				},
-				WhitespaceType.Collapse, Helper.Xml.Xs.AnySimpleTypeFormatter ),
+				WhitespaceType.Collapse, XmlHelper.Xml.Xs.AnySimpleTypeFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "unsignedByte", _helper_ti_xs_helper_unsignedShort, _helper_mif_xs_helper_unsignedByte, _helper_mil_xs_helper_unsignedByte,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "maxInclusive", "255", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.IntegerFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.IntegerFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "unsignedInt", _helper_ti_xs_helper_unsignedLong, _helper_mif_xs_helper_unsignedInt, _helper_mil_xs_helper_unsignedInt,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "maxInclusive", "4294967295", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.IntegerFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.IntegerFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "unsignedLong", _helper_ti_xs_helper_nonNegativeInteger, _helper_mif_xs_helper_unsignedLong, _helper_mil_xs_helper_unsignedLong,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "maxInclusive", "18446744073709551615", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.IntegerFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.IntegerFormatter ),
 			new TypeInfo( binder, _helper_ni_xs, "unsignedShort", _helper_ti_xs_helper_unsignedInt, _helper_mif_xs_helper_unsignedShort, _helper_mil_xs_helper_unsignedShort,  
 				new FacetInfo[]
 				{
 					new FacetInfo (null, "maxInclusive", "65535", 0 ), 
 				},
-				WhitespaceType.Unknown, Helper.Xml.Xs.IntegerFormatter ),
+				WhitespaceType.Unknown, XmlHelper.Xml.Xs.IntegerFormatter ),
 
 			
 		};

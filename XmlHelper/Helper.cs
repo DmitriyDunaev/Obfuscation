@@ -1,8 +1,9 @@
-// YOU SHOULD NOT MODIFY THIS FILE
-
 using System;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Schema;
 
-namespace Helper 
+namespace XmlHelper 
 {
 	/// <summary>
 	/// Base class for all exceptions thrown by functions of the Helper-library..
@@ -73,4 +74,30 @@ namespace Helper
 			traceTarget = null;
 		}
 	}
+
+
+    public static class Validate
+    {
+        /// <summary>
+        /// Validates an XML document against Exchange.xsd schema
+        /// </summary>
+        /// <param name="doc2validate">XML document to be validated</param>
+        public static void AgainstScheme(XmlDocument doc2validate)
+        {
+            System.Xml.Schema.XmlSchemaSet schemas = new System.Xml.Schema.XmlSchemaSet();
+            schemas.Add(null, System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Scheme\Exchange.xsd"));
+            try
+            {
+                XDocument doc = XDocument.Parse(doc2validate.InnerXml);
+                doc.Validate(schemas, (o, e) =>
+                {
+                    throw new Exception(e.Message);
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("XML could not be validated! It is not well-formed or does not comply with XSD.", ex);
+            }
+        }
+    }
 }
