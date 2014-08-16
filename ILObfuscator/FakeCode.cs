@@ -128,19 +128,30 @@ namespace Obfuscator
                 if (ins.statementType != Objects.Common.StatementType.NoOperation)
                     RefreshNext(ins);                
             }
-
-            /* Now we check for forbidden state collisions at every basic blocks' beginning. */
-            foreach (BasicBlock bb in func.BasicBlocks)
-            {
-                if (DataAnalysis.ForbiddenStateCollision(bb.Instructions.First()))
-                    throw new ObfuscatorException("Forbidden state collision: FILLED meets NOT_INITIALIZED.");
-            }
-
-            //Checking whether we have "nops" left
-            if (GetAllNops(func).Count > 0)
-                throw new ObfuscatorException("Lack of available dead variables.");
         }
 
+
+        /// <summary>
+        /// Checking for collisions of FILLED vs. NOT_INITIALIZED and residual NOPs
+        /// </summary>
+        /// <param name="routine">A routine to be checked</param>
+        public static void CheckForProblems(Routine routine)
+        {
+            foreach (Function func in routine.Functions)
+            {
+                /* Now we check for forbidden state collisions at every basic blocks' beginning. */
+                foreach (BasicBlock bb in func.BasicBlocks)
+                {
+                    if (DataAnalysis.ForbiddenStateCollision(bb.Instructions.First()))
+                        throw new ObfuscatorException("Forbidden state collision: FILLED meets NOT_INITIALIZED.");
+                }
+                //Checking whether we have "nops" left
+                if (GetAllNops(func).Count > 0)
+                    throw new ObfuscatorException("Lack of available dead variables.");
+            }
+        }
+        
+        
         /// <summary>
         /// Function to make an actual fake instruction out of a Nop.
         /// </summary>
@@ -294,7 +305,7 @@ namespace Obfuscator
                 int i = Randomizer.SingleNumber(0, 100);
                 if (i <= Common.ConditionalJumpProbability)
                 {
-                    _GenerateConditionalJump(ins);
+                    GenerateConditionalJump(ins);
                 }
             }
         }
@@ -303,7 +314,7 @@ namespace Obfuscator
         /// Function to make a Conditional Jump out of a Nop.
         /// </summary>
         /// <param name="ins">The nop we want to work on.</param>
-        private static void _GenerateConditionalJump(Instruction ins)
+        private static void GenerateConditionalJump(Instruction ins)
         {
             /* 
              * Before doing anything, we have to split the basic block holding this

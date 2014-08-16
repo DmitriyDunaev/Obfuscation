@@ -78,7 +78,7 @@ namespace Obfuscator
                         {
 
                             Instruction param = new Instruction(call.parent);
-                            MakeInstruction.Param(param, fakeInputVar, null);
+                            MakeInstruction.ProceduralParam(param, fakeInputVar, null);
                             //Inserting the "param" instruction right before the "call" instruction
                             call.parent.Instructions.Insert(allCalls[call] + shift, param);
                             shift++;

@@ -291,7 +291,7 @@ namespace Obfuscator
         /// Makes 'param' procedural instruction type
         /// </summary>
         /// <param name="value">Parameter value</param>
-        public static void Param(Instruction ins, Variable var, int? value)
+        public static void ProceduralParam(Instruction ins, Variable var, int? value)
         {
             if (ins.statementType != Objects.Common.StatementType.NoOperation)
                 throw new ObfuscatorException("Only NoOperation instruction can be modified to other type!");

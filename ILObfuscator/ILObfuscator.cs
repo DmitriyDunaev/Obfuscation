@@ -73,7 +73,7 @@ namespace Obfuscator
                     Logging.WriteReadableTAC(routine, "MeshingCOND");
                     Logging.DrawCFG(routine, "MeshingCOND");
                 }
-
+                
                 Console.Write("Step 4: Generation of fake NOP instructions");
                 foreach (Function func in routine.Functions)
                     FakeCode.GenerateNoOperations(func);
@@ -111,12 +111,14 @@ namespace Obfuscator
                 Logging.WriteRoutine(routine, "FakeIns");
                 Logging.DrawCFG(routine, "CondJumps");
                 Logging.WriteComplexityMetrics(routine, "Final");
+                FakeCode.CheckForProblems(routine);
                 routine.Validate();
                 PrintSuccess();
 
                 Logging.WriteReadableTAC(routine, "FakeInstrFromNOPs");
             }
         }
+        
 
         public static void Obfuscate(ref ExchangeFormat.Exchange exch)
         {
@@ -150,20 +152,7 @@ namespace Obfuscator
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(" . . . . . UNSUCCESSFUL\n");
                         Console.ResetColor();
-                        routine = (Routine)exch;
                     }
-                    //catch (ValidatorException ex)
-                    //{
-                    //    if (ex.Message.EndsWith("has a single direct predecessor with unconditional GOTO."))
-                    //    {
-                    //        Success = false;
-                    //        Console.ForegroundColor = ConsoleColor.Red;
-                    //        Console.WriteLine(". . . . . . . . . . FAILED\n");
-                    //        Console.ResetColor();
-                    //        routine = (Routine)exch;
-                    //    }
-                    //    else throw ex;
-                    //}
                     NumberOfRuns++;
                 } while (!Success && NumberOfRuns < Common.MaxNumberOfRuns);
                 if (Success)
@@ -181,6 +170,7 @@ namespace Obfuscator
                             Console.WriteLine("Trying again...");
                             Console.WriteLine();
                             TryAgain = true;
+                            routine = (Routine)exch;
                             break;
 
                         case 'n':
@@ -210,8 +200,7 @@ namespace Obfuscator
             PrintSuccess();
         }
 
-
-
+        
         public static void PrintSuccess()
         {
             Console.ForegroundColor = ConsoleColor.DarkGreen;
