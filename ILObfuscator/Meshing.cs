@@ -76,7 +76,7 @@ namespace Obfuscator
         }
 
         /// <summary>
-        /// Expands the Main Route into the CFT, creating the conditional jump for both Main Route and Fake Route
+        /// Expands the Main Route into the CFG, creating the conditional jump for both Main Route and Fake Route
         /// </summary>
         /// <param name="fake1">The first fake basic block to be used in the expansion</param>
         /// <param name="mainLaneBB">The original basic block we should jump to stay in the Main Route</param>
@@ -137,7 +137,7 @@ namespace Obfuscator
         }
 
         /// <summary>
-        /// Expands the Main Route into the CFT, inserting "FakeVariablesOnly" basic blocks with and random conditional jump
+        /// Expands the Main Route into the CFG, inserting "FakeVariablesOnly" basic blocks and random conditional jump
         /// between them
         /// </summary>
         /// <param name="originaltarget">The basic block we should go to stay in the Main Route</param>
@@ -174,7 +174,7 @@ namespace Obfuscator
         }
 
         /// <summary>
-        /// Expands the fake route into the CFT and creates the conditional jumps for both Loop and Fake code
+        /// Expands the fake route into the CFG and creates the conditional jumps for both Loop and Fake code
         /// </summary>
         /// <param name="fake1">The first fake basic block to be used in the expansion</param>
         /// <param name="mainLaneBB">The basic block we should go in case of no-loop</param>

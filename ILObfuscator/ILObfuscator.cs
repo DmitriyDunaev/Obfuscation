@@ -14,23 +14,17 @@ namespace Obfuscator
         private static void Obfuscation(Routine routine)
         {
             Logging.WriteComplexityMetrics(routine, "Original");
-            
-            //Creating fake input parameters in all functions
-            FakeParameters.CreateFakeParameters(routine);
-
-            //Updating all CALLs according to the new number of parameters
-            foreach (Function func in routine.Functions)
-            {
-                FakeParameters.UpdateAllFunctionCalls(func);
-            }
 
             //Checking whether the functions have either "division" or "modulo" operations
             //If they do, fake instructions with original variables should be inserted only before the return
-            //to avoid problems with the these instructions
+            //to avoid problems with the these operations
             foreach (Function func in routine.Functions)
             {
                 func.CheckDivisionModulo();
             }
+            
+            //Creating fake input parameters in all functions
+            FakeParameters.CreateFakeParameters(routine);
 
             //Checking for Multiple Obfuscation
             for (int i = 0; i < Convert.ToInt32(ConfigurationManager.AppSettings["MultipleRuns"]); i++)
@@ -198,6 +192,8 @@ namespace Obfuscator
             Console.Write("Performing logical control");
             routine.Validate();
             PrintSuccess();
+
+            exch = (ExchangeFormat.Exchange)routine;
         }
 
         

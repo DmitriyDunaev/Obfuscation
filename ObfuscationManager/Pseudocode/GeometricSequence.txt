@@ -17,7 +17,12 @@
 	return result;
 }
 
-signed int __cdecl sub_401397(int a, int b)
+signed int __cdecl sub_401397()
 {
-	return sub_401334(a, b);
+	int v2; // [sp+DCh] [bp-14h]@1
+	int v3; // [sp+E8h] [bp-8h]@1
+
+	scanf("%d", &v2);
+	scanf("%d", &v3);
+return sub_401334(v2, v3);
 }

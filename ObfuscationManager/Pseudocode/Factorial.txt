@@ -13,7 +13,7 @@ int __cdecl sub_4113E0(int a1)
 	return v1;
 }
 
-int __cdecl sub_411450(int a)
+int __cdecl sub_411450()
 {
 	int v5; // [sp+D0h] [bp-14h]@1
 	int v6; // [sp+E8h] [bp-8h]@1

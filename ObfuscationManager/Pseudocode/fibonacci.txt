@@ -18,6 +18,8 @@ signed int __cdecl sub_401334(signed int a1)
 
 signed int __cdecl sub_401373(int a)
 {
-	sub_401940();
-	return sub_401334(a);
+	signed int v1; // ST00_4@2
+  	v1 = sub_401334(a);
+  	printf("%d", v1);
+  	return v1;
 }

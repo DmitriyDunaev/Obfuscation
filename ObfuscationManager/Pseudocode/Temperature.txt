@@ -2,7 +2,7 @@ int __cdecl sub_413D20()
 {
 	int v5; // [sp+D0h] [bp-38h]@1
 	int v6; // [sp+DCh] [bp-2Ch]@1
-	int v7; // [sp+EBh] [bp-1Dh]@1
+	int v7; // [sp+Ebh] [bp-1Dh]@1
 	int v8; // [sp+F4h] [bp-14h]@1
 	int v9; // [sp+100h] [bp-8h]@1
 

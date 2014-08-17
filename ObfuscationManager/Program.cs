@@ -52,7 +52,7 @@ namespace ObfuscationManager
 
                 Console.Write("Performing formal control");
                 doc.LoadXml(exch.SaveToString(true));
-                doc.Save("export.xml");
+                doc.Save("Export.xml");
                 XmlHelper.Validate.AgainstScheme(doc);
                 Obfuscator.ILObfuscator.PrintSuccess();
                 

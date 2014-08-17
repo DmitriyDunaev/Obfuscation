@@ -11,14 +11,26 @@ namespace Obfuscator
     public static class FakeParameters
     {
 
+        /// <summary>
+        /// Creates fake input parameters in all functions on the routine
+        /// </summary>
+        /// <param name="routine">A routine with functions that will receive fake input parameters</param>
         public static void CreateFakeParameters(Routine routine)
         {
             for (int i = 0; i < Common.NumFakeInputParam; i++)
             {
+                //Creating an interval
                 List<int> borders = Randomizer.MultipleNumbers(2, Common.GlobalMinValue + Common.LoopConditionalJumpMaxRange,
                         Common.GlobalMaxValue - Common.LoopConditionalJumpMaxRange, false, true);
+                //Creating the fake input parameter in all functions
                 foreach (Function func in routine.Functions)
                     func.NewFakeInputParameter(borders.First(), borders.Last());
+            }
+
+            //Updating all CALLs according to the new number of parameters
+            foreach (Function func in routine.Functions)
+            {
+                UpdateAllFunctionCalls(func);
             }
         }
 
