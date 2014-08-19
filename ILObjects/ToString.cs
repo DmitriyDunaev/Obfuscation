@@ -43,7 +43,7 @@ namespace Objects
             sb.AppendLine("- Global ID: " + globalID);
             sb.AppendLine("- Called from: " + calledFrom);
             sb.AppendLine("- Basic blocks total: " + BasicBlocks.Count);
-            sb.AppendLine("    - Dead basic blocks: " + BasicBlocks.Count(x => x.dead));
+            sb.AppendLine("    - Dead basic blocks: " + BasicBlocks.Count(x => x.inFakeLane));
             sb.AppendLine("- Local variables total: " + LocalVariables.Count(x => x.kind != Variable.Kind.Global));
             sb.AppendLine("    - Original input parameters: " + LocalVariables.Count(x => x.kind == Variable.Kind.Input && !x.fake));
             sb.AppendLine("    - Original output parameters: " + LocalVariables.Count(x => x.kind == Variable.Kind.Output && !x.fake));
@@ -68,7 +68,7 @@ namespace Objects
             sb.AppendLine("********************************");
             sb.AppendLine("Basic Block ID: " + ID);
             sb.AppendLine("- Parent: " + parent.ID);
-            sb.AppendLine("- Dead: " + dead.ToString().ToLower());
+            sb.AppendLine("- Dead: " + inFakeLane.ToString().ToLower());
             sb.AppendLine("- Predecessors total: " + Predecessors.Count);
             foreach (BasicBlock pred in Predecessors)
                 sb.AppendLine("     - Predecessor ID: " + pred.ID);
@@ -93,8 +93,8 @@ namespace Objects
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(statementType.ToString().Substring(1));
-                for (int i = 0; i < (20-statementType.ToString().Substring(1).Length); i++)
-                    sb.Append(" ");
+            for (int i = 0; i < (20 - statementType.ToString().Substring(1).Length); i++)
+                sb.Append(" ");
             sb.Append("|\t");
             sb.Append(TACtext);
             return sb.ToString();

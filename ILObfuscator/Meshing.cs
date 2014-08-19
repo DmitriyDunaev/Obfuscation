@@ -35,7 +35,7 @@ namespace Obfuscator
                         if (funct.containsDivisionModulo == false || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0)
                             trueLane.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
                         trueLane.Meshable = false;
-                        trueLane.dead = true;
+                        trueLane.inFakeLane = true;
                         //Linking first the false lane
                         bb.LinkToSuccessor(falseLane, true);
                         //Creating the jump to the true lane
@@ -187,14 +187,14 @@ namespace Obfuscator
             if (fake2.parent.containsDivisionModulo == false 
                 || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0)
                 fake2.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
-            fake2.dead = true;
+            fake2.inFakeLane = true;
 
             //Creating fake3 to hold the extra fake code in case of No-Loop
             BasicBlock fake3 = new BasicBlock(fake1.parent);
             if (fake3.parent.containsDivisionModulo == false 
                 || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0)
                 fake3.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
-            fake3.dead = true;
+            fake3.inFakeLane = true;
 
             //Creating the fake3 unconditional jump back to the Main Lane
             MakeInstruction.UnconditionalJump(fake3.Instructions.Last(), originalSuccessor);
@@ -207,7 +207,7 @@ namespace Obfuscator
             if (fake4.parent.containsDivisionModulo == false 
                 || originalSuccessor.Instructions.FindAll(x => x.TACtext.Contains("return")).Count > 0)
                 fake4.Involve = BasicBlock.InvolveInFakeCodeGeneration.Both;
-            fake4.dead = true;
+            fake4.inFakeLane = true;
 
             //Creating the fake4 unconditional jump back to the Main Lane
             MakeInstruction.UnconditionalJump(fake4.Instructions.Last(), originalSuccessor);

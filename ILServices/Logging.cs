@@ -215,8 +215,8 @@ namespace Services
             sb.AppendLine("Total number of basic blocks: " + counter);
 
             counter = 0;
-            routine.Functions.ForEach(x => counter += x.BasicBlocks.Count(y => y.dead));
-            sb.AppendLine("   - out of them dead: " + counter);
+            routine.Functions.ForEach(x => counter += x.BasicBlocks.Count(y => y.inFakeLane));
+            sb.AppendLine("   - out of them in fake lanes (reached by invalid parameters only): " + counter);
 
             int total_instructions = 0;
             routine.Functions.ForEach(x => x.BasicBlocks.ForEach(y => total_instructions += y.Instructions.Count));

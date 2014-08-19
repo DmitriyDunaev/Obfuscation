@@ -26,7 +26,7 @@ namespace Objects
             get { return _ID.ToString(); }
         }
         public Function parent { get; private set; }
-        public bool dead = false;
+        public bool inFakeLane = false;
         public InvolveInFakeCodeGeneration Involve = InvolveInFakeCodeGeneration.FakeVariablesOnly;
         public bool Meshable = true;
         public bool PolyRequired = false;
@@ -150,7 +150,7 @@ namespace Objects
         public BasicBlock(BasicBlock original, List<BasicBlock> newSuccessors)
         {
             _ID = new IDManager();
-            this.dead = original.dead;
+            this.inFakeLane = original.inFakeLane;
             this.parent = original.parent;
             this.Involve = original.Involve;
             this.Meshable = original.Meshable;
