@@ -81,7 +81,7 @@ namespace Platform_x86
                         if (original[i].Contains(type))
                         {
                             //For functions
-                            if (original[i].Contains("_sub"))
+                            if (original[i].Contains("sub_"))
                             {
                                 CreateFunction(original[i]);
                                 translated = true;

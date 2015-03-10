@@ -124,6 +124,9 @@
     <Content Include="Pseudocode\Tests\fibonacci.txt" />
     <Content Include="Pseudocode\Tests\fibonacci_real.txt" />
     <Content Include="Pseudocode\Tests\simple_test.txt" />
+    <Content Include="Pseudocode\x64.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
