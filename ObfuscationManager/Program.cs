@@ -22,7 +22,8 @@ namespace ObfuscationManager
                 Console.ResetColor();
                 Console.Write("Getting XML from platform-dependent module");
                 string pathToPC = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Pseudocode", System.Configuration.ConfigurationManager.AppSettings["PseudoCode"]);
-                doc = Platform_x86.PseudoCode.GetTAC(pathToPC);
+                //doc = Platform_x86.PseudoCode.GetTAC(pathToPC);
+                doc = Platform_x64.PseudoCode_x64.GetTAC(pathToPC);
                 Obfuscator.ILObfuscator.PrintSuccess();
                 Console.Write("Performing formal control");
                 XmlHelper.Validate.AgainstScheme(doc);
@@ -96,8 +97,5 @@ namespace ObfuscationManager
                 return 1;
             }
         }
-
-
-        
     }
 }

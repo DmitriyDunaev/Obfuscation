@@ -75,6 +75,10 @@
       <Project>{1de873e2-65fc-44ba-ab50-5f818c4c8fea}</Project>
       <Name>ILServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platform x64\Platform x64.csproj">
+      <Project>{909a859c-750c-4fd9-b4d2-44bb478fa17d}</Project>
+      <Name>Platform x64</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Platform x86\Platform x86.csproj">
       <Project>{9c336c5b-d5c9-4b08-a40a-fb90c56a20ad}</Project>
       <Name>Platform x86</Name>
