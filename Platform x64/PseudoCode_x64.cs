@@ -19,6 +19,7 @@ namespace Platform_x64
         private static Random randNumbers = new Random(DateTime.Now.Millisecond);
         private static List<int> embeddedBasicBlocks = new List<int>();
         private static bool functionsHasDivisionModulo;
+        private static bool returnNumberOnly;
 
         /// <summary>
         /// Translates PseudoCode (PC) to Three Address Code (TAC)
@@ -37,7 +38,6 @@ namespace Platform_x64
             //For the last function
             FakeReturnInstruction();
             return doc;
-
         }
         /// <summary>
         /// Preprocesses the PC removing unnecessary elements
@@ -56,7 +56,7 @@ namespace Platform_x64
                                        "_main(int argc, const char **argv, const char **envp)",
                                        "(unint)",
                                        "unint" }; //Array of unnecessary elements
-            string[] toReplaceTAC = { "", "", "", "", "", "", "(", "(", "int ", "", "sub_123()", "", "int" };
+            string[] toReplaceTAC = { "", "", "", "", "", "", "(", "(", "int ", "", "main()", "", "int" };
             for (int i = 0; i < original.Length; i++)
             {
                 //Replacing unnecessary elements
@@ -92,7 +92,7 @@ namespace Platform_x64
                         if (original[i].Contains(type))
                         {
                             //For functions
-                            if (original[i].Contains("sub_"))
+                            if (original[i].Contains("sub_") || original[i].Contains("main"))
                             {
                                 CreateFunction(original[i]);
                                 translated = true;
@@ -128,8 +128,11 @@ namespace Platform_x64
                 FakeReturnInstruction();
             //Extracting the returning type
             currentFunctionReturnType = line.Substring(0, line.IndexOf(" "));
-            //Changing the line to "sub_401334(int a1 int a2)"
-            line = line.Substring(line.IndexOf("sub_"));
+            //Changing the line to "sub_401334(int a1 int a2)" or main() if it's a main function
+            if (line.Contains("sub_"))
+                line = line.Substring(line.IndexOf("sub_"));
+            else if (line.Contains("main"))
+                line = line.Substring(line.IndexOf("main"));
             //Removing the parameters
             string aux = line.Remove(line.IndexOf('('));
             FunctionType newFunction = routine.Function.Append();
@@ -249,6 +252,7 @@ namespace Platform_x64
         private static void PreReturn(int lineIndex)
         {
             string aux = original[lineIndex];
+            string temp = aux.Replace("return ", "");
             //aux is something like "return sub_401334(a)"
             if (aux.Contains("sub_"))
             {
@@ -267,16 +271,21 @@ namespace Platform_x64
                 aux.Replace("(", "");
                 aux.Replace(")", "");
                 ReturnInstruction(string.Concat("return ", ProcessArithmeticOperations(aux.Substring(aux.IndexOf(' ')))));
-                
             }
-            //aux is something like "return 0" or "return a1"
+            //aux is something like "return 0" or "return 1" or "return -1"
+            else if ((temp == "0") || (temp == "1") || (temp == "-1"))
+            {
+                returnNumberOnly = true; // Setting the global static flag
+                ReturnInstruction(aux);
+            }
+            //aux is something like "return a1"
             else
                 ReturnInstruction(aux);
         }
         /// <summary>
         /// Creates a return instruction
         /// </summary>
-        /// <param name="line">PC line, similar to "return v3"</param>
+        /// <param name="line">PC line, similar to "return v3" or return 0</param>
         private static void ReturnInstruction(string line)
         {
             if (line.Contains("*"))
@@ -284,6 +293,18 @@ namespace Platform_x64
             string[] tokens = line.Split(' ');
             int indexFunction = routine.Function.Count - 1;
             int indexBasicblock = routine.Function[indexFunction].BasicBlock.Count - 1;
+
+            // Dealing with return instructions that contains -1,0,1
+            if (returnNumberOnly)
+            {
+                string tempVariable;
+                // Getting the value and transforming it into a tempory variable
+                tempVariable = string.Concat("t_", randNumbers.Next().ToString());
+                // Calling this method, the temporary variable will be added into localVar list
+                CreateLocalVariable(string.Concat("int ", tempVariable));
+                tokens[1] = tempVariable;
+                returnNumberOnly = false;
+            }
 
             if (tokens.Length > 1 && functionsHasDivisionModulo)
             {
@@ -1036,8 +1057,7 @@ namespace Platform_x64
             string tempVariable2;
             string[] tokens = line.Split(' ');
             int i = 0;
-            while (i + 1 < tokens.Length && (tokens[i + 1].Equals("*") || tokens[i + 1].Equals("-") || tokens[i + 1].Equals("+")
-                || tokens[i + 1].Equals("/") || tokens[i + 1].Equals("%")))
+            while (i + 1 < tokens.Length && (tokens[i + 1].Equals("*") || tokens[i + 1].Equals("-") || tokens[i + 1].Equals("+") || tokens[i + 1].Equals("/") || tokens[i + 1].Equals("%")))
             {
                 if (tempVariable1.Length == 0)
                 {
