@@ -253,6 +253,7 @@ namespace Platform_x64
         {
             string aux = original[lineIndex];
             string temp = aux.Replace("return ", "");
+
             //aux is something like "return sub_401334(a)"
             if (aux.Contains("sub_"))
             {
@@ -261,23 +262,22 @@ namespace Platform_x64
                 CallInstruction(original[lineIndex].Substring(original[lineIndex].IndexOf("sub_")));
                 ReturnInstruction(string.Concat("return ", aux));
             }
+
+            //aux has some priorities operations in (), like (a1 + v5) / v6
+            else if (aux.Contains("(") && aux.Contains(")") && (aux.Contains(" + ") || aux.Contains(" - ") || aux.Contains(" * ") || aux.Contains(" / ") || aux.Contains(" % ")))
+                ReturnInstruction(string.Concat("return ", ProcessPrioritieOperations(aux.Substring(aux.IndexOf(' ')))));
+
             //aux is something like "return a1 + v5"
             else if (aux.Contains(" + ") || aux.Contains(" - ") || aux.Contains(" * ") || aux.Contains(" / ") || aux.Contains(" % "))
                 ReturnInstruction(string.Concat("return ", ProcessArithmeticOperations(aux.Substring(aux.IndexOf(' ')))));
-            //aux is something like "return (a1 + v5)"
-            else if (aux.Contains(" + ") || aux.Contains(" - ") || aux.Contains(" * ") || aux.Contains(" / ") || aux.Contains(" % ") && aux.Contains("(") && aux.Contains(")"))
-            {
-                //Removing the especial caracters
-                aux.Replace("(", "");
-                aux.Replace(")", "");
-                ReturnInstruction(string.Concat("return ", ProcessArithmeticOperations(aux.Substring(aux.IndexOf(' ')))));
-            }
+
             //aux is something like "return 0" or "return 1" or "return -1"
             else if ((temp == "0") || (temp == "1") || (temp == "-1"))
             {
-                returnNumberOnly = true; // Setting the global static flag
+                returnNumberOnly = true; // Setting the global flag
                 ReturnInstruction(aux);
             }
+
             //aux is something like "return a1"
             else
                 ReturnInstruction(aux);
@@ -1076,6 +1076,63 @@ namespace Platform_x64
             }
             return tempVariable1;
         }
+        /// <summary>
+        /// Processes logical operations with priorities
+        /// </summary>
+        /// <param name="line">Line similar to "(a1 + v5) / v6"</param>
+        /// <returns>The temporary variable that will hold the sequence operations' result</returns>
+        private static string ProcessPrioritieOperations(string line)
+        {
+            if (line.Contains("/") || line.Contains("%"))
+                functionsHasDivisionModulo = true;
+            line = line.Trim();
+            string aux = string.Empty;
+            string tempVariable1 = string.Empty;
+            string tempVariable2 = string.Empty;
+            string replaceOriginal = string.Empty;
+            string[] tokens;
+            int i = 0;
+            int closeParenthesesIndex, openParenthesesIndex;
+
+            while (line.Contains("(") && line.Contains(")"))
+            {
+                // Getting the first occurrence of ")"
+                closeParenthesesIndex = line.IndexOf(")");
+                aux = line.Substring(0, closeParenthesesIndex);
+                // Getting the "(" corresponding 
+                openParenthesesIndex = aux.LastIndexOf("(");
+                aux = line.Substring(openParenthesesIndex, closeParenthesesIndex + 1);
+                // Treating the variable
+                replaceOriginal = aux; // For future usage
+                aux = aux.Replace("(", ""); aux = aux.Replace(")", "");
+                tokens = aux.Split(' ');
+                while (i + 1 < tokens.Length && (tokens[i + 1].Equals("*") || tokens[i + 1].Equals("-") || tokens[i + 1].Equals("+") || tokens[i + 1].Equals("/") || tokens[i + 1].Equals("%")))
+                {
+                    // If this is the first time that the loop is been executed
+                    if (tempVariable1.Length == 0)
+                    {
+                        // Creating a local variable which will recieve the result of the operation
+                        tempVariable1 = string.Concat("t_", randNumbers.Next().ToString());
+                        CreateLocalVariable(string.Concat("int ", tempVariable1));
+                        // It will result in something like t_41413121 = a1 + a2
+                        FullAssignInstruction(string.Join(" ", tempVariable1, "=", tokens[i], tokens[i + 1], tokens[i + 2]));
+                    }
+                    else 
+                    {
+                        tempVariable2 = string.Concat("t_", randNumbers.Next().ToString());
+                        CreateLocalVariable(string.Concat("int ", tempVariable2));
+                        FullAssignInstruction(string.Join(" ", tempVariable2, "=", tempVariable1, tokens[i + 1], tokens[i + 2]));
+                        tempVariable1 = tempVariable2;
+                    }
+                    i += 2;
+                }
+                i = 0;
+                tokens = null;
+                line = line.Replace(replaceOriginal, tempVariable1 + " ");
+            }
+            return tempVariable1;
+        }
+
         /// <summary>
         /// Processes logical operations
         /// </summary>

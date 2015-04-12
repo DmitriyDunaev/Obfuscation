@@ -39,6 +39,7 @@ namespace ObfuscationManager
 
             // For debugging
             exch.SaveToFile("Import.xml", true);
+            
 
             // Sending Exchange format to obfuscator
             Obfuscator.ILObfuscator.Obfuscate(ref exch);
