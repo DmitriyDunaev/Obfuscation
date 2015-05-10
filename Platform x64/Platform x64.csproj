@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assembler_x64.cs" />
+    <Compile Include="Common.cs" />
     <Compile Include="PseudoCode_x64.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

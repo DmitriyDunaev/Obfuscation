@@ -62,7 +62,8 @@ namespace ObfuscationManager
                 Obfuscator.ILObfuscator.PrintSuccess();
 
                 Console.Write("Saving platform-dependent assembly");
-                string asm = Platform_x86.Assembler.GetPlatformDependentCode(doc);
+                //string asm = Platform_x86.Assembler.GetPlatformDependentCode(doc);
+                string asm = Platform_x64.Assembler_x64.GetPlatformDependentCode(doc);
                 Services.Logging.WriteTextFile(asm, "ASM");
                 Obfuscator.ILObfuscator.PrintSuccess();
             }
