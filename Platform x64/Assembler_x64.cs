@@ -79,7 +79,7 @@ namespace Platform_x64
             count = 1;
             foreach (Variable var in routine.Functions.Last().LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true))
             {
-                if (Common.FixFakeParameters == false)
+                if (Common_x64.FixFakeParameters == false)
                 {
                     sb.AppendLine("invoke  printf, addr f" + count);
                     sb.AppendLine("invoke  scanf, addr formatInt, addr din");

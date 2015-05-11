@@ -606,13 +606,13 @@ namespace Platform_x86
             // Remove unnecessary instructions like "MOV a,b; MOV b,a;"
             System.Collections.Specialized.StringCollection movmov = new System.Collections.Specialized.StringCollection();
             Match matchResult = Regex.Match(funcASM.ToString(), @"mov (.*), (.*)(\r\n)+mov (\2), (\1)", RegexOptions.IgnoreCase);
-            //while (matchResult.Success)
-            //{
-            //    movmov.Add(matchResult.Value);
-            //    matchResult = matchResult.NextMatch();
-            //}
-            //foreach (string item in movmov)
-            //    funcASM = funcASM.Replace(item, string.Empty);
+            while (matchResult.Success)
+            {
+                movmov.Add(matchResult.Value);
+                matchResult = matchResult.NextMatch();
+            }
+            foreach (string item in movmov)
+                funcASM = funcASM.Replace(item, string.Empty);
 
             // Remove unnecessary Labels that are not used for jumping
             List<string> labels = new List<string>();

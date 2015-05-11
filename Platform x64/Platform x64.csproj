@@ -7,7 +7,7 @@
     <ProjectGuid>{909A859C-750C-4FD9-B4D2-44BB478FA17D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Platform_x64</RootNamespace>
+    <RootNamespace>Platform_x86</RootNamespace>
     <AssemblyName>Platform x64</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assembler_x64.cs" />
-    <Compile Include="Common.cs" />
+    <Compile Include="Common_x64.cs" />
     <Compile Include="PseudoCode_x64.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -7,7 +7,7 @@ using System.Configuration;
 
 namespace Platform_x64
 {
-    public static class Common
+    public static class Common_x64
     {
 
         /// <summary>
