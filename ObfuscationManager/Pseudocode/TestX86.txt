@@ -1,0 +1,6 @@
+﻿int __cdecl sub_413D20()
+{
+  int v4; // [sp+30h] [bp+8h]@1
+  scanf("%d", &v4);
+  return v4;
+}

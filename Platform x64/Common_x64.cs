@@ -15,7 +15,7 @@ namespace Platform_x64
         /// true: select the values and write them fixed to a generated EXE file
         /// false: generate fake input parameters, later provided by the user
         /// </summary>
-        public static bool FixFakeParameters = false;
+        public static bool FixFakeParameters = true;
     
     }
 }

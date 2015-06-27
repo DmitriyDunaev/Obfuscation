@@ -384,7 +384,10 @@ namespace Platform_x64
             sb.AppendLine("MOV rax, " + StackPointerOfVariable(rightvalue));
 
             if (op == Instruction.UnaryOperationType.ArithmeticNegation)
+            {
                 sb.AppendLine("NEG rax");
+
+            }
 
             else
                 sb.AppendLine("NOT rax");
@@ -540,7 +543,7 @@ namespace Platform_x64
                 case Instruction.ProceduralType.Return:
                     if (var != null || num != null)
                     {
-                        sb.Append("MOV eax, ");
+                        sb.Append("MOV rax, ");
                         if (var != null && num == null)
                             sb.Append(StackPointerOfVariable(var));
                         else
@@ -568,7 +571,7 @@ namespace Platform_x64
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine(func.globalID + " endp");
+            sb.AppendLine(func.globalID + " endp"); 
 
             return sb.ToString();
         }
@@ -588,7 +591,7 @@ namespace Platform_x64
             foreach (Variable var in func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input))
             {
                 Offsets.Add(var, ps);
-                ps += var.memoryRegionSize;
+                ps += 8;
             }
             return fs;
         }

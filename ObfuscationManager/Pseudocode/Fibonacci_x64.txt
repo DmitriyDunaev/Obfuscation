@@ -1,0 +1,28 @@
+__int64 __fastcall sub_140001000(int a1)
+{
+  int i; // [sp+0h] [bp-18h]@1
+  signed int v3; // [sp+4h] [bp-14h]@1
+  signed int v4; // [sp+8h] [bp-10h]@1
+  int v5; // [sp+Ch] [bp-Ch]@0
+
+  v4 = 0;
+  v3 = 1;
+  for ( i = 0; i < a1; ++i )
+  {
+    v5 = v3 + v4;
+    v4 = v3;
+    v3 = v5;
+  }
+  return (unsigned int)v5;
+}
+
+int __cdecl main(int argc, const char **argv, const char **envp)
+{
+  int v3; // ST20_4@1
+  int v5; // [sp+24h] [bp-14h]@1
+
+  scanf(Format, &v5, envp);
+  v3 = sub_140001000(v5);
+  printf(aD, (unsigned int)v3);
+  return v3;
+}
