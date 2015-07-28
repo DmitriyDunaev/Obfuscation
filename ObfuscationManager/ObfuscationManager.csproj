@@ -119,12 +119,6 @@
     <Content Include="Pseudocode\Fibonacci_x64.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Pseudocode\TestX86.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Pseudocode\TestC2.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Pseudocode\Tests\Factorial.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -146,9 +140,6 @@
     <Content Include="Pseudocode\Tests\fibonacci.txt" />
     <Content Include="Pseudocode\Tests\fibonacci_real.txt" />
     <Content Include="Pseudocode\Tests\simple_test.txt" />
-    <Content Include="Pseudocode\TestC.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Pseudocode\LeastCommonMultiple_x64.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

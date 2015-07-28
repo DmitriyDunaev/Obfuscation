@@ -13,6 +13,8 @@ namespace ObfuscationManager
         {
             XmlDocument doc;    // XML Document used for data exchange between modules
             Exchange exch;      // Exchange type
+            string moduleVersion = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["Module"]);
+
             try
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
@@ -22,8 +24,10 @@ namespace ObfuscationManager
                 Console.ResetColor();
                 Console.Write("Getting XML from platform-dependent module");
                 string pathToPC = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Pseudocode", System.Configuration.ConfigurationManager.AppSettings["PseudoCode"]);
-                //doc = Platform_x86.PseudoCode.GetTAC(pathToPC);
-                doc = Platform_x64.PseudoCode_x64.GetTAC(pathToPC);
+                if (moduleVersion.Equals("x86"))
+                    doc = Platform_x86.PseudoCode.GetTAC(pathToPC);
+                else
+                    doc = Platform_x64.PseudoCode_x64.GetTAC(pathToPC);
                 Obfuscator.ILObfuscator.PrintSuccess();
                 Console.Write("Performing formal control");
                 XmlHelper.Validate.AgainstScheme(doc);
@@ -62,8 +66,11 @@ namespace ObfuscationManager
                 Obfuscator.ILObfuscator.PrintSuccess();
 
                 Console.Write("Saving platform-dependent assembly");
-                //string asm = Platform_x86.Assembler.GetPlatformDependentCode(doc);
-                string asm = Platform_x64.Assembler_x64.GetPlatformDependentCode(doc);
+                string asm;
+                if (moduleVersion.Equals("x86"))
+                     asm = Platform_x86.Assembler.GetPlatformDependentCode(doc);
+                else
+                     asm = Platform_x64.Assembler_x64.GetPlatformDependentCode(doc);
                 Services.Logging.WriteTextFile(asm, "ASM");
                 Obfuscator.ILObfuscator.PrintSuccess();
             }

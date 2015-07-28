@@ -22,7 +22,6 @@ namespace Platform_x64
 
         private static int framestack;
 
-
         public static string GetPlatformDependentCode(XmlDocument doc)
         {
             ExchangeFormat.Exchange exch = ExchangeFormat.Exchange.LoadFromString(doc.InnerXml);
@@ -41,7 +40,112 @@ namespace Platform_x64
             sb.AppendLine("includelib kernel32.lib");
             sb.AppendLine("includelib user32.lib");
             sb.AppendLine("includelib msvcrt.lib");
-            sb.AppendLine("include invoke_macros.asm");
+            sb.AppendLine();
+            sb.AppendLine("IFNDEF __JWASM");
+            sb.AppendLine("    invoke equ nvk");
+            sb.AppendLine("ENDIF");
+            sb.AppendLine("nvk MACRO thefun:REQ, args:VARARG");
+            sb.AppendLine("    push rbp");
+            sb.AppendLine("    lea  rbp, [rsp][8] ");
+            sb.AppendLine("    sub rsp, 8       ");
+            sb.AppendLine("    and rsp, -10h   ");
+            sb.AppendLine("    mov [rsp], rbp");
+            sb.AppendLine("    mov rbp, [rbp-8]");
+            sb.AppendLine("    nvk_noalign thefun, args");
+            sb.AppendLine("    pop rsp");
+            sb.AppendLine("ENDM");
+            sb.AppendLine("nvk_noalign MACRO thefun:REQ, args:VARARG  ");
+            sb.AppendLine("LOCAL txt, cnt, stackadjust, cnttopass");
+            sb.AppendLine("    cnt = 0");
+            sb.AppendLine("    IFNB <args>");
+            sb.AppendLine("        txt equ <> ");
+            sb.AppendLine("%       FOR arg, <args>");
+            sb.AppendLine("            txt CATSTR <arg> , <,>, txt");
+            sb.AppendLine("            cnt = cnt + 1");
+            sb.AppendLine("        ENDM");
+            sb.AppendLine("        txt SUBSTR txt, 1");
+            sb.AppendLine("        txt SUBSTR txt, 1, @SizeStr( %txt ) - 1");
+            sb.AppendLine("        IF cnt GT 4");
+            sb.AppendLine("            stackadjust = cnt");
+            sb.AppendLine("        ELSE");
+            sb.AppendLine("            stackadjust = 4");
+            sb.AppendLine("        ENDIF");
+            sb.AppendLine("        stackadjust = ((stackadjust+1)/2)*2");
+            sb.AppendLine("        sub rsp, stackadjust * 8");
+            sb.AppendLine("        mov [rsp], rdx");
+            sb.AppendLine("        cnttopass = cnt ");
+            sb.AppendLine("        nvk_loadstack txt, cnttopass");
+            sb.AppendLine("        mov rcx, [rsp]");
+            sb.AppendLine("        mov rdx, [rsp+8]");
+            sb.AppendLine("        mov r8, [rsp+10h]");
+            sb.AppendLine("        mov r9, [rsp+18h]");
+            sb.AppendLine("    ELSE");
+            sb.AppendLine("        sub rsp, 20h");
+            sb.AppendLine("    ENDIF");
+            sb.AppendLine("    call thefun");
+            sb.AppendLine("    IF cnt GT 0");
+            sb.AppendLine("        add rsp, stackadjust * 8");
+            sb.AppendLine("    ELSE");
+            sb.AppendLine("        add rsp, 20h");
+            sb.AppendLine("    ENDIF");
+            sb.AppendLine("ENDM");
+            sb.AppendLine("nvk_loadstack MACRO args, posonstack");
+            sb.AppendLine("local leacmd");
+            sb.AppendLine("%   FOR arg, <args>");
+            sb.AppendLine("        posonstack = posonstack - 1");
+            sb.AppendLine("        mov rdx, [rsp] ");
+            sb.AppendLine("        leacmd equ <@afteraddr(arg)> ");
+            sb.AppendLine("        IFNB leacmd");
+            sb.AppendLine("            leacmd CATSTR <lea rdx, >, leacmd");
+            sb.AppendLine("            &leacmd ");
+            sb.AppendLine("            mov [rsp + posonstack*8], rdx");
+            sb.AppendLine("        ELSE");
+            sb.AppendLine("            IF TYPE(arg) EQ REAL4 OR TYPE(arg) EQ REAL10");
+            sb.AppendLine("                fld arg");
+            sb.AppendLine("                fstp REAL8 PTR [rsp + posonstack*8]");
+            sb.AppendLine("            ELSE");
+            sb.AppendLine("                IF TYPE(arg) EQ 1 OR TYPE(arg) EQ 2");
+            sb.AppendLine("                    movsx edx, arg");
+            sb.AppendLine("                ELSEIF TYPE(arg) EQ 4");
+            sb.AppendLine("                    mov edx, arg");
+            sb.AppendLine("                ELSE");
+            sb.AppendLine("                    mov rdx, arg");
+            sb.AppendLine("                ENDIF");
+            sb.AppendLine("                mov [rsp + posonstack*8], rdx");
+            sb.AppendLine("            ENDIF");
+            sb.AppendLine("        ENDIF");
+            sb.AppendLine("    ENDM");
+            sb.AppendLine("ENDM");
+            sb.AppendLine("@afteraddr MACRO thetxt:=<>");
+            sb.AppendLine("LOCAL char, answer, iswhite, numchars");
+            sb.AppendLine("    answer equ <>");
+            sb.AppendLine("    numchars = 0");
+            sb.AppendLine("    FORC char, <&thetxt>");
+            sb.AppendLine("        IF numchars EQ 0");
+            sb.AppendLine("            iswhite INSTR 1,< 	>,<&char> ");
+            sb.AppendLine("            IFE iswhite");
+            sb.AppendLine("                answer CATSTR answer,<&char>");
+            sb.AppendLine("                numchars = 1");
+            sb.AppendLine("            ENDIF");
+            sb.AppendLine("        ELSEIF numchars LT 4");
+            sb.AppendLine("                answer CATSTR answer,<&char>");
+            sb.AppendLine("                numchars = numchars + 1");
+            sb.AppendLine("        ELSEIF numchars EQ 4");
+            sb.AppendLine("            IFIDNI <addr>, answer");
+            sb.AppendLine("                answer equ <>");
+            sb.AppendLine("                numchars = 5");
+            sb.AppendLine("            ELSE");
+            sb.AppendLine("                EXITM <> ");
+            sb.AppendLine("            ENDIF");
+            sb.AppendLine("        ELSE");
+            sb.AppendLine("            answer CATSTR answer,<&char>");
+            sb.AppendLine("        ENDIF");
+            sb.AppendLine("    ENDM");
+            sb.AppendLine("    IF numchars LT 5");
+            sb.AppendLine("        answer equ <>");
+            sb.AppendLine("    ENDIF");
+            sb.AppendLine("EXITM answer");
+            sb.AppendLine("ENDM");
             sb.AppendLine();
             sb.AppendLine(".data");
             sb.AppendLine("scan BYTE 'scanf:',0");
@@ -450,7 +554,7 @@ namespace Platform_x64
 
                         sb.AppendLine(pow.ToString());
                     }
-                    
+
                 }
 
                 /* 
@@ -571,7 +675,7 @@ namespace Platform_x64
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine(func.globalID + " endp"); 
+            sb.AppendLine(func.globalID + " endp");
 
             return sb.ToString();
         }
@@ -604,7 +708,6 @@ namespace Platform_x64
             sb.AppendLine("RET");
             return sb.ToString();
         }
-
 
         private static StringBuilder Optimize(StringBuilder funcASM)
         {
