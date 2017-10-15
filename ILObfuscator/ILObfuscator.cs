@@ -14,6 +14,8 @@ namespace Obfuscator
         private static void Obfuscation(Routine routine)
         {
             Logging.WriteComplexityMetrics(routine, "Original");
+            Logging.WriteReadableTAC(routine, "Original1");
+            Logging.WriteRoutine(routine, "Original1");
 
             //Checking whether the functions have either "division" or "modulo" operations
             //If they do, fake instructions with original variables should be inserted only before the return
@@ -25,6 +27,7 @@ namespace Obfuscator
             
             //Creating fake input parameters in all functions
             FakeParameters.CreateFakeParameters(routine);
+            Logging.WriteReadableTAC(routine, "FakeParam2");
 
             //Checking for Multiple Obfuscation
             for (int i = 0; i < Convert.ToInt32(ConfigurationManager.AppSettings["MultipleRuns"]); i++)
@@ -37,14 +40,16 @@ namespace Obfuscator
                         func.LocalVariables.Add(new Variable(Variable.Kind.Local, Variable.Purpose.Fake, Objects.Common.MemoryRegionSize.Integer));
                     }
                 }
-                
+
+                Logging.WriteReadableTAC(routine, "FakeVariable3");
+
                 if (ConfigurationManager.AppSettings["ConstCoverAlgInMultipleRuns"].Split('-')[i].Equals("1"))
                 {
                     Console.Write("Step 1: Constants coverage");
                     ConstCoverage.CoverConstants(routine);
                     routine.Validate();
                     PrintSuccess();
-                    Logging.WriteReadableTAC(routine, "CONST");
+                    Logging.WriteReadableTAC(routine, "CONST4");
                     Logging.DrawCFG(routine, "CONST");
                 }
 
@@ -54,7 +59,7 @@ namespace Obfuscator
                     Meshing.MeshUnconditionals(routine);
                     routine.Validate();
                     PrintSuccess();
-                    Logging.WriteReadableTAC(routine, "MeshingUNC");
+                    Logging.WriteReadableTAC(routine, "MeshingUNC5");
                     Logging.DrawCFG(routine, "MeshingUNC");
                 }
 
@@ -64,7 +69,7 @@ namespace Obfuscator
                     Meshing.MeshConditionals(routine);
                     routine.Validate();
                     PrintSuccess();
-                    Logging.WriteReadableTAC(routine, "MeshingCOND");
+                    Logging.WriteReadableTAC(routine, "MeshingCOND6");
                     Logging.DrawCFG(routine, "MeshingCOND");
                 }
                 
@@ -74,7 +79,7 @@ namespace Obfuscator
                 routine.Validate();
                 PrintSuccess();
                 Logging.WriteRoutine(routine, "NoOpersGeneration");
-                Logging.WriteReadableTAC(routine, "FakeNOPs");
+                Logging.WriteReadableTAC(routine, "FakeNOPs7");
 
                 Console.Write("Step 5: Partial data analysis");
                 DataAnalysis.GatherBasicBlockInfo(routine);
@@ -109,7 +114,23 @@ namespace Obfuscator
                 routine.Validate();
                 PrintSuccess();
 
-                Logging.WriteReadableTAC(routine, "FakeInstrFromNOPs");
+                Logging.WriteReadableTAC(routine, "FakeInstrFromNOPs8");
+                Logging.WriteRoutine(routine, "FakeInstrFromNOPs8");
+                Logging.WriteComplexityMetricsExcel(routine, "FakeInstrFromNOPs8 Excel");
+
+                if (true) //TODO
+                {
+                    Console.Write("Step 9: Generation nre functions from Basic Blocks");
+                    Partitioning.generateFunctions(routine);
+                    routine.Validate();
+                    PrintSuccess();
+                    Logging.WriteReadableTAC(routine, "BB9");
+                    Logging.WriteRoutine(routine, "BB9");
+                    Logging.DrawCFG(routine, "BB9");
+                    Logging.WriteComplexityMetricsExcel(routine, "After BB Excel");
+                }
+
+
             }
         }
         

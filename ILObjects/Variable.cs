@@ -50,7 +50,14 @@ namespace Objects
         public int? fixedMin { get; set; }
         public int? fixedMax { get; set; }
         public bool fake { get; private set; }
-        public Kind kind { get; private set; }
+        public Kind kind { get; set; }
+
+
+        public static int varID = 32100000;
+        private static String getID(int num)
+        {
+            return "ID_" + num + "-0000-464F-A363-485CE6CC25F7";
+        }
 
         // Constructor
         public Variable(VariableType var, Kind kind1)
@@ -111,6 +118,19 @@ namespace Objects
         }
 
 
+        public Variable(Variable var)
+        {
+            this._ID = new IDManager(var.ID);
+            this.name = var.name;
+            this.memoryRegionSize = var.memoryRegionSize;
+            this.pointer = var.pointer;
+            this.fake = var.fake;
+            this.fixedMin = var.fixedMin;
+            this.fixedMax = var.fixedMax;
+            this.kind = var.kind;
+
+        }
+
         public override bool Equals(object obj)
         {
             return (obj as Variable) == null ? base.Equals(obj) : ((Variable)obj).ID == ID;
@@ -119,6 +139,33 @@ namespace Objects
         public override int GetHashCode()
         {
             return ID.GetHashCode();
+        }
+
+        public String ResetID()
+        {
+            _ID = new IDManager(getID(++varID));
+            resetName();
+            return ID;
+        }
+
+        /// <summary>
+        /// Set the variable's ID to a new value.
+        /// </summary>
+        /// <param name="id">The new ID.</param>
+        public void ResetID(String id)
+        {
+            _ID = new IDManager(id);
+            resetName();
+        }
+
+        /// <summary>
+        /// Set the variable's name, by it's original first character and it's current ID.
+        /// </summary>
+        private void resetName()
+        {
+            name = String.Concat(this.name[0], "_", ID);
+            //name = String.Concat("p_", ID); //TODO
+            //kind = Kind.Input;
         }
     }
 }

@@ -66,6 +66,12 @@ namespace Objects
         {
             get { return _ID.ToString(); }
         }
+
+        public void mySetID(IDManager man)
+        {
+            _ID = man;
+        }
+
         public Common.StatementType statementType { get; set; }
         public string TACtext { get; set; }
         public bool isFake { get; private set; }
@@ -114,6 +120,31 @@ namespace Objects
             TACtext = "nop";
         }
 
+        private Instruction() { }
+
+        public static Instruction getInstruction(BasicBlock parent, String ID, String tacText = "return", Boolean isFake = false, Common.StatementType type = Common.StatementType.Procedural)
+        {
+            Instruction instruction = new Instruction();
+            instruction._ID = new IDManager(ID);
+            instruction.isFake = isFake;
+            instruction.parent = parent;
+            instruction.statementType = type;
+            instruction.TACtext = tacText;
+
+            return instruction;
+        }
+
+        //TODO
+        public static Instruction getReturnInstruction(BasicBlock parent)
+        {
+            Instruction ins = new Instruction(parent);
+            ins._ID = new IDManager();
+            ins.isFake = false;
+            ins.statementType = Common.StatementType.Procedural;
+            ins.TACtext = "return";
+            return ins;
+        }
+
 
         public void ResetID()
         {
@@ -151,6 +182,40 @@ namespace Objects
 
         // METHODS
 
+        /// <summary>
+        /// Creates a deep copy of its instructions variables to handle them separately from its original context.
+        /// After the copy, the variables gets new ID-s and the TAC text is change too.
+        /// </summary>
+        /// <param name="oldToNew">Varaible ID dictionary Key: old ID, value: new ID.</param>
+        /// <param name="newToOld">Varaible ID dictionary Key: new ID, value: old ID.</param>
+        public void renewVariableIds(Dictionary<String, String> oldToNew, Dictionary<String, String> newToOld)
+        {
+            List<Variable> newRefVars = new List<Variable>();
+            foreach (Variable var in RefVariables)
+            {
+                newRefVars.Add(new Variable(var));
+            }
+            this.RefVariables = newRefVars;
+
+            foreach (Variable var in RefVariables)
+            {
+                if (oldToNew.ContainsKey(var.ID)) //If the old ID is in the keys, the current variable has been visited once, so it's already has a new ID.
+                {
+                    String oldID = var.ID;
+                    var.ResetID(oldToNew[var.ID]);
+                    TACtext = TACtext.Replace(oldID, var.ID);
+                }
+                else//If the ID is not in the set it is the first visit. We add it to the controll lists, and change the TAC with the new ID.
+                {
+                    //The variable was not in the controll lists, so it is it's fist visit.
+                    String oldID = var.ID;
+                    oldToNew.Add(oldID, var.ResetID());
+                    newToOld.Add(var.ID, oldID);
+                    TACtext = TACtext.Replace(oldID, var.ID); //Replace the old TAC text with the new ID.
+                }
+            }
+        }
+      
 
         /// <summary>
         /// Gets a list of the instructions followed by the given instruction in a control flow (directly preceding in CFG)

@@ -38,7 +38,15 @@ namespace Services
                 sb.AppendLine("digraph{");
                 foreach (BasicBlock bb in func.BasicBlocks)
                 {
-                    basicBlockID = string.Join("","\"", bb.ID.ToString().Substring(bb.ID.ToString().IndexOf('_') + 1, 8), "\"");
+                    try
+                    {
+
+                        basicBlockID = string.Join("", "\"", bb.ID.ToString().Substring(bb.ID.ToString().IndexOf('_') + 1, 8), "\"");
+                    }
+                    catch (Exception e) {
+                        string a = "af";
+                    }
+                    
                     //Defining the attributes for the actual basic block
                     if (!basicBlocksCFG_Attributes.ContainsKey(bb))
                     {
@@ -536,6 +544,252 @@ namespace Services
 
             string filename_routine = Path.Combine(pathToLog, string.Format("Obfuscation_Complexity_{0}_{1:dd.MM.yyy}.log", filename_distinguisher, DateTime.Now));
             File.WriteAllText(filename_routine, sb.ToString());
+        }
+
+        /// <summary>
+        /// Writes various complexity metrics about the given routine
+        /// </summary>
+        /// <param name="routine">Routine to be logged</param>
+        /// <param name="filename_distinguisher">Filename distinguisher (e.g. last used algorithm abbreviation)</param>
+        public static void WriteComplexityMetricsExcel(Routine routine, string filename_distinguisher = "")
+        {
+            if (!Directory.Exists(pathToLog))
+                Directory.CreateDirectory(pathToLog);
+
+            StringBuilder[] sb = new StringBuilder[12];
+            for (int i = 0; i < 12; i++)
+                sb[i] = new StringBuilder();
+            sb[0].Append("Function ID |");
+            sb[1].Append("Control Flow Complexity (McCabe's Metric): |");
+            sb[2].Append("Vocabulary |");
+            sb[3].Append("Length |");
+            sb[4].Append("Volume |");
+            sb[5].Append("Difficulty to understand |");
+            sb[6].Append("Effort to implement |");
+            sb[7].Append("Time to implement |");
+            sb[8].Append("Data Flow Complexity (Elshoff's Metric): |");
+            sb[9].Append("Oviedo's Metric |");
+            sb[10].Append("Decisional Complexity (McClure's Metric): |");
+            sb[11].Append("Data Complexity (Chapin's Metric): |");
+
+            foreach (Function func in routine.Functions)
+            {
+                int index = 0;
+                //For McCabe's Metric
+                int edges = 0;
+
+                //For Halstead's Metric
+                List<string> operators = new List<string>();
+                List<string> operands = new List<string>();
+
+                //For Elshoff's Metric
+                List<string> bbReferencedVars = new List<string>();
+                List<string> funcReferencedVars = new List<string>();
+                List<string> bbDefinedVars = new List<string>();
+                List<string> funcDefinedVars = new List<string>();
+                int dataFlowComplexity = 0;
+
+                //For McClure's Metric
+                int numComparisons = 0;
+                List<string> controlVariables = new List<string>();
+
+                foreach (BasicBlock bb in func.BasicBlocks)
+                {
+                    edges += bb.getSuccessors.Count;
+                    foreach (Instruction ins in bb.Instructions)
+                    {
+                        switch (ins.statementType)
+                        {
+                            case Objects.Common.StatementType.ConditionalJump:
+                                operators.Add("if");
+                                operands.Add(ins.GetVarFromCondition().ID);
+                                bbReferencedVars.Add(ins.GetVarFromCondition().ID);
+                                controlVariables.Add(ins.GetVarFromCondition().ID);
+                                numComparisons++;
+                                switch (ins.GetRelopFromCondition())
+                                {
+                                    case Instruction.RelationalOperationType.Equals:
+                                        operators.Add("==");
+                                        break;
+                                    case Instruction.RelationalOperationType.Greater:
+                                        operators.Add(">");
+                                        break;
+                                    case Instruction.RelationalOperationType.GreaterOrEquals:
+                                        operators.Add(">=");
+                                        break;
+                                    case Instruction.RelationalOperationType.NotEquals:
+                                        operators.Add("!=");
+                                        break;
+                                    case Instruction.RelationalOperationType.Smaller:
+                                        operators.Add("<");
+                                        break;
+                                    case Instruction.RelationalOperationType.SmallerOrEquals:
+                                        operators.Add("<=");
+                                        break;
+                                }
+                                if (ins.GetConstFromCondition().ToString().Length > 0)
+                                    operands.Add(ins.GetConstFromCondition().ToString());
+                                else
+                                {
+                                    operands.Add(ins.GetRightVarFromCondition().ID);
+                                    bbReferencedVars.Add(ins.GetRightVarFromCondition().ID);
+                                }
+                                operators.Add("goto");
+                                operands.Add(ins.GetTrueSucc().ID);
+                                break;
+                            case Objects.Common.StatementType.Copy:
+                            case Objects.Common.StatementType.PointerAssignment:
+                                operands.Add(ins.RefVariables.First().ID);
+                                bbDefinedVars.Add(ins.RefVariables.First().ID);
+                                operators.Add(":=");
+                                if (ins.RefVariables.Count > 1)
+                                {
+                                    operands.Add(ins.RefVariables.Last().ID);
+                                    bbReferencedVars.Add(ins.RefVariables.Last().ID);
+                                }
+                                else
+                                    operands.Add(ins.TACtext.Split(' ')[2]);
+                                break;
+                            case Objects.Common.StatementType.FullAssignment:
+                                operands.Add(ins.RefVariables.First().ID);
+                                bbDefinedVars.Add(ins.RefVariables.First().ID);
+                                operators.Add(":=");
+                                operands.Add(ins.RefVariables[1].ID);
+                                bbReferencedVars.Add(ins.RefVariables[1].ID);
+                                operators.Add(ins.TACtext.Split(' ')[3]);
+                                if (ins.RefVariables.Count > 2)
+                                {
+                                    operands.Add(ins.RefVariables.Last().ID);
+                                    bbReferencedVars.Add(ins.RefVariables.Last().ID);
+                                }
+                                else
+                                    operands.Add(ins.TACtext.Split(' ')[4]);
+                                break;
+                            case Objects.Common.StatementType.Procedural:
+                                if (ins.TACtext.Contains("call"))
+                                {
+                                    operators.Add("call");
+                                    operands.Add(ins.TACtext.Split(' ')[1]);
+                                    operands.Add(ins.TACtext.Split(' ')[2]);
+                                }
+                                else if (ins.TACtext.Contains("param"))
+                                {
+                                    operators.Add("param");
+                                    if (ins.RefVariables.Count > 0)
+                                    {
+                                        operands.Add(ins.RefVariables.First().ID);
+                                        bbReferencedVars.Add(ins.RefVariables.First().ID);
+                                    }
+                                    else
+                                        operands.Add(ins.TACtext.Split(' ')[1]);
+                                }
+                                else if (ins.TACtext.Contains("return"))
+                                {
+                                    operators.Add("return");
+                                    if (ins.TACtext.Split(' ').Length > 1)
+                                    {
+                                        if (ins.RefVariables.Count > 0)
+                                        {
+                                            operands.Add(ins.RefVariables.First().ID);
+                                            bbReferencedVars.Add(ins.RefVariables.First().ID);
+                                        }
+                                        else
+                                            operands.Add(ins.TACtext.Split(' ')[1]);
+                                    }
+                                }
+                                break;
+                            case Objects.Common.StatementType.UnconditionalJump:
+                                operators.Add("goto");
+                                operands.Add(ins.TACtext.Split(' ')[1]);
+                                break;
+                        }
+                    }
+                    bbDefinedVars = bbDefinedVars.Distinct().ToList();
+                    bbReferencedVars = bbReferencedVars.Distinct().ToList();
+                    foreach (string definedVar in bbDefinedVars)
+                        bbReferencedVars.Remove(definedVar);
+                    bbReferencedVars = bbReferencedVars.Distinct().ToList();
+                    dataFlowComplexity += bbReferencedVars.Count;
+                    funcDefinedVars.AddRange(bbDefinedVars);
+                    funcReferencedVars.AddRange(bbReferencedVars);
+                    bbDefinedVars.Clear();
+                    bbReferencedVars.Clear();
+                }
+
+                //sb.AppendLine("FUNCTION:");
+                sb[index++].Append(func.globalID + "|");
+
+                //Control Flow Complexity (McCabe's Metric)
+                int nodes = func.BasicBlocks.Count;
+                int controlFlowComplexity = edges - nodes + 2;
+                //sb.AppendLine("Control Flow Complexity (McCabe's Metric): " + controlFlowComplexity + " distinct paths");
+                sb[index++].Append(controlFlowComplexity.ToString() + "|");
+
+
+                //Language Complexity (Halstead's Metric)
+                int totalOperators = operators.Count;
+                int totalOperands = operands.Count;
+                operators = operators.Distinct().ToList();
+                operands = operands.Distinct().ToList();
+                int uniqueOperators = operators.Count;
+                int uniqueOperands = operands.Count;
+                int progLenght = totalOperators + totalOperands;
+                int progVocabulary = uniqueOperators + uniqueOperands;
+                double volume = progLenght * Math.Log(progVocabulary, 2);
+                double difficulty = (uniqueOperators / 2) * (totalOperands / uniqueOperands);
+                double effort = volume * difficulty;
+                //sb.AppendLine("\nLanguage Complexity (Halstead's Metric)");
+                //sb.AppendLine("  Program Vocabulary: " + progVocabulary + " unique operators and operands");
+                //sb.AppendLine("  Program Length: " + progLenght + " references to operators and operands");
+                //sb.AppendLine("  Volume: ~ " + Convert.ToInt32(volume) + " mathematical bits");
+                //sb.AppendLine("  Difficulty to understand: " + difficulty);
+                //sb.AppendLine("  Effort to implement: " + effort.ToString("F"));
+                //sb.AppendLine("  Time to implement: " + (effort / 18).ToString("F") + " seconds");
+
+                sb[index++].Append(progVocabulary.ToString() + "|");
+                sb[index++].Append(progLenght.ToString() + "|");
+                sb[index++].Append(Convert.ToInt32(volume).ToString() + "|");
+                sb[index++].Append(difficulty.ToString() + "|");
+                sb[index++].Append(effort.ToString("F") + "|");
+                sb[index++].Append((effort / 18).ToString("F") + "|");
+
+                //Data Flow Complexity (Elshoff's Metric)                
+                //sb.AppendLine("\nData Flow Complexity (Elshoff's Metric): " + dataFlowComplexity);
+                sb[index++].Append(dataFlowComplexity.ToString() + "|");
+
+                //Oviedo's Metric
+                //sb.AppendLine("\nOviedo's Metric: " + (controlFlowComplexity + dataFlowComplexity));
+                sb[index++].Append((controlFlowComplexity + dataFlowComplexity).ToString() + "|");
+
+                //Decisional Complexity (McClure's Metric)
+                controlVariables = controlVariables.Distinct().ToList();
+                int decisionalComplexity = numComparisons + controlVariables.Count;
+                //sb.AppendLine("\nDecisional Complexity (McClure's Metric): " + decisionalComplexity);
+                sb[index++].Append(decisionalComplexity.ToString() + "|");
+
+                //Data Complexity (Chapin's Metric)
+                funcDefinedVars = funcDefinedVars.Distinct().ToList();
+                funcReferencedVars = funcReferencedVars.Distinct().ToList();
+                int p = func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input).Count;
+                int m = funcDefinedVars.Count;
+                int c = controlVariables.Count;
+                int t = func.LocalVariables.FindAll(x => !funcDefinedVars.Contains(x.ID) && !funcReferencedVars.Contains(x.ID)).Count;
+                double dataComplexity = p + 2 * m + 3 * c + 0.5 * t;
+                //sb.AppendLine("\nData Complexity (Chapin's Metric): " + dataComplexity);
+                sb[index++].Append(dataComplexity.ToString() + "|");
+
+
+                //sb.AppendLine("\n*****************************************************************************************\n");
+            }
+
+            string filename_routine = Path.Combine(pathToLog, string.Format("Obfuscation_Complexity_{0}_{1:dd.MM.yyy}.log", filename_distinguisher, DateTime.Now));
+            //File.WriteAllText(filename_routine, sb.ToString());
+            File.Delete(filename_routine);
+            foreach (StringBuilder _sb in sb)
+            {
+                File.AppendAllText(filename_routine, _sb.ToString());
+                File.AppendAllText(filename_routine, Environment.NewLine);
+            }
         }
     }
 }

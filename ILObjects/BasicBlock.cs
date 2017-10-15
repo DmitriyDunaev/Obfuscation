@@ -125,7 +125,6 @@ namespace Objects
             }
         }
 
-
         /// <summary>
         /// Constructor for BasicBlock that contains one NoOperation instruction
         /// </summary>
@@ -139,6 +138,17 @@ namespace Objects
             _ID = new IDManager();
             this.parent = parent;
             parent.BasicBlocks.Add(this);
+        }
+
+        private BasicBlock() { }
+
+        public static BasicBlock getBasicBlock(Function function, String ID)
+        {
+            BasicBlock block = new BasicBlock();
+            block._ID = new IDManager(ID);
+            block.parent = function;
+            function.BasicBlocks.Add(block);
+            return block;
         }
 
 
@@ -188,6 +198,11 @@ namespace Objects
 
         // METHODS
 
+        public Boolean isFakeExitBlock()
+        {
+            return Successors.Count == 0 && Predecessors.Count > 0 && Instructions.Count == 1 && Instructions[0].TACtext == "return";
+        }
+
 
         /// <summary>
         /// Splits the basic block into two after the given instruction (+ handles successor-predecessor links)
@@ -219,7 +234,6 @@ namespace Objects
             return newBB;
         }
 
-
         /// <summary>
         /// Links the basic block to a new successor (sets this.Successor and successor.Predecessor properties)
         /// </summary>
@@ -229,7 +243,7 @@ namespace Objects
         public void LinkToSuccessor(BasicBlock successor, bool clear = false, bool true_branch = false)
         {
             if (Successors.Count > 2)
-                throw new ObjectException("Basic block cannot have more than 2 successors.");
+                throw new ObjectException("Basic block cannot have more than 2 successors."); //TODO not true
 
             if (clear)
             {

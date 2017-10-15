@@ -59,6 +59,19 @@ namespace Objects
                 BasicBlocks.Add(new BasicBlock(bb, this));
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="ID"></param>
+        public Function(Routine routine, String ID)
+        {
+            _ID = new IDManager(ID);
+            globalID = ID;
+            parent = routine;
+            calledFrom = Common.CalledFrom.InternalOnly;
+        }
+
 
         // METHODS
 
@@ -68,6 +81,15 @@ namespace Objects
         /// </summary>
         /// <returns>The "fake exit block"</returns>
         public BasicBlock GetFakeExitBasicBlock()
+        {
+            return BasicBlocks.Find(x => x.getSuccessors.Count == 0);
+        }
+
+        /// <summary>
+        /// Gets the "fake exit block" (it is not the last block in the list) of a function
+        /// </summary>
+        /// <returns>The "fake exit block"</returns>
+        public BasicBlock GetLastBasicBlock()
         {
             return BasicBlocks.Find(x => x.getSuccessors.Count == 0);
         }
@@ -131,6 +153,33 @@ namespace Objects
                 {
                     this.containsDivisionModulo = true;
                     break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add all the variables inside of the funtion to the LocalVariables list.
+        /// </summary>
+        public void AddVariables()
+        {
+            HashSet<String> used = new HashSet<String>();
+            foreach (BasicBlock bb in this.BasicBlocks)
+            {
+                foreach (Instruction ins in bb.Instructions)
+                {
+                    foreach (Variable var in ins.RefVariables)
+                    {
+                        if (used.Add(var.ID))
+                        {
+                            if (!var.fixedMin.HasValue && !var.fixedMax.HasValue)
+                            {
+                                var.fixedMin = 0; //TODO validation
+                                var.fixedMax = 100000; //TODO validation
+                            }
+                            var.kind = Variable.Kind.Input; //TODO
+                            this.LocalVariables.Add(var);
+                        }
+                    }
                 }
             }
         }

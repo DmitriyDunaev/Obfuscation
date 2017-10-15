@@ -92,7 +92,7 @@ namespace Objects
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(statementType.ToString().Substring(1));
+            sb.Append(statementType.ToString().Substring(0));
             for (int i = 0; i < (20 - statementType.ToString().Substring(1).Length); i++)
                 sb.Append(" ");
             sb.Append("|\t");
