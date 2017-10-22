@@ -80,20 +80,20 @@ namespace Objects
                 throw new ValidatorException("No predecessors and no successors found for basic block " + ID);
             if (Instructions.Count == 0)
                 throw new ValidatorException("No instructions found for basic block " + ID);
-            //if (Successors.Count > 2) //TODO NOT A PROBLEM ANYMORE
-            //    throw new ValidatorException("More than two successors found in basic block " + ID);
+            if (Successors.Count > 2)
+                throw new ValidatorException("More than two successors found in basic block " + ID);
             if (Predecessors.Count == 0 && !parent.BasicBlocks.First().Equals(this))
                 throw new ValidatorException("No predecessors found at basic block " + ID + ". By convention, only the first basic block has empty Predecessors list.");
             if (Successors.Count == 0 && (Instructions.Count != 1 || Instructions[0].TACtext != "return"))
                 throw new ValidatorException("No successors found at basic block " + ID + ". By convention, only the 'fake exit block' has empty Successors list.");
-           /* if (Successors.Count == 2) //TODO NOT A PROBLEM ANYMORE
+            if (Successors.Count == 2)
             {
                 if (Instructions.Last().statementType != Common.StatementType.ConditionalJump)
                     throw new ValidatorException("To have 2 successors, the last instruction of a basic block must be a ConditionalJump. Basic block: " + ID);
                 string resultString = Regex.Match(Instructions.Last().TACtext, @"\bID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b").Value;
                 if (!resultString.Equals(Successors[0].ID))
                     throw new ValidatorException("The first successor ID does not match the GOTO instruction. Basic block: " + ID);
-            }*/
+            }
             if (Predecessors.Count > 1 && Successors.Count > 0)
             {
                 int preds_goto = Predecessors.Count(x =>
@@ -121,6 +121,35 @@ namespace Objects
             foreach (BasicBlock pred in Predecessors)
                 if (!pred.Successors.Contains(this) && pred.RefSuccessors.Count == 0)
                     throw new ValidatorException("Broken predecessor-successor link in basic block " + ID);
+
+            int paramCount = 0;
+            Dictionary<String, Function> functions = new Dictionary<string, Function>();
+            foreach (Function function in this.parent.parent.Functions){functions.Add(function.ID, function);}
+            foreach (Instruction inst in this.Instructions)
+            {
+                if (Regex.IsMatch(inst.TACtext, @"^param", RegexOptions.None))
+                {
+                    paramCount++;
+                }
+                else if (Regex.IsMatch(inst.TACtext, @"^call", RegexOptions.None) && Regex.IsMatch(inst.TACtext, @"^call ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} ([-+]?\d+)$", RegexOptions.None))
+                {
+                    try
+                    {
+                        int functionParamCount = Int32.Parse(Regex.Match(inst.TACtext, @"(?<=^call ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12} )([-+]?\d+)$", RegexOptions.None).ToString());
+
+                        if (Regex.IsMatch(inst.TACtext, @"(?<=^call )(ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})", RegexOptions.None) &&
+                            functionParamCount != functions[Regex.Match(inst.TACtext, @"(?<=^call )(ID_[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})", RegexOptions.None).ToString()].getVariableCount())
+                        {
+                            throw new ValidatorException("Instructions TACText is incorrect. Call statement must be precede by the same amount of 'param' statement as the called function." + inst.ID);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        throw new ValidatorException("Instructions TACText is incorrect. Call statement must have a number at the end." + inst.ID);
+                    }
+                    paramCount = 0;
+                }
+            }
 
             foreach (Instruction inst in this.Instructions)
             {

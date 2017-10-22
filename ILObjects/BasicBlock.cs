@@ -140,17 +140,27 @@ namespace Objects
             parent.BasicBlocks.Add(this);
         }
 
+        /// <summary>
+        /// Basic constructor for other methods.
+        /// </summary>
         private BasicBlock() { }
 
-        public static BasicBlock getBasicBlock(Function function, String ID)
+        /// <summary>
+        /// Creates a new Basic Block with the given function as parent, and with the ID if given.
+        /// </summary>
+        /// <param name="function"></param>
+        /// <param name="ID"></param>
+        /// <returns>The new Basic Block.</returns>
+        public static BasicBlock getBasicBlock(Function function, string ID = "")
         {
+            if (function == null || function.parent == null)
+                throw new ObjectException("Basic block cannot be created outside a routine.");
             BasicBlock block = new BasicBlock();
-            block._ID = new IDManager(ID);
+            block._ID = !String.IsNullOrEmpty(ID) ? new IDManager(ID) : new IDManager();
             block.parent = function;
             function.BasicBlocks.Add(block);
             return block;
         }
-
 
         /// <summary>
         /// Copy constructor for basic block
@@ -243,7 +253,7 @@ namespace Objects
         public void LinkToSuccessor(BasicBlock successor, bool clear = false, bool true_branch = false)
         {
             if (Successors.Count > 2)
-                throw new ObjectException("Basic block cannot have more than 2 successors."); //TODO not true
+                throw new ObjectException("Basic block cannot have more than 2 successors.");
 
             if (clear)
             {

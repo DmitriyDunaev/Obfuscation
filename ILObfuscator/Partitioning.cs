@@ -17,14 +17,15 @@ namespace Obfuscator
             int bbID = 65400000;
             List<Function> functions = new List<Function>();
             
-            foreach (Function func in routine.Functions)
+            foreach (Function originalFnction in routine.Functions)
             {
-                foreach (BasicBlock oldBB in func.BasicBlocks)
+                foreach (BasicBlock originalBB in originalFnction.BasicBlocks)
                 {
 
-                    List<Instruction> instructions = getInstructions(oldBB);
+                    List<Instruction> instructionsToOutline = getInstructions(originalBB);
 
-                    if (instructions.Count == 0)
+                    //There is no instructions to outline so we do nothing.
+                    if (instructionsToOutline.Count == 0)
                     {
                         continue;
                     }
@@ -33,56 +34,67 @@ namespace Obfuscator
                     Function newfunction = new Function(routine, getID(funcID++));
                     BasicBlock newBB = BasicBlock.getBasicBlock(newfunction, getID(bbID++));
 
-                    Variable myReturn =  null;
-                    Variable myReturnOld = null;
+                    //The variable we are going to return in, is going to be the new function's last instruction's first variable.
+                    Variable variableToReturn = instructionsToOutline.Last().GetVarFromCondition();
 
                     //Link the variable's olds Ids to the new Ids.
-                    Dictionary<String, String> oldToNew = new Dictionary<String, String>();
-                    Dictionary<String, String> newToOld = new Dictionary<String, String>();
-                    int index = 0; //The index of the old instruction in its old BasicBlock.
-                    foreach (Instruction instruction in instructions)
+                    Dictionary<string, string> oldToNew = new Dictionary<string, string>();
+                    Dictionary<string, string> newToOld = new Dictionary<string, string>();
+
+                    //The index of the old instruction in its old BasicBlock.
+                    int index = 0; 
+
+                    foreach (Instruction instruction in instructionsToOutline)
                     {
-                        index = oldBB.Instructions.IndexOf(instruction);
-                        oldBB.Instructions.Remove(instruction);
+                        index = originalBB.Instructions.IndexOf(instruction);
+                        originalBB.Instructions.Remove(instruction);
 
                         //We are going through the instructions variables, and generate the "param " instructions, to call the new function.
-                        List<string> functionParams = new List<string>();
+                        List<string> instructionParams = new List<string>();
                         foreach (Variable variable in instruction.RefVariables)
                         {
                             //If the variable in the "oldToNew" list, it was already processed in a previous instruction.
                             //If the variable in the "functionParams" list, it was already processed in the current instruction.
-                            if (!oldToNew.ContainsKey(variable.ID) && !functionParams.Contains(variable.ID))
+                            //In these cases we do not create a "param " instruction because it would be a duplication.
+                            if (!oldToNew.ContainsKey(variable.ID) && !instructionParams.Contains(variable.ID))
                             {
-                                functionParams.Add(variable.ID); //Set the current instructions variables to prevent duplicate.
-                                Instruction paramInstruction = Instruction.getInstruction(oldBB, (new IDManager()).ToString(), "param " + variable.name, true);
+                                instructionParams.Add(variable.ID); //Set the current instruction's variables to prevent duplications.
+                                Instruction paramInstruction = new Instruction(originalBB, (new IDManager()).ToString(), "param " + variable.name, true);
                                 paramInstruction.RefVariables.Add(variable);
-                                oldBB.Instructions.Insert(index++, paramInstruction);
-
-                                variable.kind = Variable.Kind.Input; //TODO
+                                originalBB.Instructions.Insert(index++, paramInstruction);
                             }
                         }
 
-                        myReturnOld = instruction.RefVariables.First(); //In every function, the return variable is going to be the last instructions, first variable.
                         instruction.renewVariableIds(oldToNew, newToOld);
+                        instruction.setVariables();
                         instruction.parent = newBB;
-                        instruction.mySetID(new IDManager());
                         newBB.Instructions.Add(instruction);
-                        myReturn = new Variable(instruction.RefVariables.First());
-                        ///myReturn.kind = Variable.Kind.Output; //TODO
                     }
+
+                    //In every function, the return variable is going to be the last instruction's, first variable. (At this point the instructions has new variable objects, not the same as the point at "variableToReturn = ...")
+                    Variable variableReturnWith = instructionsToOutline.Last().GetVarFromCondition();
+                    //We make a copy instruction to return with the correct value, in a different variable.
+                    Variable copyVariable = new Variable(Variable.Kind.Output, Variable.Purpose.Original);
+                    copyVariable.fake = false;
+                    Instruction copyInstruction = new Instruction(newBB, "", copyVariable.name + " := " + variableReturnWith.name, true, Objects.Common.StatementType.Copy);
+                    copyInstruction.RefVariables.Add(copyVariable);
+                    copyInstruction.RefVariables.Add(variableReturnWith);
+                    newBB.Instructions.Add(copyInstruction);
+                    //Create the "return" statement in the new BB.
+                    Instruction returnInstruction = new Instruction(newBB, (new IDManager()).ToString(), "return " + copyVariable.name, true);
+                    returnInstruction.RefVariables.Add(copyVariable);
+                    //Add the instruction to the end of the new BB.
+                    newBB.Instructions.Add(returnInstruction);
+
                     //Set the new variables.
                     newfunction.AddVariables();
-                    //Create the "call" and "retrive" instructions in the old BB.
-                    oldBB.Instructions[index++] = Instruction.getInstruction(oldBB, (new IDManager()).ToString(), "call " + newfunction.ID + " " + newfunction.LocalVariables.Count, true);
-                    Instruction retriveIns = Instruction.getInstruction(oldBB, (new IDManager()).ToString(), "retrieve " + myReturnOld.name, true);
-                    retriveIns.RefVariables.Add(myReturnOld);
-                    oldBB.Instructions[index++] = retriveIns;
 
-                    //Create the "return" statement in the new BB.
-                    Instruction myRetIns = Instruction.getInstruction(newBB, (new IDManager()).ToString(), "return " + myReturn.name, true);
-                    myRetIns.RefVariables.Add(myReturn);
-                    //Add the instruction to the end of the new BB.
-                    newBB.Instructions.Add(myRetIns);
+                    //Create the "call" and "retrive" instructions in the old BB.
+                    originalBB.Instructions[index++] = new Instruction(originalBB, (new IDManager()).ToString(), "call " + newfunction.ID + " " + newfunction.getVariableCount(), true);
+                    Instruction retriveIns = new Instruction(originalBB, (new IDManager()).ToString(), "retrieve " + variableToReturn.name, true);
+                    retriveIns.RefVariables.Add(variableToReturn);
+                    originalBB.Instructions[index++] = retriveIns;
+
 
                     //If the new BB has no LastBasicBlock, we create one.
                     BasicBlock lastBlock = newfunction.GetLastBasicBlock();
@@ -90,10 +102,9 @@ namespace Obfuscator
                     { 
                         //Create the falseReturnBB and link the successor/predecessor.
                         BasicBlock falseRet = BasicBlock.getBasicBlock(newfunction, getID(bbID++));
-                        falseRet.getPredecessors.Add(lastBlock);
-                        lastBlock.getSuccessors.Add(falseRet);
+                        lastBlock.LinkToSuccessor(falseRet);
                         //Add the "false return instruction" to the "falseReturnBB". 
-                        falseRet.Instructions.Add(Instruction.getInstruction(falseRet, (new IDManager()).ToString()));
+                        falseRet.Instructions.Add(new Instruction(falseRet, (new IDManager()).ToString()));
                     }
                     functions.Add(newfunction); //We add the funtions to the routine later, because of the foreach loop.
                 }
@@ -102,7 +113,7 @@ namespace Obfuscator
         }
 
 
-        private static String getID(int num)
+        private static string getID(int num) //TODO
         {
             return "ID_"+num+"-43C3-464F-A363-485CE6CC25F7";
         }

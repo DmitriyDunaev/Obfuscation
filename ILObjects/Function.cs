@@ -60,16 +60,17 @@ namespace Objects
         }
 
         /// <summary>
-        /// TODO
+        /// Creates a new function. Did not add the new function to the routine's Functions list.
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="ID"></param>
-        public Function(Routine routine, String ID)
+        /// <param calledFrom="calledFrom"></param>
+        public Function(Routine routine, string ID = "", Common.CalledFrom calledFrom = Common.CalledFrom.InternalOnly)
         {
-            _ID = new IDManager(ID);
-            globalID = ID;
-            parent = routine;
-            calledFrom = Common.CalledFrom.InternalOnly;
+            this.parent = routine ?? throw new ObjectException("Function cannot be created outside a routine.");
+            this._ID = !String.IsNullOrEmpty(ID) ? new IDManager(ID) : new IDManager();
+            this.globalID = _ID.ToString();
+            this.calledFrom = calledFrom;
         }
 
 
@@ -162,7 +163,7 @@ namespace Objects
         /// </summary>
         public void AddVariables()
         {
-            HashSet<String> used = new HashSet<String>();
+            HashSet<string> used = new HashSet<string>();
             foreach (BasicBlock bb in this.BasicBlocks)
             {
                 foreach (Instruction ins in bb.Instructions)
@@ -171,17 +172,29 @@ namespace Objects
                     {
                         if (used.Add(var.ID))
                         {
-                            if (!var.fixedMin.HasValue && !var.fixedMax.HasValue)
-                            {
-                                var.fixedMin = 0; //TODO validation
-                                var.fixedMax = 100000; //TODO validation
-                            }
-                            var.kind = Variable.Kind.Input; //TODO
                             this.LocalVariables.Add(var);
                         }
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns the function's given kind of variables count.
+        /// </summary>
+        /// <param name="kind"></param>
+        /// <returns></returns>
+        public int getVariableCount(Variable.Kind kind = Variable.Kind.Input)
+        {
+            int count = 0;
+            foreach (Variable var in LocalVariables)
+            {
+                if (var.kind == kind)
+                {
+                    count++;
+                }
+            }
+            return count;
         }
         
     }

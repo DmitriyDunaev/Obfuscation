@@ -49,7 +49,7 @@ namespace Objects
         public string globalID { get; private set; }
         public int? fixedMin { get; set; }
         public int? fixedMax { get; set; }
-        public bool fake { get; private set; }
+        public bool fake { get; set; }
         public Kind kind { get; set; }
 
 
@@ -117,7 +117,10 @@ namespace Objects
 
         }
 
-
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="var"></param>
         public Variable(Variable var)
         {
             this._ID = new IDManager(var.ID);
@@ -141,21 +144,16 @@ namespace Objects
             return ID.GetHashCode();
         }
 
-        public String ResetID()
-        {
-            _ID = new IDManager(getID(++varID));
-            resetName();
-            return ID;
-        }
-
         /// <summary>
         /// Set the variable's ID to a new value.
         /// </summary>
-        /// <param name="id">The new ID.</param>
-        public void ResetID(String id)
+        /// <param name="ID">The new ID.</param>
+        /// <returns>The new ID's String value.</returns>
+        public String ResetID(String ID = "")
         {
-            _ID = new IDManager(id);
+            _ID = !String.IsNullOrEmpty(ID) ? new IDManager(ID) : _ID = new IDManager(getID(++varID)); //TODO DEL
             resetName();
+            return this.ID;
         }
 
         /// <summary>
@@ -163,9 +161,7 @@ namespace Objects
         /// </summary>
         private void resetName()
         {
-            name = String.Concat(this.name[0], "_", ID);
-            //name = String.Concat("p_", ID); //TODO
-            //kind = Kind.Input;
+            this.name = String.Concat(this.name[0], "_", ID);
         }
     }
 }

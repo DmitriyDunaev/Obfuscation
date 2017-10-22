@@ -120,31 +120,17 @@ namespace Objects
             TACtext = "nop";
         }
 
-        private Instruction() { }
-
-        public static Instruction getInstruction(BasicBlock parent, String ID, String tacText = "return", Boolean isFake = false, Common.StatementType type = Common.StatementType.Procedural)
+        public Instruction(BasicBlock parent, string ID = "", string tacText = "return", Boolean isFake = false, Common.StatementType type = Common.StatementType.Procedural)
         {
-            Instruction instruction = new Instruction();
-            instruction._ID = new IDManager(ID);
-            instruction.isFake = isFake;
-            instruction.parent = parent;
-            instruction.statementType = type;
-            instruction.TACtext = tacText;
+            if (parent == null || parent.parent == null || parent.parent.parent == null)
+                throw new ObjectException("Instruction cannot be created outside a routine.");
 
-            return instruction;
+            this._ID = !string.IsNullOrEmpty(ID) ? new IDManager(ID) : new IDManager();
+            this.isFake = isFake;
+            this.parent = parent;
+            this.statementType = type;
+            this.TACtext = tacText;
         }
-
-        //TODO
-        public static Instruction getReturnInstruction(BasicBlock parent)
-        {
-            Instruction ins = new Instruction(parent);
-            ins._ID = new IDManager();
-            ins.isFake = false;
-            ins.statementType = Common.StatementType.Procedural;
-            ins.TACtext = "return";
-            return ins;
-        }
-
 
         public void ResetID()
         {
@@ -183,7 +169,7 @@ namespace Objects
         // METHODS
 
         /// <summary>
-        /// Creates a deep copy of its instructions variables to handle them separately from its original context.
+        /// Creates a deep copy of its variables to handle them separately from its original context.
         /// After the copy, the variables gets new ID-s and the TAC text is change too.
         /// </summary>
         /// <param name="oldToNew">Varaible ID dictionary Key: old ID, value: new ID.</param>
@@ -203,7 +189,7 @@ namespace Objects
                 {
                     String oldID = var.ID;
                     var.ResetID(oldToNew[var.ID]);
-                    TACtext = TACtext.Replace(oldID, var.ID);
+                    TACtext = TACtext.Replace(oldID, var.ID); //Replace the old TAC text with the new ID.
                 }
                 else//If the ID is not in the set it is the first visit. We add it to the controll lists, and change the TAC with the new ID.
                 {
@@ -512,6 +498,14 @@ namespace Objects
             return parent.getSuccessors.Last();
         }
 
+        public void setVariables(Variable.Kind kind = Variable.Kind.Input, bool fake = false)
+        {
+            foreach (Variable var in RefVariables)
+            {
+                var.kind = kind;
+                var.fake = fake;
+            }
+        }
 
     }
 }

@@ -38,14 +38,8 @@ namespace Services
                 sb.AppendLine("digraph{");
                 foreach (BasicBlock bb in func.BasicBlocks)
                 {
-                    try
-                    {
 
-                        basicBlockID = string.Join("", "\"", bb.ID.ToString().Substring(bb.ID.ToString().IndexOf('_') + 1, 8), "\"");
-                    }
-                    catch (Exception e) {
-                        string a = "af";
-                    }
+                    basicBlockID = string.Join("", "\"", bb.ID.ToString().Substring(bb.ID.ToString().IndexOf('_') + 1, 8), "\"");
                     
                     //Defining the attributes for the actual basic block
                     if (!basicBlocksCFG_Attributes.ContainsKey(bb))
