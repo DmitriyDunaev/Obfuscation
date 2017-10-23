@@ -506,6 +506,5 @@ namespace Objects
                 var.fake = fake;
             }
         }
-
     }
 }

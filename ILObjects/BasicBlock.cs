@@ -269,5 +269,22 @@ namespace Objects
 
             successor.Predecessors.Add(this);
         }
+
+        /// <summary>
+        /// Inserts a new instruction to it's list by index. If the index is greater than it's instructions count, the new instruction is going to be insert to the end of the list.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="instruction"></param>
+        public void insertInstruction(ref int index, Instruction instruction)
+        {
+            if (index < Instructions.Count)
+            {
+                Instructions.Insert(index++, instruction);
+            }
+            else
+            {
+                Instructions.Add(instruction);
+            }
+        }
     }
 }

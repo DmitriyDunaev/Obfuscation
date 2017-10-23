@@ -47,7 +47,7 @@
     <Compile Include="Meshing.cs" />
     <Compile Include="ConstCoverage.cs" />
     <Compile Include="ILObfuscator.cs" />
-    <Compile Include="Partitioning.cs" />
+    <Compile Include="Outlining.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

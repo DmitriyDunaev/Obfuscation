@@ -118,10 +118,10 @@ namespace Obfuscator
                 Logging.WriteRoutine(routine, "FakeInstrFromNOPs8");
                 Logging.WriteComplexityMetricsExcel(routine, "FakeInstrFromNOPs8 Excel");
 
-                if (true) //TODO
+                if (ConfigurationManager.AppSettings["OutliningAlgInMultipleRuns"].Split('-')[i].Equals("1"))
                 {
-                    Console.Write("Step 9: Generation nre functions from Basic Blocks");
-                    Partitioning.generateFunctions(routine);
+                    Console.Write("Step 9: Generation new functions from Basic Blocks");
+                    Outlining.generateFunctions(routine);
                     routine.Validate();
                     PrintSuccess();
                     Logging.WriteReadableTAC(routine, "BB9");
@@ -129,8 +129,6 @@ namespace Obfuscator
                     Logging.DrawCFG(routine, "BB9");
                     Logging.WriteComplexityMetricsExcel(routine, "After BB Excel");
                 }
-
-
             }
         }
         

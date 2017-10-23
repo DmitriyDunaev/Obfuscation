@@ -86,7 +86,14 @@ namespace Obfuscator
         /// when we don't have available basic blocks inside a loop body.
         /// </summary>
         public static int MaxJumpBackForLoop = Convert.ToInt32(ConfigurationManager.AppSettings["MaxJumpBackForLoop"]);
-
+        /// <summary>
+        /// Describes the probability of generating a new function in percent.
+        /// </summary>
+        public static int OutlingingProbability = Convert.ToInt32(ConfigurationManager.AppSettings["OutlingingProbability"]);
+        /// <summary>
+        /// Minimal number of instructions in a new function.
+        /// </summary>
+        public static int MaxInstructionsPerFunctions = Convert.ToInt32(ConfigurationManager.AppSettings["MaxInstructionsPerFunctions"]);
 
         /// <summary>
         /// The enumeration for the chances of the jump generation
