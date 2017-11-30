@@ -50,6 +50,7 @@ namespace Obfuscator
                     routine.Validate();
                     PrintSuccess();
                     Logging.WriteReadableTAC(routine, "CONST4");
+                    Logging.WriteRoutine(routine, "CONST4");
                     Logging.DrawCFG(routine, "CONST");
                 }
 
@@ -60,6 +61,7 @@ namespace Obfuscator
                     routine.Validate();
                     PrintSuccess();
                     Logging.WriteReadableTAC(routine, "MeshingUNC5");
+                    Logging.WriteRoutine(routine, "MeshingUNC5");
                     Logging.DrawCFG(routine, "MeshingUNC");
                 }
 
@@ -70,9 +72,10 @@ namespace Obfuscator
                     routine.Validate();
                     PrintSuccess();
                     Logging.WriteReadableTAC(routine, "MeshingCOND6");
+                    Logging.WriteRoutine(routine, "MeshingCOND6");
                     Logging.DrawCFG(routine, "MeshingCOND");
                 }
-                
+
                 Console.Write("Step 4: Generation of fake NOP instructions");
                 foreach (Function func in routine.Functions)
                     FakeCode.GenerateNoOperations(func);
@@ -90,7 +93,8 @@ namespace Obfuscator
                     Console.Write("Step 6: Generation of fake conditional jumps from NOPs");
                     foreach (Function func in routine.Functions)
                         FakeCode.GenerateConditionalJumps(func);
-                    Logging.WriteRoutine(routine, "CondJumps");
+                    Logging.WriteReadableTAC(routine, "CondJumps8");
+                    Logging.WriteRoutine(routine, "CondJumps8");
                     foreach (Function func in routine.Functions)
                         FakeCode.GenerateNoOperations(func);
                     routine.Validate();
@@ -114,8 +118,8 @@ namespace Obfuscator
                 routine.Validate();
                 PrintSuccess();
 
-                Logging.WriteReadableTAC(routine, "FakeInstrFromNOPs8");
-                Logging.WriteRoutine(routine, "FakeInstrFromNOPs8");
+                Logging.WriteReadableTAC(routine, "FakeInstrFromNOPs9");
+                Logging.WriteRoutine(routine, "FakeInstrFromNOPs9");
                 Logging.WriteComplexityMetricsExcel(routine, "FakeInstrFromNOPs8 Excel");
 
                 if (ConfigurationManager.AppSettings["OutliningAlgInMultipleRuns"].Split('-')[i].Equals("1"))
@@ -124,9 +128,9 @@ namespace Obfuscator
                     Outlining.generateFunctions(routine);
                     routine.Validate();
                     PrintSuccess();
-                    Logging.WriteReadableTAC(routine, "BB9");
-                    Logging.WriteRoutine(routine, "BB9");
-                    Logging.DrawCFG(routine, "BB9");
+                    Logging.WriteReadableTAC(routine, "BB10");
+                    Logging.WriteRoutine(routine, "BB10");
+                    Logging.DrawCFG(routine, "BB10");
                     Logging.WriteComplexityMetricsExcel(routine, "After BB Excel");
                 }
             }

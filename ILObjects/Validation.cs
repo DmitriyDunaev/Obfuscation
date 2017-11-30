@@ -145,7 +145,7 @@ namespace Objects
                     }
                     catch (Exception e)
                     {
-                        throw new ValidatorException("Instructions TACText is incorrect. Call statement must have a number at the end." + inst.ID);
+                        throw new ValidatorException("Instructions TACText is incorrect. Call statement must have a number at the end." + inst.ID + ". Exception :" + e);
                     }
                     paramCount = 0;
                 }

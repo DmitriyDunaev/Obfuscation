@@ -22,6 +22,7 @@ namespace Platform_x86
 
         private static int framestack;
 
+        private static bool workerThread = false;
 
         public static string GetPlatformDependentCode(XmlDocument doc)
         {
@@ -95,6 +96,7 @@ namespace Platform_x86
 
             foreach (Function func in routine.Functions)
             {
+                workerThread = func.Equals(routine.Functions[routine.Functions.Count - 2]);
                 sb.AppendLine(GetAssemblyFromTAC(func));
             }
 
@@ -495,7 +497,7 @@ namespace Platform_x86
                     if (called_func == null)
                     {
                         if (inst.TACtext.Contains("scanf"))
-                        {                            
+                        {
                             sb.AppendLine("invoke  crt_printf,addr scan");
                             sb.AppendLine("invoke  crt_scanf,addr formatInt,addr din");
                             sb.AppendLine("MOV eax, din");
@@ -510,7 +512,9 @@ namespace Platform_x86
                             sb.AppendLine(";CALL " + inst.TACtext.Split(' ')[1]);
                     }
                     else
+                    {
                         sb.AppendLine("CALL " + called_func.globalID);
+                    }
                     break;
                 case Instruction.ProceduralType.Param:
                     sb.Append("PUSH ");
@@ -556,6 +560,8 @@ namespace Platform_x86
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(func.globalID + " proc");
             sb.AppendLine("PUSH ebp");
+            if(workerThread)
+                sb.AppendLine("MOV ecx, ebp");
             sb.AppendLine("MOV ebp, esp");
             sb.AppendLine("SUB esp, " + Math.Abs(framestack + 4));
             return sb.ToString();
@@ -595,6 +601,8 @@ namespace Platform_x86
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("ADD esp, " + Math.Abs(framestack + 4));
             sb.AppendLine("POP ebp");
+            if (workerThread)
+                sb.AppendLine("MOV ebp, ecx");
             sb.AppendLine("RET");
             return sb.ToString();
         }

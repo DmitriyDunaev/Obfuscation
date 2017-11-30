@@ -53,12 +53,6 @@ namespace Objects
         public Kind kind { get; set; }
 
 
-        public static int varID = 32100000;
-        private static String getID(int num)
-        {
-            return "ID_" + num + "-0000-464F-A363-485CE6CC25F7";
-        }
-
         // Constructor
         public Variable(VariableType var, Kind kind1)
         {
@@ -151,7 +145,7 @@ namespace Objects
         /// <returns>The new ID's String value.</returns>
         public String ResetID(String ID = "")
         {
-            _ID = !String.IsNullOrEmpty(ID) ? new IDManager(ID) : _ID = new IDManager(getID(++varID)); //TODO DEL
+            _ID = !String.IsNullOrEmpty(ID) ? new IDManager(ID) : _ID = new IDManager();
             resetName();
             return this.ID;
         }

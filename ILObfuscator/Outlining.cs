@@ -14,17 +14,16 @@ namespace Obfuscator
     {
         public static void generateFunctions(Routine routine)
         {
-            int funcID = 98700000;
-            int bbID = 65400000;
+ 
             List<Function> functions = new List<Function>();
-            
+
             foreach (Function originalFnction in routine.Functions)
             {
                 foreach (BasicBlock originalBB in originalFnction.BasicBlocks)
                 {
                     foreach(List<Instruction> instructions in getInstructions(originalBB))
                     {
-                        Function function = getNewFunction(originalBB, instructions, ref funcID, ref bbID);
+                        Function function = getNewFunction(originalBB, instructions);
                         if (function != null)
                         {
                             functions.Add(function);
@@ -32,10 +31,10 @@ namespace Obfuscator
                     }
                 }
             }
-            routine.Functions.AddRange(functions);
+            routine.Functions.InsertRange(0, functions);
         }
 
-        private static Function getNewFunction(BasicBlock originalBB, List<Instruction> instructionsToOutline, ref int funcID, ref int bbID)
+        private static Function getNewFunction(BasicBlock originalBB, List<Instruction> instructionsToOutline)
         {
             //There is no instructions to outline so we do nothing.
             if (instructionsToOutline.Count == 0)
@@ -44,8 +43,8 @@ namespace Obfuscator
             }
 
             //Create new Function, and it's first BasicBlock.
-            Function newfunction = new Function(originalBB.parent.parent, getID(funcID++));
-            BasicBlock newBB = BasicBlock.getBasicBlock(newfunction, getID(bbID++));
+            Function newfunction = new Function(originalBB.parent.parent);
+            BasicBlock newBB = BasicBlock.getBasicBlock(newfunction);
 
             //The variable we are going to return in, is going to be the new function's last instruction's first variable.
             Variable variableToReturn = instructionsToOutline.Last().GetVarFromCondition();
@@ -72,7 +71,7 @@ namespace Obfuscator
                     if (!oldToNew.ContainsKey(variable.ID) && !instructionParams.Contains(variable.ID))
                     {
                         instructionParams.Add(variable.ID); //Set the current instruction's variables to prevent duplications.
-                        Instruction paramInstruction = new Instruction(originalBB, (new IDManager()).ToString(), "param " + variable.name, true);
+                        Instruction paramInstruction = new Instruction(originalBB, "param " + variable.name, true);
                         paramInstruction.RefVariables.Add(variable);
                         originalBB.insertInstruction(ref index, paramInstruction);
                     }
@@ -89,12 +88,12 @@ namespace Obfuscator
             //We make a copy instruction to return with the correct value, in a different variable.
             Variable copyVariable = new Variable(Variable.Kind.Output, Variable.Purpose.Original);
             copyVariable.fake = false;
-            Instruction copyInstruction = new Instruction(newBB, "", copyVariable.name + " := " + variableReturnWith.name, true, Objects.Common.StatementType.Copy);
+            Instruction copyInstruction = new Instruction(newBB, copyVariable.name + " := " + variableReturnWith.name, true, Objects.Common.StatementType.Copy);
             copyInstruction.RefVariables.Add(copyVariable);
             copyInstruction.RefVariables.Add(variableReturnWith);
             newBB.Instructions.Add(copyInstruction);
             //Create the "return" statement in the new BB.
-            Instruction returnInstruction = new Instruction(newBB, (new IDManager()).ToString(), "return " + copyVariable.name, true);
+            Instruction returnInstruction = new Instruction(newBB, "return " + copyVariable.name, true);
             returnInstruction.RefVariables.Add(copyVariable);
             //Add the instruction to the end of the new BB.
             newBB.Instructions.Add(returnInstruction);
@@ -103,8 +102,8 @@ namespace Obfuscator
             newfunction.AddVariables();
 
             //Create the "call" and "retrive" instructions in the old BB.
-            originalBB.insertInstruction(ref index, new Instruction(originalBB, (new IDManager()).ToString(), "call " + newfunction.ID + " " + newfunction.getVariableCount(), true));
-            Instruction retriveIns = new Instruction(originalBB, (new IDManager()).ToString(), "retrieve " + variableToReturn.name, true);
+            originalBB.insertInstruction(ref index, new Instruction(originalBB, "call " + newfunction.ID + " " + newfunction.getVariableCount(), true));
+            Instruction retriveIns = new Instruction(originalBB, "retrieve " + variableToReturn.name, true);
             retriveIns.RefVariables.Add(variableToReturn);
             originalBB.insertInstruction(ref index, retriveIns);
 
@@ -114,19 +113,13 @@ namespace Obfuscator
             if (!lastBlock.isFakeExitBlock())
             {
                 //Create the falseReturnBB and link the successor/predecessor.
-                BasicBlock falseRet = BasicBlock.getBasicBlock(newfunction, getID(bbID++));
+                BasicBlock falseRet = BasicBlock.getBasicBlock(newfunction);
                 lastBlock.LinkToSuccessor(falseRet);
                 //Add the "false return instruction" to the "falseReturnBB". 
-                falseRet.Instructions.Add(new Instruction(falseRet, (new IDManager()).ToString()));
+                falseRet.Instructions.Add(new Instruction(falseRet, "return"));
             }
 
             return newfunction;
-        }
-
-
-        private static string getID(int num) //TODO
-        {
-            return "ID_"+num+"-43C3-464F-A363-485CE6CC25F7";
         }
 
         /// <summary>
@@ -142,26 +135,39 @@ namespace Obfuscator
 
             foreach (List<Instruction> insturctions in instructionsList)
             {
+                if (Randomizer.SingleNumber(0, 100) >= Common.OutlingingProbability)
+                {
+                    continue;
+                }
+
                 //We need at least two instructions per function and least one instruction next to the call of the new funtcion.
                 int instructionsInFunction = Randomizer.SingleNumber(2, Math.Min(Common.MaxInstructionsPerFunctions, insturctions.Count - 1));
                 int start = Randomizer.SingleNumber(0, insturctions.Count - instructionsInFunction);
-
-                if (Randomizer.SingleNumber(0, 100) < Common.OutlingingProbability)
-                {
-                    returnList.Add(insturctions.GetRange(start, instructionsInFunction));
-                }
+                returnList.Add(insturctions.GetRange(start, instructionsInFunction));
             }
 
             return returnList;
         }
+
+        private static Boolean functionCallInstructionSet = false;
 
         private static List<List<Instruction>> getProperInstructionsList(BasicBlock bb)
         {
             List<List<Instruction>> instructionsList = new List<List<Instruction>>();
             List<Instruction> instructions = new List<Instruction>();
             bool proper = false;
+            
             foreach (Instruction instruction in bb.Instructions)
             {
+                if (instruction.TACtext.StartsWith("param"))
+                {
+                    functionCallInstructionSet = true;
+                }
+                else if (instruction.TACtext.StartsWith("retrieve") || instruction.TACtext.StartsWith("return"))
+                {
+                    functionCallInstructionSet = false;
+                }
+
                 //These are the supported instructions type.
                 switch (instruction.statementType)
                 {
@@ -171,16 +177,28 @@ namespace Obfuscator
                         proper = true; break;
                     default: proper = false; break;
                 }
+                proper = true;
 
                 //Not fake instructions are not supported.
-                proper = instruction.isFake ? proper : false;
+                //We cant break a function call with our function call
+                proper = instruction.isFake && !functionCallInstructionSet && instruction.wasNop ? proper : false;
+
+               /* if (instruction.statementType.Equals(Objects.Common.StatementType.FullAssignment))
+                {
+                    if (instruction.RefVariables.Count != 3)
+                    {
+                        proper = false;
+                    }
+                }*/
 
                 if (proper)
                 {
                     instructions.Add(instruction);
                 }
-                else if (instructions.Count >= 3) //We need at least two instructions in a function, and more next to the function call.
+                else if (instructions.Count >= 5) //We need at least two instructions in a function, and more next to the function call.
                 {
+                    instructions.Remove(instructions.First());
+                    instructions.Remove(instructions.Last());
                     instructionsList.Add(instructions);
                     instructions = new List<Instruction>();
                 }

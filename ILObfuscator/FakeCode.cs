@@ -358,7 +358,7 @@ namespace Obfuscator
                     else
                     {
                         for (int i = 0; i < Common.FPO; i++)
-                            nops_and_original.Add(new Instruction(bb));
+                            nops_and_original.Add(new Instruction(bb, true));
 
                         // Add original to TAIL
                         if (inst.statementType == Objects.Common.StatementType.ConditionalJump ||
@@ -383,7 +383,7 @@ namespace Obfuscator
                 {
                     int fakes = Math.Abs(Randomizer.SingleNumber(Common.FakePadding - Common.FakePaddingVariance, Common.FakePadding + Common.FakePaddingVariance) - bb.Instructions.Count);
                     for (int i = 0; i < fakes; i++)
-                        bb.Instructions.Insert(0, new Instruction(bb));
+                        bb.Instructions.Insert(0, new Instruction(bb, true));
                 }
             }
         }

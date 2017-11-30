@@ -151,12 +151,12 @@ namespace Objects
         /// <param name="function"></param>
         /// <param name="ID"></param>
         /// <returns>The new Basic Block.</returns>
-        public static BasicBlock getBasicBlock(Function function, string ID = "")
+        public static BasicBlock getBasicBlock(Function function)
         {
             if (function == null || function.parent == null)
                 throw new ObjectException("Basic block cannot be created outside a routine.");
             BasicBlock block = new BasicBlock();
-            block._ID = !String.IsNullOrEmpty(ID) ? new IDManager(ID) : new IDManager();
+            block._ID = new IDManager();
             block.parent = function;
             function.BasicBlocks.Add(block);
             return block;
@@ -207,7 +207,10 @@ namespace Objects
 
 
         // METHODS
-
+        /// <summary>
+        /// Returns whether the block is fake exit or not.
+        /// </summary>
+        /// <returns></returns>
         public Boolean isFakeExitBlock()
         {
             return Successors.Count == 0 && Predecessors.Count > 0 && Instructions.Count == 1 && Instructions[0].TACtext == "return";

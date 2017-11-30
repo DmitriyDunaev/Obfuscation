@@ -67,11 +67,6 @@ namespace Objects
             get { return _ID.ToString(); }
         }
 
-        public void mySetID(IDManager man)
-        {
-            _ID = man;
-        }
-
         public Common.StatementType statementType { get; set; }
         public string TACtext { get; set; }
         public bool isFake { get; private set; }
@@ -111,6 +106,8 @@ namespace Objects
             }
         }
 
+        public bool wasNop { get; private set; }
+
         public Instruction(BasicBlock parent)
         {
             _ID = new IDManager();
@@ -120,12 +117,22 @@ namespace Objects
             TACtext = "nop";
         }
 
-        public Instruction(BasicBlock parent, string ID = "", string tacText = "return", Boolean isFake = false, Common.StatementType type = Common.StatementType.Procedural)
+        public Instruction(BasicBlock parent, bool wasnop)
+        {
+            _ID = new IDManager();
+            isFake = true;
+            this.parent = parent;
+            statementType = Common.StatementType.NoOperation;
+            TACtext = "nop";
+            wasNop = wasnop;
+        }
+
+        public Instruction(BasicBlock parent, string tacText, Boolean isFake = false, Common.StatementType type = Common.StatementType.Procedural)
         {
             if (parent == null || parent.parent == null || parent.parent.parent == null)
                 throw new ObjectException("Instruction cannot be created outside a routine.");
 
-            this._ID = !string.IsNullOrEmpty(ID) ? new IDManager(ID) : new IDManager();
+            this._ID = new IDManager();
             this.isFake = isFake;
             this.parent = parent;
             this.statementType = type;
@@ -498,6 +505,11 @@ namespace Objects
             return parent.getSuccessors.Last();
         }
 
+        /// <summary>
+        /// Sets the instuctions referenced variables with the given attribute values.
+        /// </summary>
+        /// <param name="kind"></param>
+        /// <param name="fake"></param>
         public void setVariables(Variable.Kind kind = Variable.Kind.Input, bool fake = false)
         {
             foreach (Variable var in RefVariables)

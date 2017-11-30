@@ -14,6 +14,7 @@ namespace Objects
         // Attributes
         public Routine parent { get; private set; }
         private IDManager _ID;
+        private static int outlineFunctionid = 1;
         public string ID
         {
             get { return _ID.ToString(); }
@@ -65,11 +66,11 @@ namespace Objects
         /// <param name="parent"></param>
         /// <param name="ID"></param>
         /// <param calledFrom="calledFrom"></param>
-        public Function(Routine routine, string ID = "", Common.CalledFrom calledFrom = Common.CalledFrom.InternalOnly)
+        public Function(Routine routine, Common.CalledFrom calledFrom = Common.CalledFrom.InternalOnly)
         {
             this.parent = routine ?? throw new ObjectException("Function cannot be created outside a routine.");
-            this._ID = !String.IsNullOrEmpty(ID) ? new IDManager(ID) : new IDManager();
-            this.globalID = _ID.ToString();
+            this._ID =  new IDManager();
+            this.globalID = "OutlinedFunc_" + outlineFunctionid++;
             this.calledFrom = calledFrom;
         }
 
