@@ -47,7 +47,7 @@ namespace Platform_x86
             int count = 1;
             foreach (Variable var in routine.Functions.Last().LocalVariables.FindAll(x => x.kind == Variable.Kind.Input && x.fake == true))
             {
-                sb.AppendLine("f" + count + "  db 'Fake parameter #" + count + " ( " + var.fixedMin + " - " + var.fixedMax + " ):" +"',0");
+                sb.AppendLine("f" + count + "  db 'Fake parameter #" + count + " ( " + var.fixedMin + " - " + var.fixedMax + " ):" + "',0");
                 count++;
             }
             count = 1;
@@ -88,7 +88,7 @@ namespace Platform_x86
                 count++;
             }
             sb.AppendLine("CALL " + routine.Functions.Last().globalID);
-            sb.AppendLine("ADD esp, " + routine.Functions.Last().LocalVariables.FindAll(x => x.kind == Variable.Kind.Input).Count * 4);
+            //sb.AppendLine("ADD esp, " + routine.Functions.Last().LocalVariables.FindAll(x => x.kind == Variable.Kind.Input).Count * 4);
             sb.AppendLine("invoke  crt_printf,addr  msg,eax");
             sb.AppendLine("RET");
             sb.AppendLine();
@@ -236,8 +236,8 @@ namespace Platform_x86
             int? right_const;
             Instruction.RelationalOperationType relop;
             BasicBlock truebb, falsebb;
-            Parser.ConditionalJump(inst, out left, out right_var, out right_const, out relop, out truebb, out falsebb); 
-            
+            Parser.ConditionalJump(inst, out left, out right_var, out right_const, out relop, out truebb, out falsebb);
+
             /* Now we build the assembly instructions. */
             sb.AppendLine("MOV eax, " + StackPointerOfVariable(left));
             if (right_var != null && right_const == null)
@@ -434,7 +434,7 @@ namespace Platform_x86
                     int pow = Convert.ToInt32(Math.Log((int)right2_const, 2));
                     int tmp = Convert.ToInt32(Math.Pow(2, pow));
                     shift_available = (tmp == right2_const);
-                    
+
                     if (shift_available)
                     {
                         /* It is, so we can use shifts instead of multiplication and division. */
@@ -495,7 +495,7 @@ namespace Platform_x86
                     if (called_func == null)
                     {
                         if (inst.TACtext.Contains("scanf"))
-                        {                            
+                        {
                             sb.AppendLine("invoke  crt_printf,addr scan");
                             sb.AppendLine("invoke  crt_scanf,addr formatInt,addr din");
                             sb.AppendLine("MOV eax, din");
@@ -555,9 +555,11 @@ namespace Platform_x86
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(func.globalID + " proc");
-            sb.AppendLine("PUSH ebp");
-            sb.AppendLine("MOV ebp, esp");
-            sb.AppendLine("SUB esp, " + Math.Abs(framestack + 4));
+            //sb.AppendLine("PUSH ebp");
+            //sb.AppendLine("MOV ebp, esp");
+            //sb.AppendLine("SUB esp, " + Math.Abs(framestack + 4));
+            sb.AppendLine("ENTER " + func.LocalVariables.FindAll(x => (x.kind == Variable.Kind.Output || x.kind == Variable.Kind.Local)).Count * 4 + ", 0");
+            
             return sb.ToString();
         }
 
@@ -593,16 +595,15 @@ namespace Platform_x86
         private static string ReturnFromFunction(Function func)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("ADD esp, " + Math.Abs(framestack + 4));
-            sb.AppendLine("POP ebp");
-            sb.AppendLine("RET");
+            sb.AppendLine("LEAVE");
+            sb.AppendLine("RET " + func.LocalVariables.FindAll(x => x.kind == Variable.Kind.Input).Count * 4);
             return sb.ToString();
         }
 
 
         private static StringBuilder Optimize(StringBuilder funcASM)
         {
-            
+
             // Remove unnecessary instructions like "MOV a,b; MOV b,a;"
             System.Collections.Specialized.StringCollection movmov = new System.Collections.Specialized.StringCollection();
             Match matchResult = Regex.Match(funcASM.ToString(), @"mov (.*), (.*)(\r\n)+mov (\2), (\1)", RegexOptions.IgnoreCase);
@@ -624,7 +625,7 @@ namespace Platform_x86
             }
             List<string> lbl_wrong = new List<string>();
             lbl_wrong = labels.Where(x => labels.IndexOf(x) == labels.LastIndexOf(x)).ToList();
-            foreach (string lbl in labels.Where(x => labels.IndexOf(x)==labels.LastIndexOf(x)))
+            foreach (string lbl in labels.Where(x => labels.IndexOf(x) == labels.LastIndexOf(x)))
                 funcASM = funcASM.Replace(string.Concat(lbl, ":"), string.Empty);
 
             // Remove repeating \r\n CRLF characters
